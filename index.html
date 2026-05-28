@@ -223,17 +223,31 @@
             <p class="eyebrow">Music Showcase</p>
             <h2 id="music-heading">Music by Carine Sanadina</h2>
             <p>
-              A cinematic space for songs shaped by faith, tenderness, restoration, and the quiet power of kindness.
+              A compact premium playlist of songs shaped by faith, tenderness, restoration, and praise.
             </p>
           </div>
 
-          <div class="music-gallery" aria-label="Carine Sanadina music tracks">
-            <article class="music-card reveal" aria-labelledby="track-la-gentillesse-title">
-              <div class="music-cover-wrap">
+          <div class="playlist-panel reveal" aria-label="Carine Sanadina music playlist">
+            <div class="playlist-header" aria-hidden="true">
+              <span>Playlist</span>
+              <span>Time</span>
+            </div>
+
+            <article
+              class="playlist-track"
+              aria-labelledby="track-la-gentillesse-title"
+              data-audio-player
+              data-audio-src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.mp3"
+              data-track-title="La Gentillesse"
+              data-track-artist="Carine Sanadina"
+              data-track-cover="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.png"
+            >
+              <audio aria-label="La Gentillesse by Carine Sanadina" preload="metadata"></audio>
+              <div class="track-cover-wrap">
                 <img
                   src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.png"
                   alt="La Gentillesse cover art"
-                  class="music-cover"
+                  class="track-cover"
                   loading="lazy"
                   decoding="async"
                   data-fallback-target="music-cover-la-gentillesse-fallback"
@@ -241,75 +255,45 @@
                 <div class="image-fallback music-cover-fallback" id="music-cover-la-gentillesse-fallback" role="note" aria-live="polite">
                   La Gentillesse cover art is temporarily unavailable.
                 </div>
-                <div class="cover-sheen" aria-hidden="true"></div>
               </div>
 
-              <div class="music-content">
+              <div class="track-meta">
                 <p class="music-label">Track 01</p>
                 <h3 id="track-la-gentillesse-title">La Gentillesse</h3>
                 <p class="artist-name">Carine Sanadina</p>
-                <p class="track-description">
-                  “La Gentillesse” is a warm, faith-filled musical expression by Carine Sanadina celebrating kindness,
-                  compassion, healing, and the beauty of human connection.
-                </p>
-
-                <div class="music-player" data-audio-player data-audio-src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.mp3">
-                  <audio aria-label="La Gentillesse by Carine Sanadina" preload="metadata"></audio>
-
-                  <div class="equalizer" aria-hidden="true">
-                    <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                  </div>
-
-                  <div class="player-controls" aria-label="La Gentillesse audio player controls">
-                    <button class="button music-button player-toggle" type="button" data-play-toggle>Play Track</button>
-
-                    <div class="timeline-group">
-                      <div class="time-row" aria-live="off">
-                        <span data-current-time>0:00</span>
-                        <span data-duration>0:00</span>
-                      </div>
-                      <label class="sr-only" for="track-la-gentillesse-progress">La Gentillesse progress</label>
-                      <input
-                        id="track-la-gentillesse-progress"
-                        class="player-range progress-range"
-                        type="range"
-                        min="0"
-                        max="100"
-                        value="0"
-                        step="0.1"
-                        data-progress
-                        aria-label="La Gentillesse progress"
-                      />
-                    </div>
-
-                    <div class="volume-group">
-                      <span aria-hidden="true">Volume</span>
-                      <label class="sr-only" for="track-la-gentillesse-volume">La Gentillesse volume</label>
-                      <input
-                        id="track-la-gentillesse-volume"
-                        class="player-range volume-range"
-                        type="range"
-                        min="0"
-                        max="1"
-                        value="0.85"
-                        step="0.01"
-                        data-volume
-                        aria-label="La Gentillesse volume"
-                      />
-                    </div>
-                  </div>
-
-                  <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
-                </div>
+                <p class="track-description">Faith-filled kindness anthem</p>
               </div>
+
+              <div class="track-equalizer equalizer" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+
+              <div class="track-duration" aria-live="off">
+                <span class="sr-only">Duration:</span>
+                <span data-duration>0:00</span>
+              </div>
+
+              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play La Gentillesse">
+                <span class="play-icon" aria-hidden="true"></span>
+              </button>
+              <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
             </article>
 
-            <article class="music-card reveal" aria-labelledby="track-wonderful-title">
-              <div class="music-cover-wrap">
+            <article
+              class="playlist-track"
+              aria-labelledby="track-wonderful-title"
+              data-audio-player
+              data-audio-src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful.mp3"
+              data-track-title="Wonderful"
+              data-track-artist="Carine Sanadina"
+              data-track-cover="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful%20cover.png"
+            >
+              <audio aria-label="Wonderful by Carine Sanadina" preload="metadata"></audio>
+              <div class="track-cover-wrap">
                 <img
                   src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful%20cover.png"
                   alt="Wonderful cover art"
-                  class="music-cover"
+                  class="track-cover"
                   loading="lazy"
                   decoding="async"
                   data-fallback-target="music-cover-wonderful-fallback"
@@ -317,71 +301,76 @@
                 <div class="image-fallback music-cover-fallback" id="music-cover-wonderful-fallback" role="note" aria-live="polite">
                   Wonderful cover art is temporarily unavailable.
                 </div>
-                <div class="cover-sheen" aria-hidden="true"></div>
               </div>
 
-              <div class="music-content">
+              <div class="track-meta">
                 <p class="music-label">Track 02</p>
                 <h3 id="track-wonderful-title">Wonderful</h3>
                 <p class="artist-name">Carine Sanadina</p>
-                <p class="track-description">
-                  “Wonderful” is a joyful expression of gratitude and praise by Carine Sanadina, celebrating the beauty
-                  of giving glory to God and recognizing His goodness through every season.
-                </p>
-
-                <div class="music-player" data-audio-player data-audio-src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful.mp3">
-                  <audio aria-label="Wonderful by Carine Sanadina" preload="metadata"></audio>
-
-                  <div class="equalizer" aria-hidden="true">
-                    <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                  </div>
-
-                  <div class="player-controls" aria-label="Wonderful audio player controls">
-                    <button class="button music-button player-toggle" type="button" data-play-toggle>Play Track</button>
-
-                    <div class="timeline-group">
-                      <div class="time-row" aria-live="off">
-                        <span data-current-time>0:00</span>
-                        <span data-duration>0:00</span>
-                      </div>
-                      <label class="sr-only" for="track-wonderful-progress">Wonderful progress</label>
-                      <input
-                        id="track-wonderful-progress"
-                        class="player-range progress-range"
-                        type="range"
-                        min="0"
-                        max="100"
-                        value="0"
-                        step="0.1"
-                        data-progress
-                        aria-label="Wonderful progress"
-                      />
-                    </div>
-
-                    <div class="volume-group">
-                      <span aria-hidden="true">Volume</span>
-                      <label class="sr-only" for="track-wonderful-volume">Wonderful volume</label>
-                      <input
-                        id="track-wonderful-volume"
-                        class="player-range volume-range"
-                        type="range"
-                        min="0"
-                        max="1"
-                        value="0.85"
-                        step="0.01"
-                        data-volume
-                        aria-label="Wonderful volume"
-                      />
-                    </div>
-                  </div>
-
-                  <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
-                </div>
+                <p class="track-description">Joyful praise and gratitude</p>
               </div>
+
+              <div class="track-equalizer equalizer" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+
+              <div class="track-duration" aria-live="off">
+                <span class="sr-only">Duration:</span>
+                <span data-duration>0:00</span>
+              </div>
+
+              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play Wonderful">
+                <span class="play-icon" aria-hidden="true"></span>
+              </button>
+              <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
             </article>
           </div>
         </div>
       </section>
+
+      <aside class="mini-player" data-mini-player aria-label="Current track mini player" aria-hidden="true">
+        <div class="mini-player-shell">
+          <img class="mini-player-cover" src="" alt="" data-mini-cover />
+          <div class="mini-player-meta">
+            <p data-mini-title>No track selected</p>
+            <span data-mini-artist>Carine Sanadina</span>
+          </div>
+          <button class="track-play-toggle mini-toggle" type="button" data-mini-toggle aria-label="Play or pause current track">
+            <span class="play-icon" aria-hidden="true"></span>
+          </button>
+          <div class="mini-time" aria-live="off">
+            <span data-mini-current>0:00</span>
+            <label class="sr-only" for="mini-player-progress">Current track progress</label>
+            <input
+              id="mini-player-progress"
+              class="player-range progress-range"
+              type="range"
+              min="0"
+              max="100"
+              value="0"
+              step="0.1"
+              data-mini-progress
+              aria-label="Current track progress"
+            />
+            <span data-mini-duration>0:00</span>
+          </div>
+          <div class="mini-volume">
+            <span aria-hidden="true">Vol</span>
+            <label class="sr-only" for="mini-player-volume">Current track volume</label>
+            <input
+              id="mini-player-volume"
+              class="player-range volume-range"
+              type="range"
+              min="0"
+              max="1"
+              value="0.85"
+              step="0.01"
+              data-mini-volume
+              aria-label="Current track volume"
+            />
+          </div>
+        </div>
+      </aside>
 
       <section class="section focus" id="focus" aria-labelledby="focus-heading">
         <div class="container">
