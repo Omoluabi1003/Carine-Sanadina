@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 
 type Track = {
   id: string;
@@ -14,7 +14,8 @@ type Track = {
   duration: string;
 };
 
-const portraitSrc = "https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Carine%20Sanadina.png";
+const assetBase = "https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main";
+const portraitSrc = `${assetBase}/Carine%20Sanadina.png`;
 
 const tracks: Track[] = [
   {
@@ -22,8 +23,8 @@ const tracks: Track[] = [
     title: "La Gentillesse",
     mood: "Faith-filled kindness anthem",
     description: "A tender invitation into mercy, patience, and gentle strength.",
-    cover: "https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.png",
-    audio: "https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.mp3",
+    cover: `${assetBase}/La%20Gentillesse.png`,
+    audio: `${assetBase}/La%20Gentillesse.mp3`,
     duration: "Available in player"
   },
   {
@@ -31,8 +32,8 @@ const tracks: Track[] = [
     title: "Wonderful",
     mood: "Joyful praise and gratitude",
     description: "Bright, worshipful energy for renewed hope and everyday courage.",
-    cover: "https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful%20cover.png",
-    audio: "https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful.mp3",
+    cover: `${assetBase}/Wonderful%20cover.png`,
+    audio: `${assetBase}/Wonderful.mp3`,
     duration: "Available in player"
   }
 ];
@@ -62,6 +63,12 @@ const books = [
       "A restoration-centered work honoring the quiet strength that follows hardship, helping readers look beyond survival toward healing, peace, and renewed possibility.",
     href: "https://www.amazon.com/s?k=After+The+Storm+Carine+Sanadina"
   }
+];
+
+const heroSignals = [
+  { value: "Survivor", label: "Transforming hidden pain into restored purpose" },
+  { value: "Author", label: "Books on faith, healing, courage, and discernment" },
+  { value: "Artist", label: "Songs shaped for calm, kindness, and praise" }
 ];
 
 const focusAreas = [
@@ -99,6 +106,7 @@ export default function ArtistExperience() {
   const [progress, setProgress] = useState(0);
   const [durations, setDurations] = useState<Record<string, number>>({});
   const [menuOpen, setMenuOpen] = useState(false);
+  const [playbackNotice, setPlaybackNotice] = useState<string | null>(null);
 
   const activeTrack = useMemo(
     () => tracks.find((track) => track.id === activeTrackId) ?? null,
@@ -137,10 +145,12 @@ export default function ArtistExperience() {
     }
 
     try {
+      setPlaybackNotice(null);
       await requestedAudio.play();
       setIsPlaying(true);
     } catch {
       setIsPlaying(false);
+      setPlaybackNotice("Playback could not start automatically. Please try the play button again.");
     }
   };
 
@@ -161,6 +171,7 @@ export default function ArtistExperience() {
     if (activeTrackId) audioRefs.current[activeTrackId]?.pause();
     setIsPlaying(false);
     setMiniVisible(false);
+    setPlaybackNotice(null);
   };
 
   return (
@@ -207,6 +218,14 @@ export default function ArtistExperience() {
                 <a className="button button-secondary" href="#music">Explore Music</a>
                 <a className="button button-ghost" href="#about">Meet Carine</a>
               </div>
+              <div className="hero-signals" aria-label="Carine Sanadina creative identity">
+                {heroSignals.map((signal) => (
+                  <div className="hero-signal" key={signal.value}>
+                    <strong>{signal.value}</strong>
+                    <span>{signal.label}</span>
+                  </div>
+                ))}
+              </div>
             </motion.div>
 
             <motion.figure className="portrait-card" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: "easeOut" }}>
@@ -221,6 +240,11 @@ export default function ArtistExperience() {
                 />
               </div>
               <figcaption>Official portrait — courage, faith, and restoration in one healing-centered story.</figcaption>
+              <div className="portrait-note" aria-label="Featured creative world">
+                <span>Now entering</span>
+                <strong>gentle strength</strong>
+                <small>faith • restoration • sound</small>
+              </div>
             </motion.figure>
           </div>
           <a className="scroll-indicator" href="#featured" aria-label="Scroll to featured track"><span />Scroll</a>
@@ -244,6 +268,7 @@ export default function ArtistExperience() {
               <h2 id="music-heading">Apple Music-inspired songs for restoration.</h2>
               <p>Compact, elegant rows keep the focus on cover art, emotion, and native in-browser playback.</p>
             </motion.div>
+            {playbackNotice ? <p className="playback-notice" role="status">{playbackNotice}</p> : null}
             <div className="playlist-panel" aria-label="Carine Sanadina music playlist">
               <div className="playlist-header" aria-hidden="true"><span>Song</span><span>Mood</span><span>Time</span></div>
               {tracks.map((track) => (
@@ -380,7 +405,7 @@ function TrackRow({
   durations: Record<string, number>;
   onPlay: (track: Track) => void;
   setAudioRef: (node: HTMLAudioElement | null) => void;
-  setDurations: React.Dispatch<React.SetStateAction<Record<string, number>>>;
+  setDurations: Dispatch<SetStateAction<Record<string, number>>>;
   featured?: boolean;
 }) {
   const active = activeTrackId === track.id;
