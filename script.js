@@ -1,3 +1,21 @@
+const portraitImage = document.querySelector('.portrait-image');
+
+if (portraitImage) {
+  const usePortraitFallback = () => {
+    const fallbackSrc = portraitImage.dataset.fallbackSrc;
+
+    if (fallbackSrc && portraitImage.getAttribute('src') !== fallbackSrc) {
+      portraitImage.setAttribute('src', fallbackSrc);
+    }
+  };
+
+  portraitImage.addEventListener('error', usePortraitFallback);
+
+  if (portraitImage.complete && portraitImage.naturalWidth === 0) {
+    usePortraitFallback();
+  }
+}
+
 const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
 
