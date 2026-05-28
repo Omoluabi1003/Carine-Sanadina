@@ -58,18 +58,9 @@ remoteImages.forEach((image) => {
   }
 });
 
-const musicPlayer = document.querySelector('[data-audio-player]');
+const musicPlayers = Array.from(document.querySelectorAll('[data-audio-player]'));
 
-if (musicPlayer) {
-  const AUDIO_SRC = 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.mp3';
-  const audio = musicPlayer.querySelector('audio');
-  const playToggle = musicPlayer.querySelector('[data-play-toggle]');
-  const progress = musicPlayer.querySelector('[data-progress]');
-  const volume = musicPlayer.querySelector('[data-volume]');
-  const currentTime = musicPlayer.querySelector('[data-current-time]');
-  const duration = musicPlayer.querySelector('[data-duration]');
-  const status = musicPlayer.querySelector('[data-audio-status]');
-
+if (musicPlayers.length) {
   const formatTime = (seconds) => {
     if (!Number.isFinite(seconds) || seconds < 0) {
       return '0:00';
@@ -86,97 +77,118 @@ if (musicPlayer) {
     range.style.setProperty('--range-progress', `${Math.min(Math.max(percentage, 0), 100)}%`);
   };
 
-  const syncDuration = () => {
-    if (!Number.isFinite(audio.duration)) {
-      return;
-    }
+  musicPlayers.forEach((musicPlayer) => {
+    const audioSrc = musicPlayer.dataset.audioSrc;
+    const audio = musicPlayer.querySelector('audio');
+    const playToggle = musicPlayer.querySelector('[data-play-toggle]');
+    const progress = musicPlayer.querySelector('[data-progress]');
+    const volume = musicPlayer.querySelector('[data-volume]');
+    const currentTime = musicPlayer.querySelector('[data-current-time]');
+    const duration = musicPlayer.querySelector('[data-duration]');
+    const status = musicPlayer.querySelector('[data-audio-status]');
 
-    duration.textContent = formatTime(audio.duration);
-    progress.max = String(audio.duration);
+    const syncDuration = () => {
+      if (!Number.isFinite(audio.duration)) {
+        return;
+      }
+
+      duration.textContent = formatTime(audio.duration);
+      progress.max = String(audio.duration);
+      setRangeFill(progress, progress.value, progress.max);
+    };
+
+    const setPlayerReadyState = (isReady) => {
+      musicPlayer.classList.toggle('is-ready', isReady);
+      playToggle.disabled = !isReady;
+      progress.disabled = !isReady;
+
+      if (status && isReady) {
+        status.textContent = '';
+      }
+    };
+
     setRangeFill(progress, progress.value, progress.max);
-  };
+    setRangeFill(volume, volume.value, volume.max);
+    setPlayerReadyState(Boolean(audio && audioSrc));
 
-  const setPlayerReadyState = (isReady) => {
-    musicPlayer.classList.toggle('is-ready', isReady);
-    playToggle.disabled = !isReady;
-    progress.disabled = !isReady;
-
-    if (status && isReady) {
-      status.textContent = '';
-    }
-  };
-
-  setRangeFill(progress, progress.value, progress.max);
-  setRangeFill(volume, volume.value, volume.max);
-  setPlayerReadyState(Boolean(AUDIO_SRC));
-
-  if (audio && AUDIO_SRC) {
-    audio.src = AUDIO_SRC;
-    audio.volume = Number(volume.value);
-
-    audio.addEventListener('loadedmetadata', syncDuration);
-    audio.addEventListener('durationchange', syncDuration);
-
-    audio.addEventListener('timeupdate', () => {
-      currentTime.textContent = formatTime(audio.currentTime);
-      progress.value = String(audio.currentTime);
-      setRangeFill(progress, progress.value, progress.max);
-    });
-
-    audio.addEventListener('play', () => {
-      playToggle.textContent = 'Pause';
-      musicPlayer.classList.add('is-playing');
-    });
-
-    audio.addEventListener('pause', () => {
-      playToggle.textContent = 'Play Track';
-      musicPlayer.classList.remove('is-playing');
-    });
-
-    audio.addEventListener('ended', () => {
-      playToggle.textContent = 'Play Track';
-      musicPlayer.classList.remove('is-playing');
-      progress.value = '0';
-      currentTime.textContent = '0:00';
-      setRangeFill(progress, progress.value, progress.max);
-    });
-
-    audio.addEventListener('error', () => {
-      setPlayerReadyState(false);
-      playToggle.textContent = 'Play Track';
-      musicPlayer.classList.remove('is-playing');
-
-      if (status) {
-        status.textContent = 'Audio is temporarily unavailable. Please check back soon.';
-      }
-    });
-
-    playToggle.addEventListener('click', async () => {
-      if (audio.paused) {
-        try {
-          await audio.play();
-        } catch (error) {
-          if (status) {
-            status.textContent = 'Audio playback could not start. Please try again.';
-          }
-        }
-      } else {
-        audio.pause();
-      }
-    });
-
-    progress.addEventListener('input', () => {
-      audio.currentTime = Number(progress.value);
-      currentTime.textContent = formatTime(audio.currentTime);
-      setRangeFill(progress, progress.value, progress.max);
-    });
-
-    volume.addEventListener('input', () => {
+    if (audio && audioSrc) {
+      audio.src = audioSrc;
       audio.volume = Number(volume.value);
-      setRangeFill(volume, volume.value, volume.max);
-    });
-  } else {
-    playToggle.textContent = 'Play Track';
-    volume.disabled = true;
-  }
+
+      audio.addEventListener('loadedmetadata', syncDuration);
+      audio.addEventListener('durationchange', syncDuration);
+
+      audio.addEventListener('timeupdate', () => {
+        currentTime.textContent = formatTime(audio.currentTime);
+        progress.value = String(audio.currentTime);
+        setRangeFill(progress, progress.value, progress.max);
+      });
+
+      audio.addEventListener('play', () => {
+        musicPlayers.forEach((otherPlayer) => {
+          if (otherPlayer !== musicPlayer) {
+            const otherAudio = otherPlayer.querySelector('audio');
+
+            if (otherAudio && !otherAudio.paused) {
+              otherAudio.pause();
+            }
+          }
+        });
+
+        playToggle.textContent = 'Pause';
+        musicPlayer.classList.add('is-playing');
+      });
+
+      audio.addEventListener('pause', () => {
+        playToggle.textContent = 'Play Track';
+        musicPlayer.classList.remove('is-playing');
+      });
+
+      audio.addEventListener('ended', () => {
+        playToggle.textContent = 'Play Track';
+        musicPlayer.classList.remove('is-playing');
+        progress.value = '0';
+        currentTime.textContent = '0:00';
+        setRangeFill(progress, progress.value, progress.max);
+      });
+
+      audio.addEventListener('error', () => {
+        setPlayerReadyState(false);
+        playToggle.textContent = 'Play Track';
+        musicPlayer.classList.remove('is-playing');
+
+        if (status) {
+          status.textContent = 'Audio is temporarily unavailable. Please check back soon.';
+        }
+      });
+
+      playToggle.addEventListener('click', async () => {
+        if (audio.paused) {
+          try {
+            await audio.play();
+          } catch (error) {
+            if (status) {
+              status.textContent = 'Audio playback could not start. Please try again.';
+            }
+          }
+        } else {
+          audio.pause();
+        }
+      });
+
+      progress.addEventListener('input', () => {
+        audio.currentTime = Number(progress.value);
+        currentTime.textContent = formatTime(audio.currentTime);
+        setRangeFill(progress, progress.value, progress.max);
+      });
+
+      volume.addEventListener('input', () => {
+        audio.volume = Number(volume.value);
+        setRangeFill(volume, volume.value, volume.max);
+      });
+    } else if (playToggle && volume) {
+      playToggle.textContent = 'Play Track';
+      volume.disabled = true;
+    }
+  });
 }
