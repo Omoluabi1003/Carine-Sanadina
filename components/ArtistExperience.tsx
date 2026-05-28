@@ -64,6 +64,18 @@ const books = [
   }
 ];
 
+const heroProofs = [
+  { label: "Identity", value: "Congolese-born survivor" },
+  { label: "Purpose", value: "Healing through faith, words, and sound" },
+  { label: "World", value: "Gentle strength wrapped in cinematic calm" }
+];
+
+const listeningNotes = [
+  "Native in-browser playback",
+  "Safe hosted source paths",
+  "Compact restoration playlist"
+];
+
 const focusAreas = [
   "Domestic Violence Awareness",
   "Emotional Healing",
@@ -207,6 +219,14 @@ export default function ArtistExperience() {
                 <a className="button button-secondary" href="#music">Explore Music</a>
                 <a className="button button-ghost" href="#about">Meet Carine</a>
               </div>
+              <div className="hero-proof-grid" aria-label="Quick introduction to Carine Sanadina">
+                {heroProofs.map((proof) => (
+                  <div className="hero-proof" key={proof.label}>
+                    <span>{proof.label}</span>
+                    <strong>{proof.value}</strong>
+                  </div>
+                ))}
+              </div>
             </motion.div>
 
             <motion.figure className="portrait-card" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: "easeOut" }}>
@@ -232,6 +252,9 @@ export default function ArtistExperience() {
               <p className="eyebrow">Featured Track</p>
               <h2 id="featured-heading">A first listen into kindness, courage, and calm.</h2>
               <p>Begin with “La Gentillesse,” a gentle anthem that frames Carine Sanadina’s musical world with compassion and faith-filled tenderness.</p>
+              <div className="featured-notes" aria-label="Music player qualities">
+                {listeningNotes.map((note) => <span key={note}>{note}</span>)}
+              </div>
             </motion.div>
             <TrackRow track={tracks[0]} activeTrackId={activeTrackId} isPlaying={isPlaying} durations={durations} onPlay={playTrack} setAudioRef={(node) => { audioRefs.current[tracks[0].id] = node; }} setDurations={setDurations} featured />
           </div>
@@ -246,6 +269,7 @@ export default function ArtistExperience() {
             </motion.div>
             <div className="playlist-panel" aria-label="Carine Sanadina music playlist">
               <div className="playlist-header" aria-hidden="true"><span>Song</span><span>Mood</span><span>Time</span></div>
+              <p className="listener-note">Select a row to open the elegant mini-player without leaving the page.</p>
               {tracks.map((track) => (
                 <TrackRow
                   key={track.id}
@@ -386,7 +410,7 @@ function TrackRow({
   const active = activeTrackId === track.id;
 
   return (
-    <motion.article className={`${featured ? "playlist-track featured" : "playlist-track"} ${active ? "is-active" : ""}`} {...fadeUp}>
+    <motion.article className={`${featured ? "playlist-track featured" : "playlist-track"} ${active ? "is-active" : ""}`} aria-current={active ? "true" : undefined} {...fadeUp}>
       <audio
         ref={setAudioRef}
         aria-label={`${track.title} by Carine Sanadina`}
