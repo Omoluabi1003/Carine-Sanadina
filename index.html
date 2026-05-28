@@ -48,6 +48,7 @@
         <ul class="nav-links" id="site-menu">
           <li><a href="#about">About</a></li>
           <li><a href="#works">Featured Works</a></li>
+          <li><a href="#music">Music</a></li>
           <li><a href="#focus">Focus Areas</a></li>
           <li><a href="#positioning">Professional Voice</a></li>
           <li><a href="#contact">Contact</a></li>
@@ -66,6 +67,7 @@
             <h2>Turning pain into healing, survival into purpose, and stories into restoration.</h2>
             <div class="hero-actions" aria-label="Primary calls to action">
               <a class="button button-primary" href="#works">View Featured Works</a>
+              <a class="button button-secondary" href="#music">Listen to Music</a>
               <a class="button button-secondary" href="#contact">Contact Carine</a>
             </div>
           </div>
@@ -75,7 +77,13 @@
                 src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Carine%20Sanadina.png"
                 alt="Carine Sanadina official portrait"
                 class="portrait-image"
+                loading="eager"
+                decoding="async"
+                data-fallback-target="portrait-fallback"
               />
+              <div class="image-fallback portrait-fallback" id="portrait-fallback" role="note" aria-live="polite">
+                Carine Sanadina official portrait is temporarily unavailable.
+              </div>
             </div>
             <figcaption class="portrait-caption">Official portrait of Carine Sanadina — healing-centered stories with courage, faith, and restoration.</figcaption>
           </figure>
@@ -205,6 +213,57 @@
               </div>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section class="section music-showcase" id="music" aria-labelledby="music-heading">
+        <div class="music-ambient" aria-hidden="true"></div>
+        <div class="container music-shell">
+          <div class="section-heading center reveal">
+            <p class="eyebrow">Music Showcase</p>
+            <h2 id="music-heading">Music by Carine Sanadina</h2>
+            <p>
+              A cinematic space for songs shaped by faith, tenderness, restoration, and the quiet power of kindness.
+            </p>
+          </div>
+
+          <article class="music-card reveal" aria-labelledby="track-title">
+            <div class="music-cover-wrap">
+              <img
+                src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.png"
+                alt="La Gentillesse cover art"
+                class="music-cover"
+                loading="lazy"
+                decoding="async"
+                data-fallback-target="music-cover-fallback"
+              />
+              <div class="image-fallback music-cover-fallback" id="music-cover-fallback" role="note" aria-live="polite">
+                La Gentillesse cover art is temporarily unavailable.
+              </div>
+              <div class="cover-sheen" aria-hidden="true"></div>
+            </div>
+
+            <div class="music-content">
+              <p class="music-label">Featured Track</p>
+              <h3 id="track-title">La Gentillesse</h3>
+              <p class="artist-name">Carine Sanadina</p>
+              <p class="track-description">
+                “La Gentillesse” is a warm, faith-filled musical expression by Carine Sanadina celebrating kindness,
+                compassion, healing, and the beauty of human connection.
+              </p>
+
+              <div class="equalizer" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+
+              <a
+                class="button music-button"
+                href="https://suno.com/s/ujHS0FT3b8BGh3u1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Listen on Suno</a>
+            </div>
+          </article>
         </div>
       </section>
 
