@@ -312,6 +312,63 @@ h1, h2, h3, blockquote {
   border-radius: 10px;
   box-shadow: 0 18px 34px rgba(18, 9, 12, 0.24);
 }
+
+.placeholder-cover {
+  position: relative;
+  overflow: hidden;
+}
+.placeholder-cover::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(255, 248, 238, 0.38);
+  border-radius: 20px;
+  pointer-events: none;
+}
+.cover-art {
+  position: relative;
+  display: flex;
+  width: min(100%, 245px);
+  min-height: 328px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 24px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 72% 18%, rgba(234, 211, 162, 0.46), transparent 7rem),
+    linear-gradient(160deg, #f6e3cf, #a45460 42%, #3e0d1b);
+  color: var(--ivory);
+  box-shadow: 0 18px 34px rgba(18, 9, 12, 0.24);
+  text-align: center;
+}
+.cover-art::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(255, 248, 238, 0.46);
+  border-radius: 14px;
+  pointer-events: none;
+}
+.cover-art-red { background: radial-gradient(circle at 76% 14%, rgba(255, 215, 215, 0.36), transparent 7rem), linear-gradient(160deg, #f9e9de, #b01e34 45%, #3e0d1b); }
+.cover-art-sunshine { background: radial-gradient(circle at 50% 18%, rgba(255, 248, 212, 0.72), transparent 7rem), linear-gradient(160deg, #ffe7a3, #c68142 48%, #5f1427); }
+.cover-art-storm { background: radial-gradient(circle at 40% 18%, rgba(234, 211, 162, 0.52), transparent 7rem), linear-gradient(160deg, #e7d9cb, #76606a 44%, #2d2230); }
+.cover-kicker, .cover-author {
+  position: relative;
+  z-index: 1;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.cover-title {
+  position: relative;
+  z-index: 1;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(2.05rem, 3vw, 2.75rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
 .book-body {
   display: flex;
   flex: 1;
