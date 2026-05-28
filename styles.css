@@ -434,6 +434,12 @@ h1, h2, h3, blockquote {
   pointer-events: none;
 }
 .music-shell { position: relative; z-index: 1; }
+.music-gallery {
+  display: grid;
+  gap: clamp(28px, 4vw, 46px);
+  max-width: 1080px;
+  margin: 0 auto;
+}
 .music-showcase .eyebrow { color: var(--gold-soft); }
 .music-showcase h2,
 .music-showcase h3 { color: var(--ivory); }
@@ -446,8 +452,8 @@ h1, h2, h3, blockquote {
   grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1fr);
   gap: clamp(28px, 5vw, 64px);
   align-items: center;
-  max-width: 1020px;
-  margin: 0 auto;
+  max-width: 1080px;
+  margin: 0;
   padding: clamp(18px, 3.5vw, 44px);
   border: 1px solid rgba(234, 211, 162, 0.2);
   border-radius: 44px;
@@ -457,6 +463,11 @@ h1, h2, h3, blockquote {
   box-shadow: 0 34px 100px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(24px);
   transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+}
+.music-card:nth-child(even) {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05)),
+    radial-gradient(circle at 82% 0%, rgba(231, 184, 173, 0.16), transparent 18rem);
 }
 .music-card:hover,
 .music-card:focus-within {
@@ -522,7 +533,7 @@ h1, h2, h3, blockquote {
 }
 .music-content h3 {
   margin-top: 14px;
-  font-size: clamp(3.2rem, 8vw, 7rem);
+  font-size: clamp(2.8rem, 6.6vw, 6.2rem);
   letter-spacing: -0.055em;
 }
 .artist-name {
@@ -793,6 +804,7 @@ h1, h2, h3, blockquote {
   .hero { padding-top: 128px; }
   .portrait-card { transform: none; }
   .portrait-frame { min-height: 460px; }
+  .music-gallery { gap: 32px; }
   .music-card { border-radius: 34px; }
   .music-cover-wrap { max-width: 480px; width: 100%; margin: 0 auto; }
   .player-controls { grid-template-columns: 1fr; }
