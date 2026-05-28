@@ -1,9 +1,29 @@
 {
   "name": "carine-sanadina-website",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Premium one-page website for Carine Sanadina.",
+  "description": "Premium Apple Music-inspired artist website for Carine Sanadina.",
   "scripts": {
-    "build": "node scripts/build.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "latest",
+    "framer-motion": "latest",
+    "next": "^15.5.18",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwindcss": "latest"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "^15.5.18",
+    "typescript": "latest"
   }
 }
