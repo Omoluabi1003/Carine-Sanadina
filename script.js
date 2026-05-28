@@ -37,3 +37,23 @@ if ('IntersectionObserver' in window) {
 } else {
   revealElements.forEach((element) => element.classList.add('is-visible'));
 }
+
+const remoteImages = document.querySelectorAll('img[data-fallback-target]');
+
+const showImageFallback = (image) => {
+  const fallback = document.getElementById(image.dataset.fallbackTarget);
+
+  if (fallback) {
+    fallback.classList.add('is-visible');
+  }
+
+  image.hidden = true;
+};
+
+remoteImages.forEach((image) => {
+  image.addEventListener('error', () => showImageFallback(image));
+
+  if (image.complete && image.naturalWidth === 0) {
+    showImageFallback(image);
+  }
+});
