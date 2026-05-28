@@ -61,8 +61,7 @@ remoteImages.forEach((image) => {
 const musicPlayer = document.querySelector('[data-audio-player]');
 
 if (musicPlayer) {
-  // TODO: Replace AUDIO_SRC with the hosted MP3 URL for “La Gentillesse”.
-  const AUDIO_SRC = '';
+  const AUDIO_SRC = 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.mp3';
   const audio = musicPlayer.querySelector('audio');
   const playToggle = musicPlayer.querySelector('[data-play-toggle]');
   const progress = musicPlayer.querySelector('[data-progress]');
@@ -82,8 +81,19 @@ if (musicPlayer) {
   };
 
   const setRangeFill = (range, value, max) => {
-    const percentage = max > 0 ? (Number(value) / Number(max)) * 100 : 0;
+    const numericMax = Number(max);
+    const percentage = numericMax > 0 ? (Number(value) / numericMax) * 100 : 0;
     range.style.setProperty('--range-progress', `${Math.min(Math.max(percentage, 0), 100)}%`);
+  };
+
+  const syncDuration = () => {
+    if (!Number.isFinite(audio.duration)) {
+      return;
+    }
+
+    duration.textContent = formatTime(audio.duration);
+    progress.max = String(audio.duration);
+    setRangeFill(progress, progress.value, progress.max);
   };
 
   const setPlayerReadyState = (isReady) => {
@@ -104,11 +114,8 @@ if (musicPlayer) {
     audio.src = AUDIO_SRC;
     audio.volume = Number(volume.value);
 
-    audio.addEventListener('loadedmetadata', () => {
-      duration.textContent = formatTime(audio.duration);
-      progress.max = Number.isFinite(audio.duration) ? String(audio.duration) : '100';
-      setRangeFill(progress, progress.value, progress.max);
-    });
+    audio.addEventListener('loadedmetadata', syncDuration);
+    audio.addEventListener('durationchange', syncDuration);
 
     audio.addEventListener('timeupdate', () => {
       currentTime.textContent = formatTime(audio.currentTime);
@@ -130,6 +137,7 @@ if (musicPlayer) {
       playToggle.textContent = 'Play Track';
       musicPlayer.classList.remove('is-playing');
       progress.value = '0';
+      currentTime.textContent = '0:00';
       setRangeFill(progress, progress.value, progress.max);
     });
 
