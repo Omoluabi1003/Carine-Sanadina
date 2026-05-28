@@ -252,16 +252,56 @@
                 compassion, healing, and the beauty of human connection.
               </p>
 
-              <div class="equalizer" aria-hidden="true">
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              </div>
+              <div class="music-player" data-audio-player>
+                <audio aria-label="La Gentillesse by Carine Sanadina" preload="metadata"></audio>
 
-              <a
-                class="button music-button"
-                href="https://suno.com/s/ujHS0FT3b8BGh3u1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Listen on Suno</a>
+                <div class="equalizer" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+
+                <div class="player-controls" aria-label="La Gentillesse audio player controls">
+                  <button class="button music-button player-toggle" type="button" data-play-toggle>Play Track</button>
+
+                  <div class="timeline-group">
+                    <div class="time-row" aria-live="off">
+                      <span data-current-time>0:00</span>
+                      <span data-duration>0:00</span>
+                    </div>
+                    <label class="sr-only" for="track-progress">Track progress</label>
+                    <input
+                      id="track-progress"
+                      class="player-range progress-range"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value="0"
+                      step="0.1"
+                      data-progress
+                      aria-label="Track progress"
+                    />
+                  </div>
+
+                  <div class="volume-group">
+                    <span aria-hidden="true">Volume</span>
+                    <label class="sr-only" for="track-volume">Volume</label>
+                    <input
+                      id="track-volume"
+                      class="player-range volume-range"
+                      type="range"
+                      min="0"
+                      max="1"
+                      value="0.85"
+                      step="0.01"
+                      data-volume
+                      aria-label="Volume"
+                    />
+                  </div>
+                </div>
+
+                <p class="audio-status" data-audio-status role="status">
+                  Audio will be available here as soon as the hosted track file is connected.
+                </p>
+              </div>
             </div>
           </article>
         </div>
