@@ -1,14 +1,8 @@
-const { copyFileSync, rmSync, mkdirSync } = require('node:fs');
-const { join } = require('node:path');
+import { spawnSync } from "node:child_process";
 
-const root = process.cwd();
-const dist = join(root, 'dist');
+const result = spawnSync("next", ["build"], {
+  stdio: "inherit",
+  shell: process.platform === "win32",
+});
 
-rmSync(dist, { recursive: true, force: true });
-mkdirSync(dist, { recursive: true });
-
-for (const file of ['index.html', 'styles.css', 'script.js']) {
-  copyFileSync(join(root, file), join(dist, file));
-}
-
-console.log('Static site built in dist/');
+process.exit(result.status ?? 1);
