@@ -64,6 +64,7 @@ translations.en = {
   'music.kicker': 'Music Showcase',
   'music.heading': 'Music by Carine Sanadina',
   'music.intro': 'A compact premium playlist of songs shaped by faith, tenderness, restoration, and praise.',
+  'music.disclaimer': 'Music and media are presented for promotional listening and artist visibility. Rights remain with their respective owners. Unauthorized copying, redistribution, or commercial use is prohibited.',
   'music.playlistLabel': 'Carine Sanadina music playlist',
   'music.playlist': 'Playlist',
   'music.time': 'Time',
@@ -124,13 +125,16 @@ translations.en = {
   'cta.kicker': 'Begin the conversation',
   'cta.heading': 'Invite the voice. Share the story. Build a healing-centered moment.',
   'cta.body': 'Choose a premium inquiry path for speaking invitations, interviews, creative collaborations, or intimate conversations shaped by resilience, faith, and restoration.',
+  'cta.disclaimer': 'This website does not establish agency, management, publishing, or legal representation. Collaboration or booking discussions require separate written agreement.',
   'cta.optionsLabel': 'Contact options',
   'cta.invite': 'Invite Carine to Speak',
   'cta.media': 'Media Inquiry',
   'cta.music': 'Music Collaboration',
   'cta.books': 'Book Conversations',
   'footer.rights': '© 2026 Carine Sanadina. All Rights Reserved.',
-  'footer.credit': 'Website concept by Omoluabi Productions.'
+  'footer.navLabel': 'Footer navigation',
+  'footer.legal': 'Legal / Terms',
+  'footer.credit': 'Website concept, design, and digital presentation by Omoluabi Productions, a creative project operated under ETL GIS Consulting LLC.'
 };
 
 translations.fr = {
@@ -190,6 +194,7 @@ translations.fr = {
   'music.kicker': 'Vitrine musicale',
   'music.heading': 'Musique de Carine Sanadina',
   'music.intro': 'Une playlist premium compacte de chansons façonnées par la foi, la tendresse, la restauration et la louange.',
+  'music.disclaimer': 'La musique et les médias sont présentés pour une écoute promotionnelle et la visibilité de l’artiste. Les droits restent à leurs propriétaires respectifs. Toute copie, redistribution ou utilisation commerciale non autorisée est interdite.',
   'music.playlistLabel': 'Playlist musicale de Carine Sanadina',
   'music.playlist': 'Playlist',
   'music.time': 'Durée',
@@ -244,13 +249,16 @@ translations.fr = {
   'cta.kicker': 'Commencer la conversation',
   'cta.heading': 'Inviter la voix. Partager l’histoire. Créer un moment centré sur la guérison.',
   'cta.body': 'Choisissez un parcours de demande premium pour des invitations à parler, des interviews, des collaborations créatives ou des conversations intimes façonnées par la résilience, la foi et la restauration.',
+  'cta.disclaimer': 'Ce site Web n’établit aucune relation d’agence, de gestion, d’édition ou de représentation juridique. Les discussions de collaboration ou de réservation nécessitent un accord écrit distinct.',
   'cta.optionsLabel': 'Options de contact',
   'cta.invite': 'Inviter Carine à parler',
   'cta.media': 'Demande média',
   'cta.music': 'Collaboration musicale',
   'cta.books': 'Conversations autour des livres',
   'footer.rights': '© 2026 Carine Sanadina. Tous droits réservés.',
-  'footer.credit': 'Concept du site par Omoluabi Productions.'
+  'footer.navLabel': 'Navigation du pied de page',
+  'footer.legal': 'Mentions légales / Conditions',
+  'footer.credit': 'Concept, design et présentation numérique du site par Omoluabi Productions, un projet créatif exploité sous ETL GIS Consulting LLC.'
 };
 
 translations.es = {
@@ -307,6 +315,7 @@ translations.es = {
   'music.kicker': 'Muestra musical',
   'music.heading': 'Música de Carine Sanadina',
   'music.intro': 'Una playlist premium compacta de canciones marcadas por la fe, la ternura, la restauración y la alabanza.',
+  'music.disclaimer': 'La música y los medios se presentan para escucha promocional y visibilidad artística. Los derechos permanecen con sus respectivos propietarios. Se prohíbe la copia, redistribución o uso comercial no autorizado.',
   'music.time': 'Tiempo',
   'music.duration': 'Duración:',
   'music.playlistLabel': 'Playlist musical de Carine Sanadina',
@@ -362,13 +371,16 @@ translations.es = {
   'cta.kicker': 'Comenzar la conversación',
   'cta.heading': 'Invitar la voz. Compartir la historia. Crear un momento centrado en la sanación.',
   'cta.body': 'Elige una vía de consulta premium para invitaciones a hablar, entrevistas, colaboraciones creativas o conversaciones íntimas marcadas por la resiliencia, la fe y la restauración.',
+  'cta.disclaimer': 'Este sitio web no establece una relación de agencia, gestión, publicación ni representación legal. Las conversaciones de colaboración o reservas requieren un acuerdo escrito separado.',
   'cta.optionsLabel': 'Opciones de contacto',
   'cta.invite': 'Invitar a Carine a hablar',
   'cta.media': 'Consulta de medios',
   'cta.music': 'Colaboración musical',
   'cta.books': 'Conversaciones sobre libros',
   'footer.rights': '© 2026 Carine Sanadina. Todos los derechos reservados.',
-  'footer.credit': 'Concepto del sitio por Omoluabi Productions.'
+  'footer.navLabel': 'Navegación del pie de página',
+  'footer.legal': 'Legal / Términos',
+  'footer.credit': 'Concepto, diseño y presentación digital del sitio por Omoluabi Productions, un proyecto creativo operado bajo ETL GIS Consulting LLC.'
 };
 
 // TODO: Confirm nuanced Lingala copy with a fluent Lingala editor; uncertain long-form passages gracefully inherit French wording where needed.
@@ -429,7 +441,8 @@ translations.ln = {
   'cta.media': 'Demande média',
   'cta.music': 'Collaboration musicale',
   'cta.books': 'Masolo ya mikanda',
-  'footer.rights': '© 2026 Carine Sanadina. Makoki nyonso ebatelami.'
+  'footer.rights': '© 2026 Carine Sanadina. Makoki nyonso ebatelami.',
+  'footer.legal': 'Legal / Terms'
 };
 
 const supportedLanguages = Object.keys(translations);
