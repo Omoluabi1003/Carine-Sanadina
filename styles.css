@@ -1060,7 +1060,7 @@ h1, h2, h3, blockquote {
   .brand-mark, .nav-toggle { width: 44px; height: 44px; }
   .language-switcher { gap: 0; padding: 4px; }
   .language-switcher__label { display: none; }
-  .language-switcher__trigger { min-width: 118px; min-height: 34px; padding-inline: 13px 11px; font-size: 0.72rem; }
+  .language-switcher__trigger { min-width: max-content; min-height: 34px; padding-inline: 13px 11px; font-size: 0.72rem; }
   .language-switcher__menu { right: -4px; min-width: 168px; border-radius: 19px; }
   .language-option { min-height: 34px; font-size: 0.74rem; }
   .hero { padding-top: 110px; }
@@ -1572,7 +1572,6 @@ h1, h2, h3, blockquote { color: var(--ivory); }
 .site-header .language-option.is-active::after { color: var(--gold-soft); }
 
 @media (max-width: 460px) {
-  .language-switcher__trigger { min-width: 104px; max-width: 112px; }
-  .language-switcher__trigger span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .language-switcher__menu { min-width: 160px; }
+  .language-switcher__trigger { min-width: max-content; }
+  .language-switcher__menu { min-width: 172px; }
 }
