@@ -361,6 +361,32 @@ h1, h2, h3, blockquote {
   box-shadow: 0 18px 34px rgba(18, 9, 12, 0.24);
 }
 
+.book-cover-official {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(14px, 2vw, 20px);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(219, 234, 254, 0.28), transparent 9rem),
+    radial-gradient(circle at 74% 18%, rgba(240, 216, 154, 0.28), transparent 8rem),
+    linear-gradient(155deg, #0b2a68, #0f2147 46%, #020817);
+}
+
+.book-cover-official::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(219, 234, 254, 0.26);
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.official-book-cover {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 2 / 3;
+  background: rgba(2, 8, 23, 0.18);
+}
+
 .placeholder-cover {
   position: relative;
   overflow: hidden;
@@ -1101,6 +1127,13 @@ h1, h2, h3, blockquote { color: var(--ivory); }
     radial-gradient(circle at 70% 18%, rgba(240, 216, 154, 0.24), transparent 8rem),
     radial-gradient(circle at 28% 0%, rgba(96, 165, 250, 0.24), transparent 9rem),
     linear-gradient(155deg, #0b2a68, #0f2147 44%, #020817);
+}
+
+.book-cover-official {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(219, 234, 254, 0.28), transparent 9rem),
+    radial-gradient(circle at 74% 18%, rgba(240, 216, 154, 0.28), transparent 8rem),
+    linear-gradient(155deg, #0b2a68, #0f2147 46%, #020817);
 }
 
 .book-body h3,
