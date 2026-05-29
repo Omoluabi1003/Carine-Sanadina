@@ -49,10 +49,25 @@
         <a class="brand-mark" href="#hero" aria-label="Carine Sanadina home" data-i18n-attr="aria-label:a11y.home">CS</a>
         <div class="language-switcher" role="group" aria-label="Choose website language" data-i18n-attr="aria-label:language.selectorLabel">
           <span class="language-switcher__label" data-i18n="language.label">Language</span>
-          <button class="language-option is-active" type="button" data-language-option="en" aria-pressed="true">EN</button>
-          <button class="language-option" type="button" data-language-option="fr" aria-pressed="false">FR</button>
-          <button class="language-option" type="button" data-language-option="ln" aria-pressed="false">LN</button>
-          <button class="language-option" type="button" data-language-option="es" aria-pressed="false">ES</button>
+          <button
+            class="language-switcher__trigger"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="language-menu"
+            data-language-trigger
+          >
+            <span data-language-current>English</span>
+            <span class="language-switcher__chevron" aria-hidden="true"></span>
+          </button>
+          <div class="language-switcher__menu" id="language-menu" role="menu" data-language-menu hidden>
+            <button class="language-option is-active" type="button" role="menuitemradio" data-language-option="en" aria-checked="true">English</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="fr" aria-checked="false">Français</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="ln" aria-checked="false">Lingala</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="es" aria-checked="false">Español</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="sw" aria-checked="false">Kiswahili</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="yo" aria-checked="false">Yorùbá</button>
+          </div>
         </div>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
           <span class="sr-only" data-i18n="a11y.toggleNav">Toggle navigation</span>
