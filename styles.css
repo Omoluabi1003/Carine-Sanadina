@@ -404,6 +404,14 @@ h1, h2, h3, blockquote {
 }
 .about-content h2, .section-heading h2, .final-cta h2 { font-size: clamp(2.5rem, 5.6vw, 5.1rem); letter-spacing: -0.035em; }
 .about-content p { margin-top: 24px; font-size: 1.08rem; }
+.ai-facts {
+  padding: 18px 20px;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(234, 211, 162, 0.16));
+  color: var(--cocoa);
+  font-weight: 800;
+}
 .section-heading { max-width: 760px; margin-bottom: 46px; }
 .section-heading.center { text-align: center; margin-inline: auto; }
 .section-heading p:not(.eyebrow) { margin-top: 18px; font-size: 1.05rem; }

@@ -6,7 +6,7 @@ const languageLabels = {
   fr: 'Français',
   ln: 'Lingala',
   es: 'Español',
-  sw: 'Kiswahili',
+  sw: 'Swahili',
   yo: 'Yorùbá'
 };
 
@@ -14,11 +14,11 @@ const translations = {};
 
 translations.en = {
   'html.lang': 'en',
-  'meta.title': 'Carine Sanadina | Healthcare Professional, Author & Survivor Advocate',
-  'meta.description': 'Carine Sanadina is a Jacksonville, Florida-based healthcare professional, author, survivor advocate, and emotional wellness voice transforming pain into healing-centered inspiration.',
-  'meta.ogTitle': 'Carine Sanadina | Healing-Centered Author & Survivor Advocate',
-  'meta.ogDescription': 'Explore the books, advocacy, and emotional wellness voice of Carine Sanadina, a Congolese-born healthcare professional and author based in Jacksonville, Florida.',
-  'meta.twitterDescription': 'Turning pain into healing, survival into purpose, and stories into restoration.',
+  'meta.title': 'Carine Sanadina | Jacksonville Healthcare Professional, Author, Artist & Survivor Advocate',
+  'meta.description': 'Carine Sanadina is a Jacksonville, Florida healthcare professional, author, artist, survivor advocate, and emotional wellness voice focused on domestic violence awareness, faith, and restoration.',
+  'meta.ogTitle': 'Carine Sanadina | Author, Artist & Survivor Advocate in Jacksonville, Florida',
+  'meta.ogDescription': 'Discover Carine Sanadina’s books, music, advocacy, and healing-centered voice for domestic violence awareness, emotional wellness, faith, and restoration.',
+  'meta.twitterDescription': 'Jacksonville healthcare professional, author, artist, survivor advocate, and emotional wellness voice turning pain into healing and restoration.',
   'language.label': 'Language',
   'language.selectorLabel': 'Choose website language',
   'a11y.skip': 'Skip to main content',
@@ -46,6 +46,7 @@ translations.en = {
   'about.heading': 'A voice of resilience, restoration, and human-centered healing.',
   'about.body1': 'Carine Sanadina is a Congolese-born, Jacksonville-based healthcare professional, author, artist, and survivor advocate whose work transforms lived pain into healing-centered literature and inspiration.',
   'about.body2': 'Her work explores domestic violence survival, toxic relationships, emotional wounds, faith, resilience, motherhood, immigrant experience, and the journey from brokenness to restoration.',
+  'about.keyFacts': 'Key facts: Carine Sanadina serves from Jacksonville, Florida as a healthcare professional, author, artist, survivor advocate, and emotional wellness voice for domestic violence awareness, faith and restoration.',
   'works.kicker': 'Featured Works',
   'works.heading': 'Books that turn testimony into light.',
   'works.intro': 'Elegant, intimate, and brave reflections for readers seeking language for survival, recovery, faith, and renewed self-worth.',
@@ -137,9 +138,9 @@ translations.en = {
   'cta.disclaimer': 'This website does not establish agency, management, publishing, partnership, employment, or legal representation. Collaboration or booking discussions require separate written agreement.',
   'cta.optionsLabel': 'Contact options',
   'cta.invite': 'Invite Carine to Speak',
-  'cta.media': 'Media Inquiry',
-  'cta.music': 'Music Collaboration',
-  'cta.books': 'Book Conversations',
+  'cta.media': 'Request Media Interview',
+  'cta.music': 'Discuss Music Collaboration',
+  'cta.books': 'Book Conversation',
   'legal.metaTitle': 'Legal / Terms | Carine Sanadina',
   'legal.metaDescription': 'Legal and ownership notices for the Carine Sanadina website, including platform ownership, artist materials, media use, and contact guidance.',
   'legal.metaOgDescription': 'Legal and ownership notices for the Carine Sanadina website platform and approved artist materials.',
@@ -206,6 +207,7 @@ translations.fr = {
   'about.heading': 'Une voix de résilience, de restauration et de guérison centrée sur l’humain.',
   'about.body1': 'Née au Congo et basée à Jacksonville, Carine Sanadina est professionnelle de santé, autrice, artiste et défenseure des survivantes; son travail transforme la douleur vécue en littérature et inspiration centrées sur la guérison.',
   'about.body2': 'Son œuvre explore la survie après les violences domestiques, les relations toxiques, les blessures émotionnelles, la foi, la résilience, la maternité, l’expérience immigrée et le chemin de la brisure vers la restauration.',
+  'about.keyFacts': 'Repères clés : Carine Sanadina sert depuis Jacksonville, en Floride, comme professionnelle de santé, autrice, artiste, défenseure des survivantes et voix du bien-être émotionnel pour la sensibilisation aux violences domestiques, la foi et la restauration.',
   'works.kicker': 'Œuvres en vedette',
   'works.heading': 'Des livres qui transforment le témoignage en lumière.',
   'works.intro': 'Des réflexions élégantes, intimes et courageuses pour les lecteurs qui cherchent des mots pour la survie, la reconstruction, la foi et une estime de soi renouvelée.',
@@ -287,9 +289,9 @@ translations.fr = {
   'cta.disclaimer': 'Ce site Web n’établit aucune relation d’agence, de gestion, d’édition, de partenariat, d’emploi ou de représentation juridique. Les discussions de collaboration ou de réservation nécessitent un accord écrit distinct.',
   'cta.optionsLabel': 'Options de contact',
   'cta.invite': 'Inviter Carine à parler',
-  'cta.media': 'Demande média',
-  'cta.music': 'Collaboration musicale',
-  'cta.books': 'Conversations autour des livres',
+  'cta.media': 'Demander une interview média',
+  'cta.music': 'Discuter d’une collaboration musicale',
+  'cta.books': 'Réserver une conversation',
   'legal.metaTitle': 'Mentions légales / Conditions | Carine Sanadina',
   'legal.metaDescription': 'Mentions légales et avis de propriété pour le site Web de Carine Sanadina, incluant la propriété de la plateforme, les éléments artistiques, l’utilisation des médias et les indications de contact.',
   'legal.metaOgDescription': 'Mentions légales et avis de propriété pour la plateforme Web de Carine Sanadina et les éléments artistiques approuvés.',
@@ -352,6 +354,7 @@ translations.es = {
   'about.heading': 'Una voz de resiliencia, restauración y sanación centrada en la humanidad.',
   'about.body1': 'Carine Sanadina, nacida en el Congo y radicada en Jacksonville, es profesional de salud, autora, artista y defensora de sobrevivientes cuyo trabajo transforma el dolor vivido en literatura e inspiración centradas en la sanación.',
   'about.body2': 'Su obra explora la supervivencia a la violencia doméstica, las relaciones tóxicas, las heridas emocionales, la fe, la resiliencia, la maternidad, la experiencia inmigrante y el camino de la ruptura hacia la restauración.',
+  'about.keyFacts': 'Datos clave: Carine Sanadina sirve desde Jacksonville, Florida, como profesional de salud, autora, artista, defensora de sobrevivientes y voz de bienestar emocional para la conciencia sobre la violencia doméstica, la fe y la restauración.',
   'works.kicker': 'Obras destacadas',
   'works.heading': 'Libros que convierten el testimonio en luz.',
   'works.intro': 'Reflexiones elegantes, íntimas y valientes para lectores que buscan lenguaje para la supervivencia, la recuperación, la fe y una autoestima renovada.',
@@ -435,9 +438,9 @@ translations.es = {
   'cta.disclaimer': 'Este sitio web no establece una relación de agencia, gestión, publicación, asociación, empleo ni representación legal. Las conversaciones de colaboración o reservas requieren un acuerdo escrito separado.',
   'cta.optionsLabel': 'Opciones de contacto',
   'cta.invite': 'Invitar a Carine a hablar',
-  'cta.media': 'Consulta de medios',
-  'cta.music': 'Colaboración musical',
-  'cta.books': 'Conversaciones sobre libros',
+  'cta.media': 'Solicitar entrevista de medios',
+  'cta.music': 'Hablar sobre colaboración musical',
+  'cta.books': 'Reservar conversación',
   'legal.metaTitle': 'Legal / Términos | Carine Sanadina',
   'legal.metaDescription': 'Avisos legales y de propiedad del sitio web de Carine Sanadina, incluida la propiedad de la plataforma, los materiales artísticos, el uso de medios y la orientación de contacto.',
   'legal.metaOgDescription': 'Avisos legales y de propiedad de la plataforma web de Carine Sanadina y los materiales artísticos aprobados.',
@@ -504,6 +507,7 @@ translations.ln = {
   'about.heading': 'Mongongo ya mpiko, bozongisi ya motema mpe kobika oyo etalaka moto na bomoto.',
   'about.body1': 'Carine Sanadina azali mwasi ya Congo oyo afandaka na Jacksonville; azali mosali ya bokolongono, mokomi, moyembi mpe molobeli ya bato balekaki pasi. Mosala na ye ebongolaka mpasi oyo moto amonaki na maloba ya kobondisa, mikanda ya kobika mpe elikya.',
   'about.body2': 'Misala na ye elobaka na boboto makambo ya kobika nsima ya bitumba ya ndako, boyokani oyo ebebisaka motema, bapota ya kati, kondima, mpiko, bomama, bomoi ya moto oyo alongwá mboka, mpe nzela oyo ekendaka longwa na kobukana kino na kotongama lisusu.',
+  'about.keyFacts': 'Makambo ya ntina : Carine Sanadina asalaka uta Jacksonville, Florida lokola mosali ya bokolongono, mokomi, moyembi, molobeli ya bato babikaki mpe mongongo ya kobika ya motema mpo na koyebisa bitumba ya ndako, kondima mpe bozongisi.',
   'works.kicker': 'Misala minene',
   'works.heading': 'Mikanda oyo ebongolaka litatoli na pole.',
   'works.intro': 'Maloba ya kitoko, ya penepene mpe ya mpiko mpo na batangi oyo bazali koluka mongongo mpo na kobika, kokoma lisusu makasi, kondima mpe komimona na motuya ya sika.',
@@ -595,9 +599,9 @@ translations.ln = {
   'cta.disclaimer': 'Lokasa oyo esali boyokani te ya botambwisi, boyangeli, kobimisa mikanda, kosala elongo na mibeko, mosala to bolobeli ya mibeko. Masolo ya kosala elongo to ya kobengisa esengeli kozala na boyokani mosusu oyo ekomami.',
   'cta.optionsLabel': 'Banzela ya kokoma',
   'cta.invite': 'Benga Carine aloba',
-  'cta.media': 'Mituna ya koyebisa bato',
-  'cta.music': 'Kosala elongo na miziki',
-  'cta.books': 'Masolo ya mikanda',
+  'cta.media': 'Senga lisolo na bapanzi sango',
+  'cta.music': 'Solola mpo na kosala elongo na miziki',
+  'cta.books': 'Bongisa lisolo',
   'legal.metaTitle': 'Mibeko / Maloba ya kosalela | Carine Sanadina',
   'legal.metaDescription': 'Mayebisi ya mibeko mpe ya makoki mpo na lokasa ya Carine Sanadina: nkolo ya lokasa, biloko ya mosali, kosalela miziki mpe biloko mosusu, mpe kokoma.',
   'legal.metaOgDescription': 'Mayebisi ya mibeko mpe makoki mpo na lokasa ya Carine Sanadina mpe biloko ya mosali oyo endimami.',
@@ -664,6 +668,7 @@ translations.sw = {
   "about.heading": "Sauti ya uthabiti, urejesho, na uponyaji unaozingatia mwanadamu.",
   "about.body1": "Carine Sanadina ni mzaliwa wa Kongo, mtaalamu wa afya anayeishi Jacksonville, mwandishi, msanii, na wakili aliyenusurika ambaye kazi yake hubadilisha maumivu ya maisha kuwa fasihi inayolenga uponyaji na msukumo.",
   "about.body2": "Kazi yake inachunguza maisha ya unyanyasaji wa nyumbani, mahusiano yenye sumu, majeraha ya kihisia, imani, uthabiti, uzazi, uzoefu wa wahamiaji, na safari kutoka kwa kuvunjika hadi urejesho.",
+  "about.keyFacts": "Mambo muhimu: Carine Sanadina anahudumu kutoka Jacksonville, Florida kama mtaalamu wa huduma ya afya, mwandishi, msanii, wakili wa walionusurika, na sauti ya ustawi wa kihisia kwa uhamasishaji wa ukatili wa majumbani, imani na urejesho.",
   "works.kicker": "Kazi Zilizoangaziwa",
   "works.heading": "Vitabu vinavyogeuza ushuhuda kuwa nuru.",
   "works.intro": "Tafakari maridadi, za karibu, na za kijasiri kwa wasomaji wanaotafuta lugha kwa ajili ya kuishi, kupona, imani, na kujithamini upya.",
@@ -755,9 +760,9 @@ translations.sw = {
   "cta.disclaimer": "Tovuti hii haianzishi wakala, usimamizi, uchapishaji, ushirikiano, ajira, au uwakilishi wa kisheria. Majadiliano ya ushirikiano au kuweka nafasi yanahitaji makubaliano tofauti ya maandishi.",
   "cta.optionsLabel": "Chaguo za mawasiliano",
   "cta.invite": "Alika Carine Aongee",
-  "cta.media": "Uchunguzi wa Vyombo vya Habari",
-  "cta.music": "Ushirikiano wa Muziki",
-  "cta.books": "Mazungumzo ya Kitabu",
+  "cta.media": "Omba Mahojiano ya Vyombo vya Habari",
+  "cta.music": "Jadili Ushirikiano wa Muziki",
+  "cta.books": "Weka Mazungumzo",
   "legal.metaTitle": "Kisheria / Masharti | Carine Sanadina",
   "legal.metaDescription": "Notisi za kisheria na umiliki za tovuti ya Carine Sanadina, ikijumuisha umiliki wa jukwaa, nyenzo za wasanii, matumizi ya midia na mwongozo wa mawasiliano.",
   "legal.metaOgDescription": "Notisi za kisheria na umiliki za jukwaa la tovuti ya Carine Sanadina na nyenzo za msanii zilizoidhinishwa.",
@@ -824,6 +829,7 @@ translations.yo = {
   "about.heading": "Ohùn ifarabalẹ, imupadabọsipo, ati iwosan ti o dojukọ eniyan.",
   "about.body1": "Carine Sanadina jẹ ọmọ ilu Kongo kan, alamọdaju ilera ti orisun Jacksonville, onkọwe, oṣere, ati agbawi olugbala ti iṣẹ rẹ yi irora igbesi aye pada si awọn iwe ti o dojukọ iwosan ati awokose.",
   "about.body2": "Iṣẹ rẹ ṣawari iwalaaye iwa-ipa abele, awọn ibatan majele, awọn ọgbẹ ẹdun, igbagbọ, resilience, iya iya, iriri aṣikiri, ati irin-ajo lati ibajẹ si imupadabọ.",
+  "about.keyFacts": "Àwọn òtítọ́ pàtàkì: Carine Sanadina n ṣiṣẹ lati Jacksonville, Florida gẹgẹ bi ọjọgbọn itọju ilera, onkọwe, oṣere, alagbawi olugbala, ati ohun alafia ẹdun fun imọ iwa-ipa abele, igbagbọ ati atunṣe.",
   "works.kicker": "Awọn iṣẹ ifihan",
   "works.heading": "Awọn iwe ti o yi ẹri pada si imọlẹ.",
   "works.intro": "Lẹwa, timọtimọ, ati awọn iṣaro akọni fun awọn oluka ti n wa ede fun iwalaaye, imularada, igbagbọ, ati isọdọtun ara ẹni.",
@@ -915,9 +921,9 @@ translations.yo = {
   "cta.disclaimer": "Oju opo wẹẹbu yii ko ṣe agbekalẹ ile-ibẹwẹ, iṣakoso, titẹjade, ajọṣepọ, iṣẹ, tabi aṣoju ofin. Ifowosowopo tabi awọn ijiroro ifiṣura nilo adehun kikọ lọtọ.",
   "cta.optionsLabel": "Awọn aṣayan olubasọrọ",
   "cta.invite": "Pe Carine lati Sọ",
-  "cta.media": "Iwadii Media",
-  "cta.music": "Ifowosowopo Orin",
-  "cta.books": "Awọn ibaraẹnisọrọ Iwe",
+  "cta.media": "Beere Ifọrọwanilẹnuwo Media",
+  "cta.music": "Jiroro Ifowosowopo Orin",
+  "cta.books": "Ṣeto Ibaraẹnisọrọ",
   "legal.metaTitle": "Ofin / Awọn ofin | Carine Sanadina",
   "legal.metaDescription": "Awọn akiyesi ofin ati nini fun oju opo wẹẹbu Carine Sanadina, pẹlu ohun-ini Syeed, awọn ohun elo olorin, lilo media, ati itọsọna olubasọrọ.",
   "legal.metaOgDescription": "Awọn akiyesi ofin ati nini fun aaye ayelujara Carine Sanadina ati awọn ohun elo olorin ti a fọwọsi.",
@@ -1245,6 +1251,7 @@ if (musicPlayers.length) {
 
   const getAudio = (player) => player.querySelector('audio');
   const getDurationLabel = (player) => player.querySelector('[data-duration]');
+  const getFallbackDuration = (player) => Number.parseFloat(player.dataset.trackDuration || '0');
   const getPlayToggle = (player) => player.querySelector('[data-play-toggle]');
   const getTrackTitle = (player) => {
     const playToggle = getPlayToggle(player);
@@ -1262,18 +1269,24 @@ if (musicPlayers.length) {
     button.setAttribute('aria-label', `${isPlaying ? translate('audio.pause') : translate('audio.play')} ${title}`);
   };
 
-  const getSafeDuration = (audio, fallbackDuration = 100) => (
-    audio && Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : fallbackDuration
-  );
+  const getSafeDuration = (audio, fallback = 0) => {
+    if (audio && Number.isFinite(audio.duration) && audio.duration > 0) {
+      return audio.duration;
+    }
+
+    return Number.isFinite(fallback) && fallback > 0 ? fallback : 0;
+  };
 
   const syncMiniProgress = (audio) => {
     if (!mini || !audio) {
       return;
     }
 
-    const max = getSafeDuration(audio);
+    const fallbackDuration = activePlayer ? getFallbackDuration(activePlayer) : 0;
+    const max = getSafeDuration(audio, fallbackDuration || 100);
+    const safeDuration = getSafeDuration(audio, fallbackDuration);
     mini.current.textContent = formatTime(audio.currentTime);
-    mini.duration.textContent = Number.isFinite(audio.duration) && audio.duration > 0 ? formatTime(audio.duration) : '0:00';
+    mini.duration.textContent = safeDuration > 0 ? formatTime(safeDuration) : '0:00';
     mini.progress.max = String(max);
     mini.progress.value = String(Math.min(audio.currentTime, max));
     setRangeFill(mini.progress, mini.progress.value, mini.progress.max);
@@ -1342,12 +1355,13 @@ if (musicPlayers.length) {
   const syncDuration = (player) => {
     const audio = getAudio(player);
     const duration = getDurationLabel(player);
+    const safeDuration = getSafeDuration(audio, getFallbackDuration(player));
 
-    if (!audio || !duration || !Number.isFinite(audio.duration) || audio.duration <= 0) {
+    if (!duration || safeDuration <= 0) {
       return false;
     }
 
-    duration.textContent = formatTime(audio.duration);
+    duration.textContent = formatTime(safeDuration);
 
     if (activePlayer === player) {
       syncMiniProgress(audio);
@@ -1366,8 +1380,10 @@ if (musicPlayers.length) {
     }
 
     audio.preload = 'metadata';
+    audio.crossOrigin = 'anonymous';
     audio.src = audioSrc;
     audio.volume = mini && mini.volume ? Number(mini.volume.value) : 0.85;
+    syncDuration(player);
     setPlayerReadyState(player, true);
     audio.load();
   };
@@ -1420,7 +1436,7 @@ if (musicPlayers.length) {
 
       if (miniPlayer && activePlayer === player) {
         miniPlayer.classList.remove('is-playing');
-        updateToggle(mini.toggle, audio, trackTitle);
+        updateToggle(mini.toggle, audio, getTrackTitle(player));
       }
 
       if (status) {
