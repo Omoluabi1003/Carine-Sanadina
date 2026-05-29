@@ -8,3 +8,5 @@ dist/
 *.gif
 *.ico
 *.pdf
+.next/
+out/
