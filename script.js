@@ -40,22 +40,28 @@ if ('IntersectionObserver' in window) {
 
 const remoteImages = document.querySelectorAll('img[data-fallback-target]');
 
-const showImageFallback = (image) => {
+const setImageFallbackState = (image, isFallbackVisible) => {
   const fallback = document.getElementById(image.dataset.fallbackTarget);
 
   if (fallback) {
-    fallback.classList.add('is-visible');
+    fallback.classList.toggle('is-visible', isFallbackVisible);
   }
 
-  image.hidden = true;
+  image.classList.toggle('has-load-error', isFallbackVisible);
+  image.toggleAttribute('aria-hidden', isFallbackVisible);
 };
 
 remoteImages.forEach((image) => {
-  image.addEventListener('error', () => showImageFallback(image));
+  image.addEventListener('load', () => setImageFallbackState(image, false));
+  image.addEventListener('error', () => setImageFallbackState(image, true));
 
-  if (image.complete && image.naturalWidth === 0) {
-    showImageFallback(image);
-  }
+  // Cached failed images can be complete before listeners attach. Defer the check so
+  // lazily-loaded images are not mistaken for errors before the browser requests them.
+  window.setTimeout(() => {
+    if (image.complete && image.naturalWidth === 0) {
+      setImageFallbackState(image, true);
+    }
+  }, 0);
 });
 
 const musicPlayers = Array.from(document.querySelectorAll('[data-audio-player]'));
@@ -131,6 +137,7 @@ if (musicPlayers.length) {
     miniPlayer.classList.toggle('is-playing', audio && !audio.paused);
     mini.cover.src = player.dataset.trackCover;
     mini.cover.alt = `${player.dataset.trackTitle} cover art`;
+    mini.cover.referrerPolicy = 'no-referrer';
     mini.title.textContent = player.dataset.trackTitle;
     mini.artist.textContent = player.dataset.trackArtist;
     mini.volume.value = String(audio.volume);
