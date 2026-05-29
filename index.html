@@ -1,31 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-i18n-attr="lang:html.lang">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carine Sanadina | Healthcare Professional, Author & Survivor Advocate</title>
+    <title data-i18n="meta.title">Carine Sanadina | Healthcare Professional, Author & Survivor Advocate</title>
     <meta
       name="description"
-      content="Carine Sanadina is a Jacksonville, Florida-based healthcare professional, author, survivor advocate, and emotional wellness voice transforming pain into healing-centered inspiration."
+      content="Carine Sanadina is a Jacksonville, Florida-based healthcare professional, author, survivor advocate, and emotional wellness voice transforming pain into healing-centered inspiration." data-i18n-attr="content:meta.description"
     />
     <meta name="author" content="Carine Sanadina" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://omoluabi1003.github.io/Carine-Sanadina/" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Carine Sanadina | Healing-Centered Author & Survivor Advocate" />
+    <meta property="og:title" content="Carine Sanadina | Healing-Centered Author & Survivor Advocate" data-i18n-attr="content:meta.ogTitle" />
     <meta
       property="og:description"
-      content="Explore the books, advocacy, and emotional wellness voice of Carine Sanadina, a Congolese-born healthcare professional and author based in Jacksonville, Florida."
+      content="Explore the books, advocacy, and emotional wellness voice of Carine Sanadina, a Congolese-born healthcare professional and author based in Jacksonville, Florida." data-i18n-attr="content:meta.ogDescription"
     />
     <meta property="og:url" content="https://omoluabi1003.github.io/Carine-Sanadina/" />
     <meta property="og:image" content="/assets/CS-logo.png" />
     <meta property="og:image:alt" content="Carine Sanadina logo" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Carine Sanadina | Healthcare Professional, Author & Survivor Advocate" />
+    <meta name="twitter:title" content="Carine Sanadina | Healthcare Professional, Author & Survivor Advocate" data-i18n-attr="content:meta.title" />
     <meta
       name="twitter:description"
-      content="Turning pain into healing, survival into purpose, and stories into restoration."
+      content="Turning pain into healing, survival into purpose, and stories into restoration." data-i18n-attr="content:meta.twitterDescription"
     />
     <meta name="twitter:image" content="/assets/CS-logo.png" />
     <meta name="twitter:image:alt" content="Carine Sanadina logo" />
@@ -42,22 +42,29 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to main content</a>
+    <a class="skip-link" href="#main"> <span data-i18n="a11y.skip">Skip to main content</span></a>
 
-    <header class="site-header" aria-label="Primary navigation">
+    <header class="site-header" aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.primaryNav">
       <nav class="nav container">
-        <a class="brand-mark" href="#hero" aria-label="Carine Sanadina home">CS</a>
+        <a class="brand-mark" href="#hero" aria-label="Carine Sanadina home" data-i18n-attr="aria-label:a11y.home">CS</a>
+        <div class="language-switcher" role="group" aria-label="Choose website language" data-i18n-attr="aria-label:language.selectorLabel">
+          <span class="language-switcher__label" data-i18n="language.label">Language</span>
+          <button class="language-option is-active" type="button" data-language-option="en" aria-pressed="true">EN</button>
+          <button class="language-option" type="button" data-language-option="fr" aria-pressed="false">FR</button>
+          <button class="language-option" type="button" data-language-option="ln" aria-pressed="false">LN</button>
+          <button class="language-option" type="button" data-language-option="es" aria-pressed="false">ES</button>
+        </div>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
-          <span class="sr-only">Toggle navigation</span>
+          <span class="sr-only" data-i18n="a11y.toggleNav">Toggle navigation</span>
           <span></span><span></span><span></span>
         </button>
         <ul class="nav-links" id="site-menu">
-          <li><a href="#about">About</a></li>
-          <li><a href="#works">Featured Works</a></li>
-          <li><a href="#music">Music</a></li>
-          <li><a href="#focus">Focus Areas</a></li>
-          <li><a href="#positioning">Professional Voice</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#about" data-i18n="nav.about">About</a></li>
+          <li><a href="#works" data-i18n="nav.works">Featured Works</a></li>
+          <li><a href="#music" data-i18n="nav.music">Music</a></li>
+          <li><a href="#focus" data-i18n="nav.focus">Focus Areas</a></li>
+          <li><a href="#positioning" data-i18n="nav.positioning">Professional Voice</a></li>
+          <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
         </ul>
       </nav>
     </header>
@@ -67,21 +74,21 @@
         <div class="hero-glow" aria-hidden="true"></div>
         <div class="container hero-grid">
           <div class="hero-copy reveal">
-            <p class="eyebrow">Jacksonville, Florida</p>
+            <p class="eyebrow" data-i18n="hero.location">Jacksonville, Florida</p>
             <h1>Carine Sanadina</h1>
-            <p class="subtitle">Healthcare Professional | Author | Survivor Advocate | Emotional Wellness Voice</p>
-            <h2>Turning pain into healing, survival into purpose, and stories into restoration.</h2>
-            <div class="hero-actions" aria-label="Primary calls to action">
-              <a class="button button-primary" href="#works">View Featured Works</a>
-              <a class="button button-secondary" href="#music">Listen to Music</a>
-              <a class="button button-secondary" href="#contact">Contact Carine</a>
+            <p class="subtitle" data-i18n="hero.subtitle">Healthcare Professional | Author | Survivor Advocate | Emotional Wellness Voice</p>
+            <h2 data-i18n="hero.heading">Turning pain into healing, survival into purpose, and stories into restoration.</h2>
+            <div class="hero-actions" aria-label="Primary calls to action" data-i18n-attr="aria-label:a11y.primaryCta">
+              <a class="button button-primary" href="#works" data-i18n="hero.viewWorks">View Featured Works</a>
+              <a class="button button-secondary" href="#music" data-i18n="hero.listenMusic">Listen to Music</a>
+              <a class="button button-secondary" href="#contact" data-i18n="hero.contactCarine">Contact Carine</a>
             </div>
           </div>
-          <figure class="portrait-card reveal" aria-label="Carine Sanadina official portrait feature">
+          <figure class="portrait-card reveal" aria-label="Carine Sanadina official portrait feature" data-i18n-attr="aria-label:portrait.figureLabel">
             <div class="portrait-frame">
               <img
                 src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Carine%20Sanadina.png"
-                alt="Carine Sanadina official portrait"
+                alt="Carine Sanadina official portrait" data-i18n-attr="alt:portrait.alt"
                 class="portrait-image"
                 width="1200"
                 height="1600"
@@ -92,27 +99,24 @@
                 data-fallback-target="portrait-fallback"
               />
               <div class="image-fallback portrait-fallback" id="portrait-fallback" role="note" aria-live="polite">
-                Carine Sanadina official portrait is temporarily unavailable.
+                <span data-i18n="portrait.fallback">Carine Sanadina official portrait is temporarily unavailable.</span>
               </div>
             </div>
-            <figcaption class="portrait-caption">Official portrait of Carine Sanadina — healing-centered stories with courage, faith, and restoration.</figcaption>
+            <figcaption class="portrait-caption" data-i18n="portrait.caption">Official portrait of Carine Sanadina — healing-centered stories with courage, faith, and restoration.</figcaption>
           </figure>
         </div>
       </section>
 
       <section class="section about" id="about" aria-labelledby="about-heading">
         <div class="container split-layout">
-          <div class="section-kicker reveal">About Carine</div>
+          <div class="section-kicker reveal" data-i18n="about.kicker">About Carine</div>
           <div class="about-content reveal">
-            <h2 id="about-heading">A voice of resilience, restoration, and human-centered healing.</h2>
+            <h2 id="about-heading" data-i18n="about.heading">A voice of resilience, restoration, and human-centered healing.</h2>
             <p>
-              Carine Sanadina is a Congolese-born, Jacksonville-based healthcare professional, author,
-              artist, and survivor advocate whose work transforms lived pain into healing-centered literature
-              and inspiration.
+              <span data-i18n="about.body1">Carine Sanadina is a Congolese-born, Jacksonville-based healthcare professional, author, artist, and survivor advocate whose work transforms lived pain into healing-centered literature and inspiration.</span>
             </p>
             <p>
-              Her work explores domestic violence survival, toxic relationships, emotional wounds, faith,
-              resilience, motherhood, immigrant experience, and the journey from brokenness to restoration.
+              <span data-i18n="about.body2">Her work explores domestic violence survival, toxic relationships, emotional wounds, faith, resilience, motherhood, immigrant experience, and the journey from brokenness to restoration.</span>
             </p>
           </div>
         </div>
@@ -121,97 +125,92 @@
       <section class="section works" id="works" aria-labelledby="works-heading">
         <div class="container">
           <div class="section-heading reveal">
-            <p class="eyebrow">Featured Works</p>
-            <h2 id="works-heading">Books that turn testimony into light.</h2>
+            <p class="eyebrow" data-i18n="works.kicker">Featured Works</p>
+            <h2 id="works-heading" data-i18n="works.heading">Books that turn testimony into light.</h2>
             <p>
-              Elegant, intimate, and brave reflections for readers seeking language for survival, recovery,
-              faith, and renewed self-worth.
+              <span data-i18n="works.intro">Elegant, intimate, and brave reflections for readers seeking language for survival, recovery, faith, and renewed self-worth.</span>
             </p>
           </div>
           <div class="book-grid">
             <article class="book-card reveal">
               <!-- TODO: Replace this placeholder with a stable remote cover image URL when confirmed. -->
-              <figure class="book-cover placeholder-cover" aria-label="The Pain Nobody Saw placeholder book cover">
+              <figure class="book-cover placeholder-cover" aria-label="The Pain Nobody Saw placeholder book cover" data-i18n-attr="aria-label:books.pain.coverLabel">
                 <div class="cover-art" aria-hidden="true">
-                  <span class="cover-kicker">Memoir</span>
-                  <span class="cover-title">The Pain Nobody Saw</span>
+                  <span class="cover-kicker" data-i18n="books.pain.kicker">Memoir</span>
+                  <span class="cover-title" data-i18n="books.pain.coverTitle">The Pain Nobody Saw</span>
                   <span class="cover-author">Carine Sanadina</span>
                 </div>
               </figure>
               <div class="book-body">
-                <h3>The Pain Nobody Saw: A Hidden Story of Abuse and Survival</h3>
+                <h3 data-i18n="books.pain.title">The Pain Nobody Saw: A Hidden Story of Abuse and Survival</h3>
                 <p>
-                  A raw memoir exposing the hidden reality of domestic abuse, cultural pressure, silent
-                  suffering, and the courageous path toward freedom, faith, and reclaimed self-worth.
+                  <span data-i18n="books.pain.description">A raw memoir exposing the hidden reality of domestic abuse, cultural pressure, silent suffering, and the courageous path toward freedom, faith, and reclaimed self-worth.</span>
                 </p>
                 <a
                   class="button book-button"
                   href="https://www.amazon.com/Pain-Nobody-Saw-Hidden-Survival/dp/B0GPDL1BN3"
                   target="_blank"
                   rel="noopener noreferrer"
-                >Buy on Amazon</a>
+                > <span data-i18n="buttons.buyAmazon">Buy on Amazon</span></a>
               </div>
             </article>
             <article class="book-card reveal">
               <!-- TODO: Replace this placeholder with a stable remote cover image URL when confirmed. -->
-              <figure class="book-cover placeholder-cover" aria-label="If It’s Red, It’s Toxic placeholder book cover">
+              <figure class="book-cover placeholder-cover" aria-label="If It’s Red, It’s Toxic placeholder book cover" data-i18n-attr="aria-label:books.toxic.coverLabel">
                 <div class="cover-art cover-art-red" aria-hidden="true">
-                  <span class="cover-kicker">Guide</span>
-                  <span class="cover-title">If It’s Red, It’s Toxic</span>
+                  <span class="cover-kicker" data-i18n="books.toxic.kicker">Guide</span>
+                  <span class="cover-title" data-i18n="books.toxic.coverTitle">If It’s Red, It’s Toxic</span>
                   <span class="cover-author">Carine Sanadina</span>
                 </div>
               </figure>
               <div class="book-body">
-                <h3>If It’s Red, It’s Toxic</h3>
+                <h3 data-i18n="books.toxic.title">If It’s Red, It’s Toxic</h3>
                 <p>
-                  A bold guide to recognizing warning signs, emotional manipulation, spiritual danger,
-                  unhealthy attachments, and patterns that slowly drain peace, clarity, and purpose.
+                  <span data-i18n="books.toxic.description">A bold guide to recognizing warning signs, emotional manipulation, spiritual danger, unhealthy attachments, and patterns that slowly drain peace, clarity, and purpose.</span>
                 </p>
                 <a
                   class="button book-button"
                   href="https://www.amazon.com/If-Its-Red-Toxic/dp/B0GPDLJNH9"
                   target="_blank"
                   rel="noopener noreferrer"
-                >Buy on Amazon</a>
+                > <span data-i18n="buttons.buyAmazon">Buy on Amazon</span></a>
               </div>
             </article>
             <article class="book-card reveal">
               <!-- TODO: Replace this placeholder with a stable remote cover image URL when confirmed. -->
-              <figure class="book-cover placeholder-cover" aria-label="The Road to Sunshine placeholder book cover">
+              <figure class="book-cover placeholder-cover" aria-label="The Road to Sunshine placeholder book cover" data-i18n-attr="aria-label:books.sunshine.coverLabel">
                 <div class="cover-art cover-art-sunshine" aria-hidden="true">
-                  <span class="cover-kicker">Faith & Hope</span>
-                  <span class="cover-title">The Road to Sunshine</span>
+                  <span class="cover-kicker" data-i18n="books.sunshine.kicker">Faith & Hope</span>
+                  <span class="cover-title" data-i18n="books.sunshine.coverTitle">The Road to Sunshine</span>
                   <span class="cover-author">Carine Sanadina</span>
                 </div>
               </figure>
               <div class="book-body">
-                <h3>The Road to Sunshine: A Journey of Struggles, Faith and Hope</h3>
+                <h3 data-i18n="books.sunshine.title">The Road to Sunshine: A Journey of Struggles, Faith and Hope</h3>
                 <p>
-                  A hope-filled reflection on enduring struggle, holding onto faith, and continuing the
-                  journey toward brighter days even when the road feels uncertain.
+                  <span data-i18n="books.sunshine.description">A hope-filled reflection on enduring struggle, holding onto faith, and continuing the journey toward brighter days even when the road feels uncertain.</span>
                 </p>
                 <a
                   class="button book-button"
                   href="https://www.amazon.co.uk/Road-Sunshine-journey-struggles-faith-ebook/dp/B071FSC8K6"
                   target="_blank"
                   rel="noopener noreferrer"
-                >Buy on Amazon</a>
+                > <span data-i18n="buttons.buyAmazon">Buy on Amazon</span></a>
               </div>
             </article>
             <article class="book-card reveal">
               <!-- TODO: Replace this placeholder with a stable remote cover image URL when confirmed. -->
-              <figure class="book-cover placeholder-cover" aria-label="After The Storm placeholder book cover">
+              <figure class="book-cover placeholder-cover" aria-label="After The Storm placeholder book cover" data-i18n-attr="aria-label:books.storm.coverLabel">
                 <div class="cover-art cover-art-storm" aria-hidden="true">
-                  <span class="cover-kicker">Restoration</span>
-                  <span class="cover-title">After The Storm</span>
+                  <span class="cover-kicker" data-i18n="books.storm.kicker">Restoration</span>
+                  <span class="cover-title" data-i18n="books.storm.coverTitle">After The Storm</span>
                   <span class="cover-author">Carine Sanadina</span>
                 </div>
               </figure>
               <div class="book-body">
-                <h3>After The Storm</h3>
+                <h3 data-i18n="books.storm.title">After The Storm</h3>
                 <p>
-                  A restoration-centered work honoring the quiet strength that follows hardship, helping
-                  readers look beyond survival toward healing, peace, and renewed possibility.
+                  <span data-i18n="books.storm.description">A restoration-centered work honoring the quiet strength that follows hardship, helping readers look beyond survival toward healing, peace, and renewed possibility.</span>
                 </p>
                 <!-- TODO: Replace this Amazon search URL with the correct After The Storm purchase URL when confirmed. -->
                 <a
@@ -219,7 +218,7 @@
                   href="https://www.amazon.com/s?k=After+The+Storm+Carine+Sanadina"
                   target="_blank"
                   rel="noopener noreferrer"
-                >Buy on Amazon</a>
+                > <span data-i18n="buttons.buyAmazon">Buy on Amazon</span></a>
               </div>
             </article>
           </div>
@@ -230,17 +229,17 @@
         <div class="music-ambient" aria-hidden="true"></div>
         <div class="container music-shell">
           <div class="section-heading center reveal">
-            <p class="eyebrow">Music Showcase</p>
-            <h2 id="music-heading">Music by Carine Sanadina</h2>
+            <p class="eyebrow" data-i18n="music.kicker">Music Showcase</p>
+            <h2 id="music-heading" data-i18n="music.heading">Music by Carine Sanadina</h2>
             <p>
-              A compact premium playlist of songs shaped by faith, tenderness, restoration, and praise.
+              <span data-i18n="music.intro">A compact premium playlist of songs shaped by faith, tenderness, restoration, and praise.</span>
             </p>
           </div>
 
-          <div class="playlist-panel reveal" aria-label="Carine Sanadina music playlist">
+          <div class="playlist-panel reveal" aria-label="Carine Sanadina music playlist" data-i18n-attr="aria-label:music.playlistLabel">
             <div class="playlist-header" aria-hidden="true">
-              <span>Playlist</span>
-              <span>Time</span>
+              <span data-i18n="music.playlist">Playlist</span>
+              <span data-i18n="music.time">Time</span>
             </div>
 
             <article
@@ -252,11 +251,11 @@
               data-track-artist="Carine Sanadina"
               data-track-cover="/assets/music/consolation-cover.png"
             >
-              <audio aria-label="Consolation by Carine Sanadina" preload="metadata"></audio>
+              <audio aria-label="Consolation by Carine Sanadina" data-i18n-attr="aria-label:tracks.consolation.audioLabel" preload="metadata"></audio>
               <div class="track-cover-wrap">
                 <img
                   src="/assets/music/consolation-cover.png"
-                  alt="Consolation cover art"
+                  alt="Consolation cover art" data-i18n-attr="alt:tracks.consolation.coverAlt"
                   class="track-cover"
                   width="1000"
                   height="1000"
@@ -265,15 +264,15 @@
                   data-fallback-target="music-cover-consolation-fallback"
                 />
                 <div class="image-fallback music-cover-fallback" id="music-cover-consolation-fallback" role="note" aria-live="polite">
-                  Consolation cover art is temporarily unavailable.
+                  <span data-i18n="tracks.consolation.fallback">Consolation cover art is temporarily unavailable.</span>
                 </div>
               </div>
 
               <div class="track-meta">
-                <p class="music-label">Track 01</p>
+                <p class="music-label" data-i18n="tracks.consolation.number">Track 01</p>
                 <h3 id="track-consolation-title">Consolation</h3>
                 <p class="artist-name">Carine Sanadina</p>
-                <p class="track-description">Healing-centered comfort and hope</p>
+                <p class="track-description" data-i18n="tracks.consolation.description">Healing-centered comfort and hope</p>
               </div>
 
               <div class="track-equalizer equalizer" aria-hidden="true">
@@ -281,11 +280,11 @@
               </div>
 
               <div class="track-duration" aria-live="off">
-                <span class="sr-only">Duration:</span>
+                <span class="sr-only" data-i18n="music.duration">Duration:</span>
                 <span data-duration>0:00</span>
               </div>
 
-              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play Consolation">
+              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play Consolation" data-track-key="tracks.consolation.title" data-i18n-attr="aria-label:tracks.consolation.playLabel">
                 <span class="play-icon" aria-hidden="true"></span>
               </button>
               <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
@@ -300,11 +299,11 @@
               data-track-artist="Carine Sanadina"
               data-track-cover="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.png"
             >
-              <audio aria-label="La Gentillesse by Carine Sanadina" preload="metadata"></audio>
+              <audio aria-label="La Gentillesse by Carine Sanadina" data-i18n-attr="aria-label:tracks.gentillesse.audioLabel" preload="metadata"></audio>
               <div class="track-cover-wrap">
                 <img
                   src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.png"
-                  alt="La Gentillesse cover art"
+                  alt="La Gentillesse cover art" data-i18n-attr="alt:tracks.gentillesse.coverAlt"
                   class="track-cover"
                   width="1000"
                   height="1000"
@@ -314,15 +313,15 @@
                   data-fallback-target="music-cover-la-gentillesse-fallback"
                 />
                 <div class="image-fallback music-cover-fallback" id="music-cover-la-gentillesse-fallback" role="note" aria-live="polite">
-                  La Gentillesse cover art is temporarily unavailable.
+                  <span data-i18n="tracks.gentillesse.fallback">La Gentillesse cover art is temporarily unavailable.</span>
                 </div>
               </div>
 
               <div class="track-meta">
-                <p class="music-label">Track 02</p>
+                <p class="music-label" data-i18n="tracks.gentillesse.number">Track 02</p>
                 <h3 id="track-la-gentillesse-title">La Gentillesse</h3>
                 <p class="artist-name">Carine Sanadina</p>
-                <p class="track-description">Faith-filled kindness anthem</p>
+                <p class="track-description" data-i18n="tracks.gentillesse.description">Faith-filled kindness anthem</p>
               </div>
 
               <div class="track-equalizer equalizer" aria-hidden="true">
@@ -330,11 +329,11 @@
               </div>
 
               <div class="track-duration" aria-live="off">
-                <span class="sr-only">Duration:</span>
+                <span class="sr-only" data-i18n="music.duration">Duration:</span>
                 <span data-duration>0:00</span>
               </div>
 
-              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play La Gentillesse">
+              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play La Gentillesse" data-track-key="tracks.gentillesse.title" data-i18n-attr="aria-label:tracks.gentillesse.playLabel">
                 <span class="play-icon" aria-hidden="true"></span>
               </button>
               <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
@@ -349,11 +348,11 @@
               data-track-artist="Carine Sanadina"
               data-track-cover="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful%20cover.png"
             >
-              <audio aria-label="Wonderful by Carine Sanadina" preload="metadata"></audio>
+              <audio aria-label="Wonderful by Carine Sanadina" data-i18n-attr="aria-label:tracks.wonderful.audioLabel" preload="metadata"></audio>
               <div class="track-cover-wrap">
                 <img
                   src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful%20cover.png"
-                  alt="Wonderful cover art"
+                  alt="Wonderful cover art" data-i18n-attr="alt:tracks.wonderful.coverAlt"
                   class="track-cover"
                   width="1000"
                   height="1000"
@@ -363,15 +362,15 @@
                   data-fallback-target="music-cover-wonderful-fallback"
                 />
                 <div class="image-fallback music-cover-fallback" id="music-cover-wonderful-fallback" role="note" aria-live="polite">
-                  Wonderful cover art is temporarily unavailable.
+                  <span data-i18n="tracks.wonderful.fallback">Wonderful cover art is temporarily unavailable.</span>
                 </div>
               </div>
 
               <div class="track-meta">
-                <p class="music-label">Track 03</p>
+                <p class="music-label" data-i18n="tracks.wonderful.number">Track 03</p>
                 <h3 id="track-wonderful-title">Wonderful</h3>
                 <p class="artist-name">Carine Sanadina</p>
-                <p class="track-description">Joyful praise and gratitude</p>
+                <p class="track-description" data-i18n="tracks.wonderful.description">Joyful praise and gratitude</p>
               </div>
 
               <div class="track-equalizer equalizer" aria-hidden="true">
@@ -379,11 +378,11 @@
               </div>
 
               <div class="track-duration" aria-live="off">
-                <span class="sr-only">Duration:</span>
+                <span class="sr-only" data-i18n="music.duration">Duration:</span>
                 <span data-duration>0:00</span>
               </div>
 
-              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play Wonderful">
+              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play Wonderful" data-track-key="tracks.wonderful.title" data-i18n-attr="aria-label:tracks.wonderful.playLabel">
                 <span class="play-icon" aria-hidden="true"></span>
               </button>
               <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
@@ -392,19 +391,19 @@
         </div>
       </section>
 
-      <aside class="mini-player" data-mini-player aria-label="Current track mini player" aria-hidden="true">
+      <aside class="mini-player" data-mini-player aria-label="Current track mini player" aria-hidden="true" data-i18n-attr="aria-label:mini.label">
         <div class="mini-player-shell">
           <img class="mini-player-cover" src="" alt="" data-mini-cover />
           <div class="mini-player-meta">
-            <p data-mini-title>No track selected</p>
+            <p data-mini-title data-i18n="mini.noTrack">No track selected</p>
             <span data-mini-artist>Carine Sanadina</span>
           </div>
-          <button class="track-play-toggle mini-toggle" type="button" data-mini-toggle aria-label="Play or pause current track">
+          <button class="track-play-toggle mini-toggle" type="button" data-mini-toggle aria-label="Play or pause current track" data-i18n-attr="aria-label:mini.toggleLabel">
             <span class="play-icon" aria-hidden="true"></span>
           </button>
           <div class="mini-time" aria-live="off">
             <span data-mini-current>0:00</span>
-            <label class="sr-only" for="mini-player-progress">Current track progress</label>
+            <label class="sr-only" for="mini-player-progress" data-i18n="mini.progress">Current track progress</label>
             <input
               id="mini-player-progress"
               class="player-range progress-range"
@@ -414,13 +413,13 @@
               value="0"
               step="0.1"
               data-mini-progress
-              aria-label="Current track progress"
+              aria-label="Current track progress" data-i18n-attr="aria-label:mini.progress"
             />
             <span data-mini-duration>0:00</span>
           </div>
           <div class="mini-volume">
-            <span aria-hidden="true">Vol</span>
-            <label class="sr-only" for="mini-player-volume">Current track volume</label>
+            <span aria-hidden="true" data-i18n="mini.volumeShort">Vol</span>
+            <label class="sr-only" for="mini-player-volume" data-i18n="mini.volume">Current track volume</label>
             <input
               id="mini-player-volume"
               class="player-range volume-range"
@@ -430,7 +429,7 @@
               value="0.85"
               step="0.01"
               data-mini-volume
-              aria-label="Current track volume"
+              aria-label="Current track volume" data-i18n-attr="aria-label:mini.volume"
             />
           </div>
         </div>
@@ -439,20 +438,20 @@
       <section class="section focus" id="focus" aria-labelledby="focus-heading">
         <div class="container">
           <div class="section-heading compact reveal">
-            <p class="eyebrow">Core Focus Areas</p>
-            <h2 id="focus-heading">The themes at the heart of Carine’s work.</h2>
+            <p class="eyebrow" data-i18n="focus.kicker">Core Focus Areas</p>
+            <h2 id="focus-heading" data-i18n="focus.heading">The themes at the heart of Carine’s work.</h2>
           </div>
-          <div class="focus-grid" aria-label="Core focus areas">
-            <span class="focus-pill reveal">Domestic Violence Awareness</span>
-            <span class="focus-pill reveal">Emotional Healing</span>
-            <span class="focus-pill reveal">Toxic Relationship Recovery</span>
-            <span class="focus-pill reveal">Faith and Resilience</span>
-            <span class="focus-pill reveal">Women’s Empowerment</span>
-            <span class="focus-pill reveal">Self-Worth and Identity</span>
-            <span class="focus-pill reveal">Immigrant and Refugee Experience</span>
-            <span class="focus-pill reveal">Motherhood and Survival</span>
-            <span class="focus-pill reveal">Inspirational Writing</span>
-            <span class="focus-pill reveal">Human-Centered Care</span>
+          <div class="focus-grid" aria-label="Core focus areas" data-i18n-attr="aria-label:focus.gridLabel">
+            <span class="focus-pill reveal" data-i18n="focus.pills.domestic">Domestic Violence Awareness</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.healing">Emotional Healing</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.toxic">Toxic Relationship Recovery</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.faith">Faith and Resilience</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.women">Women’s Empowerment</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.selfWorth">Self-Worth and Identity</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.immigrant">Immigrant and Refugee Experience</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.motherhood">Motherhood and Survival</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.writing">Inspirational Writing</span>
+            <span class="focus-pill reveal" data-i18n="focus.pills.care">Human-Centered Care</span>
           </div>
         </div>
       </section>
@@ -460,49 +459,46 @@
       <section class="section positioning" id="positioning" aria-labelledby="positioning-heading">
         <div class="container">
           <div class="section-heading reveal">
-            <p class="eyebrow">Professional Positioning</p>
-            <h2 id="positioning-heading">Compassionate care and inspirational authorship.</h2>
+            <p class="eyebrow" data-i18n="positioning.kicker">Professional Positioning</p>
+            <h2 id="positioning-heading" data-i18n="positioning.heading">Compassionate care and inspirational authorship.</h2>
           </div>
           <div class="positioning-grid">
             <article class="position-card reveal">
               <span class="card-number">01</span>
-              <h3>Healthcare Professional</h3>
+              <h3 data-i18n="positioning.healthcare.title">Healthcare Professional</h3>
               <p>
-                Provides compassionate, patient-centered support in a healthcare environment, bringing empathy,
-                professionalism, and human understanding to daily service.
+                <span data-i18n="positioning.healthcare.body">Provides compassionate, patient-centered support in a healthcare environment, bringing empathy, professionalism, and human understanding to daily service.</span>
               </p>
             </article>
             <article class="position-card reveal">
               <span class="card-number">02</span>
-              <h3>Author and Inspirational Voice</h3>
+              <h3 data-i18n="positioning.author.title">Author and Inspirational Voice</h3>
               <p>
-                Writes books and reflective content centered on survival, healing, faith, toxic relationship
-                awareness, emotional restoration, and personal transformation.
+                <span data-i18n="positioning.author.body">Writes books and reflective content centered on survival, healing, faith, toxic relationship awareness, emotional restoration, and personal transformation.</span>
               </p>
             </article>
           </div>
         </div>
       </section>
 
-      <section class="quote-banner" aria-label="Featured quote">
+      <section class="quote-banner" aria-label="Featured quote" data-i18n-attr="aria-label:quote.label">
         <div class="container reveal">
-          <blockquote>“Pain may shape the story, but it does not get to own the ending.”</blockquote>
+          <blockquote data-i18n="quote.text">“Pain may shape the story, but it does not get to own the ending.”</blockquote>
         </div>
       </section>
 
       <section class="section final-cta" id="contact" aria-labelledby="contact-heading">
         <div class="container cta-panel reveal">
-          <p class="eyebrow">Begin the conversation</p>
-          <h2 id="contact-heading">Invite the voice. Share the story. Build a healing-centered moment.</h2>
+          <p class="eyebrow" data-i18n="cta.kicker">Begin the conversation</p>
+          <h2 id="contact-heading" data-i18n="cta.heading">Invite the voice. Share the story. Build a healing-centered moment.</h2>
           <p>
-            Choose a premium inquiry path for speaking invitations, interviews, creative collaborations,
-            or intimate conversations shaped by resilience, faith, and restoration.
+            <span data-i18n="cta.body">Choose a premium inquiry path for speaking invitations, interviews, creative collaborations, or intimate conversations shaped by resilience, faith, and restoration.</span>
           </p>
-          <div class="cta-actions" aria-label="Contact options">
-            <a class="button button-primary" href="mailto:hello@example.com?subject=Invite%20Carine%20to%20Speak">Invite Carine to Speak</a>
-            <a class="button button-secondary" href="mailto:hello@example.com?subject=Media%20Inquiry%20for%20Carine%20Sanadina">Media Inquiry</a>
-            <a class="button button-secondary" href="mailto:hello@example.com?subject=Music%20Collaboration%20with%20Carine%20Sanadina">Music Collaboration</a>
-            <a class="button button-ghost" href="mailto:hello@example.com?subject=Book%20Conversations%20with%20Carine%20Sanadina">Book Conversations</a>
+          <div class="cta-actions" aria-label="Contact options" data-i18n-attr="aria-label:cta.optionsLabel">
+            <a class="button button-primary" href="mailto:hello@example.com?subject=Invite%20Carine%20to%20Speak"> <span data-i18n="cta.invite">Invite Carine to Speak</span></a>
+            <a class="button button-secondary" href="mailto:hello@example.com?subject=Media%20Inquiry%20for%20Carine%20Sanadina"> <span data-i18n="cta.media">Media Inquiry</span></a>
+            <a class="button button-secondary" href="mailto:hello@example.com?subject=Music%20Collaboration%20with%20Carine%20Sanadina"> <span data-i18n="cta.music">Music Collaboration</span></a>
+            <a class="button button-ghost" href="mailto:hello@example.com?subject=Book%20Conversations%20with%20Carine%20Sanadina"> <span data-i18n="cta.books">Book Conversations</span></a>
           </div>
         </div>
       </section>
@@ -510,8 +506,8 @@
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>© 2026 Carine Sanadina. All Rights Reserved.</p>
-        <p>Website concept by Omoluabi Productions.</p>
+        <p data-i18n="footer.rights">© 2026 Carine Sanadina. All Rights Reserved.</p>
+        <p data-i18n="footer.credit">Website concept by Omoluabi Productions.</p>
       </div>
     </footer>
 

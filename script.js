@@ -1,3 +1,501 @@
+const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
+const DEFAULT_LANGUAGE = 'en';
+
+const translations = {};
+
+translations.en = {
+  'html.lang': 'en',
+  'meta.title': 'Carine Sanadina | Healthcare Professional, Author & Survivor Advocate',
+  'meta.description': 'Carine Sanadina is a Jacksonville, Florida-based healthcare professional, author, survivor advocate, and emotional wellness voice transforming pain into healing-centered inspiration.',
+  'meta.ogTitle': 'Carine Sanadina | Healing-Centered Author & Survivor Advocate',
+  'meta.ogDescription': 'Explore the books, advocacy, and emotional wellness voice of Carine Sanadina, a Congolese-born healthcare professional and author based in Jacksonville, Florida.',
+  'meta.twitterDescription': 'Turning pain into healing, survival into purpose, and stories into restoration.',
+  'language.label': 'Language',
+  'language.selectorLabel': 'Choose website language',
+  'a11y.skip': 'Skip to main content',
+  'a11y.primaryNav': 'Primary navigation',
+  'a11y.home': 'Carine Sanadina home',
+  'a11y.toggleNav': 'Toggle navigation',
+  'a11y.primaryCta': 'Primary calls to action',
+  'nav.about': 'About',
+  'nav.works': 'Featured Works',
+  'nav.music': 'Music',
+  'nav.focus': 'Focus Areas',
+  'nav.positioning': 'Professional Voice',
+  'nav.contact': 'Contact',
+  'hero.location': 'Jacksonville, Florida',
+  'hero.subtitle': 'Healthcare Professional | Author | Survivor Advocate | Emotional Wellness Voice',
+  'hero.heading': 'Turning pain into healing, survival into purpose, and stories into restoration.',
+  'hero.viewWorks': 'View Featured Works',
+  'hero.listenMusic': 'Listen to Music',
+  'hero.contactCarine': 'Contact Carine',
+  'portrait.figureLabel': 'Carine Sanadina official portrait feature',
+  'portrait.alt': 'Carine Sanadina official portrait',
+  'portrait.fallback': 'Carine Sanadina official portrait is temporarily unavailable.',
+  'portrait.caption': 'Official portrait of Carine Sanadina — healing-centered stories with courage, faith, and restoration.',
+  'about.kicker': 'About Carine',
+  'about.heading': 'A voice of resilience, restoration, and human-centered healing.',
+  'about.body1': 'Carine Sanadina is a Congolese-born, Jacksonville-based healthcare professional, author, artist, and survivor advocate whose work transforms lived pain into healing-centered literature and inspiration.',
+  'about.body2': 'Her work explores domestic violence survival, toxic relationships, emotional wounds, faith, resilience, motherhood, immigrant experience, and the journey from brokenness to restoration.',
+  'works.kicker': 'Featured Works',
+  'works.heading': 'Books that turn testimony into light.',
+  'works.intro': 'Elegant, intimate, and brave reflections for readers seeking language for survival, recovery, faith, and renewed self-worth.',
+  'buttons.buyAmazon': 'Buy on Amazon',
+  'books.pain.coverLabel': 'The Pain Nobody Saw placeholder book cover',
+  'books.pain.kicker': 'Memoir',
+  'books.pain.coverTitle': 'The Pain Nobody Saw',
+  'books.pain.title': 'The Pain Nobody Saw: A Hidden Story of Abuse and Survival',
+  'books.pain.description': 'A raw memoir exposing the hidden reality of domestic abuse, cultural pressure, silent suffering, and the courageous path toward freedom, faith, and reclaimed self-worth.',
+  'books.toxic.coverLabel': 'If It’s Red, It’s Toxic placeholder book cover',
+  'books.toxic.kicker': 'Guide',
+  'books.toxic.coverTitle': 'If It’s Red, It’s Toxic',
+  'books.toxic.title': 'If It’s Red, It’s Toxic',
+  'books.toxic.description': 'A bold guide to recognizing warning signs, emotional manipulation, spiritual danger, unhealthy attachments, and patterns that slowly drain peace, clarity, and purpose.',
+  'books.sunshine.coverLabel': 'The Road to Sunshine placeholder book cover',
+  'books.sunshine.kicker': 'Faith & Hope',
+  'books.sunshine.coverTitle': 'The Road to Sunshine',
+  'books.sunshine.title': 'The Road to Sunshine: A Journey of Struggles, Faith and Hope',
+  'books.sunshine.description': 'A hope-filled reflection on enduring struggle, holding onto faith, and continuing the journey toward brighter days even when the road feels uncertain.',
+  'books.storm.coverLabel': 'After The Storm placeholder book cover',
+  'books.storm.kicker': 'Restoration',
+  'books.storm.coverTitle': 'After The Storm',
+  'books.storm.title': 'After The Storm',
+  'books.storm.description': 'A restoration-centered work honoring the quiet strength that follows hardship, helping readers look beyond survival toward healing, peace, and renewed possibility.',
+  'music.kicker': 'Music Showcase',
+  'music.heading': 'Music by Carine Sanadina',
+  'music.intro': 'A compact premium playlist of songs shaped by faith, tenderness, restoration, and praise.',
+  'music.playlistLabel': 'Carine Sanadina music playlist',
+  'music.playlist': 'Playlist',
+  'music.time': 'Time',
+  'music.duration': 'Duration:',
+  'tracks.consolation.title': 'Consolation',
+  'tracks.consolation.audioLabel': 'Consolation by Carine Sanadina',
+  'tracks.consolation.coverAlt': 'Consolation cover art',
+  'tracks.consolation.fallback': 'Consolation cover art is temporarily unavailable.',
+  'tracks.consolation.number': 'Track 01',
+  'tracks.consolation.description': 'Healing-centered comfort and hope',
+  'tracks.consolation.playLabel': 'Play Consolation',
+  'tracks.gentillesse.title': 'La Gentillesse',
+  'tracks.gentillesse.audioLabel': 'La Gentillesse by Carine Sanadina',
+  'tracks.gentillesse.coverAlt': 'La Gentillesse cover art',
+  'tracks.gentillesse.fallback': 'La Gentillesse cover art is temporarily unavailable.',
+  'tracks.gentillesse.number': 'Track 02',
+  'tracks.gentillesse.description': 'Faith-filled kindness anthem',
+  'tracks.gentillesse.playLabel': 'Play La Gentillesse',
+  'tracks.wonderful.title': 'Wonderful',
+  'tracks.wonderful.audioLabel': 'Wonderful by Carine Sanadina',
+  'tracks.wonderful.coverAlt': 'Wonderful cover art',
+  'tracks.wonderful.fallback': 'Wonderful cover art is temporarily unavailable.',
+  'tracks.wonderful.number': 'Track 03',
+  'tracks.wonderful.description': 'Joyful praise and gratitude',
+  'tracks.wonderful.playLabel': 'Play Wonderful',
+  'mini.label': 'Current track mini player',
+  'mini.noTrack': 'No track selected',
+  'mini.toggleLabel': 'Play or pause current track',
+  'mini.progress': 'Current track progress',
+  'mini.volumeShort': 'Vol',
+  'mini.volume': 'Current track volume',
+  'audio.play': 'Play',
+  'audio.pause': 'Pause',
+  'audio.coverArt': 'cover art',
+  'audio.playbackError': 'Audio playback could not start. Please try again.',
+  'audio.unavailable': 'Audio is temporarily unavailable. Please check back soon.',
+  'focus.kicker': 'Core Focus Areas',
+  'focus.heading': 'The themes at the heart of Carine’s work.',
+  'focus.gridLabel': 'Core focus areas',
+  'focus.pills.domestic': 'Domestic Violence Awareness',
+  'focus.pills.healing': 'Emotional Healing',
+  'focus.pills.toxic': 'Toxic Relationship Recovery',
+  'focus.pills.faith': 'Faith and Resilience',
+  'focus.pills.women': 'Women’s Empowerment',
+  'focus.pills.selfWorth': 'Self-Worth and Identity',
+  'focus.pills.immigrant': 'Immigrant and Refugee Experience',
+  'focus.pills.motherhood': 'Motherhood and Survival',
+  'focus.pills.writing': 'Inspirational Writing',
+  'focus.pills.care': 'Human-Centered Care',
+  'positioning.kicker': 'Professional Positioning',
+  'positioning.heading': 'Compassionate care and inspirational authorship.',
+  'positioning.healthcare.title': 'Healthcare Professional',
+  'positioning.healthcare.body': 'Provides compassionate, patient-centered support in a healthcare environment, bringing empathy, professionalism, and human understanding to daily service.',
+  'positioning.author.title': 'Author and Inspirational Voice',
+  'positioning.author.body': 'Writes books and reflective content centered on survival, healing, faith, toxic relationship awareness, emotional restoration, and personal transformation.',
+  'quote.label': 'Featured quote',
+  'quote.text': '“Pain may shape the story, but it does not get to own the ending.”',
+  'cta.kicker': 'Begin the conversation',
+  'cta.heading': 'Invite the voice. Share the story. Build a healing-centered moment.',
+  'cta.body': 'Choose a premium inquiry path for speaking invitations, interviews, creative collaborations, or intimate conversations shaped by resilience, faith, and restoration.',
+  'cta.optionsLabel': 'Contact options',
+  'cta.invite': 'Invite Carine to Speak',
+  'cta.media': 'Media Inquiry',
+  'cta.music': 'Music Collaboration',
+  'cta.books': 'Book Conversations',
+  'footer.rights': '© 2026 Carine Sanadina. All Rights Reserved.',
+  'footer.credit': 'Website concept by Omoluabi Productions.'
+};
+
+translations.fr = {
+  ...translations.en,
+  'html.lang': 'fr',
+  'meta.title': 'Carine Sanadina | Professionnelle de santé, autrice et voix des survivantes',
+  'meta.description': 'Carine Sanadina est une professionnelle de santé, autrice, défenseure des survivantes et voix du bien-être émotionnel basée à Jacksonville, en Floride.',
+  'meta.ogTitle': 'Carine Sanadina | Autrice centrée sur la guérison et défenseure des survivantes',
+  'meta.ogDescription': 'Découvrez les livres, le plaidoyer et la voix de bien-être émotionnel de Carine Sanadina, professionnelle de santé et autrice d’origine congolaise basée à Jacksonville, en Floride.',
+  'meta.twitterDescription': 'Transformer la douleur en guérison, la survie en mission, et les histoires en restauration.',
+  'language.label': 'Langue',
+  'language.selectorLabel': 'Choisir la langue du site',
+  'a11y.skip': 'Aller au contenu principal',
+  'a11y.primaryNav': 'Navigation principale',
+  'a11y.home': 'Accueil Carine Sanadina',
+  'a11y.toggleNav': 'Ouvrir ou fermer la navigation',
+  'a11y.primaryCta': 'Appels à l’action principaux',
+  'nav.about': 'À propos',
+  'nav.works': 'Œuvres',
+  'nav.music': 'Musique',
+  'nav.focus': 'Axes clés',
+  'nav.positioning': 'Voix professionnelle',
+  'nav.contact': 'Contact',
+  'hero.subtitle': 'Professionnelle de santé | Autrice | Défenseure des survivantes | Voix du bien-être émotionnel',
+  'hero.heading': 'Transformer la douleur en guérison, la survie en mission, et les histoires en restauration.',
+  'hero.viewWorks': 'Voir les œuvres',
+  'hero.listenMusic': 'Écouter la musique',
+  'hero.contactCarine': 'Contacter Carine',
+  'portrait.figureLabel': 'Portrait officiel de Carine Sanadina',
+  'portrait.alt': 'Portrait officiel de Carine Sanadina',
+  'portrait.fallback': 'Le portrait officiel de Carine Sanadina est temporairement indisponible.',
+  'portrait.caption': 'Portrait officiel de Carine Sanadina — des récits de guérison portés par le courage, la foi et la restauration.',
+  'about.kicker': 'À propos de Carine',
+  'about.heading': 'Une voix de résilience, de restauration et de guérison centrée sur l’humain.',
+  'about.body1': 'Née au Congo et basée à Jacksonville, Carine Sanadina est professionnelle de santé, autrice, artiste et défenseure des survivantes; son travail transforme la douleur vécue en littérature et inspiration centrées sur la guérison.',
+  'about.body2': 'Son œuvre explore la survie après les violences domestiques, les relations toxiques, les blessures émotionnelles, la foi, la résilience, la maternité, l’expérience immigrée et le chemin de la brisure vers la restauration.',
+  'works.kicker': 'Œuvres en vedette',
+  'works.heading': 'Des livres qui transforment le témoignage en lumière.',
+  'works.intro': 'Des réflexions élégantes, intimes et courageuses pour les lecteurs qui cherchent des mots pour la survie, la reconstruction, la foi et une estime de soi renouvelée.',
+  'buttons.buyAmazon': 'Acheter sur Amazon',
+  'books.pain.coverLabel': 'Couverture provisoire du livre The Pain Nobody Saw',
+  'books.pain.kicker': 'Mémoire',
+  'books.pain.title': 'La douleur que personne n’a vue : une histoire cachée d’abus et de survie',
+  'books.pain.description': 'Un mémoire brut qui révèle la réalité cachée des violences domestiques, des pressions culturelles, de la souffrance silencieuse et du courage nécessaire pour retrouver liberté, foi et dignité.',
+  'books.toxic.coverLabel': 'Couverture provisoire du livre If It’s Red, It’s Toxic',
+  'books.toxic.kicker': 'Guide',
+  'books.toxic.title': 'Si c’est rouge, c’est toxique',
+  'books.toxic.description': 'Un guide audacieux pour reconnaître les signaux d’alerte, la manipulation émotionnelle, les dangers spirituels, les attachements malsains et les schémas qui épuisent la paix, la clarté et le but.',
+  'books.sunshine.coverLabel': 'Couverture provisoire du livre The Road to Sunshine',
+  'books.sunshine.kicker': 'Foi et espoir',
+  'books.sunshine.title': 'La route vers le soleil : un voyage de luttes, de foi et d’espoir',
+  'books.sunshine.description': 'Une réflexion pleine d’espoir sur la persévérance dans l’épreuve, l’attachement à la foi et la marche vers des jours plus lumineux même lorsque la route semble incertaine.',
+  'books.storm.coverLabel': 'Couverture provisoire du livre After The Storm',
+  'books.storm.kicker': 'Restauration',
+  'books.storm.title': 'Après la tempête',
+  'books.storm.description': 'Une œuvre centrée sur la restauration qui honore la force silencieuse après l’épreuve et aide les lecteurs à regarder au-delà de la survie vers la guérison, la paix et de nouvelles possibilités.',
+  'music.kicker': 'Vitrine musicale',
+  'music.heading': 'Musique de Carine Sanadina',
+  'music.intro': 'Une playlist premium compacte de chansons façonnées par la foi, la tendresse, la restauration et la louange.',
+  'music.playlistLabel': 'Playlist musicale de Carine Sanadina',
+  'music.playlist': 'Playlist',
+  'music.time': 'Durée',
+  'music.duration': 'Durée :',
+  'tracks.consolation.coverAlt': 'Pochette de Consolation',
+  'tracks.consolation.fallback': 'La pochette de Consolation est temporairement indisponible.',
+  'tracks.consolation.number': 'Titre 01',
+  'tracks.consolation.description': 'Réconfort et espoir centrés sur la guérison',
+  'tracks.consolation.playLabel': 'Lire Consolation',
+  'tracks.gentillesse.coverAlt': 'Pochette de La Gentillesse',
+  'tracks.gentillesse.fallback': 'La pochette de La Gentillesse est temporairement indisponible.',
+  'tracks.gentillesse.number': 'Titre 02',
+  'tracks.gentillesse.description': 'Hymne de bonté porté par la foi',
+  'tracks.gentillesse.playLabel': 'Lire La Gentillesse',
+  'tracks.wonderful.coverAlt': 'Pochette de Wonderful',
+  'tracks.wonderful.fallback': 'La pochette de Wonderful est temporairement indisponible.',
+  'tracks.wonderful.number': 'Titre 03',
+  'tracks.wonderful.description': 'Louange joyeuse et gratitude',
+  'tracks.wonderful.playLabel': 'Lire Wonderful',
+  'mini.label': 'Mini lecteur du titre en cours',
+  'mini.noTrack': 'Aucun titre sélectionné',
+  'mini.toggleLabel': 'Lire ou mettre en pause le titre en cours',
+  'mini.progress': 'Progression du titre en cours',
+  'mini.volumeShort': 'Vol',
+  'mini.volume': 'Volume du titre en cours',
+  'audio.play': 'Lire',
+  'audio.pause': 'Pause',
+  'audio.coverArt': 'pochette',
+  'audio.playbackError': 'La lecture audio n’a pas pu démarrer. Veuillez réessayer.',
+  'audio.unavailable': 'L’audio est temporairement indisponible. Veuillez revenir bientôt.',
+  'focus.kicker': 'Axes clés',
+  'focus.heading': 'Les thèmes au cœur du travail de Carine.',
+  'focus.gridLabel': 'Axes clés',
+  'focus.pills.domestic': 'Sensibilisation aux violences domestiques',
+  'focus.pills.healing': 'Guérison émotionnelle',
+  'focus.pills.toxic': 'Reconstruction après les relations toxiques',
+  'focus.pills.faith': 'Foi et résilience',
+  'focus.pills.women': 'Autonomisation des femmes',
+  'focus.pills.selfWorth': 'Estime de soi et identité',
+  'focus.pills.immigrant': 'Expérience immigrée et réfugiée',
+  'focus.pills.motherhood': 'Maternité et survie',
+  'focus.pills.writing': 'Écriture inspirante',
+  'focus.pills.care': 'Soin centré sur l’humain',
+  'positioning.kicker': 'Positionnement professionnel',
+  'positioning.heading': 'Soins compatissants et écriture inspirante.',
+  'positioning.healthcare.title': 'Professionnelle de santé',
+  'positioning.healthcare.body': 'Elle offre un accompagnement compatissant et centré sur le patient dans un environnement de santé, avec empathie, professionnalisme et compréhension humaine au quotidien.',
+  'positioning.author.title': 'Autrice et voix inspirante',
+  'positioning.author.body': 'Elle écrit des livres et des réflexions centrés sur la survie, la guérison, la foi, la sensibilisation aux relations toxiques, la restauration émotionnelle et la transformation personnelle.',
+  'quote.label': 'Citation en vedette',
+  'quote.text': '« La douleur peut façonner l’histoire, mais elle n’a pas le droit d’en posséder la fin. »',
+  'cta.kicker': 'Commencer la conversation',
+  'cta.heading': 'Inviter la voix. Partager l’histoire. Créer un moment centré sur la guérison.',
+  'cta.body': 'Choisissez un parcours de demande premium pour des invitations à parler, des interviews, des collaborations créatives ou des conversations intimes façonnées par la résilience, la foi et la restauration.',
+  'cta.optionsLabel': 'Options de contact',
+  'cta.invite': 'Inviter Carine à parler',
+  'cta.media': 'Demande média',
+  'cta.music': 'Collaboration musicale',
+  'cta.books': 'Conversations autour des livres',
+  'footer.rights': '© 2026 Carine Sanadina. Tous droits réservés.',
+  'footer.credit': 'Concept du site par Omoluabi Productions.'
+};
+
+translations.es = {
+  ...translations.fr,
+  'html.lang': 'es',
+  'meta.title': 'Carine Sanadina | Profesional de salud, autora y defensora de sobrevivientes',
+  'language.label': 'Idioma',
+  'language.selectorLabel': 'Elegir idioma del sitio',
+  'a11y.skip': 'Saltar al contenido principal',
+  'a11y.primaryNav': 'Navegación principal',
+  'a11y.home': 'Inicio de Carine Sanadina',
+  'a11y.toggleNav': 'Alternar navegación',
+  'nav.about': 'Acerca de',
+  'nav.works': 'Obras destacadas',
+  'nav.music': 'Música',
+  'nav.focus': 'Áreas de enfoque',
+  'nav.positioning': 'Voz profesional',
+  'nav.contact': 'Contacto',
+  'a11y.primaryCta': 'Llamadas principales a la acción',
+  'portrait.figureLabel': 'Retrato oficial de Carine Sanadina',
+  'portrait.alt': 'Retrato oficial de Carine Sanadina',
+  'hero.subtitle': 'Profesional de salud | Autora | Defensora de sobrevivientes | Voz de bienestar emocional',
+  'hero.heading': 'Transformar el dolor en sanación, la supervivencia en propósito y las historias en restauración.',
+  'hero.viewWorks': 'Ver obras destacadas',
+  'hero.listenMusic': 'Escuchar música',
+  'hero.contactCarine': 'Contactar a Carine',
+  'portrait.fallback': 'El retrato oficial de Carine Sanadina no está disponible temporalmente.',
+  'portrait.caption': 'Retrato oficial de Carine Sanadina — historias centradas en la sanación con valentía, fe y restauración.',
+  'about.kicker': 'Acerca de Carine',
+  'about.heading': 'Una voz de resiliencia, restauración y sanación centrada en la humanidad.',
+  'about.body1': 'Carine Sanadina, nacida en el Congo y radicada en Jacksonville, es profesional de salud, autora, artista y defensora de sobrevivientes cuyo trabajo transforma el dolor vivido en literatura e inspiración centradas en la sanación.',
+  'about.body2': 'Su obra explora la supervivencia a la violencia doméstica, las relaciones tóxicas, las heridas emocionales, la fe, la resiliencia, la maternidad, la experiencia inmigrante y el camino de la ruptura hacia la restauración.',
+  'works.kicker': 'Obras destacadas',
+  'works.heading': 'Libros que convierten el testimonio en luz.',
+  'works.intro': 'Reflexiones elegantes, íntimas y valientes para lectores que buscan lenguaje para la supervivencia, la recuperación, la fe y una autoestima renovada.',
+  'buttons.buyAmazon': 'Comprar en Amazon',
+  'books.pain.coverLabel': 'Portada provisional del libro The Pain Nobody Saw',
+  'books.toxic.coverLabel': 'Portada provisional del libro If It’s Red, It’s Toxic',
+  'books.toxic.kicker': 'Guía',
+  'books.sunshine.coverLabel': 'Portada provisional del libro The Road to Sunshine',
+  'books.sunshine.kicker': 'Fe y esperanza',
+  'books.storm.coverLabel': 'Portada provisional del libro After The Storm',
+  'books.storm.kicker': 'Restauración',
+  'books.pain.kicker': 'Memorias',
+  'books.pain.title': 'El dolor que nadie vio: una historia oculta de abuso y supervivencia',
+  'books.pain.description': 'Unas memorias crudas que revelan la realidad oculta del abuso doméstico, la presión cultural, el sufrimiento silencioso y el camino valiente hacia la libertad, la fe y la autoestima recuperada.',
+  'books.toxic.title': 'Si es rojo, es tóxico',
+  'books.toxic.description': 'Una guía audaz para reconocer señales de alerta, manipulación emocional, peligro espiritual, vínculos malsanos y patrones que agotan lentamente la paz, la claridad y el propósito.',
+  'books.sunshine.kicker': 'Fe y esperanza',
+  'books.sunshine.title': 'El camino hacia el sol: un viaje de luchas, fe y esperanza',
+  'books.sunshine.description': 'Una reflexión llena de esperanza sobre resistir la lucha, aferrarse a la fe y continuar hacia días más luminosos aun cuando el camino parezca incierto.',
+  'books.storm.title': 'Después de la tormenta',
+  'books.storm.description': 'Una obra centrada en la restauración que honra la fuerza silenciosa que sigue a la dificultad y ayuda a mirar más allá de sobrevivir hacia la sanación, la paz y nuevas posibilidades.',
+  'music.kicker': 'Muestra musical',
+  'music.heading': 'Música de Carine Sanadina',
+  'music.intro': 'Una playlist premium compacta de canciones marcadas por la fe, la ternura, la restauración y la alabanza.',
+  'music.time': 'Tiempo',
+  'music.duration': 'Duración:',
+  'music.playlistLabel': 'Playlist musical de Carine Sanadina',
+  'tracks.consolation.audioLabel': 'Consolation de Carine Sanadina',
+  'tracks.consolation.coverAlt': 'Portada de Consolation',
+  'tracks.consolation.fallback': 'La portada de Consolation no está disponible temporalmente.',
+  'tracks.consolation.number': 'Pista 01',
+  'tracks.consolation.description': 'Consuelo y esperanza centrados en la sanación',
+  'tracks.consolation.playLabel': 'Reproducir Consolation',
+  'tracks.gentillesse.audioLabel': 'La Gentillesse de Carine Sanadina',
+  'tracks.gentillesse.coverAlt': 'Portada de La Gentillesse',
+  'tracks.gentillesse.fallback': 'La portada de La Gentillesse no está disponible temporalmente.',
+  'tracks.gentillesse.number': 'Pista 02',
+  'tracks.gentillesse.description': 'Himno de bondad lleno de fe',
+  'tracks.gentillesse.playLabel': 'Reproducir La Gentillesse',
+  'tracks.wonderful.audioLabel': 'Wonderful de Carine Sanadina',
+  'tracks.wonderful.coverAlt': 'Portada de Wonderful',
+  'tracks.wonderful.fallback': 'La portada de Wonderful no está disponible temporalmente.',
+  'tracks.wonderful.number': 'Pista 03',
+  'tracks.wonderful.description': 'Alabanza alegre y gratitud',
+  'tracks.wonderful.playLabel': 'Reproducir Wonderful',
+  'mini.label': 'Minirreproductor de la pista actual',
+  'mini.noTrack': 'No hay pista seleccionada',
+  'mini.toggleLabel': 'Reproducir o pausar la pista actual',
+  'mini.progress': 'Progreso de la pista actual',
+  'mini.volume': 'Volumen de la pista actual',
+  'audio.play': 'Reproducir',
+  'audio.pause': 'Pausar',
+  'audio.coverArt': 'portada',
+  'audio.playbackError': 'No se pudo iniciar la reproducción de audio. Inténtalo de nuevo.',
+  'audio.unavailable': 'El audio no está disponible temporalmente. Vuelve pronto.',
+  'focus.kicker': 'Áreas de enfoque',
+  'focus.gridLabel': 'Áreas de enfoque principales',
+  'focus.heading': 'Los temas en el corazón del trabajo de Carine.',
+  'focus.pills.domestic': 'Conciencia sobre la violencia doméstica',
+  'focus.pills.healing': 'Sanación emocional',
+  'focus.pills.toxic': 'Recuperación de relaciones tóxicas',
+  'focus.pills.faith': 'Fe y resiliencia',
+  'focus.pills.women': 'Empoderamiento de las mujeres',
+  'focus.pills.selfWorth': 'Autoestima e identidad',
+  'focus.pills.immigrant': 'Experiencia inmigrante y refugiada',
+  'focus.pills.motherhood': 'Maternidad y supervivencia',
+  'focus.pills.writing': 'Escritura inspiradora',
+  'focus.pills.care': 'Cuidado centrado en la persona',
+  'positioning.kicker': 'Posicionamiento profesional',
+  'positioning.heading': 'Cuidado compasivo y autoría inspiradora.',
+  'positioning.healthcare.title': 'Profesional de salud',
+  'positioning.healthcare.body': 'Brinda apoyo compasivo y centrado en el paciente en un entorno de salud, aportando empatía, profesionalismo y comprensión humana al servicio diario.',
+  'positioning.author.title': 'Autora y voz inspiradora',
+  'positioning.author.body': 'Escribe libros y contenido reflexivo centrado en la supervivencia, la sanación, la fe, la conciencia sobre relaciones tóxicas, la restauración emocional y la transformación personal.',
+  'quote.label': 'Cita destacada',
+  'quote.text': '“El dolor puede dar forma a la historia, pero no tiene derecho a poseer el final.”',
+  'cta.kicker': 'Comenzar la conversación',
+  'cta.heading': 'Invitar la voz. Compartir la historia. Crear un momento centrado en la sanación.',
+  'cta.body': 'Elige una vía de consulta premium para invitaciones a hablar, entrevistas, colaboraciones creativas o conversaciones íntimas marcadas por la resiliencia, la fe y la restauración.',
+  'cta.optionsLabel': 'Opciones de contacto',
+  'cta.invite': 'Invitar a Carine a hablar',
+  'cta.media': 'Consulta de medios',
+  'cta.music': 'Colaboración musical',
+  'cta.books': 'Conversaciones sobre libros',
+  'footer.rights': '© 2026 Carine Sanadina. Todos los derechos reservados.',
+  'footer.credit': 'Concepto del sitio por Omoluabi Productions.'
+};
+
+// TODO: Confirm nuanced Lingala copy with a fluent Lingala editor; uncertain long-form passages gracefully inherit French wording where needed.
+translations.ln = {
+  ...translations.fr,
+  'html.lang': 'ln',
+  'language.label': 'Lokota',
+  'language.selectorLabel': 'Pona lokota ya site',
+  'a11y.skip': 'Kende na makambo ya ntina',
+  'a11y.primaryNav': 'Navigation ya liboso',
+  'nav.about': 'Na ntina',
+  'nav.works': 'Misala',
+  'nav.music': 'Miziki',
+  'nav.focus': 'Makambo ya ntina',
+  'nav.positioning': 'Mongongo ya mosala',
+  'nav.contact': 'Kontakt',
+  'hero.subtitle': 'Mosali ya santé | Mokomi | Mobundeli ya ba survivantes | Mongongo ya bolamu ya motema',
+  'hero.heading': 'Kobongola pasi na kobika, survie na tina, mpe masolo na restauration.',
+  'hero.viewWorks': 'Tala misala',
+  'hero.listenMusic': 'Yoka miziki',
+  'hero.contactCarine': 'Kontakt Carine',
+  'about.kicker': 'Na ntina ya Carine',
+  'works.kicker': 'Misala ya ntina',
+  'buttons.buyAmazon': 'Somba na Amazon',
+  'music.kicker': 'Miziki',
+  'music.heading': 'Miziki ya Carine Sanadina',
+  'music.playlist': 'Playlist',
+  'music.time': 'Ntango',
+  'music.duration': 'Bolai:',
+  'tracks.consolation.number': 'Loyembo 01',
+  'tracks.consolation.description': 'Libondisi mpe elikya mpo na kobika',
+  'tracks.gentillesse.number': 'Loyembo 02',
+  'tracks.gentillesse.description': 'Loyembo ya boboto mpe kondima',
+  'tracks.wonderful.number': 'Loyembo 03',
+  'tracks.wonderful.description': 'Lokumu ya esengo mpe matondo',
+  'mini.noTrack': 'Loyembo eponami te',
+  'mini.progress': 'Bokende ya loyembo',
+  'mini.volume': 'Volume ya loyembo',
+  'audio.play': 'Bɛta',
+  'audio.pause': 'Pema',
+  'audio.playbackError': 'Miziki ekoki kobanda te. Meka lisusu.',
+  'audio.unavailable': 'Miziki ezali disponible te sikoyo. Zonga lisusu kala mingi te.',
+  'focus.kicker': 'Makambo ya ntina',
+  'focus.heading': 'Makambo ezali na motema ya mosala ya Carine.',
+  'focus.pills.domestic': 'Koyebisa bato mpo na violence na libota',
+  'focus.pills.healing': 'Kobika ya motema',
+  'focus.pills.toxic': 'Kobika nsima ya relations toxiques',
+  'focus.pills.faith': 'Kondima mpe makasi',
+  'focus.pills.women': 'Kopesa basi makasi',
+  'focus.pills.selfWorth': 'Valɛrɛ ya yo moko mpe identité',
+  'focus.pills.immigrant': 'Bomoi ya ba immigrés mpe ba réfugiés',
+  'focus.pills.motherhood': 'Bomama mpe survie',
+  'focus.pills.writing': 'Bokomi ya kopesa elikya',
+  'focus.pills.care': 'Soin oyo etali moto',
+  'quote.text': '“Pasi ekoki kobongisa lisolo, kasi ekoki kozwa suka na yango te.”',
+  'cta.kicker': 'Banda lisolo',
+  'cta.invite': 'Benga Carine aloba',
+  'cta.media': 'Demande média',
+  'cta.music': 'Collaboration musicale',
+  'cta.books': 'Masolo ya mikanda',
+  'footer.rights': '© 2026 Carine Sanadina. Makoki nyonso ebatelami.'
+};
+
+const supportedLanguages = Object.keys(translations);
+let currentLanguage = DEFAULT_LANGUAGE;
+
+const translate = (key, language = currentLanguage) => {
+  const languageDictionary = translations[language] || translations[DEFAULT_LANGUAGE];
+  return languageDictionary[key] || translations[DEFAULT_LANGUAGE][key] || key;
+};
+
+const getStoredLanguage = () => {
+  try {
+    return window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  } catch (error) {
+    return null;
+  }
+};
+
+const storeLanguage = (language) => {
+  try {
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  } catch (error) {
+    // localStorage can be unavailable in private or restricted browsing contexts.
+  }
+};
+
+const applyLanguage = (language) => {
+  const nextLanguage = supportedLanguages.includes(language) ? language : DEFAULT_LANGUAGE;
+  currentLanguage = nextLanguage;
+
+  document.querySelectorAll('[data-i18n]').forEach((element) => {
+    if (element.matches('[data-mini-title][data-has-track="true"]')) {
+      return;
+    }
+
+    element.textContent = translate(element.dataset.i18n, nextLanguage);
+  });
+
+  document.querySelectorAll('[data-i18n-attr]').forEach((element) => {
+    element.dataset.i18nAttr.split(';').forEach((pair) => {
+      const [attribute, key] = pair.split(':');
+
+      if (attribute && key) {
+        element.setAttribute(attribute.trim(), translate(key.trim(), nextLanguage));
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-language-option]').forEach((button) => {
+    const isActive = button.dataset.languageOption === nextLanguage;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+
+  storeLanguage(nextLanguage);
+  window.dispatchEvent(new CustomEvent('carine:languagechange', { detail: { language: nextLanguage } }));
+};
+
+const languageButtons = document.querySelectorAll('[data-language-option]');
+
+languageButtons.forEach((button) => {
+  button.addEventListener('click', () => applyLanguage(button.dataset.languageOption));
+});
+
+applyLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
+
 const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
 
@@ -109,7 +607,7 @@ if (musicPlayers.length) {
     }
 
     const isPlaying = audio && !audio.paused;
-    button.setAttribute('aria-label', `${isPlaying ? 'Pause' : 'Play'} ${title}`);
+    button.setAttribute('aria-label', `${isPlaying ? translate('audio.pause') : translate('audio.play')} ${title}`);
   };
 
   const syncMiniProgress = (audio) => {
@@ -136,8 +634,9 @@ if (musicPlayers.length) {
     miniPlayer.setAttribute('aria-hidden', 'false');
     miniPlayer.classList.toggle('is-playing', audio && !audio.paused);
     mini.cover.src = player.dataset.trackCover;
-    mini.cover.alt = `${player.dataset.trackTitle} cover art`;
+    mini.cover.alt = `${player.dataset.trackTitle} ${translate('audio.coverArt')}`;
     mini.cover.referrerPolicy = 'no-referrer';
+    mini.title.dataset.hasTrack = 'true';
     mini.title.textContent = player.dataset.trackTitle;
     mini.artist.textContent = player.dataset.trackArtist;
     mini.volume.value = String(audio.volume);
@@ -178,7 +677,7 @@ if (musicPlayers.length) {
       }
     } catch (error) {
       if (status) {
-        status.textContent = 'Audio playback could not start. Please try again.';
+        status.textContent = translate('audio.playbackError');
       }
     }
   };
@@ -260,9 +759,18 @@ if (musicPlayers.length) {
         musicPlayer.classList.remove('is-playing');
 
         if (status) {
-          status.textContent = 'Audio is temporarily unavailable. Please check back soon.';
+          status.textContent = translate('audio.unavailable');
         }
       });
+
+
+    window.addEventListener('carine:languagechange', () => {
+      updateToggle(playToggle, audio, title);
+
+      if (status && status.textContent) {
+        status.textContent = musicPlayer.classList.contains('is-ready') ? '' : translate('audio.unavailable');
+      }
+    });
 
       playToggle.addEventListener('click', () => {
         if (audio.paused) {
@@ -302,6 +810,19 @@ if (musicPlayers.length) {
       const audio = activePlayer.querySelector('audio');
       audio.currentTime = Number(mini.progress.value);
       syncMiniProgress(audio);
+    });
+
+
+    window.addEventListener('carine:languagechange', () => {
+      if (!activePlayer) {
+        mini.title.dataset.hasTrack = 'false';
+        mini.title.textContent = translate('mini.noTrack');
+        return;
+      }
+
+      const audio = activePlayer.querySelector('audio');
+      updateToggle(mini.toggle, audio, activePlayer.dataset.trackTitle);
+      mini.cover.alt = `${activePlayer.dataset.trackTitle} ${translate('audio.coverArt')}`;
     });
 
     mini.volume.addEventListener('input', () => {
