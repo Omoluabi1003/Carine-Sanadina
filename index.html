@@ -27,6 +27,7 @@
       content="Turning pain into healing, survival into purpose, and stories into restoration."
     />
 
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -77,8 +78,12 @@
                 src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Carine%20Sanadina.png"
                 alt="Carine Sanadina official portrait"
                 class="portrait-image"
+                width="1200"
+                height="1600"
                 loading="eager"
+                fetchpriority="high"
                 decoding="async"
+                referrerpolicy="no-referrer"
                 data-fallback-target="portrait-fallback"
               />
               <div class="image-fallback portrait-fallback" id="portrait-fallback" role="note" aria-live="polite">
@@ -248,8 +253,11 @@
                   src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.png"
                   alt="La Gentillesse cover art"
                   class="track-cover"
+                  width="1000"
+                  height="1000"
                   loading="lazy"
                   decoding="async"
+                  referrerpolicy="no-referrer"
                   data-fallback-target="music-cover-la-gentillesse-fallback"
                 />
                 <div class="image-fallback music-cover-fallback" id="music-cover-la-gentillesse-fallback" role="note" aria-live="polite">
@@ -294,8 +302,11 @@
                   src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful%20cover.png"
                   alt="Wonderful cover art"
                   class="track-cover"
+                  width="1000"
+                  height="1000"
                   loading="lazy"
                   decoding="async"
+                  referrerpolicy="no-referrer"
                   data-fallback-target="music-cover-wonderful-fallback"
                 />
                 <div class="image-fallback music-cover-fallback" id="music-cover-wonderful-fallback" role="note" aria-live="polite">
@@ -429,18 +440,16 @@
       <section class="section final-cta" id="contact" aria-labelledby="contact-heading">
         <div class="container cta-panel reveal">
           <p class="eyebrow">Begin the conversation</p>
-          <h2 id="contact-heading">Read the books. Hear the story. Begin healing.</h2>
+          <h2 id="contact-heading">Invite the voice. Share the story. Build a healing-centered moment.</h2>
           <p>
-            For speaking invitations, reader messages, collaborations, media inquiries, and future book updates,
-            connect with Carine’s platform.
+            Choose a premium inquiry path for speaking invitations, interviews, creative collaborations,
+            or intimate conversations shaped by resilience, faith, and restoration.
           </p>
-          <div class="cta-actions">
-            <!-- Future books page or Amazon author page link should be inserted in the href below. -->
-            <a class="button button-primary" href="#works">Explore Books</a>
-            <!-- Future speaking inquiry form or email link should be inserted in the href below. -->
-            <a class="button button-secondary" href="mailto:hello@example.com">Invite Carine to Speak</a>
-            <!-- Future preferred contact details should replace this placeholder email. -->
-            <a class="button button-ghost" href="mailto:hello@example.com">Contact</a>
+          <div class="cta-actions" aria-label="Contact options">
+            <a class="button button-primary" href="mailto:hello@example.com?subject=Invite%20Carine%20to%20Speak">Invite Carine to Speak</a>
+            <a class="button button-secondary" href="mailto:hello@example.com?subject=Media%20Inquiry%20for%20Carine%20Sanadina">Media Inquiry</a>
+            <a class="button button-secondary" href="mailto:hello@example.com?subject=Music%20Collaboration%20with%20Carine%20Sanadina">Music Collaboration</a>
+            <a class="button button-ghost" href="mailto:hello@example.com?subject=Book%20Conversations%20with%20Carine%20Sanadina">Book Conversations</a>
           </div>
         </div>
       </section>
