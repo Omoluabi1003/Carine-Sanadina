@@ -1,6 +1,15 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
 
+const languageLabels = {
+  en: 'English',
+  fr: 'Français',
+  ln: 'Lingala',
+  es: 'Español',
+  sw: 'Kiswahili',
+  yo: 'Yorùbá'
+};
+
 const translations = {};
 
 translations.en = {
@@ -621,6 +630,20 @@ translations.ln = {
   'footer.credit': 'Likanisi, kitoko mpe komonisa lokasa na nzela ya tekiniki esalemi na Omoluabi Productions, mosala ya bokeli oyo etambolaka na se ya ETL GIS Consulting LLC.'
 };
 
+translations.sw = {
+  ...translations.en,
+  'html.lang': 'sw',
+  'language.label': 'Lugha',
+  'language.selectorLabel': 'Chagua lugha ya tovuti'
+};
+
+translations.yo = {
+  ...translations.en,
+  'html.lang': 'yo',
+  'language.label': 'Èdè',
+  'language.selectorLabel': 'Yan èdè oju opo wẹẹbu'
+};
+
 const supportedLanguages = Object.keys(translations);
 let currentLanguage = DEFAULT_LANGUAGE;
 
@@ -670,17 +693,134 @@ const applyLanguage = (language) => {
   document.querySelectorAll('[data-language-option]').forEach((button) => {
     const isActive = button.dataset.languageOption === nextLanguage;
     button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-checked', String(isActive));
     button.setAttribute('aria-pressed', String(isActive));
+  });
+
+  document.querySelectorAll('[data-language-current]').forEach((element) => {
+    element.textContent = languageLabels[nextLanguage] || languageLabels[DEFAULT_LANGUAGE];
+  });
+
+  document.querySelectorAll('[data-language-trigger]').forEach((trigger) => {
+    const activeLabel = languageLabels[nextLanguage] || languageLabels[DEFAULT_LANGUAGE];
+    trigger.setAttribute('aria-label', `${translate('language.selectorLabel', nextLanguage)}: ${activeLabel}`);
   });
 
   storeLanguage(nextLanguage);
   window.dispatchEvent(new CustomEvent('carine:languagechange', { detail: { language: nextLanguage } }));
 };
 
+const languageSwitchers = document.querySelectorAll('.language-switcher');
 const languageButtons = document.querySelectorAll('[data-language-option]');
 
+const setLanguageMenuOpen = (switcher, isOpen) => {
+  const trigger = switcher.querySelector('[data-language-trigger]');
+  const menu = switcher.querySelector('[data-language-menu]');
+
+  if (!trigger || !menu) {
+    return;
+  }
+
+  window.clearTimeout(Number(menu.dataset.closeTimer || 0));
+  trigger.setAttribute('aria-expanded', String(isOpen));
+
+  if (isOpen) {
+    menu.hidden = false;
+    window.requestAnimationFrame(() => switcher.classList.add('is-open'));
+    return;
+  }
+
+  switcher.classList.remove('is-open');
+  menu.dataset.closeTimer = String(window.setTimeout(() => {
+    if (!switcher.classList.contains('is-open')) {
+      menu.hidden = true;
+    }
+  }, 180));
+};
+
+const closeLanguageMenus = () => {
+  languageSwitchers.forEach((switcher) => setLanguageMenuOpen(switcher, false));
+};
+
+const focusLanguageOption = (currentButton, direction) => {
+  const menu = currentButton.closest('[data-language-menu]');
+  const options = [...(menu?.querySelectorAll('[data-language-option]') || [])];
+  const currentIndex = options.indexOf(currentButton);
+
+  if (currentIndex === -1) {
+    return;
+  }
+
+  const nextIndex = (currentIndex + direction + options.length) % options.length;
+  options[nextIndex].focus();
+};
+
+languageSwitchers.forEach((switcher) => {
+  const trigger = switcher.querySelector('[data-language-trigger]');
+  const menu = switcher.querySelector('[data-language-menu]');
+
+  if (!trigger || !menu) {
+    return;
+  }
+
+  trigger.addEventListener('click', () => {
+    const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+    setLanguageMenuOpen(switcher, !isOpen);
+  });
+
+  trigger.addEventListener('keydown', (event) => {
+    if (!['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
+      return;
+    }
+
+    event.preventDefault();
+    setLanguageMenuOpen(switcher, true);
+    const activeOption = menu.querySelector('.language-option.is-active') || menu.querySelector('[data-language-option]');
+    activeOption?.focus();
+  });
+});
+
 languageButtons.forEach((button) => {
-  button.addEventListener('click', () => applyLanguage(button.dataset.languageOption));
+  button.addEventListener('click', () => {
+    applyLanguage(button.dataset.languageOption);
+    closeLanguageMenus();
+    button.closest('.language-switcher')?.querySelector('[data-language-trigger]')?.focus();
+  });
+
+  button.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      focusLanguageOption(button, 1);
+    }
+
+    if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+      event.preventDefault();
+      focusLanguageOption(button, -1);
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault();
+      button.closest('[data-language-menu]')?.querySelector('[data-language-option]')?.focus();
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault();
+      const options = button.closest('[data-language-menu]')?.querySelectorAll('[data-language-option]');
+      options?.[options.length - 1]?.focus();
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeLanguageMenus();
+      button.closest('.language-switcher')?.querySelector('[data-language-trigger]')?.focus();
+    }
+  });
+});
+
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.language-switcher')) {
+    closeLanguageMenus();
+  }
 });
 
 applyLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
