@@ -462,98 +462,163 @@ translations.es = {
 };
 
 translations.ln = {
-  ...translations.fr,
   'html.lang': 'ln',
+  'meta.title': 'Carine Sanadina | Mosali ya bokolongono, mokomi mpe mongongo ya elikya',
+  'meta.description': 'Carine Sanadina, mwasi ya Congo oyo afandaka na Jacksonville, Florida, azali mosali ya bokolongono, mokomi, moyembi mpe motomboli ya bato oyo balekaki pasi; abongolaka mpasi na nzela ya kobika, kondima mpe elikya.',
+  'meta.ogTitle': 'Carine Sanadina | Mokomi ya kobika mpe mongongo ya elikya',
+  'meta.ogDescription': 'Yeba mikanda, miziki, mosala ya kobondisa mpe mongongo ya Carine Sanadina, mwasi ya Congo na Jacksonville, Florida, oyo akabolaka kobika, kondima mpe bozongisi ya motema.',
+  'meta.twitterDescription': 'Kolongola mpasi na nzela ya kobika, kopesa bomoi ntina, mpe kozongisa masolo na pole.',
   'language.label': 'Lokota',
-  'language.selectorLabel': 'Pona lokota ya site',
-  'a11y.skip': 'Kende na makambo ya ntina',
-  'a11y.primaryNav': 'Navigation ya liboso',
-  'nav.about': 'Na ntina',
-  'nav.works': 'Misala',
+  'language.selectorLabel': 'Pona lokota ya lokasa oyo',
+  'a11y.skip': 'Kende mbala moko na makambo ya ntina',
+  'a11y.primaryNav': 'Nzela monene ya kotambola na lokasa',
+  'a11y.home': 'Ebandeli ya Carine Sanadina',
+  'a11y.toggleNav': 'Fungola to kanga nzela ya kotambola',
+  'a11y.primaryCta': 'Banzela ya liboso ya kobenga kosala elongo',
+  'nav.about': 'Maye matali Carine',
+  'nav.works': 'Misala minene',
   'nav.music': 'Miziki',
-  'nav.focus': 'Makambo ya ntina',
+  'nav.focus': 'Makambo ya motema',
   'nav.positioning': 'Mongongo ya mosala',
-  'nav.contact': 'Kontakt',
-  'hero.subtitle': 'Mosali ya santé | Mokomi | Mobundeli ya ba survivantes | Mongongo ya bolamu ya motema',
-  'hero.heading': 'Kobongola pasi na kobika, survie na tina, mpe masolo na restauration.',
-  'hero.viewWorks': 'Tala misala',
-  'hero.listenMusic': 'Yoka miziki',
-  'hero.contactCarine': 'Kontakt Carine',
-  'about.kicker': 'Na ntina ya Carine',
-  'works.kicker': 'Misala ya ntina',
+  'nav.contact': 'Kokutana',
+  'hero.location': 'Jacksonville, Florida',
+  'hero.subtitle': 'Mosali ya bokolongono | Mokomi | Molobeli ya bato balekaki pasi | Mongongo ya kimia ya motema',
+  'hero.heading': 'Kolongola mpasi na nzela ya kobika, kopesa bomoi ntina, mpe kozongisa masolo na pole.',
+  'hero.viewWorks': 'Tala misala minene',
+  'hero.listenMusic': 'Yoka Miziki',
+  'hero.contactCarine': 'Koma epai ya Carine',
+  'portrait.figureLabel': 'Elilingi ya lokumu ya Carine Sanadina',
+  'portrait.alt': 'Elilingi ya lokumu ya Carine Sanadina',
+  'portrait.fallback': 'Elilingi ya lokumu ya Carine Sanadina ezali komonana te mpo na mwa ntango.',
+  'portrait.caption': 'Elilingi ya lokumu ya Carine Sanadina — masolo ya kobika, na mpiko, kondima mpe bozongisi ya motema.',
+  'about.kicker': 'Maye matali Carine',
+  'about.heading': 'Mongongo ya mpiko, bozongisi ya motema mpe kobika oyo etalaka moto na bomoto.',
+  'about.body1': 'Carine Sanadina azali mwasi ya Congo oyo afandaka na Jacksonville; azali mosali ya bokolongono, mokomi, moyembi mpe molobeli ya bato balekaki pasi. Mosala na ye ebongolaka mpasi oyo moto amonaki na maloba ya kobondisa, mikanda ya kobika mpe elikya.',
+  'about.body2': 'Misala na ye elobaka na boboto makambo ya kobika nsima ya bitumba ya ndako, boyokani oyo ebebisaka motema, bapota ya kati, kondima, mpiko, bomama, bomoi ya moto oyo alongwá mboka, mpe nzela oyo ekendaka longwa na kobukana kino na kotongama lisusu.',
+  'works.kicker': 'Misala minene',
+  'works.heading': 'Mikanda oyo ebongolaka litatoli na pole.',
+  'works.intro': 'Maloba ya kitoko, ya penepene mpe ya mpiko mpo na batangi oyo bazali koluka mongongo mpo na kobika, kokoma lisusu makasi, kondima mpe komimona na motuya ya sika.',
   'buttons.buyAmazon': 'Somba na Amazon',
-  'music.kicker': 'Miziki',
+  'books.pain.coverLabel': 'Ezipeli ya buku The Pain Nobody Saw ya Carine Sanadina',
+  'books.pain.kicker': 'Lisolo ya bomoi',
+  'books.pain.coverTitle': 'Mpasi oyo moto amonaki te',
+  'books.pain.title': 'Mpasi oyo moto amonaki te: lisolo ebombamá ya minyoko mpe kobika',
+  'books.pain.description': 'Lisolo ya bomoi oyo elakisaka solo ya minyoko ya ndako oyo ebombamaka, bozito ya mimeseno, mpasi ya kimya, mpe mpiko ya kotambola kino na bonsomi, kondima mpe kozwa lisusu motuya ya yo moko.',
+  'books.toxic.coverLabel': 'Ezipeli ya buku If It’s Red, It’s Toxic ya Carine Sanadina',
+  'books.toxic.kicker': 'Mokanda ya litambwisi',
+  'books.toxic.coverTitle': 'Soki ezali elembo ya likama, tika yango',
+  'books.toxic.title': 'Soki ezali elembo ya likama, tika yango',
+  'books.toxic.description': 'Mokanda ya mpiko mpo na koyeba bilembo ya likama, kotambwisama ya mayoki, likama ya molimo, bokangami oyo ebebisaka, mpe ndenge mosusu elongolaka kimia, polele mpe ntina ya bomoi mokemoke.',
+  'books.sunshine.coverLabel': 'Ezipeli ya buku The Road to Sunshine ya Carine Sanadina',
+  'books.sunshine.kicker': 'Kondima mpe elikya',
+  'books.sunshine.coverTitle': 'Nzela ya moi',
+  'books.sunshine.title': 'Nzela ya moi: mobembo ya bitumba, kondima mpe elikya',
+  'books.sunshine.description': 'Makanisi etonda na elikya mpo na kotelema na kati ya komekama, kokangama na kondima, mpe kokoba kotambola epai ya mikolo ya pole ata soki nzela ezali komonana lokola ezali na molili.',
+  'books.storm.coverLabel': 'Ezipeli ya buku After The Storm ya Carine Sanadina',
+  'books.storm.kicker': 'Kotongama lisusu',
+  'books.storm.coverTitle': 'Nsima ya mopɛpɛ makasi',
+  'books.storm.title': 'Nsima ya mopɛpɛ makasi',
+  'books.storm.description': 'Mokanda oyo epesaka lokumu na makasi ya kimya oyo etikalaka nsima ya komekama, mpe esalisaka motangi atala koleka kobika mpamba, epai ya kobikisama, kimia mpe mabaku ya sika.',
+  'music.kicker': 'Esika ya miziki',
   'music.heading': 'Miziki ya Carine Sanadina',
-  'music.playlist': 'Playlist',
+  'music.intro': 'Molongo mokuse ya banzembo ya lokumu, oyo etongami na kondima, boboto, kotongama lisusu mpe masanzoli.',
+  'music.disclaimer': 'Miziki mpe biloko ya koyoka to komona elakisami mpo bato bayoka, bayeba mpe bapesa lokumu na mosala ya moyembi. Makoki etikali epai ya bankolo na yango. Kokopa, kokabola lisusu, to kosalela yango mpo na mombongo kozanga ndingisa epekisami.',
+  'music.playlistLabel': 'Molongo ya miziki ya Carine Sanadina',
+  'music.playlist': 'Molongo ya banzembo',
   'music.time': 'Ntango',
   'music.duration': 'Bolai:',
+  'tracks.consolation.title': 'Libondisi',
+  'tracks.consolation.audioLabel': 'Libondisi ya Carine Sanadina',
+  'tracks.consolation.coverAlt': 'Ezipeli ya loyembo Libondisi',
+  'tracks.consolation.fallback': 'Ezipeli ya loyembo Libondisi ezali komonana te mpo na mwa ntango.',
   'tracks.consolation.number': 'Loyembo 01',
-  'tracks.consolation.description': 'Libondisi mpe elikya mpo na kobika',
+  'tracks.consolation.description': 'Libondisi ya motema mpe elikya ya kobika',
+  'tracks.consolation.playLabel': 'Beta Loyembo Libondisi',
+  'tracks.gentillesse.title': 'Boboto',
+  'tracks.gentillesse.audioLabel': 'Boboto ya Carine Sanadina',
+  'tracks.gentillesse.coverAlt': 'Ezipeli ya loyembo Boboto',
+  'tracks.gentillesse.fallback': 'Ezipeli ya loyembo Boboto ezali komonana te mpo na mwa ntango.',
   'tracks.gentillesse.number': 'Loyembo 02',
-  'tracks.gentillesse.description': 'Loyembo ya boboto mpe kondima',
+  'tracks.gentillesse.description': 'Loyembo ya boboto oyo etondi na kondima',
+  'tracks.gentillesse.playLabel': 'Beta Loyembo Boboto',
+  'tracks.wonderful.title': 'Kitoko mingi',
+  'tracks.wonderful.audioLabel': 'Kitoko mingi ya Carine Sanadina',
+  'tracks.wonderful.coverAlt': 'Ezipeli ya loyembo Kitoko mingi',
+  'tracks.wonderful.fallback': 'Ezipeli ya loyembo Kitoko mingi ezali komonana te mpo na mwa ntango.',
   'tracks.wonderful.number': 'Loyembo 03',
-  'tracks.wonderful.description': 'Lokumu ya esengo mpe matondo',
-  'mini.noTrack': 'Loyembo eponami te',
-  'mini.progress': 'Bokende ya loyembo',
-  'mini.volume': 'Volume ya loyembo',
-  'audio.play': 'Bɛta',
-  'audio.pause': 'Pema',
-  'audio.playbackError': 'Miziki ekoki kobanda te. Meka lisusu.',
-  'audio.unavailable': 'Miziki ezali disponible te sikoyo. Zonga lisusu kala mingi te.',
-  'focus.kicker': 'Makambo ya ntina',
-  'focus.heading': 'Makambo ezali na motema ya mosala ya Carine.',
-  'focus.pills.domestic': 'Koyebisa bato mpo na violence na libota',
+  'tracks.wonderful.description': 'Masanzoli ya esengo mpe matondi',
+  'tracks.wonderful.playLabel': 'Beta Loyembo Kitoko mingi',
+  'mini.label': 'Mwa ebɛtelo ya loyembo oyo ezali koyokana',
+  'mini.noTrack': 'Loyembo eponami naino te',
+  'mini.toggleLabel': 'Beta to pemisa loyembo oyo ezali koyokana',
+  'mini.progress': 'Nzela loyembo ezali kotambola',
+  'mini.volumeShort': 'Makasi',
+  'mini.volume': 'Makasi ya mongongo ya loyembo oyo ezali koyokana',
+  'audio.play': 'Beta',
+  'audio.pause': 'Pemisa',
+  'audio.coverArt': 'elilingi ya ezipeli',
+  'audio.playbackError': 'Loyembo ekoki kobanda te. Meka lisusu.',
+  'audio.unavailable': 'Loyembo ezali koyokana te sikoyo. Zonga lisusu mwa sima.',
+  'focus.kicker': 'Makambo ya motema',
+  'focus.heading': 'Makambo oyo ezali na motema ya mosala ya Carine.',
+  'focus.gridLabel': 'Makambo ya motema ya mosala',
+  'focus.pills.domestic': 'Koyebisa likama ya bitumba ya ndako',
   'focus.pills.healing': 'Kobika ya motema',
-  'focus.pills.toxic': 'Kobika nsima ya relations toxiques',
-  'focus.pills.faith': 'Kondima mpe makasi',
-  'focus.pills.women': 'Kopesa basi makasi',
-  'focus.pills.selfWorth': 'Valɛrɛ ya yo moko mpe identité',
-  'focus.pills.immigrant': 'Bomoi ya ba immigrés mpe ba réfugiés',
-  'focus.pills.motherhood': 'Bomama mpe survie',
-  'focus.pills.writing': 'Bokomi ya kopesa elikya',
-  'focus.pills.care': 'Soin oyo etali moto',
-  'quote.text': '“Pasi ekoki kobongisa lisolo, kasi ekoki kozwa suka na yango te.”',
+  'focus.pills.toxic': 'Kobika nsima ya boyokani ebebisaka',
+  'focus.pills.faith': 'Kondima mpe mpiko',
+  'focus.pills.women': 'Kotombola basi',
+  'focus.pills.selfWorth': 'Motuya ya yo moko mpe koyeba yo nani',
+  'focus.pills.immigrant': 'Bomoi ya moto alongwá mboka mpe ya moto alukaka kobatelama',
+  'focus.pills.motherhood': 'Bomama mpe kobika',
+  'focus.pills.writing': 'Bokomi oyo epesaka elikya',
+  'focus.pills.care': 'Kosalisa moto na bomoto',
+  'positioning.kicker': 'Esika ya mongongo na mosala',
+  'positioning.heading': 'Kobatela bato na boboto mpe kokoma mpo na kopesa elikya.',
+  'positioning.healthcare.title': 'Mosali ya bokolongono',
+  'positioning.healthcare.body': 'Apesaka lisungi ya boboto na esika ya bokolongono, na kotia moto na katikati ya mosala, na mawa, botosi ya mosala mpe koyeba motema ya moto na mosala ya mokolo na mokolo.',
+  'positioning.author.title': 'Mokomi mpe mongongo ya elikya',
+  'positioning.author.body': 'Akomaka mikanda mpe makanisi oyo etalaka kobika, kobikisama, kondima, koyeba boyokani oyo ebebisaka, bozongisi ya motema mpe kobongwana ya bomoi.',
+  'quote.label': 'Liloba ya kopona',
+  'quote.text': '“Mpasi ekoki kopesa lisolo lolenge, kasi ekoki te kozala nkolo ya suka na yango.”',
   'cta.kicker': 'Banda lisolo',
+  'cta.heading': 'Benga mongongo. Kabola lisolo. Tonga ntango ya kobika.',
+  'cta.body': 'Pona nzela ya lokumu mpo na kobenga Carine aloba, masolo ya koyebisa bato, kosala elongo na makambo ya bokeli, to masolo ya penepene oyo etongami na mpiko, kondima mpe bozongisi ya motema.',
+  'cta.disclaimer': 'Lokasa oyo esali boyokani te ya botambwisi, boyangeli, kobimisa mikanda, kosala elongo na mibeko, mosala to bolobeli ya mibeko. Masolo ya kosala elongo to ya kobengisa esengeli kozala na boyokani mosusu oyo ekomami.',
+  'cta.optionsLabel': 'Banzela ya kokoma',
   'cta.invite': 'Benga Carine aloba',
-  'cta.media': 'Demande média',
-  'cta.music': 'Collaboration musicale',
+  'cta.media': 'Mituna ya koyebisa bato',
+  'cta.music': 'Kosala elongo na miziki',
   'cta.books': 'Masolo ya mikanda',
-  'meta.title': 'Carine Sanadina | Mosali ya santé, mokomi mpe mobateli ya ba survivantes',
-  'meta.description': 'Carine Sanadina azali mosali ya santé, mokomi, artiste mpe mobateli ya ba survivantes, afandaka na Jacksonville, Florida.',
-  'meta.ogTitle': 'Carine Sanadina | Mokomi ya kobikisa mpe mobateli ya ba survivantes',
-  'meta.ogDescription': 'Tala mikanda, bomateli mpe mongongo ya bolamu ya motema ya Carine Sanadina, mosali ya santé mpe mokomi abotama na Congo, afandaka na Jacksonville, Florida.',
-  'meta.twitterDescription': 'Kobongola pasi na kobika, survie na tina, mpe masolo na restauration.',
-  'music.disclaimer': 'Miziki mpe media elakisami mpo bato bayoka na lolenge ya promotion mpe mpo artiste amonana. Makoki etikali ya bankolo na yango. Kokopa, kokabola lisusu, to kosalela yango mpo na commerce kozanga ndingisa epekisami.',
-  'cta.disclaimer': 'Site oyo esali te relation ya agence, management, édition, partenariat, mosala, to representation juridique. Masolo ya collaboration to booking esengeli kozala na boyokani ya kokoma separé.',
-  'legal.metaTitle': 'Legal / Conditions | Carine Sanadina',
-  'legal.metaDescription': 'Ba avis ya mibeko mpe ya propriété mpo na site ya Carine Sanadina, na propriété ya plateforme, biloko ya artiste, usage ya media, mpe contact.',
-  'legal.metaOgDescription': 'Ba avis ya mibeko mpe propriété mpo na plateforme ya Carine Sanadina mpe biloko ya artiste oyo endimami.',
-  'legal.kicker': 'Legal / Conditions',
-  'legal.heading': 'Avis ya propriété mpe usage ya site',
-  'legal.intro': 'Ba avis oyo elimboli propriété, usage oyo endimami, mpe bandelo ya représentation mpo na site ya Carine Sanadina, na limemya, collaboration mpe polele.',
-  'legal.ariaLabel': 'Ba conditions légales mpe ba avis ya propriété',
-  'legal.ownership.title': 'Avis ya propriété mpe plateforme',
-  'legal.ownership.body': 'Concept, design, structure, mise en œuvre ya code, direction visuelle, expérience digitale, layout, mpe présentation créative ya site ebimisami mpe etambwisami na Omoluabi Productions, projet créatif oyo etambolaka na se ya ETL GIS Consulting LLC. Soki elobami ndenge mosusu te, plateforme ya site mpe biloko ya présentation digitale ezali ya ETL GIS Consulting LLC to ezali na contrôle na yango.',
-  'legal.ip.title': 'Propriété intellectuelle',
-  'legal.ip.body': 'Ba layout ya site, style ya interface, code, présentation ya texte, mpe direction créative ya plateforme ekoki te kokopama, kosalelama lisusu, kobongisama, kokabolama lisusu, to kosalelama mpo na commerce kozanga ndingisa ya kokoma ya ETL GIS Consulting LLC to nkolo ya makoki oyo ebongi. Biloko ya bato mosusu, ya artiste, to oyo ezali crédité séparément etikali ya bankolo na yango.',
-  'legal.artist.title': 'Biloko ya artiste mpe image',
-  'legal.artist.body': 'Carine Sanadina abateli propriété to contrôle ya identité na ye, image oyo endimami, mikanda, miziki, lisolo ya bomoi, mpe biloko etali artiste soki esengeli. Kolakisa kombo, image, misala, miziki, to biographie ya Carine Sanadina na site oyo ezali mpo na promotion mpe information, na biloko ya collaboration oyo endimami.',
-  'legal.noAgency.title': 'Agence to management ezali te',
-  'legal.noAgency.body': 'Eloko moko te na site oyo esali relation ya agence, management, édition, label ya miziki, mosala, partenariat, to représentation juridique kati na Carine Sanadina, Omoluabi Productions, mpe ETL GIS Consulting LLC, longola kaka soki boyokani ya kokoma separé elobi yango polele. Omoluabi Productions elakisami te lokola société enregistrée séparée, label, manager, agent, éditeur, to représentant juridique.',
-  'legal.music.title': 'Usage ya miziki mpe media',
-  'legal.music.body': 'Miziki, bilili, texte, audio, artwork, video, mpe media mosusu elakisami mpo na visibilité ya promotion, contexte ya information, mpe présentation ya artiste oyo endimami. Makoki etikali ya bankolo na yango. Kokopa, ko télécharger, kosalela lisusu, kobongola, kokabola lisusu, kobimisa public, to kosalela commerce kozanga ndingisa epekisami soki ndingisa ya kokoma ya nkolo ya makoki oyo ebongi ezali te.',
-  'legal.websiteUse.title': 'Usage ya site',
-  'legal.websiteUse.body': 'Bapaya bakoki kotala site mpo na makambo ya bango moko, information, mpe découverte ya promotion. Usage ya site esengeli te kobebisa fonctionnement ya site, kopesa image ya lokuta ya relation ya moto moko, to kolakisa endorsement, représentation, to permission oyo epesami te séparément na kokoma.',
-  'legal.liability.title': 'Limitation ya responsabilité',
-  'legal.liability.body': 'Site oyo epesami lokola présentation digitale ya promotion mpe information. ETL GIS Consulting LLC ekoki kobongisa, kolongola, ko réviser, ko suspendre, to kosukisa eteni nyonso ya site to présentation ya media. Na ndenge mibeko epesi nzela, ETL GIS Consulting LLC ezali responsable te mpo na ba problèmes indirects, incidentals, to consequentials oyo ewuti na usage ya site, disponibilité, liens ya bato mosusu, to playback ya media.',
-  'legal.takedown.title': 'Demandes ya kolongola to kobongisa',
-  'legal.takedown.body': 'Demandes ya correction, kolongola, mituna ya makoki, mituna ya media, to clarification ya propriété esengeli kotindama na section contact ya site. Pesa ba détails ekoki mpo koyeba matériel nini mpe lolenge ya demande mpo etalelama malamu.',
-  'legal.takedown.link': 'Kende na section contact',
-  'legal.entity.title': 'Entité oyo etambwisaka',
-  'legal.entity.body': 'ETL GIS Consulting LLC ezali entité légalement enregistrée oyo etali fonctionnement mpe contrôle ya plateforme ya site mpe présentation digitale. Omoluabi Productions esalaka lokola marque ya projet créatif/media oyo etambolaka na se ya ETL GIS Consulting LLC mpe na site oyo elakisami te lokola entité juridique enregistrée séparée.',
+  'legal.metaTitle': 'Mibeko / Maloba ya kosalela | Carine Sanadina',
+  'legal.metaDescription': 'Mayebisi ya mibeko mpe ya makoki mpo na lokasa ya Carine Sanadina: nkolo ya lokasa, biloko ya mosali, kosalela miziki mpe biloko mosusu, mpe kokoma.',
+  'legal.metaOgDescription': 'Mayebisi ya mibeko mpe makoki mpo na lokasa ya Carine Sanadina mpe biloko ya mosali oyo endimami.',
+  'legal.kicker': 'Mibeko / Maloba ya kosalela',
+  'legal.heading': 'Mayebisi ya makoki mpe kosalela lokasa',
+  'legal.intro': 'Mayebisi oyo elimboli nkolo ya biloko, ndenge ya kosalela oyo endimami, mpe bandelo ya bolobeli mpo na lokasa ya Carine Sanadina, na limemya, boyokani mpe polele.',
+  'legal.ariaLabel': 'Maloba ya mibeko mpe mayebisi ya makoki',
+  'legal.ownership.title': 'Mayebisi ya nkolo ya lokasa',
+  'legal.ownership.body': 'Likanisi, kitoko, ndenge lokasa etongami, kokoma makomi ya mosala, nzela ya komonisa biloko mpe lolenge ya bokeli ya lokasa ebimisami mpe etambwisami na Omoluabi Productions, mosala ya bokeli oyo etambolaka na se ya ETL GIS Consulting LLC. Soki elobami ndenge mosusu te, lokasa mpe biloko nyonso ya komonisa yango ezali ya ETL GIS Consulting LLC to ezali na bokonzi na yango.',
+  'legal.ip.title': 'Makoki ya makanisi mpe ya bokeli',
+  'legal.ip.body': 'Ndenge lokasa ebongisami, lolenge ya komonana, makomi ya mosala, maloba mpe nzela ya bokeli ekoki te kokopama, kosalelama lisusu, kobongisama, kokabolama lisusu to kosalelama mpo na mombongo kozanga ndingisa ekomami ya ETL GIS Consulting LLC to ya nkolo ya makoki oyo ebongi. Biloko ya bato mosusu, ya mosali, to oyo epesami lokumu pembeni, etikali ya bankolo na yango.',
+  'legal.artist.title': 'Biloko ya mosali mpe elilingi',
+  'legal.artist.body': 'Carine Sanadina abateli makoki to bokonzi likolo ya bomoto na ye, elilingi oyo endimami, mikanda, miziki, lisolo ya bomoi mpe biloko mosusu oyo etali mosali. Komonisa kombo, elilingi, misala, miziki to lisolo ya Carine Sanadina na lokasa oyo ezali mpo na koyebisa bato mpe kopesa sango, na biloko ya kosala elongo oyo endimami.',
+  'legal.noAgency.title': 'Botambwisi to boyangeli ezali te',
+  'legal.noAgency.body': 'Eloko moko te na lokasa oyo esali boyokani ya botambwisi, boyangeli, kobimisa mikanda, etuluku ya miziki, mosala, boyokani ya mombongo to bolobeli ya mibeko kati na Carine Sanadina, Omoluabi Productions mpe ETL GIS Consulting LLC, longola kaka soki boyokani mosusu oyo ekomami elobi yango polele. Omoluabi Productions elakisami te lokola kompanyi oyo ekomami pembeni, etuluku ya miziki, moyangeli, motindami, mobimisi ya mikanda to molobeli ya mibeko.',
+  'legal.music.title': 'Kosalela miziki mpe biloko ya koyoka to komona',
+  'legal.music.body': 'Miziki, bililingi, maloba, mongongo, misala ya bililingi, video mpe biloko mosusu elakisami mpo na koyebisa bato, kopesa sango mpe komonisa mosala ya mosali oyo endimami. Makoki etikali epai ya bankolo na yango. Kokopa, kozwa, kosalela lisusu, kobongola, kokabola lisusu, kobimisa na bato nyonso to kosalela mpo na mombongo kozanga ndingisa ekomami ya nkolo ya makoki epekisami.',
+  'legal.websiteUse.title': 'Kosalela lokasa',
+  'legal.websiteUse.body': 'Bapaya bakoki kotala lokasa mpo na makambo na bango moko, koyeba sango mpe komona misala. Kosalela lokasa esengeli te kobebisa ndenge etambolaka, kolakisa boyokani ya lokuta, to kopesa makanisi ete ndingisa, botomboli to bolobeli epesami soki ekomami pembeni te.',
+  'legal.liability.title': 'Ndelo ya mokumba',
+  'legal.liability.body': 'Lokasa oyo epesami lokola komonisa mosala mpe kopesa sango. ETL GIS Consulting LLC ekoki kobongisa, kolongola, kotalela lisusu, kotika mpo na ntango, to kosukisa eteni nyonso ya lokasa to biloko oyo emonisami. Na ndenge mibeko epesi nzela, ETL GIS Consulting LLC ezali na mokumba te mpo na mikakatano ya zele te, oyo elandi pembeni, to oyo ewuti na kosalela lokasa, kozala na yango, banzela ya bato mosusu, to koyoka miziki.',
+  'legal.takedown.title': 'Kosenga kolongola to kobongisa',
+  'legal.takedown.body': 'Masengi ya kobongisa, kolongola, mituna ya makoki, mituna ya miziki to biloko mosusu, to kosenga polele na makoki esengeli kotindama na eteni ya kokoma ya lokasa. Pesa makambo ekoki mpo toyeba eloko nini etali mpe lolenge ya bosengi mpo etalelama malamu.',
+  'legal.takedown.link': 'Kende na eteni ya kokoma',
+  'legal.entity.title': 'Eteni oyo etambwisaka',
+  'legal.entity.body': 'ETL GIS Consulting LLC ezali eteni ekomami na mibeko oyo etali botambwisi mpe bokonzi ya lokasa mpe komonisa yango. Omoluabi Productions esalaka lokola elembo ya mosala ya bokeli mpe ya koyebisa bato oyo etambolaka na se ya ETL GIS Consulting LLC, mpe na lokasa oyo elakisami te lokola eteni ya mibeko ekomami pembeni.',
   'footer.rights': '© 2026 Carine Sanadina. Makoki nyonso ebatelami.',
-  'footer.legal': 'Legal / Conditions',
-  'footer.credit': 'Concept, design mpe présentation digitale ya site na Omoluabi Productions, projet créatif oyo etambolaka na se ya ETL GIS Consulting LLC.'
+  'footer.navLabel': 'Nzela ya kotambola na nse ya lokasa',
+  'footer.legal': 'Mibeko / Maloba ya kosalela',
+  'footer.credit': 'Likanisi, kitoko mpe komonisa lokasa na nzela ya tekiniki esalemi na Omoluabi Productions, mosala ya bokeli oyo etambolaka na se ya ETL GIS Consulting LLC.'
 };
 
 const supportedLanguages = Object.keys(translations);
@@ -730,6 +795,12 @@ if (musicPlayers.length) {
   const getAudio = (player) => player.querySelector('audio');
   const getDurationLabel = (player) => player.querySelector('[data-duration]');
   const getPlayToggle = (player) => player.querySelector('[data-play-toggle]');
+  const getTrackTitle = (player) => {
+    const playToggle = getPlayToggle(player);
+    return playToggle && playToggle.dataset.trackKey
+      ? translate(playToggle.dataset.trackKey)
+      : player.dataset.trackTitle;
+  };
 
   const updateToggle = (button, audio, title) => {
     if (!button) {
@@ -768,15 +839,16 @@ if (musicPlayers.length) {
     miniPlayer.setAttribute('aria-hidden', 'false');
     miniPlayer.classList.toggle('is-playing', audio && !audio.paused && !audio.ended);
     mini.cover.src = player.dataset.trackCover;
-    mini.cover.alt = `${player.dataset.trackTitle} ${translate('audio.coverArt')}`;
+    const trackTitle = getTrackTitle(player);
+    mini.cover.alt = `${trackTitle} ${translate('audio.coverArt')}`;
     mini.cover.referrerPolicy = 'no-referrer';
     mini.title.dataset.hasTrack = 'true';
-    mini.title.textContent = player.dataset.trackTitle;
+    mini.title.textContent = trackTitle;
     mini.artist.textContent = player.dataset.trackArtist;
     mini.volume.value = String(audio ? audio.volume : mini.volume.value);
     setRangeFill(mini.volume, mini.volume.value, mini.volume.max);
     syncMiniProgress(audio);
-    updateToggle(mini.toggle, audio, player.dataset.trackTitle);
+    updateToggle(mini.toggle, audio, getTrackTitle(player));
   };
 
   const resetMiniPlayer = () => {
@@ -862,7 +934,7 @@ if (musicPlayers.length) {
       }
 
       player.classList.remove('is-playing');
-      updateToggle(getPlayToggle(player), audio, player.dataset.trackTitle);
+      updateToggle(getPlayToggle(player), audio, getTrackTitle(player));
     });
   };
 
@@ -893,11 +965,11 @@ if (musicPlayers.length) {
       return true;
     } catch (error) {
       player.classList.remove('is-playing');
-      updateToggle(getPlayToggle(player), audio, player.dataset.trackTitle);
+      updateToggle(getPlayToggle(player), audio, getTrackTitle(player));
 
       if (miniPlayer && activePlayer === player) {
         miniPlayer.classList.remove('is-playing');
-        updateToggle(mini.toggle, audio, player.dataset.trackTitle);
+        updateToggle(mini.toggle, audio, trackTitle);
       }
 
       if (status) {
@@ -922,7 +994,6 @@ if (musicPlayers.length) {
 
   musicPlayers.forEach((musicPlayer) => {
     const audio = getAudio(musicPlayer);
-    const title = musicPlayer.dataset.trackTitle;
     const playToggle = getPlayToggle(musicPlayer);
     const status = musicPlayer.querySelector('[data-audio-status]');
 
@@ -967,17 +1038,17 @@ if (musicPlayers.length) {
       audio.addEventListener('play', () => {
         musicPlayer.classList.add('is-playing');
         showMiniPlayer(musicPlayer);
-        updateToggle(playToggle, audio, title);
+        updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
         if (miniPlayer) {
           miniPlayer.classList.add('is-playing');
-          updateToggle(mini.toggle, audio, title);
+          updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
       });
 
       audio.addEventListener('pause', () => {
         musicPlayer.classList.remove('is-playing');
-        updateToggle(playToggle, audio, title);
+        updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
         if (!audio.ended && !isSwitchingTracks) {
           userStoppedPlayback = true;
@@ -985,7 +1056,7 @@ if (musicPlayers.length) {
 
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
-          updateToggle(mini.toggle, audio, title);
+          updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
       });
 
@@ -994,12 +1065,12 @@ if (musicPlayers.length) {
 
         musicPlayer.classList.remove('is-playing');
         audio.currentTime = 0;
-        updateToggle(playToggle, audio, title);
+        updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
           syncMiniProgress(audio);
-          updateToggle(mini.toggle, audio, title);
+          updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
 
         if (shouldAdvance) {
@@ -1017,12 +1088,12 @@ if (musicPlayers.length) {
 
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
-          updateToggle(mini.toggle, audio, title);
+          updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
       });
 
       window.addEventListener('carine:languagechange', () => {
-        updateToggle(playToggle, audio, title);
+        updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
         if (status && status.textContent) {
           status.textContent = musicPlayer.classList.contains('is-ready') ? '' : translate('audio.unavailable');
@@ -1081,8 +1152,10 @@ if (musicPlayers.length) {
       }
 
       const audio = getAudio(activePlayer);
-      updateToggle(mini.toggle, audio, activePlayer.dataset.trackTitle);
-      mini.cover.alt = `${activePlayer.dataset.trackTitle} ${translate('audio.coverArt')}`;
+      const trackTitle = getTrackTitle(activePlayer);
+      mini.title.textContent = trackTitle;
+      updateToggle(mini.toggle, audio, trackTitle);
+      mini.cover.alt = `${trackTitle} ${translate('audio.coverArt')}`;
     });
 
     mini.volume.addEventListener('input', () => {
