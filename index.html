@@ -19,14 +19,19 @@
       content="Explore the books, advocacy, and emotional wellness voice of Carine Sanadina, a Congolese-born healthcare professional and author based in Jacksonville, Florida."
     />
     <meta property="og:url" content="https://omoluabi1003.github.io/Carine-Sanadina/" />
-    <meta property="og:image" content="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Carine%20Sanadina.png" />
+    <meta property="og:image" content="/assets/CS-logo.png" />
+    <meta property="og:image:alt" content="Carine Sanadina logo" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Carine Sanadina | Healthcare Professional, Author & Survivor Advocate" />
     <meta
       name="twitter:description"
       content="Turning pain into healing, survival into purpose, and stories into restoration."
     />
+    <meta name="twitter:image" content="/assets/CS-logo.png" />
+    <meta name="twitter:image:alt" content="Carine Sanadina logo" />
 
+    <link rel="icon" type="image/png" href="/assets/CS-logo.png" />
+    <link rel="apple-touch-icon" href="/assets/CS-logo.png" />
     <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -240,6 +245,54 @@
 
             <article
               class="playlist-track"
+              aria-labelledby="track-consolation-title"
+              data-audio-player
+              data-audio-src="/assets/music/consolation.mp3"
+              data-track-title="Consolation"
+              data-track-artist="Carine Sanadina"
+              data-track-cover="/assets/music/consolation-cover.png"
+            >
+              <audio aria-label="Consolation by Carine Sanadina" preload="metadata"></audio>
+              <div class="track-cover-wrap">
+                <img
+                  src="/assets/music/consolation-cover.png"
+                  alt="Consolation cover art"
+                  class="track-cover"
+                  width="1000"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                  data-fallback-target="music-cover-consolation-fallback"
+                />
+                <div class="image-fallback music-cover-fallback" id="music-cover-consolation-fallback" role="note" aria-live="polite">
+                  Consolation cover art is temporarily unavailable.
+                </div>
+              </div>
+
+              <div class="track-meta">
+                <p class="music-label">Track 01</p>
+                <h3 id="track-consolation-title">Consolation</h3>
+                <p class="artist-name">Carine Sanadina</p>
+                <p class="track-description">Healing-centered comfort and hope</p>
+              </div>
+
+              <div class="track-equalizer equalizer" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+
+              <div class="track-duration" aria-live="off">
+                <span class="sr-only">Duration:</span>
+                <span data-duration>0:00</span>
+              </div>
+
+              <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play Consolation">
+                <span class="play-icon" aria-hidden="true"></span>
+              </button>
+              <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
+            </article>
+
+            <article
+              class="playlist-track"
               aria-labelledby="track-la-gentillesse-title"
               data-audio-player
               data-audio-src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.mp3"
@@ -266,7 +319,7 @@
               </div>
 
               <div class="track-meta">
-                <p class="music-label">Track 01</p>
+                <p class="music-label">Track 02</p>
                 <h3 id="track-la-gentillesse-title">La Gentillesse</h3>
                 <p class="artist-name">Carine Sanadina</p>
                 <p class="track-description">Faith-filled kindness anthem</p>
@@ -315,7 +368,7 @@
               </div>
 
               <div class="track-meta">
-                <p class="music-label">Track 02</p>
+                <p class="music-label">Track 03</p>
                 <h3 id="track-wonderful-title">Wonderful</h3>
                 <p class="artist-name">Carine Sanadina</p>
                 <p class="track-description">Joyful praise and gratitude</p>
