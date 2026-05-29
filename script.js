@@ -724,26 +724,36 @@ if (musicPlayers.length) {
     : null;
 
   let activePlayer = null;
+  let userStoppedPlayback = false;
+  let isSwitchingTracks = false;
+
+  const getAudio = (player) => player.querySelector('audio');
+  const getDurationLabel = (player) => player.querySelector('[data-duration]');
+  const getPlayToggle = (player) => player.querySelector('[data-play-toggle]');
 
   const updateToggle = (button, audio, title) => {
     if (!button) {
       return;
     }
 
-    const isPlaying = audio && !audio.paused;
+    const isPlaying = audio && !audio.paused && !audio.ended;
     button.setAttribute('aria-label', `${isPlaying ? translate('audio.pause') : translate('audio.play')} ${title}`);
   };
+
+  const getSafeDuration = (audio, fallbackDuration = 100) => (
+    audio && Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : fallbackDuration
+  );
 
   const syncMiniProgress = (audio) => {
     if (!mini || !audio) {
       return;
     }
 
-    const max = Number.isFinite(audio.duration) ? audio.duration : 100;
+    const max = getSafeDuration(audio);
     mini.current.textContent = formatTime(audio.currentTime);
-    mini.duration.textContent = Number.isFinite(audio.duration) ? formatTime(audio.duration) : '0:00';
+    mini.duration.textContent = Number.isFinite(audio.duration) && audio.duration > 0 ? formatTime(audio.duration) : '0:00';
     mini.progress.max = String(max);
-    mini.progress.value = String(audio.currentTime);
+    mini.progress.value = String(Math.min(audio.currentTime, max));
     setRangeFill(mini.progress, mini.progress.value, mini.progress.max);
   };
 
@@ -752,21 +762,91 @@ if (musicPlayers.length) {
       return;
     }
 
-    const audio = player.querySelector('audio');
+    const audio = getAudio(player);
     activePlayer = player;
     miniPlayer.classList.add('is-visible');
     miniPlayer.setAttribute('aria-hidden', 'false');
-    miniPlayer.classList.toggle('is-playing', audio && !audio.paused);
+    miniPlayer.classList.toggle('is-playing', audio && !audio.paused && !audio.ended);
     mini.cover.src = player.dataset.trackCover;
     mini.cover.alt = `${player.dataset.trackTitle} ${translate('audio.coverArt')}`;
     mini.cover.referrerPolicy = 'no-referrer';
     mini.title.dataset.hasTrack = 'true';
     mini.title.textContent = player.dataset.trackTitle;
     mini.artist.textContent = player.dataset.trackArtist;
-    mini.volume.value = String(audio.volume);
+    mini.volume.value = String(audio ? audio.volume : mini.volume.value);
     setRangeFill(mini.volume, mini.volume.value, mini.volume.max);
     syncMiniProgress(audio);
     updateToggle(mini.toggle, audio, player.dataset.trackTitle);
+  };
+
+  const resetMiniPlayer = () => {
+    activePlayer = null;
+
+    if (!mini || !miniPlayer) {
+      return;
+    }
+
+    miniPlayer.classList.remove('is-playing', 'is-visible');
+    miniPlayer.setAttribute('aria-hidden', 'true');
+    mini.cover.removeAttribute('src');
+    mini.cover.alt = '';
+    mini.title.dataset.hasTrack = 'false';
+    mini.title.textContent = translate('mini.noTrack');
+    mini.artist.textContent = 'Carine Sanadina';
+    mini.current.textContent = '0:00';
+    mini.duration.textContent = '0:00';
+    mini.progress.max = '100';
+    mini.progress.value = '0';
+    setRangeFill(mini.progress, 0, 100);
+    updateToggle(mini.toggle, null, translate('mini.noTrack'));
+  };
+
+  const setPlayerReadyState = (player, isReady) => {
+    const playToggle = getPlayToggle(player);
+    const status = player.querySelector('[data-audio-status]');
+
+    player.classList.toggle('is-ready', isReady);
+
+    if (playToggle) {
+      playToggle.disabled = !isReady;
+    }
+
+    if (status && isReady) {
+      status.textContent = '';
+    }
+  };
+
+  const syncDuration = (player) => {
+    const audio = getAudio(player);
+    const duration = getDurationLabel(player);
+
+    if (!audio || !duration || !Number.isFinite(audio.duration) || audio.duration <= 0) {
+      return false;
+    }
+
+    duration.textContent = formatTime(audio.duration);
+
+    if (activePlayer === player) {
+      syncMiniProgress(audio);
+    }
+
+    return true;
+  };
+
+  const prepareAudio = (player) => {
+    const audio = getAudio(player);
+    const audioSrc = player.dataset.audioSrc;
+
+    if (!audio || !audioSrc) {
+      setPlayerReadyState(player, false);
+      return;
+    }
+
+    audio.preload = 'metadata';
+    audio.src = audioSrc;
+    audio.volume = mini && mini.volume ? Number(mini.volume.value) : 0.85;
+    setPlayerReadyState(player, true);
+    audio.load();
   };
 
   const pauseOtherPlayers = (currentPlayer) => {
@@ -775,74 +855,108 @@ if (musicPlayers.length) {
         return;
       }
 
-      const audio = player.querySelector('audio');
+      const audio = getAudio(player);
 
       if (audio && !audio.paused) {
         audio.pause();
       }
+
+      player.classList.remove('is-playing');
+      updateToggle(getPlayToggle(player), audio, player.dataset.trackTitle);
     });
   };
 
-  const playAudio = async (player) => {
-    const audio = player.querySelector('audio');
+  const playAudio = async (player, { isAutoAdvance = false } = {}) => {
+    const audio = getAudio(player);
     const status = player.querySelector('[data-audio-status]');
 
-    if (!audio) {
-      return;
+    if (!audio || !player.dataset.audioSrc) {
+      setPlayerReadyState(player, false);
+      return false;
     }
 
+    isSwitchingTracks = true;
     pauseOtherPlayers(player);
+    isSwitchingTracks = false;
+    userStoppedPlayback = false;
     showMiniPlayer(player);
+
+    if (audio.ended || audio.currentTime >= getSafeDuration(audio, 0)) {
+      audio.currentTime = 0;
+    }
 
     try {
       await audio.play();
       if (status) {
         status.textContent = '';
       }
+      return true;
     } catch (error) {
-      if (status) {
-        status.textContent = translate('audio.playbackError');
+      player.classList.remove('is-playing');
+      updateToggle(getPlayToggle(player), audio, player.dataset.trackTitle);
+
+      if (miniPlayer && activePlayer === player) {
+        miniPlayer.classList.remove('is-playing');
+        updateToggle(mini.toggle, audio, player.dataset.trackTitle);
       }
+
+      if (status) {
+        status.textContent = isAutoAdvance ? translate('audio.unavailable') : translate('audio.playbackError');
+      }
+
+      return false;
     }
   };
 
+  const playNextTrack = (currentPlayer) => {
+    const currentIndex = musicPlayers.indexOf(currentPlayer);
+    const nextPlayer = musicPlayers[currentIndex + 1];
+
+    if (!nextPlayer) {
+      resetMiniPlayer();
+      return;
+    }
+
+    playAudio(nextPlayer, { isAutoAdvance: true });
+  };
+
   musicPlayers.forEach((musicPlayer) => {
-    const audioSrc = musicPlayer.dataset.audioSrc;
+    const audio = getAudio(musicPlayer);
     const title = musicPlayer.dataset.trackTitle;
-    const audio = musicPlayer.querySelector('audio');
-    const playToggle = musicPlayer.querySelector('[data-play-toggle]');
-    const duration = musicPlayer.querySelector('[data-duration]');
+    const playToggle = getPlayToggle(musicPlayer);
     const status = musicPlayer.querySelector('[data-audio-status]');
 
-    const syncDuration = () => {
-      if (!Number.isFinite(audio.duration)) {
-        return;
-      }
+    if (audio && musicPlayer.dataset.audioSrc) {
+      audio.addEventListener('loadstart', () => {
+        setPlayerReadyState(musicPlayer, false);
+        if (status) {
+          status.textContent = '';
+        }
+      });
 
-      duration.textContent = formatTime(audio.duration);
+      audio.addEventListener('loadedmetadata', () => {
+        syncDuration(musicPlayer);
+        setPlayerReadyState(musicPlayer, true);
+      });
 
-      if (activePlayer === musicPlayer) {
-        syncMiniProgress(audio);
-      }
-    };
+      audio.addEventListener('durationchange', () => {
+        syncDuration(musicPlayer);
+      });
 
-    const setPlayerReadyState = (isReady) => {
-      musicPlayer.classList.toggle('is-ready', isReady);
-      playToggle.disabled = !isReady;
+      audio.addEventListener('canplay', () => {
+        syncDuration(musicPlayer);
+        setPlayerReadyState(musicPlayer, true);
+      });
 
-      if (status && isReady) {
-        status.textContent = '';
-      }
-    };
+      audio.addEventListener('loadeddata', () => {
+        syncDuration(musicPlayer);
+      });
 
-    setPlayerReadyState(Boolean(audio && audioSrc));
-
-    if (audio && audioSrc) {
-      audio.src = audioSrc;
-      audio.volume = mini && mini.volume ? Number(mini.volume.value) : 0.85;
-
-      audio.addEventListener('loadedmetadata', syncDuration);
-      audio.addEventListener('durationchange', syncDuration);
+      audio.addEventListener('waiting', () => {
+        if (activePlayer === musicPlayer && status) {
+          status.textContent = '';
+        }
+      });
 
       audio.addEventListener('timeupdate', () => {
         if (activePlayer === musicPlayer) {
@@ -854,11 +968,20 @@ if (musicPlayers.length) {
         musicPlayer.classList.add('is-playing');
         showMiniPlayer(musicPlayer);
         updateToggle(playToggle, audio, title);
+
+        if (miniPlayer) {
+          miniPlayer.classList.add('is-playing');
+          updateToggle(mini.toggle, audio, title);
+        }
       });
 
       audio.addEventListener('pause', () => {
         musicPlayer.classList.remove('is-playing');
         updateToggle(playToggle, audio, title);
+
+        if (!audio.ended && !isSwitchingTracks) {
+          userStoppedPlayback = true;
+        }
 
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
@@ -867,6 +990,8 @@ if (musicPlayers.length) {
       });
 
       audio.addEventListener('ended', () => {
+        const shouldAdvance = activePlayer === musicPlayer && !userStoppedPlayback;
+
         musicPlayer.classList.remove('is-playing');
         audio.currentTime = 0;
         updateToggle(playToggle, audio, title);
@@ -876,33 +1001,44 @@ if (musicPlayers.length) {
           syncMiniProgress(audio);
           updateToggle(mini.toggle, audio, title);
         }
+
+        if (shouldAdvance) {
+          playNextTrack(musicPlayer);
+        }
       });
 
       audio.addEventListener('error', () => {
-        setPlayerReadyState(false);
+        setPlayerReadyState(musicPlayer, false);
         musicPlayer.classList.remove('is-playing');
 
         if (status) {
           status.textContent = translate('audio.unavailable');
         }
+
+        if (activePlayer === musicPlayer && miniPlayer) {
+          miniPlayer.classList.remove('is-playing');
+          updateToggle(mini.toggle, audio, title);
+        }
       });
 
+      window.addEventListener('carine:languagechange', () => {
+        updateToggle(playToggle, audio, title);
 
-    window.addEventListener('carine:languagechange', () => {
-      updateToggle(playToggle, audio, title);
-
-      if (status && status.textContent) {
-        status.textContent = musicPlayer.classList.contains('is-ready') ? '' : translate('audio.unavailable');
-      }
-    });
+        if (status && status.textContent) {
+          status.textContent = musicPlayer.classList.contains('is-ready') ? '' : translate('audio.unavailable');
+        }
+      });
 
       playToggle.addEventListener('click', () => {
         if (audio.paused) {
           playAudio(musicPlayer);
         } else {
+          userStoppedPlayback = true;
           audio.pause();
         }
       });
+
+      prepareAudio(musicPlayer);
     } else if (playToggle) {
       playToggle.disabled = true;
     }
@@ -917,11 +1053,12 @@ if (musicPlayers.length) {
         return;
       }
 
-      const audio = activePlayer.querySelector('audio');
+      const audio = getAudio(activePlayer);
 
       if (audio.paused) {
         playAudio(activePlayer);
       } else {
+        userStoppedPlayback = true;
         audio.pause();
       }
     });
@@ -931,11 +1068,10 @@ if (musicPlayers.length) {
         return;
       }
 
-      const audio = activePlayer.querySelector('audio');
+      const audio = getAudio(activePlayer);
       audio.currentTime = Number(mini.progress.value);
       syncMiniProgress(audio);
     });
-
 
     window.addEventListener('carine:languagechange', () => {
       if (!activePlayer) {
@@ -944,14 +1080,14 @@ if (musicPlayers.length) {
         return;
       }
 
-      const audio = activePlayer.querySelector('audio');
+      const audio = getAudio(activePlayer);
       updateToggle(mini.toggle, audio, activePlayer.dataset.trackTitle);
       mini.cover.alt = `${activePlayer.dataset.trackTitle} ${translate('audio.coverArt')}`;
     });
 
     mini.volume.addEventListener('input', () => {
       musicPlayers.forEach((player) => {
-        const audio = player.querySelector('audio');
+        const audio = getAudio(player);
 
         if (audio) {
           audio.volume = Number(mini.volume.value);
