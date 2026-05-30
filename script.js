@@ -1720,6 +1720,125 @@ document.addEventListener('click', (event) => {
   }
 });
 
+const formatTrackDuration = (seconds) => {
+  if (!Number.isFinite(seconds) || seconds <= 0) {
+    return '0:00';
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, '0');
+  return `${minutes}:${remainingSeconds}`;
+};
+
+const CARINE_MUSIC_PLAYLIST = [
+  {
+    id: 'consolation',
+    title: 'Consolation',
+    artist: 'Carine Sanadina',
+    coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Consolation%20Cover.png',
+    audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Consolation.mp3',
+    mood: 'Healing comfort',
+    description: 'Healing-centered comfort and hope',
+    duration: 242.712,
+    translationKey: 'tracks.consolation'
+  },
+  {
+    id: 'gentillesse',
+    title: 'La Gentillesse',
+    artist: 'Carine Sanadina',
+    coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.png',
+    audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/La%20Gentillesse.mp3',
+    mood: 'Faith-filled kindness',
+    description: 'Faith-filled kindness anthem',
+    duration: 218.064,
+    translationKey: 'tracks.gentillesse'
+  },
+  {
+    id: 'wonderful',
+    title: 'Wonderful',
+    artist: 'Carine Sanadina',
+    coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful%20cover.png',
+    audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Wonderful.mp3',
+    mood: 'Joyful gratitude',
+    description: 'Joyful praise and gratitude',
+    duration: 230.28,
+    translationKey: 'tracks.wonderful'
+  }
+];
+
+const renderCarinePlaylist = () => {
+  const playlistMount = document.querySelector('[data-playlist-tracks]');
+
+  if (!playlistMount) {
+    return;
+  }
+
+  playlistMount.innerHTML = CARINE_MUSIC_PLAYLIST.map((track, index) => {
+    const trackKey = track.translationKey;
+    const titleId = `track-${track.id}-title`;
+    const fallbackId = `music-cover-${track.id}-fallback`;
+    const durationLabel = formatTrackDuration(track.duration);
+
+    return `
+      <article
+        class="playlist-track"
+        aria-labelledby="${titleId}"
+        data-audio-player
+        data-track-id="${track.id}"
+        data-audio-src="${track.audioUrl}"
+        data-track-title="${track.title}"
+        data-track-artist="${track.artist}"
+        data-track-cover="${track.coverUrl}"
+        data-track-duration="${track.duration}"
+        data-track-mood="${track.mood}"
+        data-track-description="${track.description}"
+      >
+        <audio aria-label="${track.title} by ${track.artist}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
+        <div class="track-cover-wrap">
+          <img
+            src="${track.coverUrl}"
+            alt="${track.title} cover art"
+            data-i18n-alt="${trackKey}.coverAlt"
+            class="track-cover"
+            width="1000"
+            height="1000"
+            loading="lazy"
+            decoding="async"
+            referrerpolicy="no-referrer"
+            data-fallback-target="${fallbackId}"
+          />
+          <div class="image-fallback music-cover-fallback" id="${fallbackId}" role="note" aria-live="polite">
+            <span data-i18n="${trackKey}.fallback">${track.title} cover art is temporarily unavailable.</span>
+          </div>
+        </div>
+
+        <div class="track-meta">
+          <p class="music-label" data-i18n="${trackKey}.number">Track ${String(index + 1).padStart(2, '0')}</p>
+          <h3 id="${titleId}" data-i18n="${trackKey}.title">${track.title}</h3>
+          <p class="artist-name">${track.artist}</p>
+          <p class="track-description" data-i18n="${trackKey}.description">${track.description}</p>
+        </div>
+
+        <div class="track-equalizer equalizer" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="track-duration" aria-live="off">
+          <span class="sr-only" data-i18n="music.duration">Duration:</span>
+          <span data-duration>${durationLabel}</span>
+        </div>
+
+        <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play ${track.title}" data-track-key="${trackKey}.title" data-i18n-aria-label="${trackKey}.playLabel">
+          <span class="play-icon" aria-hidden="true"></span>
+        </button>
+        <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
+      </article>
+    `;
+  }).join('');
+};
+
+renderCarinePlaylist();
+
 applyLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
 
 const navToggle = document.querySelector('.nav-toggle');
