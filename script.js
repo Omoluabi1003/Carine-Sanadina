@@ -1,15 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
 
-const languageLabels = {
-  en: 'English',
-  fr: 'French',
-  ln: 'Lingala',
-  es: 'Spanish',
-  sw: 'Swahili',
-  yo: 'Yoruba'
-};
-
 const translations = {};
 
 translations.en = {
@@ -964,6 +955,7 @@ const premiumExperienceTranslations = {
     'music.controlsLabel': 'Music playback controls',
     'music.nowPlaying': 'Now playing',
     'music.visualizerFallback': 'Audio visualization is unavailable because this browser does not support the Web Audio API.',
+    'music.visualizerAvailable': 'Visualizer animation appears above.',
     'music.shuffle': 'Shuffle',
     'music.shuffleOn': 'Shuffle on',
     'music.shuffleOff': 'Shuffle off',
@@ -1011,6 +1003,7 @@ const premiumExperienceTranslations = {
     'music.controlsLabel': 'Commandes de lecture musicale',
     'music.nowPlaying': 'En lecture',
     'music.visualizerFallback': 'La visualisation audio est indisponible, car ce navigateur ne prend pas en charge l’API Web Audio.',
+    'music.visualizerAvailable': 'L’animation de visualisation apparaît ci-dessus.',
     'music.shuffle': 'Aléatoire',
     'music.shuffleOn': 'Aléatoire activé',
     'music.shuffleOff': 'Aléatoire désactivé',
@@ -1085,13 +1078,229 @@ Object.entries(premiumExperienceTranslations).forEach(([language, dictionary]) =
   }
 });
 
+
+const fullSiteTranslationAdditions = {
+  en: {
+    'cta.call': 'Call Carine',
+    'offline.metaTitle': 'Offline | Carine Sanadina',
+    'offline.kicker': 'Offline',
+    'offline.heading': 'You’re offline, but the healing journey can continue.',
+    'offline.body': 'Reconnect to stream music, open external book links, and receive the latest live site assets. Core pages cached for this static GitHub Pages app will reopen when available.',
+    'offline.returnHome': 'Return to the home page',
+    'reflections.explore': 'Explore related work',
+    'reflections.exploreAria': 'Explore related section for {title}',
+    'reflection.category.survival': 'Survival',
+    'reflection.category.toxic': 'Toxic Relationship Awareness',
+    'reflection.category.faith': 'Faith & Hope',
+    'reflection.category.restoration': 'Restoration',
+    'reflection.category.kindness': 'Kindness',
+    'reflection.category.healing': 'Emotional Healing',
+    'reflection.hidden.title': 'When hidden pain finally receives language',
+    'reflection.hidden.excerpt': 'Inspired by The Pain Nobody Saw, this reflection centers the dignity of naming abuse, cultural pressure, and silent suffering without asking survivors to turn their pain into performance.',
+    'reflection.hidden.readTime': '4 min',
+    'reflection.hidden.quote': 'Pain may shape the story, but it does not get to own the ending.',
+    'reflection.hidden.prompt': 'Where do you need gentler language for something you survived?',
+    'reflection.red.title': 'Red flags are invitations to protect your peace',
+    'reflection.red.excerpt': 'A book-inspired note on recognizing emotional manipulation, spiritual danger, unhealthy attachments, and patterns that quietly drain clarity, confidence, and purpose.',
+    'reflection.red.readTime': '5 min',
+    'reflection.red.quote': 'What costs your peace is asking for discernment.',
+    'reflection.red.prompt': 'What pattern has been asking you to choose clarity sooner?',
+    'reflection.sunshine.title': 'The road to sunshine can begin while the road is still hard',
+    'reflection.sunshine.excerpt': 'Drawn from the hope-forward themes of The Road to Sunshine, this reflection honors struggle, faith, and the patient courage required to keep walking toward brighter days.',
+    'reflection.sunshine.readTime': '3 min',
+    'reflection.sunshine.quote': 'Hope does not deny the storm; it keeps a lamp lit through it.',
+    'reflection.sunshine.prompt': 'What small light can you carry into this week?',
+    'reflection.storm.title': 'After the storm, restoration can be quiet before it is visible',
+    'reflection.storm.excerpt': 'A restoration-centered meditation for readers rebuilding peace after hardship, honoring the unseen strength that comes after survival.',
+    'reflection.storm.readTime': '4 min',
+    'reflection.storm.quote': 'Healing often starts as a private decision to breathe again.',
+    'reflection.storm.prompt': 'What would restoration look like if it did not need to be rushed?',
+    'reflection.kindness.title': 'Kindness can become a healing practice',
+    'reflection.kindness.excerpt': 'Inspired by La Gentillesse, this note treats kindness as more than softness: a daily discipline that protects dignity, repairs atmosphere, and opens room for grace.',
+    'reflection.kindness.readTime': '3 min',
+    'reflection.kindness.quote': 'Gentleness can still be strong enough to change a room.',
+    'reflection.kindness.prompt': 'Where can kindness become a boundary, not a burden?',
+    'reflection.consolation.title': 'Consolation is not weakness; it is oxygen for courage',
+    'reflection.consolation.excerpt': 'A music-inspired reflection on receiving comfort without shame, especially when healing feels slow, private, or unfinished.',
+    'reflection.consolation.readTime': '3 min',
+    'reflection.consolation.quote': 'Comfort gives courage somewhere safe to begin again.',
+    'reflection.consolation.prompt': 'What form of consolation would help you keep going today?'
+  },
+  fr: {
+    'cta.call': 'Appeler Carine',
+    'offline.metaTitle': 'Hors ligne | Carine Sanadina',
+    'offline.kicker': 'Hors ligne',
+    'offline.heading': 'Vous êtes hors ligne, mais le chemin de guérison peut continuer.',
+    'offline.body': 'Reconnectez-vous pour écouter la musique, ouvrir les liens externes des livres et recevoir les derniers éléments du site. Les pages principales mises en cache pour cette application statique GitHub Pages se rouvriront lorsqu’elles seront disponibles.',
+    'offline.returnHome': 'Retourner à la page d’accueil',
+    'reflections.explore': 'Explorer l’œuvre liée',
+    'reflections.exploreAria': 'Explorer la section liée à {title}',
+    'reflection.category.survival': 'Survie',
+    'reflection.category.toxic': 'Sensibilisation aux relations toxiques',
+    'reflection.category.faith': 'Foi et espoir',
+    'reflection.category.restoration': 'Restauration',
+    'reflection.category.kindness': 'Bonté',
+    'reflection.category.healing': 'Guérison émotionnelle',
+    'reflection.hidden.title': 'Quand la douleur cachée reçoit enfin des mots',
+    'reflection.hidden.excerpt': 'Inspirée de The Pain Nobody Saw, cette réflexion honore la dignité de nommer l’abus, la pression culturelle et la souffrance silencieuse sans demander aux survivantes de transformer leur douleur en spectacle.',
+    'reflection.hidden.readTime': '4 min',
+    'reflection.hidden.quote': 'La douleur peut façonner l’histoire, mais elle ne possède pas la fin.',
+    'reflection.hidden.prompt': 'Où avez-vous besoin de mots plus doux pour ce que vous avez survécu?',
+    'reflection.red.title': 'Les signaux rouges invitent à protéger votre paix',
+    'reflection.red.excerpt': 'Une note inspirée du livre sur la manipulation émotionnelle, le danger spirituel, les attachements malsains et les schémas qui épuisent la clarté, la confiance et le but.',
+    'reflection.red.readTime': '5 min',
+    'reflection.red.quote': 'Ce qui coûte votre paix demande du discernement.',
+    'reflection.red.prompt': 'Quel schéma vous invite à choisir la clarté plus tôt?',
+    'reflection.sunshine.title': 'La route vers le soleil peut commencer même quand la route reste dure',
+    'reflection.sunshine.excerpt': 'Inspirée par les thèmes d’espoir de The Road to Sunshine, cette réflexion honore la lutte, la foi et le courage patient de continuer vers des jours plus lumineux.',
+    'reflection.sunshine.readTime': '3 min',
+    'reflection.sunshine.quote': 'L’espoir ne nie pas la tempête; il garde une lampe allumée.',
+    'reflection.sunshine.prompt': 'Quelle petite lumière pouvez-vous porter cette semaine?',
+    'reflection.storm.title': 'Après la tempête, la restauration peut être discrète avant d’être visible',
+    'reflection.storm.excerpt': 'Une méditation sur la reconstruction de la paix après l’épreuve, honorant la force invisible qui vient après la survie.',
+    'reflection.storm.readTime': '4 min',
+    'reflection.storm.quote': 'La guérison commence souvent par une décision privée de respirer encore.',
+    'reflection.storm.prompt': 'À quoi ressemblerait la restauration si elle n’avait pas besoin d’être pressée?',
+    'reflection.kindness.title': 'La bonté peut devenir une pratique de guérison',
+    'reflection.kindness.excerpt': 'Inspirée de La Gentillesse, cette note voit la bonté comme une discipline quotidienne qui protège la dignité, répare l’atmosphère et ouvre un espace de grâce.',
+    'reflection.kindness.readTime': '3 min',
+    'reflection.kindness.quote': 'La douceur peut rester assez forte pour changer une pièce.',
+    'reflection.kindness.prompt': 'Où la bonté peut-elle devenir une limite, et non un fardeau?',
+    'reflection.consolation.title': 'La consolation n’est pas une faiblesse; c’est l’oxygène du courage',
+    'reflection.consolation.excerpt': 'Une réflexion inspirée par la musique sur l’accueil du réconfort sans honte, surtout lorsque la guérison semble lente, privée ou inachevée.',
+    'reflection.consolation.readTime': '3 min',
+    'reflection.consolation.quote': 'Le réconfort donne au courage un lieu sûr pour recommencer.',
+    'reflection.consolation.prompt': 'Quelle forme de consolation vous aiderait à continuer aujourd’hui?'
+  },
+  es: {
+    'cta.call': 'Llamar a Carine',
+    'offline.metaTitle': 'Sin conexión | Carine Sanadina',
+    'offline.kicker': 'Sin conexión',
+    'offline.heading': 'Estás sin conexión, pero el camino de sanación puede continuar.',
+    'offline.body': 'Vuelve a conectarte para reproducir música, abrir enlaces externos de libros y recibir los recursos más recientes del sitio. Las páginas principales guardadas para esta aplicación estática de GitHub Pages se abrirán cuando estén disponibles.',
+    'offline.returnHome': 'Volver a la página principal',
+    'reflections.explore': 'Explorar obra relacionada',
+    'reflections.exploreAria': 'Explorar la sección relacionada con {title}',
+    'reflection.category.survival': 'Supervivencia',
+    'reflection.category.toxic': 'Conciencia sobre relaciones tóxicas',
+    'reflection.category.faith': 'Fe y esperanza',
+    'reflection.category.restoration': 'Restauración',
+    'reflection.category.kindness': 'Bondad',
+    'reflection.category.healing': 'Sanación emocional',
+    'reflection.hidden.title': 'Cuando el dolor oculto por fin recibe lenguaje',
+    'reflection.hidden.excerpt': 'Inspirada en The Pain Nobody Saw, esta reflexión centra la dignidad de nombrar el abuso, la presión cultural y el sufrimiento silencioso sin convertir el dolor en espectáculo.',
+    'reflection.hidden.readTime': '4 min',
+    'reflection.hidden.quote': 'El dolor puede dar forma a la historia, pero no posee el final.',
+    'reflection.hidden.prompt': '¿Dónde necesitas palabras más suaves para algo que sobreviviste?',
+    'reflection.red.title': 'Las señales rojas invitan a proteger tu paz',
+    'reflection.red.excerpt': 'Una nota inspirada en el libro sobre reconocer manipulación emocional, peligro espiritual, apegos dañinos y patrones que agotan la claridad, la confianza y el propósito.',
+    'reflection.red.readTime': '5 min',
+    'reflection.red.quote': 'Lo que cuesta tu paz pide discernimiento.',
+    'reflection.red.prompt': '¿Qué patrón te pide elegir claridad antes?',
+    'reflection.sunshine.title': 'El camino hacia el sol puede empezar aunque la ruta siga difícil',
+    'reflection.sunshine.excerpt': 'Tomada de los temas esperanzadores de The Road to Sunshine, esta reflexión honra la lucha, la fe y el valor paciente de seguir hacia días más luminosos.',
+    'reflection.sunshine.readTime': '3 min',
+    'reflection.sunshine.quote': 'La esperanza no niega la tormenta; mantiene una lámpara encendida.',
+    'reflection.sunshine.prompt': '¿Qué pequeña luz puedes llevar esta semana?',
+    'reflection.storm.title': 'Después de la tormenta, la restauración puede ser silenciosa antes de verse',
+    'reflection.storm.excerpt': 'Una meditación para reconstruir la paz después de la dificultad, honrando la fuerza invisible que llega después de sobrevivir.',
+    'reflection.storm.readTime': '4 min',
+    'reflection.storm.quote': 'La sanación a menudo empieza como una decisión privada de volver a respirar.',
+    'reflection.storm.prompt': '¿Cómo sería la restauración si no tuviera que apresurarse?',
+    'reflection.kindness.title': 'La bondad puede convertirse en una práctica sanadora',
+    'reflection.kindness.excerpt': 'Inspirada en La Gentillesse, esta nota trata la bondad como una disciplina diaria que protege la dignidad, repara el ambiente y abre espacio para la gracia.',
+    'reflection.kindness.readTime': '3 min',
+    'reflection.kindness.quote': 'La ternura puede ser lo bastante fuerte para cambiar una habitación.',
+    'reflection.kindness.prompt': '¿Dónde puede la bondad ser un límite y no una carga?',
+    'reflection.consolation.title': 'La consolación no es debilidad; es oxígeno para el valor',
+    'reflection.consolation.excerpt': 'Una reflexión inspirada en la música sobre recibir consuelo sin vergüenza, especialmente cuando sanar se siente lento, privado o incompleto.',
+    'reflection.consolation.readTime': '3 min',
+    'reflection.consolation.quote': 'El consuelo da al valor un lugar seguro para empezar de nuevo.',
+    'reflection.consolation.prompt': '¿Qué forma de consuelo te ayudaría a seguir hoy?'
+  },
+  ln: {
+    'nav.reflections': 'Makanisi', 'hero.readReflections': 'Tanga makanisi', 'cta.call': 'Benga Carine',
+    'offline.metaTitle': 'Ozali na internet te | Carine Sanadina', 'offline.kicker': 'Internet ezali te', 'offline.heading': 'Ozali na internet te, kasi mobembo ya kobika ekoki kokoba.', 'offline.body': 'Zongela kokangama na internet mpo na koyoka miziki, kofungola ba liens ya mikanda, mpe kozwa biloko ya sika ya site. Nkasa ya ntina oyo ebombami ekofungwama lisusu soki ekoki.', 'offline.returnHome': 'Zonga na lokasa ya ebandeli',
+    'reflections.explore': 'Tala mosala oyo ekokani', 'reflections.exploreAria': 'Tala eteni oyo etali {title}',
+    'reflection.category.survival': 'Kobika', 'reflection.category.toxic': 'Kososola boyokani ya mabe', 'reflection.category.faith': 'Kondima mpe elikya', 'reflection.category.restoration': 'Kozongisama', 'reflection.category.kindness': 'Boboto', 'reflection.category.healing': 'Kobika ya motema',
+    'reflection.hidden.title': 'Ntango pasi oyo ebombamaki ezwi maloba', 'reflection.hidden.excerpt': 'Euti na The Pain Nobody Saw, makanisi oyo epesi lokumu na kotya nkombo na mobulu, pression ya mimeseno, mpe pasi ya kimia kozanga kosenga na babiki komonisa pasi na bango lokola lisano.', 'reflection.hidden.readTime': '4 min', 'reflection.hidden.quote': 'Pasi ekoki kobongisa lisolo, kasi ezali nkolo ya nsuka te.', 'reflection.hidden.prompt': 'Wapi ozali na mposa ya maloba ya boboto mpo na likambo oyo obikaki?',
+    'reflection.red.title': 'Bilembo ya motane ebengaka kobatela kimia na yo', 'reflection.red.excerpt': 'Likanisi ya buku mpo na koyeba manipulation ya motema, likama ya molimo, kokangama ya mabe, mpe banzela oyo ekitisaka polele, confiance, mpe ntina.', 'reflection.red.readTime': '5 min', 'reflection.red.quote': 'Likambo oyo elongolaka kimia na yo esengaka bososoli.', 'reflection.red.prompt': 'Ndenge nini ozali kobengama kopona polele noki?',
+    'reflection.sunshine.title': 'Nzela ya moi ekoki kobanda ata nzela ezali makasi', 'reflection.sunshine.excerpt': 'Euti na makanisi ya elikya ya The Road to Sunshine, likanisi oyo epesi lokumu na etumba, kondima, mpe mpiko ya kokoba kotambola na mikolo ya pole.', 'reflection.sunshine.readTime': '3 min', 'reflection.sunshine.quote': 'Elikya eboyi mopɛpɛ makasi te; ebatelaka mwinda kati na yango.', 'reflection.sunshine.prompt': 'Mwinda nini ya moke okoki komema poso oyo?',
+    'reflection.storm.title': 'Sima ya mopɛpɛ makasi, kozongisama ekoki kozala kimia liboso emonana', 'reflection.storm.excerpt': 'Likanisi ya kozongisa kimia sima ya mpasi, kopesa lokumu na makasi oyo emonanaka te sima ya kobika.', 'reflection.storm.readTime': '4 min', 'reflection.storm.quote': 'Kobika ebandaka mingi lokola mokano ya sekele ya kopema lisusu.', 'reflection.storm.prompt': 'Kozongisama elingaki kozala ndenge nini soki esengelaki kopotama te?',
+    'reflection.kindness.title': 'Boboto ekoki kokoma momeseno ya kobikisa', 'reflection.kindness.excerpt': 'Euti na La Gentillesse, likanisi oyo emoni boboto lokola momeseno ya mokolo na mokolo oyo ebatelaka lokumu, ebongisaka esika, mpe efungolaka nzela ya ngolu.', 'reflection.kindness.readTime': '3 min', 'reflection.kindness.quote': 'Boboto ekoki kozala makasi mpo na kobongola ndako.', 'reflection.kindness.prompt': 'Wapi boboto ekoki kozala ndelo, kasi mokumba te?',
+    'reflection.consolation.title': 'Libondisi ezali bolembu te; ezali mopepe ya mpiko', 'reflection.consolation.excerpt': 'Likanisi euti na miziki mpo na koyamba libondisi kozanga soni, mingimingi ntango kobika ezali komonana malɛmbɛ, ya sekele, to esili naino te.', 'reflection.consolation.readTime': '3 min', 'reflection.consolation.quote': 'Libondisi epesaka mpiko esika ya kimia mpo na kobanda lisusu.', 'reflection.consolation.prompt': 'Libondisi nini ekosalisa yo kokoba lelo?'
+  },
+  sw: {
+    'nav.reflections': 'Tafakari', 'hero.readReflections': 'Soma tafakari', 'cta.call': 'Mpigie Carine',
+    'offline.metaTitle': 'Nje ya mtandao | Carine Sanadina', 'offline.kicker': 'Nje ya mtandao', 'offline.heading': 'Uko nje ya mtandao, lakini safari ya uponyaji inaweza kuendelea.', 'offline.body': 'Unganisha tena ili kusikiliza muziki, kufungua viungo vya vitabu vya nje, na kupata rasilimali mpya za tovuti. Kurasa kuu zilizohifadhiwa kwa programu hii tuli ya GitHub Pages zitafunguka zinapopatikana.', 'offline.returnHome': 'Rudi ukurasa wa nyumbani',
+    'reflections.explore': 'Chunguza kazi inayohusiana', 'reflections.exploreAria': 'Chunguza sehemu inayohusiana na {title}',
+    'reflection.category.survival': 'Kunusurika', 'reflection.category.toxic': 'Ufahamu wa mahusiano yenye sumu', 'reflection.category.faith': 'Imani na matumaini', 'reflection.category.restoration': 'Urejesho', 'reflection.category.kindness': 'Fadhili', 'reflection.category.healing': 'Uponyaji wa kihisia',
+    'reflection.hidden.title': 'Maumivu yaliyofichwa yanapopata lugha hatimaye', 'reflection.hidden.excerpt': 'Ikiongozwa na The Pain Nobody Saw, tafakari hii inaheshimu hadhi ya kutaja unyanyasaji, shinikizo la kitamaduni, na mateso ya kimya bila kuwataka walionusurika wageuze maumivu yao kuwa maonyesho.', 'reflection.hidden.readTime': '4 min', 'reflection.hidden.quote': 'Maumivu yanaweza kuunda hadithi, lakini hayamiliki mwisho.', 'reflection.hidden.prompt': 'Ni wapi unahitaji lugha laini kwa kitu ulichonusurika?',
+    'reflection.red.title': 'Alama nyekundu ni mwaliko wa kulinda amani yako', 'reflection.red.excerpt': 'Dokezo lililoongozwa na kitabu kuhusu kutambua udanganyifu wa kihisia, hatari ya kiroho, kushikamana kusikofaa, na mifumo inayomaliza uwazi, ujasiri, na kusudi.', 'reflection.red.readTime': '5 min', 'reflection.red.quote': 'Kinachokugharimu amani yako kinaomba utambuzi.', 'reflection.red.prompt': 'Ni mtindo gani umekuwa ukikuomba uchague uwazi mapema?',
+    'reflection.sunshine.title': 'Barabara ya mwanga inaweza kuanza hata wakati njia bado ni ngumu', 'reflection.sunshine.excerpt': 'Ikichotwa kutoka mada za matumaini za The Road to Sunshine, tafakari hii huheshimu mapambano, imani, na ujasiri wa kuendelea kutembea kuelekea siku nyepesi.', 'reflection.sunshine.readTime': '3 min', 'reflection.sunshine.quote': 'Matumaini hayakani dhoruba; huweka taa ikiwaka ndani yake.', 'reflection.sunshine.prompt': 'Ni mwanga gani mdogo unaweza kubeba wiki hii?',
+    'reflection.storm.title': 'Baada ya dhoruba, urejesho unaweza kuwa kimya kabla haujaonekana', 'reflection.storm.excerpt': 'Tafakari ya kujenga tena amani baada ya ugumu, ikiheshimu nguvu isiyoonekana inayokuja baada ya kunusurika.', 'reflection.storm.readTime': '4 min', 'reflection.storm.quote': 'Uponyaji mara nyingi huanza kama uamuzi wa faragha wa kupumua tena.', 'reflection.storm.prompt': 'Urejesho ungeonekanaje kama usingehitaji kuharakishwa?',
+    'reflection.kindness.title': 'Fadhili zinaweza kuwa mazoezi ya uponyaji', 'reflection.kindness.excerpt': 'Ikiongozwa na La Gentillesse, dokezo hili linaona fadhili kama nidhamu ya kila siku inayolinda hadhi, kurekebisha mazingira, na kufungua nafasi ya neema.', 'reflection.kindness.readTime': '3 min', 'reflection.kindness.quote': 'Upole bado unaweza kuwa na nguvu ya kubadilisha chumba.', 'reflection.kindness.prompt': 'Ni wapi fadhili zinaweza kuwa mpaka, si mzigo?',
+    'reflection.consolation.title': 'Faraja si udhaifu; ni hewa ya ujasiri', 'reflection.consolation.excerpt': 'Tafakari iliyoongozwa na muziki kuhusu kupokea faraja bila aibu, hasa uponyaji unapohisi kuwa wa polepole, wa faragha, au haujakamilika.', 'reflection.consolation.readTime': '3 min', 'reflection.consolation.quote': 'Faraja huipa ujasiri mahali salama pa kuanza tena.', 'reflection.consolation.prompt': 'Ni aina gani ya faraja ingekusaidia kuendelea leo?'
+  },
+  yo: {
+    'nav.reflections': 'Àwọn ìrònú', 'hero.readReflections': 'Ka àwọn ìrònú', 'cta.call': 'Pe Carine',
+    'offline.metaTitle': 'Kò sí lórí ayélujára | Carine Sanadina', 'offline.kicker': 'Kò sí lórí ayélujára', 'offline.heading': 'O kò sí lórí ayélujára, ṣùgbọ́n irin-ajo ìwòsàn lè tẹ̀síwájú.', 'offline.body': 'So pọ̀ mọ́ ayélujára lẹ́ẹ̀kansi láti gbọ́ orin, ṣí àwọn ọna asopọ iwe ita, kí o sì gba ohun tuntun lórí aaye. Àwọn oju-iwe pataki tí a fi pamọ́ fún app GitHub Pages yìí yóò tún ṣí nígbà tí wọ́n bá wà.', 'offline.returnHome': 'Padà sí oju-iwe àkọ́kọ́',
+    'reflections.explore': 'Ṣawari iṣẹ́ tó ní ìbáṣepọ̀', 'reflections.exploreAria': 'Ṣawari apá tó ní ìbáṣepọ̀ pẹ̀lú {title}',
+    'reflection.category.survival': 'Ìyè-lẹ́yìn ewu', 'reflection.category.toxic': 'Ìmọ̀ nípa ibáṣepọ̀ tó léwu', 'reflection.category.faith': 'Ìgbàgbọ́ àti ìrètí', 'reflection.category.restoration': 'Ìmúpadàbọ̀', 'reflection.category.kindness': 'Inú rere', 'reflection.category.healing': 'Ìwòsàn ẹ̀dá ọkàn',
+    'reflection.hidden.title': 'Nígbà tí ìrora tí a fi pamọ́ gba ede nikẹyìn', 'reflection.hidden.excerpt': 'Ní ìmísí The Pain Nobody Saw, ìrònú yìí bọwọ́ fún ọlá ti sisọ orúkọ ìpalára, titẹ̀ aṣa, àti ìjìyà ìdákẹ́jẹ láì bẹ̀rẹ̀ pé kí àwọn tó yè bọ́ fi ìrora wọn ṣe eré.', 'reflection.hidden.readTime': '4 min', 'reflection.hidden.quote': 'Ìrora lè ṣe apẹrẹ ìtàn, ṣùgbọ́n kò ní opin rẹ.', 'reflection.hidden.prompt': 'Níbo ni o nílò ede onírẹlẹ̀ fún ohun tí o yè kọjá?',
+    'reflection.red.title': 'Àwọn àmì pupa jẹ́ ìpè láti dáàbò bo àlàáfíà rẹ', 'reflection.red.excerpt': 'Àkọsílẹ̀ tó ní ìmísí iwe lori mímọ ìtan ẹ̀dá ọkàn, ewu ẹ̀mí, ìfarapa tí kò dára, àti àṣà tí ń mú kedere, igboya, àti ète rẹ dínkù.', 'reflection.red.readTime': '5 min', 'reflection.red.quote': 'Ohun tó ń jẹ àlàáfíà rẹ ń béèrè ìmòye.', 'reflection.red.prompt': 'Àṣà wo ló ń pe ọ láti yan kedere kíákíá?',
+    'reflection.sunshine.title': 'Ọ̀nà sí ìmọ́lẹ̀ lè bẹ̀rẹ̀ nígbà tí ọ̀nà ṣì nira', 'reflection.sunshine.excerpt': 'Láti inú àwọn akori ìrètí The Road to Sunshine, ìrònú yìí bọwọ́ fún ìjàkadì, ìgbàgbọ́, àti ìgboyà sùúrù láti tẹ̀síwájú sí ọjọ́ tó mọ́.', 'reflection.sunshine.readTime': '3 min', 'reflection.sunshine.quote': 'Ìrètí kò sẹ́ ìjì; ó ń jẹ́ kí fitila tan láàrin rẹ.', 'reflection.sunshine.prompt': 'Ìmọ́lẹ̀ kékeré wo ni o lè gbé lọ sí ọ̀sẹ̀ yìí?',
+    'reflection.storm.title': 'Lẹ́yìn ìjì, ìmúpadàbọ̀ lè dakẹ́ kí ó tó hàn', 'reflection.storm.excerpt': 'Ìṣàrò fún àwọn tó ń tún àlàáfíà kọ́ lẹ́yìn ìṣòro, bíbọwọ́ fún agbára tí kò hàn lẹ́yìn ìyè-lẹ́yìn ewu.', 'reflection.storm.readTime': '4 min', 'reflection.storm.quote': 'Ìwòsàn máa ń bẹ̀rẹ̀ gẹ́gẹ́ bí ìpinnu ikọkọ láti mí lẹ́ẹ̀kansi.', 'reflection.storm.prompt': 'Báwo ni ìmúpadàbọ̀ yóò rí tí kò bá nílò ìyára?',
+    'reflection.kindness.title': 'Inú rere lè di ìṣe ìwòsàn', 'reflection.kindness.excerpt': 'Ní ìmísí La Gentillesse, àkọsílẹ̀ yìí wo inú rere gẹ́gẹ́ bí ìbáwí ojoojúmọ́ tó dáàbò bo ọlá, tún afẹ́fẹ́ ṣe, tí ó sì ṣí ààyè fún oore-ọfẹ́.', 'reflection.kindness.readTime': '3 min', 'reflection.kindness.quote': 'Ìrẹlẹ̀ lè ní agbára tó láti yí yara kan padà.', 'reflection.kindness.prompt': 'Níbo ni inú rere lè di ààlà, kì í ṣe ẹrù?',
+    'reflection.consolation.title': 'Ìtùnú kì í ṣe ailera; ó jẹ́ afẹ́fẹ́ fún ìgboyà', 'reflection.consolation.excerpt': 'Ìrònú orin lori gbigba ìtùnú láì ní ìtìjú, pàápàá nígbà tí ìwòsàn bá dà bí ohun lọ́ra, ikọkọ, tàbí tí kò tíì pé.', 'reflection.consolation.readTime': '3 min', 'reflection.consolation.quote': 'Ìtùnú fún ìgboyà ní ibi ailewu láti bẹ̀rẹ̀ lẹ́ẹ̀kansi.', 'reflection.consolation.prompt': 'Irú ìtùnú wo ló máa ràn ọ́ lọ́wọ́ láti tẹ̀síwájú lónìí?'
+  }
+};
+
+Object.entries(fullSiteTranslationAdditions).forEach(([language, dictionary]) => {
+  if (translations[language]) {
+    Object.assign(translations[language], dictionary);
+  }
+});
+
+Object.values(translations).forEach((dictionary) => {
+  Object.assign(dictionary, {
+    'language.name.en': 'English',
+    'language.name.fr': 'French',
+    'language.name.ln': 'Lingala',
+    'language.name.es': 'Spanish',
+    'language.name.sw': 'Swahili',
+    'language.name.yo': 'Yoruba',
+    'tracks.consolation.title': 'Consolation',
+    'tracks.gentillesse.title': 'La Gentillesse',
+    'tracks.wonderful.title': 'Wonderful'
+  });
+});
+
 const supportedLanguages = Object.keys(translations);
 let currentLanguage = DEFAULT_LANGUAGE;
 
+const isDevelopmentHost = () => ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
+
 const translate = (key, language = currentLanguage) => {
   const languageDictionary = translations[language] || translations[DEFAULT_LANGUAGE];
-  return languageDictionary[key] || translations[DEFAULT_LANGUAGE][key] || key;
+  const translatedValue = languageDictionary[key] || translations[DEFAULT_LANGUAGE][key];
+
+  if (translatedValue) {
+    return translatedValue;
+  }
+
+  if (isDevelopmentHost() && window.console && typeof window.console.warn === 'function') {
+    window.console.warn(`[i18n] Missing translation key: ${key}`);
+  }
+
+  return key;
 };
+
+const translateTemplate = (key, replacements = {}, language = currentLanguage) => (
+  translate(key, language).replace(/\{(\w+)\}/g, (match, token) => replacements[token] || match)
+);
+
+const getLanguageLabel = (language) => translate(`language.name.${language}`, DEFAULT_LANGUAGE);
 
 const getStoredLanguage = () => {
   try {
@@ -1131,10 +1340,21 @@ const applyLanguage = (language) => {
     });
   });
 
+  [
+    ['i18nPlaceholder', 'placeholder'],
+    ['i18nAriaLabel', 'aria-label'],
+    ['i18nTitle', 'title'],
+    ['i18nAlt', 'alt']
+  ].forEach(([datasetKey, attribute]) => {
+    document.querySelectorAll(`[data-${datasetKey.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}]`).forEach((element) => {
+      element.setAttribute(attribute, translate(element.dataset[datasetKey], nextLanguage));
+    });
+  });
+
   document.querySelectorAll('[data-language-option]').forEach((button) => {
     const optionLanguage = button.dataset.languageOption;
     const isActive = optionLanguage === nextLanguage;
-    const optionLabel = languageLabels[optionLanguage] || languageLabels[DEFAULT_LANGUAGE];
+    const optionLabel = getLanguageLabel(optionLanguage) || getLanguageLabel(DEFAULT_LANGUAGE);
 
     button.textContent = optionLabel;
     button.setAttribute('aria-label', optionLabel);
@@ -1144,11 +1364,11 @@ const applyLanguage = (language) => {
   });
 
   document.querySelectorAll('[data-language-current]').forEach((element) => {
-    element.textContent = languageLabels[nextLanguage] || languageLabels[DEFAULT_LANGUAGE];
+    element.textContent = getLanguageLabel(nextLanguage) || getLanguageLabel(DEFAULT_LANGUAGE);
   });
 
   document.querySelectorAll('[data-language-trigger]').forEach((trigger) => {
-    const activeLabel = languageLabels[nextLanguage] || languageLabels[DEFAULT_LANGUAGE];
+    const activeLabel = getLanguageLabel(nextLanguage) || getLanguageLabel(DEFAULT_LANGUAGE);
     trigger.setAttribute('aria-label', `${translate('language.selectorLabel', nextLanguage)}: ${activeLabel}`);
   });
 
@@ -1339,66 +1559,12 @@ remoteImages.forEach((image) => {
 
 
 const reflectionArticles = [
-  {
-    id: 'hidden-pain-visible-language',
-    title: 'When hidden pain finally receives language',
-    excerpt: 'Inspired by The Pain Nobody Saw, this reflection centers the dignity of naming abuse, cultural pressure, and silent suffering without asking survivors to turn their pain into performance.',
-    category: 'Survival',
-    readTime: '4 min',
-    quote: 'Pain may shape the story, but it does not get to own the ending.',
-    prompt: 'Where do you need gentler language for something you survived?',
-    link: '#works'
-  },
-  {
-    id: 'red-flags-peace',
-    title: 'Red flags are invitations to protect your peace',
-    excerpt: 'A book-inspired note on recognizing emotional manipulation, spiritual danger, unhealthy attachments, and patterns that quietly drain clarity, confidence, and purpose.',
-    category: 'Toxic Relationship Awareness',
-    readTime: '5 min',
-    quote: 'What costs your peace is asking for discernment.',
-    prompt: 'What pattern has been asking you to choose clarity sooner?',
-    link: '#works'
-  },
-  {
-    id: 'road-to-sunshine-faith',
-    title: 'The road to sunshine can begin while the road is still hard',
-    excerpt: 'Drawn from the hope-forward themes of The Road to Sunshine, this reflection honors struggle, faith, and the patient courage required to keep walking toward brighter days.',
-    category: 'Faith & Hope',
-    readTime: '3 min',
-    quote: 'Hope does not deny the storm; it keeps a lamp lit through it.',
-    prompt: 'What small light can you carry into this week?',
-    link: '#works'
-  },
-  {
-    id: 'after-the-storm-restoration',
-    title: 'After the storm, restoration can be quiet before it is visible',
-    excerpt: 'A restoration-centered meditation for readers rebuilding peace after hardship, honoring the unseen strength that comes after survival.',
-    category: 'Restoration',
-    readTime: '4 min',
-    quote: 'Healing often starts as a private decision to breathe again.',
-    prompt: 'What would restoration look like if it did not need to be rushed?',
-    link: '#focus'
-  },
-  {
-    id: 'kindness-as-practice',
-    title: 'Kindness can become a healing practice',
-    excerpt: 'Inspired by La Gentillesse, this note treats kindness as more than softness: a daily discipline that protects dignity, repairs atmosphere, and opens room for grace.',
-    category: 'Kindness',
-    readTime: '3 min',
-    quote: 'Gentleness can still be strong enough to change a room.',
-    prompt: 'Where can kindness become a boundary, not a burden?',
-    link: '#music'
-  },
-  {
-    id: 'consolation-and-courage',
-    title: 'Consolation is not weakness; it is oxygen for courage',
-    excerpt: 'A music-inspired reflection on receiving comfort without shame, especially when healing feels slow, private, or unfinished.',
-    category: 'Emotional Healing',
-    readTime: '3 min',
-    quote: 'Comfort gives courage somewhere safe to begin again.',
-    prompt: 'What form of consolation would help you keep going today?',
-    link: '#music'
-  }
+  { id: 'hidden-pain-visible-language', key: 'reflection.hidden', categoryKey: 'reflection.category.survival', link: '#works' },
+  { id: 'red-flags-peace', key: 'reflection.red', categoryKey: 'reflection.category.toxic', link: '#works' },
+  { id: 'road-to-sunshine-faith', key: 'reflection.sunshine', categoryKey: 'reflection.category.faith', link: '#works' },
+  { id: 'after-the-storm-restoration', key: 'reflection.storm', categoryKey: 'reflection.category.restoration', link: '#focus' },
+  { id: 'kindness-as-practice', key: 'reflection.kindness', categoryKey: 'reflection.category.kindness', link: '#music' },
+  { id: 'consolation-and-courage', key: 'reflection.consolation', categoryKey: 'reflection.category.healing', link: '#music' }
 ];
 
 const initializeReflections = () => {
@@ -1414,48 +1580,90 @@ const initializeReflections = () => {
   }
 
   const pageSize = 3;
-  let activeCategory = 'All';
+  let activeCategory = 'all';
   let visibleCount = pageSize;
 
-  const categories = ['All', ...new Set(reflectionArticles.map((article) => article.category))];
+  const categories = [{ id: 'all', labelKey: 'reflections.all' }, ...[...new Set(reflectionArticles.map((article) => article.categoryKey))].map((categoryKey) => ({ id: categoryKey, labelKey: categoryKey }))];
 
   const createTagButton = (category) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'reflection-filter';
-    button.dataset.category = category;
-    button.textContent = category === 'All' ? translate('reflections.all') : category;
-    button.setAttribute('aria-pressed', String(category === activeCategory));
+    button.dataset.category = category.id;
+    button.textContent = translate(category.labelKey);
+    button.setAttribute('aria-pressed', String(category.id === activeCategory));
     button.addEventListener('click', () => {
-      activeCategory = category;
+      activeCategory = category.id;
       visibleCount = pageSize;
       renderReflections();
     });
     return button;
   };
 
+  const getReflectionText = (article, field) => translate(`${article.key}.${field}`);
+
   const articleMatches = (article) => {
     const query = search.value.trim().toLowerCase();
-    const searchable = [article.title, article.excerpt, article.category, article.quote, article.prompt].join(' ').toLowerCase();
-    const matchesCategory = activeCategory === 'All' || article.category === activeCategory;
+    const searchable = [
+      getReflectionText(article, 'title'),
+      getReflectionText(article, 'excerpt'),
+      translate(article.categoryKey),
+      getReflectionText(article, 'quote'),
+      getReflectionText(article, 'prompt')
+    ].join(' ').toLowerCase();
+    const matchesCategory = activeCategory === 'all' || article.categoryKey === activeCategory;
     return matchesCategory && (!query || searchable.includes(query));
   };
 
   const createArticleCard = (article, isFeatured = false) => {
     const card = document.createElement('article');
+    const title = getReflectionText(article, 'title');
+    const quote = getReflectionText(article, 'quote');
+    const prompt = getReflectionText(article, 'prompt');
     card.className = isFeatured ? 'reflection-card reflection-card-featured' : 'reflection-card reveal is-visible';
     card.id = `reflection-${article.id}`;
-    card.innerHTML = `
-      <div class="reflection-card__meta">
-        <span class="reflection-tag">${article.category}</span>
-        <span>${article.readTime} ${translate('reflections.readTime')}</span>
-      </div>
-      <h3>${article.title}</h3>
-      <p>${article.excerpt}</p>
-      ${article.quote ? `<blockquote>${article.quote}</blockquote>` : ''}
-      ${article.prompt ? `<p class="reflection-prompt"><strong>${translate('reflections.promptLabel')}:</strong> ${article.prompt}</p>` : ''}
-      <a class="text-link reflection-link" href="${article.link}" aria-label="Explore related section for ${article.title}">Explore related work</a>
-    `;
+
+    const meta = document.createElement('div');
+    meta.className = 'reflection-card__meta';
+
+    const tag = document.createElement('span');
+    tag.className = 'reflection-tag';
+    tag.textContent = translate(article.categoryKey);
+
+    const readTime = document.createElement('span');
+    readTime.textContent = `${getReflectionText(article, 'readTime')} ${translate('reflections.readTime')}`;
+    meta.append(tag, readTime);
+
+    const heading = document.createElement('h3');
+    heading.textContent = title;
+
+    const excerpt = document.createElement('p');
+    excerpt.textContent = getReflectionText(article, 'excerpt');
+
+    card.append(meta, heading, excerpt);
+
+    if (quote) {
+      const quoteElement = document.createElement('blockquote');
+      quoteElement.textContent = quote;
+      card.append(quoteElement);
+    }
+
+    if (prompt) {
+      const promptElement = document.createElement('p');
+      promptElement.className = 'reflection-prompt';
+      const strong = document.createElement('strong');
+      strong.textContent = `${translate('reflections.promptLabel')}:`;
+      promptElement.append(strong, ` ${prompt}`);
+      card.append(promptElement);
+    }
+
+    const link = document.createElement('a');
+    link.className = 'text-link reflection-link';
+    link.href = article.link;
+    link.textContent = translate('reflections.explore');
+    link.setAttribute('aria-label', translateTemplate('reflections.exploreAria', { title }));
+    card.append(link);
+
     return card;
   };
 
@@ -1499,7 +1707,8 @@ const initializeReflections = () => {
 const initializePwaExperience = () => {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch((error) => {
+      const scriptUrl = document.querySelector('script[src$="script.js"]')?.src || window.location.href;
+      navigator.serviceWorker.register(new URL('sw.js', scriptUrl)).catch((error) => {
         console.info('Service worker registration skipped:', error);
       });
     });
@@ -1702,7 +1911,7 @@ if (musicPlayers.length) {
     }
 
     visualizerFallback.hidden = true;
-    visualizerFallback.textContent = translate('music.visualizerFallback') || 'Visualizer animation appears above.';
+    visualizerFallback.textContent = translate('music.visualizerFallback');
   };
 
   const startVisualizer = () => {
@@ -2214,7 +2423,15 @@ if (musicPlayers.length) {
     if (event.target === mobilePlayer) setMobilePlayerOpen(false);
   });
 
-  window.addEventListener('carine:languagechange', () => updateCommandButtons());
+  window.addEventListener('carine:languagechange', () => {
+    updateCommandButtons();
+    if (activePlayer) {
+      syncStage(activePlayer);
+    } else {
+      if (mobileTitle) mobileTitle.textContent = translate('mini.noTrack');
+      updateToggle(mobileToggle, null, translate('mini.noTrack'));
+    }
+  });
 
   const storedState = getStoredPlayerState();
   shuffleEnabled = Boolean(storedState.shuffleEnabled);

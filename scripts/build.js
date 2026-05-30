@@ -8,7 +8,7 @@ const publicDir = join(root, 'public');
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(dist, { recursive: true });
 
-for (const file of ['index.html', 'styles.css', 'script.js']) {
+for (const file of ['index.html', 'styles.css', 'script.js', 'offline.html', 'manifest.json', 'sw.js']) {
   copyFileSync(join(root, file), join(dist, file));
 }
 

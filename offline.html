@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-i18n-attr="lang:html.lang">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#081120" />
-    <title>Offline | Carine Sanadina</title>
+    <title data-i18n="offline.metaTitle">Offline | Carine Sanadina</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="offline-page">
     <main class="offline-shell" aria-labelledby="offline-heading">
       <section class="legal-shell offline-card">
-        <p class="eyebrow">Offline</p>
-        <h1 id="offline-heading">You’re offline, but the healing journey can continue.</h1>
-        <p class="legal-intro">Reconnect to stream music, open external book links, and receive the latest live site assets. Core pages cached for this static GitHub Pages app will reopen when available.</p>
-        <a class="button button-primary" href="./">Return to the home page</a>
+        <p class="eyebrow" data-i18n="offline.kicker">Offline</p>
+        <h1 id="offline-heading" data-i18n="offline.heading">You’re offline, but the healing journey can continue.</h1>
+        <p class="legal-intro" data-i18n="offline.body">Reconnect to stream music, open external book links, and receive the latest live site assets. Core pages cached for this static GitHub Pages app will reopen when available.</p>
+        <a class="button button-primary" href="./" data-i18n="offline.returnHome">Return to the home page</a>
       </section>
     </main>
+    <script src="script.js" defer></script>
   </body>
 </html>
