@@ -1686,18 +1686,42 @@ h1, h2, h3, blockquote { color: var(--ivory); }
 .music-visualizer {
   position: relative;
   z-index: 2;
-  display: block;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: clamp(8px, 1.4vw, 16px);
   width: 100%;
   min-width: 240px;
   height: clamp(140px, 22vw, 220px);
   margin-top: 18px;
+  padding: clamp(22px, 4vw, 38px);
+  overflow: hidden;
   border-radius: 24px;
-  background: linear-gradient(180deg, rgba(4, 18, 43, 0.94), rgba(9, 35, 73, 0.82));
+  background:
+    radial-gradient(circle at 50% 18%, rgba(96, 165, 250, 0.22), transparent 34%),
+    linear-gradient(180deg, rgba(4, 18, 43, 0.94), rgba(9, 35, 73, 0.82));
   box-shadow: inset 0 0 0 1px rgba(234, 242, 255, 0.14), 0 18px 54px rgba(3, 12, 30, 0.26);
   opacity: 1;
 }
 
-.music-visualizer.is-visualizing,
+.music-visualizer span {
+  display: block;
+  width: clamp(8px, 1.25vw, 15px);
+  height: 34%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(56, 189, 248, 0.94) 48%, rgba(29, 185, 84, 0.9));
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.22);
+  opacity: 0.72;
+  transform-origin: bottom;
+  animation: cssVisualizerPulse 1.2s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.music-visualizer span:nth-child(2n) { height: 54%; animation-duration: 0.95s; }
+.music-visualizer span:nth-child(3n) { height: 42%; animation-duration: 1.38s; }
+.music-visualizer span:nth-child(4n) { height: 68%; animation-duration: 1.08s; }
+.music-visualizer span:nth-child(5n) { height: 48%; animation-duration: 1.54s; }
+
 .music-visualizer.is-playing {
   box-shadow:
     inset 0 0 0 1px rgba(96, 165, 250, 0.38),
@@ -1705,18 +1729,14 @@ h1, h2, h3, blockquote { color: var(--ivory); }
     0 0 92px rgba(29, 185, 84, 0.14);
 }
 
-.music-visualizer.visualizer-fallback-active,
-.music-visualizer.is-fallback-visualizing {
-  box-shadow:
-    inset 0 0 0 1px rgba(45, 212, 191, 0.34),
-    0 0 42px rgba(45, 212, 191, 0.18),
-    0 0 84px rgba(29, 185, 84, 0.16);
-  animation: visualizerGlowPulse 1.65s ease-in-out infinite;
+.music-visualizer.is-playing span {
+  animation-play-state: running;
+  opacity: 1;
 }
 
-@keyframes visualizerGlowPulse {
-  0%, 100% { filter: saturate(1) brightness(1); }
-  50% { filter: saturate(1.18) brightness(1.08); }
+@keyframes cssVisualizerPulse {
+  0%, 100% { transform: scaleY(0.48); filter: saturate(0.95); }
+  50% { transform: scaleY(1); filter: saturate(1.22) brightness(1.08); }
 }
 
 .visualizer-note {

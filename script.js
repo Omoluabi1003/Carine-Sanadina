@@ -1372,14 +1372,6 @@ if (musicPlayers.length) {
   const mobileRepeat = document.querySelector('[data-mobile-repeat]');
   const miniExpand = document.querySelector('[data-mini-expand]');
   const mobileClose = document.querySelector('[data-mobile-close]');
-  const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
-  const isWebAudioSupported = Boolean(AudioContextConstructor);
-  let audioContext = null;
-  let analyser = null;
-  let visualizerFrame = 0;
-  let visualizerContext = null;
-  let activeVisualizerSource = null;
-  const audioSources = new WeakMap();
   const isAudioDebugEnabled = ['localhost', '127.0.0.1', ''].includes(window.location.hostname)
     || new URLSearchParams(window.location.search).has('debugAudio');
 
@@ -1393,32 +1385,6 @@ if (musicPlayers.length) {
 
   const getVerifiedAudioSource = (player) => (player?.dataset.audioSrc || '').trim();
 
-  const shouldUseCorsForAudio = (source) => {
-    if (!source) {
-      return false;
-    }
-
-    try {
-      const url = new URL(source, window.location.href);
-      return url.origin === window.location.origin || url.hostname === 'raw.githubusercontent.com';
-    } catch (error) {
-      return false;
-    }
-  };
-
-  const canSafelyAnalyseAudioSource = (source) => {
-    if (!source) {
-      return false;
-    }
-
-    try {
-      const url = new URL(source, window.location.href);
-      return url.origin === window.location.origin || shouldUseCorsForAudio(source);
-    } catch (error) {
-      return false;
-    }
-  };
-
   const applyResolvedAudioSource = (player, audio) => {
     const verifiedSource = getVerifiedAudioSource(player);
 
@@ -1428,21 +1394,13 @@ if (musicPlayers.length) {
 
     audio.preload = 'metadata';
 
-    if (shouldUseCorsForAudio(verifiedSource)) {
-      audio.crossOrigin = 'anonymous';
-    } else {
-      audio.removeAttribute('crossorigin');
-    }
-
-    if (audio.dataset.resolvedAudioSrc !== verifiedSource || audio.getAttribute('src') !== verifiedSource) {
+    if (audio.getAttribute('src') !== verifiedSource) {
       audio.src = verifiedSource;
-      audio.dataset.resolvedAudioSrc = verifiedSource;
     }
 
     logAudioDiagnostics('selected-source', {
       track: getTrackTitle(player),
-      selectedSrc: verifiedSource,
-      crossOrigin: audio.crossOrigin || 'none'
+      selectedSrc: verifiedSource
     });
 
     return verifiedSource;
@@ -1523,423 +1481,21 @@ if (musicPlayers.length) {
     visualizerFallback.textContent = translate('music.visualizerFallback') || 'Visualizer animation appears above.';
   };
 
-  const resizeVisualizerCanvas = () => {
-    if (!visualizerCanvas) {
-      return false;
-    }
-
-    const bounds = visualizerCanvas.getBoundingClientRect();
-    const cssWidth = Math.max(1, Math.round(bounds.width || visualizerCanvas.clientWidth || 960));
-    const cssHeight = Math.max(1, Math.round(bounds.height || visualizerCanvas.clientHeight || 220));
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2.5);
-    const nextWidth = Math.round(cssWidth * pixelRatio);
-    const nextHeight = Math.round(cssHeight * pixelRatio);
-
-    visualizerCanvas.style.width = '100%';
-    if (!visualizerCanvas.style.height) {
-      visualizerCanvas.style.height = 'clamp(140px, 22vw, 220px)';
-    }
-
-    if (visualizerCanvas.width !== nextWidth || visualizerCanvas.height !== nextHeight) {
-      visualizerCanvas.width = nextWidth;
-      visualizerCanvas.height = nextHeight;
-    }
-
-    return nextWidth > 1 && nextHeight > 1;
-  };
-
-  const getVisualizerContext = () => {
-    if (!visualizerCanvas) {
-      return null;
-    }
-
-    visualizerContext = visualizerContext || visualizerCanvas.getContext('2d');
-    return visualizerContext;
-  };
-
-  let visualizerMode = 'idle';
-  let zeroDataStartedAt = 0;
-  let fallbackStartedAt = 0;
-  let fallbackSeed = 0;
-  let lastVisualizerDebugAt = 0;
-  let lastAverageFrequency = 0;
-  let isAnalyserConnected = false;
-
-  const getAverageFrequency = (frequencyData) => {
-    if (!frequencyData || !frequencyData.length) {
-      return 0;
-    }
-
-    return frequencyData.reduce((sum, value) => sum + value, 0) / frequencyData.length;
-  };
-
-  const logVisualizerDiagnostics = (audio, reason = 'playback') => {
-    if (!isAudioDebugEnabled || !window.console || typeof window.console.info !== 'function') {
-      return;
-    }
-
-    const now = window.performance.now();
-    if (now - lastVisualizerDebugAt < 1200 && reason !== 'fallback') {
-      return;
-    }
-
-    lastVisualizerDebugAt = now;
-    window.console.info('[music visualizer]', {
-      reason,
-      audioContextState: audioContext ? audioContext.state : 'unavailable',
-      analyserConnected: Boolean(analyser && isAnalyserConnected),
-      averageFrequency: Math.round(lastAverageFrequency * 100) / 100,
-      fallbackActive: visualizerMode === 'fallback',
-      canvas: visualizerCanvas ? `${visualizerCanvas.width}x${visualizerCanvas.height}` : 'missing',
-      audioSrc: audio ? audio.currentSrc || audio.src || '' : ''
-    });
-  };
-
-  const drawVisualizerShell = (context, width, height, energy = 0) => {
-    context.clearRect(0, 0, width, height);
-
-    const background = context.createLinearGradient(0, 0, width, height);
-    background.addColorStop(0, 'rgba(2, 12, 32, 0.98)');
-    background.addColorStop(0.52, 'rgba(4, 24, 55, 0.94)');
-    background.addColorStop(1, 'rgba(10, 49, 95, 0.9)');
-    context.fillStyle = background;
-    context.fillRect(0, 0, width, height);
-
-    const glow = context.createRadialGradient(
-      width * (0.5 + Math.sin(energy * 2.4) * 0.12),
-      height * 0.48,
-      width * 0.04,
-      width * 0.5,
-      height * 0.5,
-      width * 0.72
-    );
-    glow.addColorStop(0, `rgba(29, 185, 84, ${0.18 + energy * 0.2})`);
-    glow.addColorStop(0.44, `rgba(56, 189, 248, ${0.1 + energy * 0.14})`);
-    glow.addColorStop(1, 'rgba(4, 18, 43, 0)');
-    context.fillStyle = glow;
-    context.fillRect(0, 0, width, height);
-
-    context.strokeStyle = `rgba(125, 211, 252, ${0.22 + energy * 0.2})`;
-    context.lineWidth = Math.max(1, width * 0.0018);
-    context.beginPath();
-    context.moveTo(width * 0.04, height * 0.58);
-    context.lineTo(width * 0.96, height * 0.58);
-    context.stroke();
-  };
-
-  const seededMovement = (index, seed) => {
-    const value = Math.sin((index + 1) * 12.9898 + seed * 78.233) * 43758.5453;
-    return value - Math.floor(value);
-  };
-
-  const drawFallbackWave = (context, width, height, progress, isPlaying) => {
-    const centerY = height * 0.46;
-    const amplitude = height * (isPlaying ? 0.09 : 0.025);
-
-    context.save();
-    context.shadowColor = 'rgba(56, 189, 248, 0.42)';
-    context.shadowBlur = isPlaying ? 18 : 6;
-    context.lineWidth = Math.max(2, width * 0.003);
-    context.strokeStyle = isPlaying ? 'rgba(226, 246, 255, 0.9)' : 'rgba(186, 230, 253, 0.45)';
-    context.beginPath();
-
-    for (let point = 0; point <= 150; point += 1) {
-      const x = (point / 150) * width;
-      const waveA = Math.sin(point * 0.18 + progress * 2.8 + fallbackSeed);
-      const waveB = Math.sin(point * 0.07 - progress * 1.6 + fallbackSeed * 0.4);
-      const y = centerY + (waveA * 0.62 + waveB * 0.38) * amplitude;
-      if (point === 0) {
-        context.moveTo(x, y);
-      } else {
-        context.lineTo(x, y);
-      }
-    }
-
-    context.stroke();
-    context.restore();
-  };
-
-  const drawFallbackBars = (context, width, height, isPlaying) => {
-    const barCount = 52;
-    const gap = Math.max(4, width * 0.0054);
-    const barWidth = Math.max(5, (width - gap * (barCount - 1)) / barCount);
-    const activeAudio = activePlayer ? getAudio(activePlayer) : null;
-    const duration = getSafeDuration(activeAudio, activePlayer ? getFallbackDuration(activePlayer) : 0);
-    const trackProgress = duration > 0 && activeAudio ? activeAudio.currentTime / duration : 0;
-    const elapsed = fallbackStartedAt ? (window.performance.now() - fallbackStartedAt) / 1000 : 0;
-    const time = isPlaying ? elapsed * 3.2 + trackProgress * 7 : elapsed * 0.7;
-    const energyPulse = isPlaying ? (Math.sin(time * 1.7) * 0.5 + 0.5) : 0.16;
-    const gradient = context.createLinearGradient(0, height, 0, 0);
-    gradient.addColorStop(0, 'rgba(29, 185, 84, 0.9)');
-    gradient.addColorStop(0.5, 'rgba(45, 212, 191, 0.94)');
-    gradient.addColorStop(0.78, 'rgba(56, 189, 248, 0.96)');
-    gradient.addColorStop(1, 'rgba(248, 250, 252, 0.98)');
-
-    drawFallbackWave(context, width, height, time, isPlaying);
-
-    context.save();
-    context.shadowColor = isPlaying ? 'rgba(29, 185, 84, 0.38)' : 'rgba(45, 212, 191, 0.16)';
-    context.shadowBlur = isPlaying ? 18 + energyPulse * 14 : 8;
-
-    for (let index = 0; index < barCount; index += 1) {
-      const seed = seededMovement(index, fallbackSeed);
-      const pulse = Math.sin(time + index * 0.54 + seed * 4) * 0.5 + 0.5;
-      const secondaryPulse = Math.sin(time * 0.63 + index * 0.19 + seed * 6) * 0.5 + 0.5;
-      const progressPulse = Math.sin(trackProgress * Math.PI * 8 + index * 0.13) * 0.5 + 0.5;
-      const activity = isPlaying
-        ? 0.14 + pulse * 0.46 + secondaryPulse * 0.2 + progressPulse * 0.12
-        : 0.07 + pulse * 0.045 + seed * 0.04;
-      const barHeight = Math.max(height * 0.08, Math.min(height * 0.78, activity * height * 0.74));
-      const x = index * (barWidth + gap);
-      const y = height - barHeight - height * 0.11;
-
-      context.fillStyle = gradient;
-      context.beginPath();
-      if (typeof context.roundRect === 'function') {
-        context.roundRect(x, y, barWidth, barHeight, Math.min(18, barWidth / 2));
-      } else {
-        context.rect(x, y, barWidth, barHeight);
-      }
-      context.fill();
-    }
-
-    context.restore();
-
-    context.save();
-    context.globalCompositeOperation = 'lighter';
-    context.fillStyle = `rgba(29, 185, 84, ${isPlaying ? 0.08 + energyPulse * 0.1 : 0.025})`;
-    context.beginPath();
-    context.ellipse(width * 0.5, height * 0.82, width * (0.24 + energyPulse * 0.06), height * 0.12, 0, 0, Math.PI * 2);
-    context.fill();
-    context.restore();
-  };
-
-  const drawIdleVisualizer = () => {
-    if (!visualizerCanvas) {
-      return;
-    }
-
-    resizeVisualizerCanvas();
-    const context = getVisualizerContext();
-    if (!context) {
-      return;
-    }
-
-    const { width, height } = visualizerCanvas;
-    drawVisualizerShell(context, width, height, 0);
-    drawFallbackBars(context, width, height, false);
-  };
-
-  const ensureVisualizer = async (audio) => {
-    setVisualizerFallback();
-    resizeVisualizerCanvas();
-    drawIdleVisualizer();
-
-    if (!visualizerCanvas || reduceMotion || !audio || !isWebAudioSupported) {
-      visualizerMode = 'fallback';
-      isAnalyserConnected = false;
-      return Boolean(visualizerCanvas);
-    }
-
-    const analysisSource = audio.currentSrc || audio.src || audio.dataset.resolvedAudioSrc || '';
-    if (!canSafelyAnalyseAudioSource(analysisSource)) {
-      visualizerMode = 'fallback';
-      isAnalyserConnected = false;
-      logVisualizerDiagnostics(audio, 'fallback');
-      return Boolean(visualizerCanvas);
-    }
-
-    if (!audioContext) {
-      audioContext = new AudioContextConstructor();
-      analyser = audioContext.createAnalyser();
-      analyser.fftSize = 512;
-      analyser.smoothingTimeConstant = 0.82;
-      analyser.connect(audioContext.destination);
-    }
-
-    if (audioContext.state === 'suspended') {
-      try {
-        await audioContext.resume();
-      } catch (error) {
-        visualizerMode = 'fallback';
-        isAnalyserConnected = false;
-        return Boolean(visualizerCanvas);
-      }
-    }
-
-    logAudioDiagnostics('audio-context', { state: audioContext.state });
-
-    let source = audioSources.get(audio);
-
-    if (!source) {
-      try {
-        source = audioContext.createMediaElementSource(audio);
-        audioSources.set(audio, source);
-      } catch (error) {
-        visualizerMode = 'fallback';
-        isAnalyserConnected = false;
-        return Boolean(visualizerCanvas);
-      }
-    }
-
-    if (activeVisualizerSource !== source) {
-      if (activeVisualizerSource) {
-        try {
-          activeVisualizerSource.disconnect(analyser);
-        } catch (error) {
-          try {
-            activeVisualizerSource.disconnect();
-          } catch (disconnectError) {
-            // Already disconnected by the browser.
-          }
-        }
-      }
-
-      try {
-        source.connect(analyser);
-        isAnalyserConnected = true;
-      } catch (error) {
-        visualizerMode = 'fallback';
-        isAnalyserConnected = false;
-        return Boolean(visualizerCanvas);
-      }
-      activeVisualizerSource = source;
-    } else {
-      isAnalyserConnected = true;
-    }
-
-    visualizerMode = 'audio';
-    zeroDataStartedAt = 0;
-    return resizeVisualizerCanvas();
-  };
-
-  const drawVisualizer = () => {
+  const startVisualizer = () => {
     if (!visualizerCanvas || reduceMotion) {
       return;
     }
 
-    const activeAudio = activePlayer ? getAudio(activePlayer) : null;
-    const context = getVisualizerContext();
-
-    if (!context || !activeAudio || activeAudio.paused || activeAudio.ended) {
-      stopVisualizer();
-      drawIdleVisualizer();
-      return;
-    }
-
-    resizeVisualizerCanvas();
-
-    const { width, height } = visualizerCanvas;
-    let frequencyData = null;
-    let waveData = null;
-
-    if (analyser && visualizerMode === 'audio') {
-      frequencyData = new Uint8Array(analyser.frequencyBinCount);
-      waveData = new Uint8Array(analyser.fftSize);
-      analyser.getByteFrequencyData(frequencyData);
-      analyser.getByteTimeDomainData(waveData);
-      lastAverageFrequency = getAverageFrequency(frequencyData);
-
-      if (lastAverageFrequency <= 0.5) {
-        zeroDataStartedAt = zeroDataStartedAt || window.performance.now();
-        visualizerMode = 'fallback';
-        logVisualizerDiagnostics(activeAudio, 'fallback');
-      } else {
-        zeroDataStartedAt = 0;
-      }
-    }
-
-    const shellEnergy = visualizerMode === 'fallback'
-      ? (Math.sin(((window.performance.now() - fallbackStartedAt) / 1000) * 1.7) * 0.5 + 0.5)
-      : Math.min(lastAverageFrequency / 120, 1);
-    drawVisualizerShell(context, width, height, shellEnergy);
-
-    if (visualizerMode === 'fallback' || !frequencyData || !waveData) {
-      visualizerCanvas.classList.add('visualizer-fallback-active', 'is-fallback-visualizing');
-      drawFallbackBars(context, width, height, true);
-      visualizerFrame = window.requestAnimationFrame(drawVisualizer);
-      return;
-    }
-
-    visualizerCanvas.classList.remove('visualizer-fallback-active', 'is-fallback-visualizing');
-
-    const barCount = Math.min(64, frequencyData.length);
-    const gap = Math.max(3, width * 0.0045);
-    const barWidth = Math.max(4, (width - gap * (barCount - 1)) / barCount);
-    const barGradient = context.createLinearGradient(0, height, 0, 0);
-    barGradient.addColorStop(0, 'rgba(29, 185, 84, 0.88)');
-    barGradient.addColorStop(0.5, 'rgba(56, 189, 248, 0.94)');
-    barGradient.addColorStop(1, 'rgba(255, 255, 255, 0.98)');
-
-    for (let index = 0; index < barCount; index += 1) {
-      const value = frequencyData[index] || 0;
-      const barHeight = Math.max(height * 0.08, (value / 255) * (height * 0.7));
-      const x = index * (barWidth + gap);
-      const y = height - barHeight - height * 0.1;
-
-      context.fillStyle = barGradient;
-      context.beginPath();
-      if (typeof context.roundRect === 'function') {
-        context.roundRect(x, y, barWidth, barHeight, Math.min(18, barWidth / 2));
-      } else {
-        context.rect(x, y, barWidth, barHeight);
-      }
-      context.fill();
-    }
-
-    context.beginPath();
-    waveData.forEach((value, index) => {
-      const x = (index / (waveData.length - 1)) * width;
-      const y = (value / 255) * height * 0.42 + height * 0.2;
-      if (index === 0) {
-        context.moveTo(x, y);
-      } else {
-        context.lineTo(x, y);
-      }
-    });
-    context.strokeStyle = 'rgba(248, 250, 252, 0.98)';
-    context.lineWidth = Math.max(2, width * 0.003);
-    context.shadowColor = 'rgba(125, 211, 252, 0.42)';
-    context.shadowBlur = 14;
-    context.stroke();
-    context.shadowBlur = 0;
-
-    visualizerFrame = window.requestAnimationFrame(drawVisualizer);
-  };
-
-  const startVisualizer = async (audio) => {
-    const isReady = await ensureVisualizer(audio);
-
-    if (!isReady || !visualizerCanvas || reduceMotion || audio.paused || audio.ended) {
-      return;
-    }
-
-    window.cancelAnimationFrame(visualizerFrame);
-    fallbackStartedAt = window.performance.now();
-    fallbackSeed = (activePlayer ? musicPlayers.indexOf(activePlayer) + 1 : 1) + Math.max(0, Math.floor(audio.currentTime || 0));
-    visualizerCanvas.classList.add('is-playing', 'is-visualizing');
-    visualizerCanvas.classList.toggle('visualizer-fallback-active', visualizerMode === 'fallback');
-    logVisualizerDiagnostics(audio);
-    drawVisualizer();
+    visualizerCanvas.classList.add('is-playing');
   };
 
   const stopVisualizer = () => {
-    window.cancelAnimationFrame(visualizerFrame);
-    visualizerFrame = 0;
     if (visualizerCanvas) {
-      visualizerCanvas.classList.remove('is-playing', 'is-visualizing', 'visualizer-fallback-active', 'is-fallback-visualizing');
+      visualizerCanvas.classList.remove('is-playing');
     }
   };
 
   setVisualizerFallback();
-  resizeVisualizerCanvas();
-  drawIdleVisualizer();
-  window.addEventListener('resize', () => {
-    resizeVisualizerCanvas();
-    if (!visualizerFrame) {
-      drawIdleVisualizer();
-    }
-  }, { passive: true });
   window.addEventListener('carine:languagechange', setVisualizerFallback);
 
   const getAudio = (player) => player.querySelector('audio');
@@ -2107,7 +1663,11 @@ if (musicPlayers.length) {
       return false;
     }
 
-    applyResolvedAudioSource(player, audio);
+    const previousSource = audio.currentSrc || audio.getAttribute('src') || '';
+    const verifiedSource = applyResolvedAudioSource(player, audio);
+    if (previousSource !== verifiedSource) {
+      audio.load();
+    }
     isSwitchingTracks = true;
     pauseOtherPlayers(player);
     isSwitchingTracks = false;
@@ -2121,7 +1681,7 @@ if (musicPlayers.length) {
     try {
       await audio.play();
       logAudioDiagnostics('play-succeeded', { track: getTrackTitle(player), currentSrc: audio.currentSrc || audio.src });
-      await startVisualizer(audio);
+      startVisualizer();
       persistPlayerState();
       if (status) {
         status.textContent = '';
@@ -2233,7 +1793,7 @@ if (musicPlayers.length) {
         showMiniPlayer(musicPlayer);
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
-        startVisualizer(audio);
+        startVisualizer();
         persistPlayerState();
 
         if (miniPlayer) {
