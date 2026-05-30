@@ -1559,6 +1559,8 @@ if (musicPlayers.length) {
 
   let visualizerMode = 'idle';
   let zeroDataStartedAt = 0;
+  let fallbackStartedAt = 0;
+  let fallbackSeed = 0;
   let lastVisualizerDebugAt = 0;
   let lastAverageFrequency = 0;
   let isAnalyserConnected = false;
@@ -1593,16 +1595,31 @@ if (musicPlayers.length) {
     });
   };
 
-  const drawVisualizerShell = (context, width, height) => {
+  const drawVisualizerShell = (context, width, height, energy = 0) => {
     context.clearRect(0, 0, width, height);
 
     const background = context.createLinearGradient(0, 0, width, height);
-    background.addColorStop(0, 'rgba(4, 18, 43, 0.96)');
-    background.addColorStop(1, 'rgba(12, 47, 96, 0.86)');
+    background.addColorStop(0, 'rgba(2, 12, 32, 0.98)');
+    background.addColorStop(0.52, 'rgba(4, 24, 55, 0.94)');
+    background.addColorStop(1, 'rgba(10, 49, 95, 0.9)');
     context.fillStyle = background;
     context.fillRect(0, 0, width, height);
 
-    context.strokeStyle = 'rgba(125, 211, 252, 0.28)';
+    const glow = context.createRadialGradient(
+      width * (0.5 + Math.sin(energy * 2.4) * 0.12),
+      height * 0.48,
+      width * 0.04,
+      width * 0.5,
+      height * 0.5,
+      width * 0.72
+    );
+    glow.addColorStop(0, `rgba(29, 185, 84, ${0.18 + energy * 0.2})`);
+    glow.addColorStop(0.44, `rgba(56, 189, 248, ${0.1 + energy * 0.14})`);
+    glow.addColorStop(1, 'rgba(4, 18, 43, 0)');
+    context.fillStyle = glow;
+    context.fillRect(0, 0, width, height);
+
+    context.strokeStyle = `rgba(125, 211, 252, ${0.22 + energy * 0.2})`;
     context.lineWidth = Math.max(1, width * 0.0018);
     context.beginPath();
     context.moveTo(width * 0.04, height * 0.58);
@@ -1610,21 +1627,69 @@ if (musicPlayers.length) {
     context.stroke();
   };
 
+  const seededMovement = (index, seed) => {
+    const value = Math.sin((index + 1) * 12.9898 + seed * 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  };
+
+  const drawFallbackWave = (context, width, height, progress, isPlaying) => {
+    const centerY = height * 0.46;
+    const amplitude = height * (isPlaying ? 0.09 : 0.025);
+
+    context.save();
+    context.shadowColor = 'rgba(56, 189, 248, 0.42)';
+    context.shadowBlur = isPlaying ? 18 : 6;
+    context.lineWidth = Math.max(2, width * 0.003);
+    context.strokeStyle = isPlaying ? 'rgba(226, 246, 255, 0.9)' : 'rgba(186, 230, 253, 0.45)';
+    context.beginPath();
+
+    for (let point = 0; point <= 150; point += 1) {
+      const x = (point / 150) * width;
+      const waveA = Math.sin(point * 0.18 + progress * 2.8 + fallbackSeed);
+      const waveB = Math.sin(point * 0.07 - progress * 1.6 + fallbackSeed * 0.4);
+      const y = centerY + (waveA * 0.62 + waveB * 0.38) * amplitude;
+      if (point === 0) {
+        context.moveTo(x, y);
+      } else {
+        context.lineTo(x, y);
+      }
+    }
+
+    context.stroke();
+    context.restore();
+  };
+
   const drawFallbackBars = (context, width, height, isPlaying) => {
-    const barCount = 44;
-    const gap = Math.max(4, width * 0.006);
+    const barCount = 52;
+    const gap = Math.max(4, width * 0.0054);
     const barWidth = Math.max(5, (width - gap * (barCount - 1)) / barCount);
-    const now = window.performance.now() * (isPlaying ? 0.004 : 0.0012);
+    const activeAudio = activePlayer ? getAudio(activePlayer) : null;
+    const duration = getSafeDuration(activeAudio, activePlayer ? getFallbackDuration(activePlayer) : 0);
+    const trackProgress = duration > 0 && activeAudio ? activeAudio.currentTime / duration : 0;
+    const elapsed = fallbackStartedAt ? (window.performance.now() - fallbackStartedAt) / 1000 : 0;
+    const time = isPlaying ? elapsed * 3.2 + trackProgress * 7 : elapsed * 0.7;
+    const energyPulse = isPlaying ? (Math.sin(time * 1.7) * 0.5 + 0.5) : 0.16;
     const gradient = context.createLinearGradient(0, height, 0, 0);
-    gradient.addColorStop(0, 'rgba(29, 185, 84, 0.88)');
-    gradient.addColorStop(0.55, 'rgba(45, 212, 191, 0.92)');
-    gradient.addColorStop(1, 'rgba(240, 253, 250, 0.98)');
+    gradient.addColorStop(0, 'rgba(29, 185, 84, 0.9)');
+    gradient.addColorStop(0.5, 'rgba(45, 212, 191, 0.94)');
+    gradient.addColorStop(0.78, 'rgba(56, 189, 248, 0.96)');
+    gradient.addColorStop(1, 'rgba(248, 250, 252, 0.98)');
+
+    drawFallbackWave(context, width, height, time, isPlaying);
+
+    context.save();
+    context.shadowColor = isPlaying ? 'rgba(29, 185, 84, 0.38)' : 'rgba(45, 212, 191, 0.16)';
+    context.shadowBlur = isPlaying ? 18 + energyPulse * 14 : 8;
 
     for (let index = 0; index < barCount; index += 1) {
-      const pulse = Math.sin(now + index * 0.54) * 0.5 + 0.5;
-      const secondaryPulse = Math.sin(now * 0.63 + index * 0.19) * 0.5 + 0.5;
-      const activity = isPlaying ? 0.16 + pulse * 0.52 + secondaryPulse * 0.18 : 0.08 + pulse * 0.08;
-      const barHeight = Math.max(height * 0.1, activity * height * 0.72);
+      const seed = seededMovement(index, fallbackSeed);
+      const pulse = Math.sin(time + index * 0.54 + seed * 4) * 0.5 + 0.5;
+      const secondaryPulse = Math.sin(time * 0.63 + index * 0.19 + seed * 6) * 0.5 + 0.5;
+      const progressPulse = Math.sin(trackProgress * Math.PI * 8 + index * 0.13) * 0.5 + 0.5;
+      const activity = isPlaying
+        ? 0.14 + pulse * 0.46 + secondaryPulse * 0.2 + progressPulse * 0.12
+        : 0.07 + pulse * 0.045 + seed * 0.04;
+      const barHeight = Math.max(height * 0.08, Math.min(height * 0.78, activity * height * 0.74));
       const x = index * (barWidth + gap);
       const y = height - barHeight - height * 0.11;
 
@@ -1637,6 +1702,16 @@ if (musicPlayers.length) {
       }
       context.fill();
     }
+
+    context.restore();
+
+    context.save();
+    context.globalCompositeOperation = 'lighter';
+    context.fillStyle = `rgba(29, 185, 84, ${isPlaying ? 0.08 + energyPulse * 0.1 : 0.025})`;
+    context.beginPath();
+    context.ellipse(width * 0.5, height * 0.82, width * (0.24 + energyPulse * 0.06), height * 0.12, 0, 0, Math.PI * 2);
+    context.fill();
+    context.restore();
   };
 
   const drawIdleVisualizer = () => {
@@ -1651,7 +1726,7 @@ if (musicPlayers.length) {
     }
 
     const { width, height } = visualizerCanvas;
-    drawVisualizerShell(context, width, height);
+    drawVisualizerShell(context, width, height, 0);
     drawFallbackBars(context, width, height, false);
   };
 
@@ -1767,25 +1842,26 @@ if (musicPlayers.length) {
 
       if (lastAverageFrequency <= 0.5) {
         zeroDataStartedAt = zeroDataStartedAt || window.performance.now();
-        if (window.performance.now() - zeroDataStartedAt > 1000) {
-          visualizerMode = 'fallback';
-          logVisualizerDiagnostics(activeAudio, 'fallback');
-        }
+        visualizerMode = 'fallback';
+        logVisualizerDiagnostics(activeAudio, 'fallback');
       } else {
         zeroDataStartedAt = 0;
       }
     }
 
-    drawVisualizerShell(context, width, height);
+    const shellEnergy = visualizerMode === 'fallback'
+      ? (Math.sin(((window.performance.now() - fallbackStartedAt) / 1000) * 1.7) * 0.5 + 0.5)
+      : Math.min(lastAverageFrequency / 120, 1);
+    drawVisualizerShell(context, width, height, shellEnergy);
 
     if (visualizerMode === 'fallback' || !frequencyData || !waveData) {
-      visualizerCanvas.classList.add('is-fallback-visualizing');
+      visualizerCanvas.classList.add('visualizer-fallback-active', 'is-fallback-visualizing');
       drawFallbackBars(context, width, height, true);
       visualizerFrame = window.requestAnimationFrame(drawVisualizer);
       return;
     }
 
-    visualizerCanvas.classList.remove('is-fallback-visualizing');
+    visualizerCanvas.classList.remove('visualizer-fallback-active', 'is-fallback-visualizing');
 
     const barCount = Math.min(64, frequencyData.length);
     const gap = Math.max(3, width * 0.0045);
@@ -1839,7 +1915,10 @@ if (musicPlayers.length) {
     }
 
     window.cancelAnimationFrame(visualizerFrame);
-    visualizerCanvas.classList.add('is-visualizing');
+    fallbackStartedAt = window.performance.now();
+    fallbackSeed = (activePlayer ? musicPlayers.indexOf(activePlayer) + 1 : 1) + Math.max(0, Math.floor(audio.currentTime || 0));
+    visualizerCanvas.classList.add('is-playing', 'is-visualizing');
+    visualizerCanvas.classList.toggle('visualizer-fallback-active', visualizerMode === 'fallback');
     logVisualizerDiagnostics(audio);
     drawVisualizer();
   };
@@ -1848,7 +1927,7 @@ if (musicPlayers.length) {
     window.cancelAnimationFrame(visualizerFrame);
     visualizerFrame = 0;
     if (visualizerCanvas) {
-      visualizerCanvas.classList.remove('is-visualizing', 'is-fallback-visualizing');
+      visualizerCanvas.classList.remove('is-playing', 'is-visualizing', 'visualizer-fallback-active', 'is-fallback-visualizing');
     }
   };
 
