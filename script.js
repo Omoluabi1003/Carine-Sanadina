@@ -1380,6 +1380,73 @@ if (musicPlayers.length) {
   let visualizerContext = null;
   let activeVisualizerSource = null;
   const audioSources = new WeakMap();
+  const isAudioDebugEnabled = ['localhost', '127.0.0.1', ''].includes(window.location.hostname)
+    || new URLSearchParams(window.location.search).has('debugAudio');
+
+  const logAudioDiagnostics = (event, details = {}) => {
+    if (!isAudioDebugEnabled || !window.console || typeof window.console.info !== 'function') {
+      return;
+    }
+
+    window.console.info('[music audio]', { event, ...details });
+  };
+
+  const getVerifiedAudioSource = (player) => (player?.dataset.audioSrc || '').trim();
+
+  const shouldUseCorsForAudio = (source) => {
+    if (!source) {
+      return false;
+    }
+
+    try {
+      const url = new URL(source, window.location.href);
+      return url.origin === window.location.origin || url.hostname === 'raw.githubusercontent.com';
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const canSafelyAnalyseAudioSource = (source) => {
+    if (!source) {
+      return false;
+    }
+
+    try {
+      const url = new URL(source, window.location.href);
+      return url.origin === window.location.origin || shouldUseCorsForAudio(source);
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const applyResolvedAudioSource = (player, audio) => {
+    const verifiedSource = getVerifiedAudioSource(player);
+
+    if (!audio || !verifiedSource) {
+      return '';
+    }
+
+    audio.preload = 'metadata';
+
+    if (shouldUseCorsForAudio(verifiedSource)) {
+      audio.crossOrigin = 'anonymous';
+    } else {
+      audio.removeAttribute('crossorigin');
+    }
+
+    if (audio.dataset.resolvedAudioSrc !== verifiedSource || audio.getAttribute('src') !== verifiedSource) {
+      audio.src = verifiedSource;
+      audio.dataset.resolvedAudioSrc = verifiedSource;
+    }
+
+    logAudioDiagnostics('selected-source', {
+      track: getTrackTitle(player),
+      selectedSrc: verifiedSource,
+      crossOrigin: audio.crossOrigin || 'none'
+    });
+
+    return verifiedSource;
+  };
 
   const getStoredPlayerState = () => {
     try {
@@ -1505,7 +1572,7 @@ if (musicPlayers.length) {
   };
 
   const logVisualizerDiagnostics = (audio, reason = 'playback') => {
-    if (!window.console || typeof window.console.info !== 'function') {
+    if (!isAudioDebugEnabled || !window.console || typeof window.console.info !== 'function') {
       return;
     }
 
@@ -1520,6 +1587,7 @@ if (musicPlayers.length) {
       audioContextState: audioContext ? audioContext.state : 'unavailable',
       analyserConnected: Boolean(analyser && isAnalyserConnected),
       averageFrequency: Math.round(lastAverageFrequency * 100) / 100,
+      fallbackActive: visualizerMode === 'fallback',
       canvas: visualizerCanvas ? `${visualizerCanvas.width}x${visualizerCanvas.height}` : 'missing',
       audioSrc: audio ? audio.currentSrc || audio.src || '' : ''
     });
@@ -1598,6 +1666,14 @@ if (musicPlayers.length) {
       return Boolean(visualizerCanvas);
     }
 
+    const analysisSource = audio.currentSrc || audio.src || audio.dataset.resolvedAudioSrc || '';
+    if (!canSafelyAnalyseAudioSource(analysisSource)) {
+      visualizerMode = 'fallback';
+      isAnalyserConnected = false;
+      logVisualizerDiagnostics(audio, 'fallback');
+      return Boolean(visualizerCanvas);
+    }
+
     if (!audioContext) {
       audioContext = new AudioContextConstructor();
       analyser = audioContext.createAnalyser();
@@ -1615,6 +1691,8 @@ if (musicPlayers.length) {
         return Boolean(visualizerCanvas);
       }
     }
+
+    logAudioDiagnostics('audio-context', { state: audioContext.state });
 
     let source = audioSources.get(audio);
 
@@ -1911,16 +1989,13 @@ if (musicPlayers.length) {
 
   const prepareAudio = (player) => {
     const audio = getAudio(player);
-    const audioSrc = player.dataset.audioSrc;
+    const audioSrc = applyResolvedAudioSource(player, audio);
 
     if (!audio || !audioSrc) {
       setPlayerReadyState(player, false);
       return;
     }
 
-    audio.preload = 'metadata';
-    audio.crossOrigin = 'anonymous';
-    audio.src = audioSrc;
     audio.volume = mini && mini.volume ? Number(mini.volume.value) : 0.85;
     syncDuration(player);
     setPlayerReadyState(player, true);
@@ -1948,17 +2023,17 @@ if (musicPlayers.length) {
     const audio = getAudio(player);
     const status = player.querySelector('[data-audio-status]');
 
-    if (!audio || !player.dataset.audioSrc) {
+    if (!audio || !getVerifiedAudioSource(player)) {
       setPlayerReadyState(player, false);
       return false;
     }
 
+    applyResolvedAudioSource(player, audio);
     isSwitchingTracks = true;
     pauseOtherPlayers(player);
     isSwitchingTracks = false;
     userStoppedPlayback = false;
     showMiniPlayer(player);
-    await ensureVisualizer(audio);
 
     if (audio.ended || audio.currentTime >= getSafeDuration(audio, 0)) {
       audio.currentTime = 0;
@@ -1966,6 +2041,7 @@ if (musicPlayers.length) {
 
     try {
       await audio.play();
+      logAudioDiagnostics('play-succeeded', { track: getTrackTitle(player), currentSrc: audio.currentSrc || audio.src });
       await startVisualizer(audio);
       persistPlayerState();
       if (status) {
@@ -1973,6 +2049,11 @@ if (musicPlayers.length) {
       }
       return true;
     } catch (error) {
+      logAudioDiagnostics('play-failed', {
+        track: getTrackTitle(player),
+        currentSrc: audio.currentSrc || audio.src,
+        message: error?.message || String(error)
+      });
       player.classList.remove('is-playing');
       updateToggle(getPlayToggle(player), audio, getTrackTitle(player));
 
@@ -2028,13 +2109,17 @@ if (musicPlayers.length) {
 
     if (audio && musicPlayer.dataset.audioSrc) {
       audio.addEventListener('loadstart', () => {
-        setPlayerReadyState(musicPlayer, false);
         if (status) {
           status.textContent = '';
         }
       });
 
       audio.addEventListener('loadedmetadata', () => {
+        logAudioDiagnostics('loadedmetadata', {
+          track: getTrackTitle(musicPlayer),
+          currentSrc: audio.currentSrc || audio.src,
+          duration: Number.isFinite(audio.duration) ? Math.round(audio.duration * 100) / 100 : 'unknown'
+        });
         syncDuration(musicPlayer);
         setPlayerReadyState(musicPlayer, true);
       });
@@ -2121,6 +2206,12 @@ if (musicPlayers.length) {
       });
 
       audio.addEventListener('error', () => {
+        logAudioDiagnostics('audio-error', {
+          track: getTrackTitle(musicPlayer),
+          selectedSrc: getVerifiedAudioSource(musicPlayer),
+          currentSrc: audio.currentSrc || audio.src,
+          code: audio.error ? audio.error.code : 'unknown'
+        });
         setPlayerReadyState(musicPlayer, false);
         musicPlayer.classList.remove('is-playing');
 
