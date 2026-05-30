@@ -1720,15 +1720,28 @@ document.addEventListener('click', (event) => {
   }
 });
 
-const formatTrackDuration = (seconds) => {
+const UNKNOWN_DURATION_LABEL = '–:–';
+
+const formatTrackDuration = (seconds, fallbackLabel = UNKNOWN_DURATION_LABEL) => {
   if (!Number.isFinite(seconds) || seconds <= 0) {
-    return '0:00';
+    return fallbackLabel;
   }
 
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, '0');
   return `${minutes}:${remainingSeconds}`;
 };
+
+const escapePlaylistText = (value = '') => String(value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
+
+const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
+const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful'];
 
 const CARINE_MUSIC_PLAYLIST = [
   {
@@ -1766,6 +1779,10 @@ const CARINE_MUSIC_PLAYLIST = [
   }
 ];
 
+const assertRequiredPlaylistTracks = () => REQUIRED_MUSIC_TRACK_IDS.every((requiredId) =>
+  CARINE_MUSIC_PLAYLIST.some((track) => track.id === requiredId && track.audioUrl && track.coverUrl)
+);
+
 const renderCarinePlaylist = () => {
   const playlistMount = document.querySelector('[data-playlist-tracks]');
 
@@ -1773,31 +1790,47 @@ const renderCarinePlaylist = () => {
     return;
   }
 
-  playlistMount.innerHTML = CARINE_MUSIC_PLAYLIST.map((track, index) => {
-    const trackKey = track.translationKey;
-    const titleId = `track-${track.id}-title`;
-    const fallbackId = `music-cover-${track.id}-fallback`;
-    const durationLabel = formatTrackDuration(track.duration);
+  const safePlaylist = CARINE_MUSIC_PLAYLIST.filter((track) => track && track.id && track.title && track.audioUrl && track.coverUrl);
+
+  if (safePlaylist.length !== REQUIRED_MUSIC_TRACK_IDS.length || !assertRequiredPlaylistTracks()) {
+    playlistMount.dataset.playlistError = 'missing-required-track';
+  } else {
+    delete playlistMount.dataset.playlistError;
+  }
+
+  playlistMount.innerHTML = safePlaylist.map((track, index) => {
+    const trackKey = escapePlaylistAttribute(track.translationKey);
+    const titleId = `track-${escapePlaylistAttribute(track.id)}-title`;
+    const fallbackId = `music-cover-${escapePlaylistAttribute(track.id)}-fallback`;
+    const durationLabel = formatTrackDuration(Number(track.duration));
+    const trackTitle = escapePlaylistText(track.title);
+    const trackArtist = escapePlaylistText(track.artist);
+    const trackDescription = escapePlaylistText(track.description);
+    const trackMood = escapePlaylistAttribute(track.mood);
+    const trackId = escapePlaylistAttribute(track.id);
+    const coverUrl = escapePlaylistAttribute(track.coverUrl);
+    const audioUrl = escapePlaylistAttribute(track.audioUrl);
+    const durationValue = Number.isFinite(Number(track.duration)) && Number(track.duration) > 0 ? String(Number(track.duration)) : '';
 
     return `
       <article
-        class="playlist-track"
+        class="playlist-track is-ready"
         aria-labelledby="${titleId}"
         data-audio-player
-        data-track-id="${track.id}"
-        data-audio-src="${track.audioUrl}"
-        data-track-title="${track.title}"
-        data-track-artist="${track.artist}"
-        data-track-cover="${track.coverUrl}"
-        data-track-duration="${track.duration}"
-        data-track-mood="${track.mood}"
-        data-track-description="${track.description}"
+        data-track-id="${trackId}"
+        data-audio-src="${audioUrl}"
+        data-track-title="${escapePlaylistAttribute(track.title)}"
+        data-track-artist="${escapePlaylistAttribute(track.artist)}"
+        data-track-cover="${coverUrl}"
+        data-track-duration="${escapePlaylistAttribute(durationValue)}"
+        data-track-mood="${trackMood}"
+        data-track-description="${escapePlaylistAttribute(track.description)}"
       >
-        <audio aria-label="${track.title} by ${track.artist}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
+        <audio aria-label="${escapePlaylistAttribute(`${track.title} by ${track.artist}`)}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
         <div class="track-cover-wrap">
           <img
-            src="${track.coverUrl}"
-            alt="${track.title} cover art"
+            src="${coverUrl}"
+            alt="${escapePlaylistAttribute(`${track.title} cover art`)}"
             data-i18n-alt="${trackKey}.coverAlt"
             class="track-cover"
             width="1000"
@@ -1808,15 +1841,15 @@ const renderCarinePlaylist = () => {
             data-fallback-target="${fallbackId}"
           />
           <div class="image-fallback music-cover-fallback" id="${fallbackId}" role="note" aria-live="polite">
-            <span data-i18n="${trackKey}.fallback">${track.title} cover art is temporarily unavailable.</span>
+            <span data-i18n="${trackKey}.fallback">${trackTitle} cover art is temporarily unavailable.</span>
           </div>
         </div>
 
         <div class="track-meta">
           <p class="music-label" data-i18n="${trackKey}.number">Track ${String(index + 1).padStart(2, '0')}</p>
-          <h3 id="${titleId}" data-i18n="${trackKey}.title">${track.title}</h3>
-          <p class="artist-name">${track.artist}</p>
-          <p class="track-description" data-i18n="${trackKey}.description">${track.description}</p>
+          <h3 id="${titleId}" data-i18n="${trackKey}.title">${trackTitle}</h3>
+          <p class="artist-name">${trackArtist}</p>
+          <p class="track-description" data-i18n="${trackKey}.description">${trackDescription}</p>
         </div>
 
         <div class="track-equalizer equalizer" aria-hidden="true">
@@ -1828,7 +1861,7 @@ const renderCarinePlaylist = () => {
           <span data-duration>${durationLabel}</span>
         </div>
 
-        <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play ${track.title}" data-track-key="${trackKey}.title" data-i18n-aria-label="${trackKey}.playLabel">
+        <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play ${escapePlaylistAttribute(track.title)}" data-track-key="${trackKey}.title" data-i18n-aria-label="${trackKey}.playLabel">
           <span class="play-icon" aria-hidden="true"></span>
         </button>
         <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
@@ -2588,14 +2621,15 @@ if (musicPlayers.length) {
   const setPlayerReadyState = (player, isReady) => {
     const playToggle = getPlayToggle(player);
     const status = player.querySelector('[data-audio-status]');
+    const hasSource = Boolean(getVerifiedAudioSource(player));
 
-    player.classList.toggle('is-ready', isReady);
+    player.classList.toggle('is-ready', isReady || hasSource);
 
     if (playToggle) {
-      playToggle.disabled = !isReady;
+      playToggle.disabled = !hasSource;
     }
 
-    if (status && isReady) {
+    if (status && (isReady || hasSource) && status.textContent === translate('audio.unavailable')) {
       status.textContent = '';
     }
   };

@@ -2189,3 +2189,62 @@ h1, h2, h3, blockquote { color: var(--ivory); }
 
 .offline-shell { width: min(920px, 100%); }
 .offline-card .button { margin-top: 28px; }
+
+/* Resilient playlist rendering: keep every track visible on compact mobile browsers. */
+.music-showcase {
+  overflow: visible;
+  overflow-x: clip;
+}
+
+.playlist-tracks {
+  display: grid;
+  gap: 8px;
+  overflow: visible;
+}
+
+.playlist-track {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow: visible;
+}
+
+@media (max-width: 640px) {
+  .music-showcase {
+    overflow: visible;
+    overflow-x: clip;
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+
+  .playlist-panel,
+  .playlist-tracks {
+    inline-size: 100%;
+    max-inline-size: 100%;
+    overflow: visible;
+  }
+
+  .playlist-track {
+    grid-template-columns: 58px minmax(0, 1fr) 38px;
+    grid-auto-rows: auto;
+    align-items: center;
+  }
+
+  .track-cover-wrap {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .track-meta {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .track-play-toggle {
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  .audio-status {
+    grid-column: 2 / -1;
+    min-height: 0;
+  }
+}
