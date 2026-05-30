@@ -29,6 +29,7 @@ translations.en = {
   'nav.about': 'About',
   'nav.works': 'Featured Works',
   'nav.music': 'Music',
+  'nav.reflections': 'Reflections',
   'nav.focus': 'Focus Areas',
   'nav.positioning': 'Professional Voice',
   'nav.contact': 'Contact',
@@ -37,6 +38,7 @@ translations.en = {
   'hero.heading': 'Turning pain into healing, survival into purpose, and stories into restoration.',
   'hero.viewWorks': 'View Featured Works',
   'hero.listenMusic': 'Listen to Music',
+  'hero.readReflections': 'Read Reflections',
   'hero.contactCarine': 'Contact Carine',
   'portrait.figureLabel': 'Carine Sanadina official portrait feature',
   'portrait.alt': 'Carine Sanadina official portrait',
@@ -983,11 +985,22 @@ const premiumExperienceTranslations = {
     'inquiry.title': 'Collaboration Inquiry',
     'inquiry.body': 'For interviews, speaking invitations, music conversations, or book-centered events, use the contact paths below so each opportunity can be reviewed with clarity and care.',
     'inquiry.cta': 'Start an inquiry',
-    'testimonials.kicker': 'Testimonials',
-    'testimonials.heading': 'Words that reflect the emotional impact of Carine’s platform.',
-    'testimonials.one': '“Her voice makes survival feel seen, dignified, and possible.”',
-    'testimonials.two': '“Carine brings compassion to painful topics without losing courage or truth.”',
-    'testimonials.three': '“The work feels like a quiet room for healing, faith, and renewed strength.”',
+    'reflections.kicker': 'Reflections',
+    'reflections.heading': 'Healing notes inspired by Carine’s books, music, and restoration-centered themes.',
+    'reflections.intro': 'A static editorial library for readers exploring survival, toxic relationship awareness, faith, kindness, and emotional restoration.',
+    'reflections.toolbarLabel': 'Filter reflections',
+    'reflections.searchLabel': 'Search reflections',
+    'reflections.searchPlaceholder': 'Search by theme or title',
+    'reflections.categoryLabel': 'Reflection categories',
+    'reflections.empty': 'No reflections match that search yet.',
+    'reflections.loadMore': 'Load more reflections',
+    'reflections.readTime': 'read',
+    'reflections.featuredLabel': 'Featured reflection',
+    'reflections.promptLabel': 'Reflection prompt',
+    'reflections.all': 'All',
+    'pwa.installText': 'Install this healing-centered app for quick offline access.',
+    'pwa.installButton': 'Install',
+    'pwa.dismissLabel': 'Dismiss install prompt',
     'quote.wallLabel': 'Featured quote wall',
     'quote.wall.one': 'Survival is not the end of the story.',
     'quote.wall.two': 'Healing can become a language.',
@@ -1019,11 +1032,24 @@ const premiumExperienceTranslations = {
     'inquiry.title': 'Demande de collaboration',
     'inquiry.body': 'Pour les interviews, invitations, conversations musicales ou événements autour des livres, utilisez les chemins de contact ci-dessous afin que chaque opportunité soit examinée avec clarté et soin.',
     'inquiry.cta': 'Commencer une demande',
-    'testimonials.kicker': 'Témoignages',
-    'testimonials.heading': 'Des mots qui reflètent l’impact émotionnel de la plateforme de Carine.',
-    'testimonials.one': '« Sa voix rend la survie visible, digne et possible. »',
-    'testimonials.two': '« Carine apporte de la compassion aux sujets douloureux sans perdre courage ni vérité. »',
-    'testimonials.three': '« Le travail ressemble à une pièce calme pour la guérison, la foi et une force renouvelée. »',
+    'nav.reflections': 'Réflexions',
+    'hero.readReflections': 'Lire les réflexions',
+    'reflections.kicker': 'Réflexions',
+    'reflections.heading': 'Notes de guérison inspirées par les livres, la musique et les thèmes de restauration de Carine.',
+    'reflections.intro': 'Une bibliothèque éditoriale statique pour explorer la survie, les relations toxiques, la foi, la bonté et la restauration émotionnelle.',
+    'reflections.toolbarLabel': 'Filtrer les réflexions',
+    'reflections.searchLabel': 'Rechercher des réflexions',
+    'reflections.searchPlaceholder': 'Rechercher par thème ou titre',
+    'reflections.categoryLabel': 'Catégories de réflexions',
+    'reflections.empty': 'Aucune réflexion ne correspond à cette recherche pour le moment.',
+    'reflections.loadMore': 'Charger plus de réflexions',
+    'reflections.readTime': 'lecture',
+    'reflections.featuredLabel': 'Réflexion en vedette',
+    'reflections.promptLabel': 'Question de réflexion',
+    'reflections.all': 'Tout',
+    'pwa.installText': 'Installez cette application centrée sur la guérison pour un accès hors ligne rapide.',
+    'pwa.installButton': 'Installer',
+    'pwa.dismissLabel': 'Fermer l’invite d’installation',
     'quote.wallLabel': 'Mur de citations',
     'quote.wall.one': 'La survie n’est pas la fin de l’histoire.',
     'quote.wall.two': 'La guérison peut devenir une langue.',
@@ -1034,23 +1060,23 @@ const premiumExperienceTranslations = {
 
 premiumExperienceTranslations.es = {
   ...premiumExperienceTranslations.en,
-  'music.nowPlaying': 'Reproduciendo ahora', 'music.shuffle': 'Aleatorio', 'music.repeatAll': 'Repetir todo', 'music.repeatOne': 'Repetir una', 'music.repeatOff': 'Repetición desactivada', 'music.nextTrack': 'Siguiente canción', 'mini.expand': 'Expandir', 'mini.close': 'Cerrar reproductor',
-  'press.kicker': 'Kit de prensa', 'bio.title': 'Biografía para medios', 'speaking.title': 'Temas para charlas', 'inquiry.title': 'Consulta de colaboración', 'inquiry.cta': 'Iniciar consulta', 'testimonials.kicker': 'Testimonios'
+  'music.nowPlaying': 'Reproduciendo ahora', 'music.shuffle': 'Aleatorio', 'music.repeatAll': 'Repetir todo', 'music.repeatOne': 'Repetir una', 'music.repeatOff': 'Repetición desactivada', 'music.nextTrack': 'Siguiente canción', 'nav.reflections': 'Reflexiones', 'hero.readReflections': 'Leer reflexiones', 'mini.expand': 'Expandir', 'mini.close': 'Cerrar reproductor',
+  'press.kicker': 'Kit de prensa', 'bio.title': 'Biografía para medios', 'speaking.title': 'Temas para charlas', 'inquiry.title': 'Consulta de colaboración', 'inquiry.cta': 'Iniciar consulta'
 };
 premiumExperienceTranslations.sw = {
   ...premiumExperienceTranslations.en,
   'music.nowPlaying': 'Inacheza sasa', 'music.shuffle': 'Changanya', 'music.repeatAll': 'Rudia zote', 'music.repeatOne': 'Rudia moja', 'music.repeatOff': 'Rudia imezimwa', 'music.nextTrack': 'Wimbo unaofuata', 'mini.expand': 'Panua', 'mini.close': 'Funga kicheza muziki',
-  'press.kicker': 'Seti ya Vyombo vya Habari', 'bio.title': 'Wasifu wa Vyombo vya Habari', 'speaking.title': 'Mada za Kuzungumza', 'inquiry.title': 'Ombi la Ushirikiano', 'inquiry.cta': 'Anza ombi', 'testimonials.kicker': 'Shuhuda'
+  'press.kicker': 'Seti ya Vyombo vya Habari', 'bio.title': 'Wasifu wa Vyombo vya Habari', 'speaking.title': 'Mada za Kuzungumza', 'inquiry.title': 'Ombi la Ushirikiano', 'inquiry.cta': 'Anza ombi'
 };
 premiumExperienceTranslations.ln = {
   ...premiumExperienceTranslations.en,
   'music.nowPlaying': 'Ezali kobeta sikoyo', 'music.shuffle': 'Sangisa', 'music.repeatAll': 'Zongela nyonso', 'music.repeatOne': 'Zongela moko', 'music.repeatOff': 'Kozongela ekangami', 'music.nextTrack': 'Loyembo elandi', 'mini.expand': 'Monisa mobimba', 'mini.close': 'Kanga lecteur',
-  'press.kicker': 'Dossier ya presse', 'bio.title': 'Bio ya média', 'speaking.title': 'Masolo ya koloba', 'inquiry.title': 'Bosengi ya kosala elongo', 'inquiry.cta': 'Banda bosengi', 'testimonials.kicker': 'Matatoli'
+  'press.kicker': 'Dossier ya presse', 'bio.title': 'Bio ya média', 'speaking.title': 'Masolo ya koloba', 'inquiry.title': 'Bosengi ya kosala elongo', 'inquiry.cta': 'Banda bosengi'
 };
 premiumExperienceTranslations.yo = {
   ...premiumExperienceTranslations.en,
   'music.nowPlaying': 'Ó ń dun báyìí', 'music.shuffle': 'Darapọ̀', 'music.repeatAll': 'Tun gbogbo rẹ ṣe', 'music.repeatOne': 'Tun ẹyọ kan ṣe', 'music.repeatOff': 'Ìtúnṣe pa', 'music.nextTrack': 'Orin tó kàn', 'mini.expand': 'Faagun', 'mini.close': 'Pa ẹrọ orin',
-  'press.kicker': 'Ohun elo atẹjade', 'bio.title': 'Ìtàn kukuru fún mídia', 'speaking.title': 'Àwọn koko ọrọ sisọ', 'inquiry.title': 'Ìbéèrè ìfọwọ́sowọ́pọ̀', 'inquiry.cta': 'Bẹrẹ ìbéèrè', 'testimonials.kicker': 'Ẹ̀rí'
+  'press.kicker': 'Ohun elo atẹjade', 'bio.title': 'Ìtàn kukuru fún mídia', 'speaking.title': 'Àwọn koko ọrọ sisọ', 'inquiry.title': 'Ìbéèrè ìfọwọ́sowọ́pọ̀', 'inquiry.cta': 'Bẹrẹ ìbéèrè'
 };
 
 Object.entries(premiumExperienceTranslations).forEach(([language, dictionary]) => {
@@ -1310,6 +1336,204 @@ remoteImages.forEach((image) => {
     }
   }, 0);
 });
+
+
+const reflectionArticles = [
+  {
+    id: 'hidden-pain-visible-language',
+    title: 'When hidden pain finally receives language',
+    excerpt: 'Inspired by The Pain Nobody Saw, this reflection centers the dignity of naming abuse, cultural pressure, and silent suffering without asking survivors to turn their pain into performance.',
+    category: 'Survival',
+    readTime: '4 min',
+    quote: 'Pain may shape the story, but it does not get to own the ending.',
+    prompt: 'Where do you need gentler language for something you survived?',
+    link: '#works'
+  },
+  {
+    id: 'red-flags-peace',
+    title: 'Red flags are invitations to protect your peace',
+    excerpt: 'A book-inspired note on recognizing emotional manipulation, spiritual danger, unhealthy attachments, and patterns that quietly drain clarity, confidence, and purpose.',
+    category: 'Toxic Relationship Awareness',
+    readTime: '5 min',
+    quote: 'What costs your peace is asking for discernment.',
+    prompt: 'What pattern has been asking you to choose clarity sooner?',
+    link: '#works'
+  },
+  {
+    id: 'road-to-sunshine-faith',
+    title: 'The road to sunshine can begin while the road is still hard',
+    excerpt: 'Drawn from the hope-forward themes of The Road to Sunshine, this reflection honors struggle, faith, and the patient courage required to keep walking toward brighter days.',
+    category: 'Faith & Hope',
+    readTime: '3 min',
+    quote: 'Hope does not deny the storm; it keeps a lamp lit through it.',
+    prompt: 'What small light can you carry into this week?',
+    link: '#works'
+  },
+  {
+    id: 'after-the-storm-restoration',
+    title: 'After the storm, restoration can be quiet before it is visible',
+    excerpt: 'A restoration-centered meditation for readers rebuilding peace after hardship, honoring the unseen strength that comes after survival.',
+    category: 'Restoration',
+    readTime: '4 min',
+    quote: 'Healing often starts as a private decision to breathe again.',
+    prompt: 'What would restoration look like if it did not need to be rushed?',
+    link: '#focus'
+  },
+  {
+    id: 'kindness-as-practice',
+    title: 'Kindness can become a healing practice',
+    excerpt: 'Inspired by La Gentillesse, this note treats kindness as more than softness: a daily discipline that protects dignity, repairs atmosphere, and opens room for grace.',
+    category: 'Kindness',
+    readTime: '3 min',
+    quote: 'Gentleness can still be strong enough to change a room.',
+    prompt: 'Where can kindness become a boundary, not a burden?',
+    link: '#music'
+  },
+  {
+    id: 'consolation-and-courage',
+    title: 'Consolation is not weakness; it is oxygen for courage',
+    excerpt: 'A music-inspired reflection on receiving comfort without shame, especially when healing feels slow, private, or unfinished.',
+    category: 'Emotional Healing',
+    readTime: '3 min',
+    quote: 'Comfort gives courage somewhere safe to begin again.',
+    prompt: 'What form of consolation would help you keep going today?',
+    link: '#music'
+  }
+];
+
+const initializeReflections = () => {
+  const section = document.querySelector('[data-reflection-grid]');
+  const featured = document.querySelector('[data-featured-reflection]');
+  const filters = document.querySelector('[data-reflection-filters]');
+  const search = document.querySelector('[data-reflection-search]');
+  const empty = document.querySelector('[data-reflection-empty]');
+  const loadMore = document.querySelector('[data-reflection-load-more]');
+
+  if (!section || !featured || !filters || !search || !loadMore) {
+    return;
+  }
+
+  const pageSize = 3;
+  let activeCategory = 'All';
+  let visibleCount = pageSize;
+
+  const categories = ['All', ...new Set(reflectionArticles.map((article) => article.category))];
+
+  const createTagButton = (category) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'reflection-filter';
+    button.dataset.category = category;
+    button.textContent = category === 'All' ? translate('reflections.all') : category;
+    button.setAttribute('aria-pressed', String(category === activeCategory));
+    button.addEventListener('click', () => {
+      activeCategory = category;
+      visibleCount = pageSize;
+      renderReflections();
+    });
+    return button;
+  };
+
+  const articleMatches = (article) => {
+    const query = search.value.trim().toLowerCase();
+    const searchable = [article.title, article.excerpt, article.category, article.quote, article.prompt].join(' ').toLowerCase();
+    const matchesCategory = activeCategory === 'All' || article.category === activeCategory;
+    return matchesCategory && (!query || searchable.includes(query));
+  };
+
+  const createArticleCard = (article, isFeatured = false) => {
+    const card = document.createElement('article');
+    card.className = isFeatured ? 'reflection-card reflection-card-featured' : 'reflection-card reveal is-visible';
+    card.id = `reflection-${article.id}`;
+    card.innerHTML = `
+      <div class="reflection-card__meta">
+        <span class="reflection-tag">${article.category}</span>
+        <span>${article.readTime} ${translate('reflections.readTime')}</span>
+      </div>
+      <h3>${article.title}</h3>
+      <p>${article.excerpt}</p>
+      ${article.quote ? `<blockquote>${article.quote}</blockquote>` : ''}
+      ${article.prompt ? `<p class="reflection-prompt"><strong>${translate('reflections.promptLabel')}:</strong> ${article.prompt}</p>` : ''}
+      <a class="text-link reflection-link" href="${article.link}" aria-label="Explore related section for ${article.title}">Explore related work</a>
+    `;
+    return card;
+  };
+
+  const renderFilters = () => {
+    filters.replaceChildren(...categories.map(createTagButton));
+  };
+
+  const renderReflections = () => {
+    const matchingArticles = reflectionArticles.filter(articleMatches);
+    const [featuredArticle, ...restArticles] = matchingArticles;
+    featured.innerHTML = '';
+
+    if (featuredArticle) {
+      const label = document.createElement('p');
+      label.className = 'eyebrow reflection-featured-label';
+      label.textContent = translate('reflections.featuredLabel');
+      featured.append(label, createArticleCard(featuredArticle, true));
+    }
+
+    const visibleArticles = restArticles.slice(0, visibleCount);
+    section.replaceChildren(...visibleArticles.map((article) => createArticleCard(article)));
+    empty.hidden = matchingArticles.length > 0;
+    loadMore.hidden = visibleCount >= restArticles.length;
+    renderFilters();
+  };
+
+  search.addEventListener('input', () => {
+    visibleCount = pageSize;
+    renderReflections();
+  });
+
+  loadMore.addEventListener('click', () => {
+    visibleCount += pageSize;
+    renderReflections();
+  });
+
+  window.addEventListener('carine:languagechange', renderReflections);
+  renderReflections();
+};
+
+const initializePwaExperience = () => {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch((error) => {
+        console.info('Service worker registration skipped:', error);
+      });
+    });
+  }
+
+  const installToast = document.querySelector('[data-install-toast]');
+  const installButton = document.querySelector('[data-install-button]');
+  const dismissButton = document.querySelector('[data-install-dismiss]');
+  let deferredInstallPrompt = null;
+
+  const hideInstallToast = () => {
+    if (installToast) installToast.hidden = true;
+  };
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (installToast) installToast.hidden = false;
+  });
+
+  installButton?.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    hideInstallToast();
+  });
+
+  dismissButton?.addEventListener('click', hideInstallToast);
+  window.addEventListener('appinstalled', hideInstallToast);
+};
+
+initializeReflections();
+initializePwaExperience();
 
 const musicPlayers = Array.from(document.querySelectorAll('[data-audio-player]'));
 const miniPlayer = document.querySelector('[data-mini-player]');

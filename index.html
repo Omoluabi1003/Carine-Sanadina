@@ -10,6 +10,9 @@
     />
     <meta name="author" content="Carine Sanadina" />
     <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#081120" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Carine Sanadina" />
     <link rel="canonical" href="https://omoluabi1003.github.io/Carine-Sanadina/" />
 
     <meta property="og:type" content="website" />
@@ -31,7 +34,8 @@
     <meta name="twitter:image:alt" content="Carine Sanadina logo" />
 
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/CS%20logo.png" />
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/CS%20logo.png" />
+    <link rel="apple-touch-icon" href="CS%20logo.png" />
+    <link rel="manifest" href="manifest.json" />
     <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -40,6 +44,38 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "@id": "https://omoluabi1003.github.io/Carine-Sanadina/#reflections-blog",
+        "name": "Carine Sanadina Reflections",
+        "description": "Static healing reflections inspired by Carine Sanadina’s published books, music, survivor advocacy, faith, kindness, and restoration-centered themes.",
+        "url": "https://omoluabi1003.github.io/Carine-Sanadina/#reflections",
+        "author": { "@id": "https://omoluabi1003.github.io/Carine-Sanadina/#carine-sanadina" },
+        "blogPost": [
+          {
+            "@type": "BlogPosting",
+            "headline": "When hidden pain finally receives language",
+            "description": "A reflection inspired by The Pain Nobody Saw about naming abuse, cultural pressure, and silent suffering with dignity.",
+            "url": "https://omoluabi1003.github.io/Carine-Sanadina/#reflection-hidden-pain-visible-language"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Red flags are invitations to protect your peace",
+            "description": "A book-inspired note on recognizing toxic patterns, emotional manipulation, spiritual danger, and unhealthy attachments.",
+            "url": "https://omoluabi1003.github.io/Carine-Sanadina/#reflection-red-flags-peace"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "The road to sunshine can begin while the road is still hard",
+            "description": "A hope-forward reflection inspired by The Road to Sunshine and its themes of struggle, faith, and perseverance.",
+            "url": "https://omoluabi1003.github.io/Carine-Sanadina/#reflection-road-to-sunshine-faith"
+          }
+        ]
+      }
+    </script>
 
     <script type="application/ld+json">
       {
@@ -211,6 +247,7 @@
           <li><a href="#about" data-i18n="nav.about">About</a></li>
           <li><a href="#works" data-i18n="nav.works">Featured Works</a></li>
           <li><a href="#music" data-i18n="nav.music">Music</a></li>
+          <li><a href="#reflections" data-i18n="nav.reflections">Reflections</a></li>
           <li><a href="#focus" data-i18n="nav.focus">Focus Areas</a></li>
           <li><a href="#positioning" data-i18n="nav.positioning">Professional Voice</a></li>
           <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
@@ -230,6 +267,7 @@
             <div class="hero-actions" aria-label="Primary calls to action" data-i18n-attr="aria-label:a11y.primaryCta">
               <a class="button button-primary" href="#works" data-i18n="hero.viewWorks">View Featured Works</a>
               <a class="button button-secondary" href="#music" data-i18n="hero.listenMusic">Listen to Music</a>
+              <a class="button button-secondary" href="#reflections" data-i18n="hero.readReflections">Read Reflections</a>
               <a class="button button-secondary" href="#contact" data-i18n="hero.contactCarine">Contact Carine</a>
             </div>
           </div>
@@ -650,6 +688,31 @@
         </div>
       </div>
 
+
+      <section class="section reflections" id="reflections" aria-labelledby="reflections-heading">
+        <div class="reflections-ambient" aria-hidden="true"></div>
+        <div class="container reflections-shell">
+          <div class="section-heading reveal">
+            <p class="eyebrow" data-i18n="reflections.kicker">Reflections</p>
+            <h2 id="reflections-heading" data-i18n="reflections.heading">Healing notes inspired by Carine’s books, music, and restoration-centered themes.</h2>
+            <p><span data-i18n="reflections.intro">A static editorial library for readers exploring survival, toxic relationship awareness, faith, kindness, and emotional restoration.</span></p>
+          </div>
+
+          <div class="reflections-toolbar reveal" aria-label="Filter reflections" data-i18n-attr="aria-label:reflections.toolbarLabel">
+            <label class="reflection-search-label" for="reflection-search" data-i18n="reflections.searchLabel">Search reflections</label>
+            <input id="reflection-search" class="reflection-search" type="search" placeholder="Search by theme or title" autocomplete="off" data-reflection-search data-i18n-attr="placeholder:reflections.searchPlaceholder" />
+            <div class="reflection-filters" role="list" aria-label="Reflection categories" data-i18n-attr="aria-label:reflections.categoryLabel" data-reflection-filters></div>
+          </div>
+
+          <div class="featured-reflection reveal" data-featured-reflection></div>
+          <div class="reflection-grid" data-reflection-grid aria-live="polite"></div>
+          <p class="reflection-empty" data-reflection-empty hidden data-i18n="reflections.empty">No reflections match that search yet.</p>
+          <div class="reflection-actions reveal">
+            <button class="button button-secondary" type="button" data-reflection-load-more data-i18n="reflections.loadMore">Load more reflections</button>
+          </div>
+        </div>
+      </section>
+
       <section class="section premium-content" id="press" aria-labelledby="press-heading">
         <div class="container">
           <div class="section-heading reveal">
@@ -661,17 +724,6 @@
             <article class="premium-card reveal"><h3 data-i18n="bio.title">Media Bio</h3><p data-i18n="bio.body">Congolese-born and Jacksonville-based, Carine Sanadina brings together healthcare service, inspirational writing, music, and survivor advocacy to speak with tenderness about pain, courage, faith, and emotional restoration.</p></article>
             <article class="premium-card reveal"><h3 data-i18n="speaking.title">Speaking Topics</h3><ul><li data-i18n="speaking.topic1">Domestic violence awareness and hidden survival</li><li data-i18n="speaking.topic2">Faith, resilience, and rebuilding self-worth</li><li data-i18n="speaking.topic3">Human-centered care, immigrant experience, and emotional wellness</li></ul></article>
             <article class="premium-card reveal"><h3 data-i18n="inquiry.title">Collaboration Inquiry</h3><p data-i18n="inquiry.body">For interviews, speaking invitations, music conversations, or book-centered events, use the contact paths below so each opportunity can be reviewed with clarity and care.</p><a class="button button-primary" href="#contact" data-i18n="inquiry.cta">Start an inquiry</a></article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section testimonials" id="testimonials" aria-labelledby="testimonials-heading">
-        <div class="container">
-          <div class="section-heading center reveal"><p class="eyebrow" data-i18n="testimonials.kicker">Testimonials</p><h2 id="testimonials-heading" data-i18n="testimonials.heading">Words that reflect the emotional impact of Carine’s platform.</h2></div>
-          <div class="testimonial-grid">
-            <blockquote class="testimonial-card reveal"><p data-i18n="testimonials.one">“Her voice makes survival feel seen, dignified, and possible.”</p></blockquote>
-            <blockquote class="testimonial-card reveal"><p data-i18n="testimonials.two">“Carine brings compassion to painful topics without losing courage or truth.”</p></blockquote>
-            <blockquote class="testimonial-card reveal"><p data-i18n="testimonials.three">“The work feels like a quiet room for healing, faith, and renewed strength.”</p></blockquote>
           </div>
         </div>
       </section>
@@ -736,6 +788,7 @@
         </div>
       </section>
 
+      <!-- TODO: Add email capture or member experiences only after a real static-compatible endpoint/auth provider is confirmed and ready to connect. -->
       <section class="section final-cta" id="contact" aria-labelledby="contact-heading">
         <div class="container cta-panel reveal">
           <p class="eyebrow" data-i18n="cta.kicker">Begin the conversation</p>
@@ -754,6 +807,13 @@
         </div>
       </section>
     </main>
+
+
+    <div class="install-toast" data-install-toast hidden role="status" aria-live="polite">
+      <span data-i18n="pwa.installText">Install this healing-centered app for quick offline access.</span>
+      <button class="button button-primary install-toast__button" type="button" data-install-button data-i18n="pwa.installButton">Install</button>
+      <button class="install-toast__dismiss" type="button" data-install-dismiss aria-label="Dismiss install prompt" data-i18n-attr="aria-label:pwa.dismissLabel">×</button>
+    </div>
 
     <footer class="site-footer">
       <div class="container footer-inner">
