@@ -47,10 +47,10 @@
   <body>
     <a class="skip-link" href="#main"> <span data-i18n="a11y.skip">Skip to main content</span></a>
 
-    <header class="site-header" aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.primaryNav">
+    <header class="site-header" aria-label="Primary navigation" data-i18n-aria-label="a11y.primaryNav">
       <nav class="nav container">
-        <a class="brand-mark" href="../#hero" aria-label="Carine Sanadina home" data-i18n-attr="aria-label:a11y.home">CS</a>
-        <div class="language-switcher" role="group" aria-label="Choose website language" data-i18n-attr="aria-label:language.selectorLabel">
+        <a class="brand-mark" href="../#hero" aria-label="Carine Sanadina home" data-i18n-aria-label="a11y.home">CS</a>
+        <div class="language-switcher" role="group" aria-label="Choose website language" data-i18n-aria-label="language.selectorLabel">
           <span class="language-switcher__label" data-i18n="language.label">Language</span>
           <button
             class="language-switcher__trigger"
@@ -64,12 +64,12 @@
             <span class="language-switcher__chevron" aria-hidden="true"></span>
           </button>
           <div class="language-switcher__menu" id="language-menu" role="menu" data-language-menu hidden>
-            <button class="language-option is-active" type="button" role="menuitemradio" data-language-option="en" aria-checked="true">English</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="fr" aria-checked="false">French</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="ln" aria-checked="false">Lingala</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="es" aria-checked="false">Spanish</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="sw" aria-checked="false">Swahili</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="yo" aria-checked="false">Yoruba</button>
+            <button class="language-option is-active" type="button" role="menuitemradio" data-language-option="en" aria-checked="true" data-i18n="language.name.en">English</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="fr" aria-checked="false" data-i18n="language.name.fr">French</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="ln" aria-checked="false" data-i18n="language.name.ln">Lingala</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="es" aria-checked="false" data-i18n="language.name.es">Spanish</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="sw" aria-checked="false" data-i18n="language.name.sw">Swahili</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="yo" aria-checked="false" data-i18n="language.name.yo">Yoruba</button>
           </div>
         </div>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
@@ -80,6 +80,7 @@
           <li><a href="../#about" data-i18n="nav.about">About</a></li>
           <li><a href="../#works" data-i18n="nav.works">Featured Works</a></li>
           <li><a href="../#music" data-i18n="nav.music">Music</a></li>
+          <li><a href="../#reflections" data-i18n="nav.reflections">Reflections</a></li>
           <li><a href="../#focus" data-i18n="nav.focus">Focus Areas</a></li>
           <li><a href="../#positioning" data-i18n="nav.positioning">Professional Voice</a></li>
           <li><a href="../#contact" data-i18n="nav.contact">Contact</a></li>
@@ -98,7 +99,7 @@
         </div>
       </section>
 
-      <section class="section legal-content" aria-label="Legal terms and ownership notices" data-i18n-attr="aria-label:legal.ariaLabel">
+      <section class="section legal-content" aria-label="Legal terms and ownership notices" data-i18n-aria-label="legal.ariaLabel">
         <div class="container legal-grid">
           <article class="legal-card reveal">
             <h2 data-i18n="legal.ownership.title">Ownership and Platform Notice</h2>
@@ -170,7 +171,7 @@
     <footer class="site-footer">
       <div class="container footer-inner">
         <p data-i18n="footer.rights">© 2026 Carine Sanadina. All Rights Reserved.</p>
-        <nav class="footer-nav" aria-label="Footer navigation" data-i18n-attr="aria-label:footer.navLabel">
+        <nav class="footer-nav" aria-label="Footer navigation" data-i18n-aria-label="footer.navLabel">
           <a href="../legal/" data-i18n="footer.legal">Legal / Terms</a>
         </nav>
         <p data-i18n="footer.credit">Website concept, design, and digital presentation by Omoluabi Productions, a creative project operated under ETL GIS Consulting LLC.</p>
