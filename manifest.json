@@ -1,0 +1,27 @@
+{
+  "name": "Carine Sanadina",
+  "short_name": "Carine",
+  "description": "Books, music, reflections, and restoration-centered resources from Carine Sanadina.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#081120",
+  "theme_color": "#081120",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "CS%20logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "CS%20logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["books", "music", "lifestyle"],
+  "lang": "en-US"
+}
