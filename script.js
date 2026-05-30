@@ -961,7 +961,7 @@ const premiumExperienceTranslations = {
     'music.stageLabel': 'Premium now playing experience',
     'music.controlsLabel': 'Music playback controls',
     'music.nowPlaying': 'Now playing',
-    'music.visualizerNote': 'Frequency bars and waveform respond while music is playing.',
+    'music.visualizerFallback': 'Audio visualization is unavailable because this browser does not support the Web Audio API.',
     'music.shuffle': 'Shuffle',
     'music.shuffleOn': 'Shuffle on',
     'music.shuffleOff': 'Shuffle off',
@@ -997,7 +997,7 @@ const premiumExperienceTranslations = {
     'music.stageLabel': 'Expérience premium du titre en cours',
     'music.controlsLabel': 'Commandes de lecture musicale',
     'music.nowPlaying': 'En lecture',
-    'music.visualizerNote': 'Les barres de fréquence et la forme d’onde réagissent pendant la musique.',
+    'music.visualizerFallback': 'La visualisation audio est indisponible, car ce navigateur ne prend pas en charge l’API Web Audio.',
     'music.shuffle': 'Aléatoire',
     'music.shuffleOn': 'Aléatoire activé',
     'music.shuffleOff': 'Aléatoire désactivé',
@@ -1359,6 +1359,7 @@ if (musicPlayers.length) {
   const repeatButton = document.querySelector('[data-repeat-toggle]');
   const nextButton = document.querySelector('[data-next-track]');
   const visualizerCanvas = document.querySelector('[data-audio-visualizer]');
+  const visualizerFallback = document.querySelector('[data-visualizer-fallback]');
   const stageCover = document.querySelector('[data-stage-cover]');
   const stageTitle = document.querySelector('[data-stage-title]');
   const stageArtist = document.querySelector('[data-stage-artist]');
@@ -1371,9 +1372,13 @@ if (musicPlayers.length) {
   const mobileRepeat = document.querySelector('[data-mobile-repeat]');
   const miniExpand = document.querySelector('[data-mini-expand]');
   const mobileClose = document.querySelector('[data-mobile-close]');
+  const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+  const isWebAudioSupported = Boolean(AudioContextConstructor);
   let audioContext = null;
   let analyser = null;
   let visualizerFrame = 0;
+  let visualizerContext = null;
+  let activeVisualizerSource = null;
   const audioSources = new WeakMap();
 
   const getStoredPlayerState = () => {
@@ -1442,83 +1447,174 @@ if (musicPlayers.length) {
     syncStage(player);
   };
 
-  const ensureVisualizer = (audio) => {
-    if (!visualizerCanvas || reduceMotion || !audio || !window.AudioContext && !window.webkitAudioContext) {
+  const setVisualizerFallback = () => {
+    if (!visualizerFallback) {
       return;
     }
 
+    visualizerFallback.hidden = isWebAudioSupported;
+    visualizerFallback.textContent = isWebAudioSupported ? '' : translate('music.visualizerFallback');
+  };
+
+  const resizeVisualizerCanvas = () => {
+    if (!visualizerCanvas) {
+      return false;
+    }
+
+    const bounds = visualizerCanvas.getBoundingClientRect();
+    const cssWidth = Math.max(1, Math.round(bounds.width));
+    const cssHeight = Math.max(1, Math.round(bounds.height));
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const nextWidth = Math.round(cssWidth * pixelRatio);
+    const nextHeight = Math.round(cssHeight * pixelRatio);
+
+    if (visualizerCanvas.width !== nextWidth || visualizerCanvas.height !== nextHeight) {
+      visualizerCanvas.width = nextWidth;
+      visualizerCanvas.height = nextHeight;
+    }
+
+    return nextWidth > 1 && nextHeight > 1;
+  };
+
+  const getVisualizerContext = () => {
+    if (!visualizerCanvas) {
+      return null;
+    }
+
+    visualizerContext = visualizerContext || visualizerCanvas.getContext('2d');
+    return visualizerContext;
+  };
+
+  const ensureVisualizer = async (audio) => {
+    setVisualizerFallback();
+
+    if (!visualizerCanvas || reduceMotion || !audio || !isWebAudioSupported) {
+      return false;
+    }
+
     if (!audioContext) {
-      const Context = window.AudioContext || window.webkitAudioContext;
-      audioContext = new Context();
+      audioContext = new AudioContextConstructor();
       analyser = audioContext.createAnalyser();
-      analyser.fftSize = 128;
-      analyser.smoothingTimeConstant = 0.82;
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.84;
       analyser.connect(audioContext.destination);
     }
 
-    if (!audioSources.has(audio)) {
+    if (audioContext.state === 'suspended') {
       try {
-        const source = audioContext.createMediaElementSource(audio);
-        source.connect(analyser);
-        audioSources.set(audio, source);
+        await audioContext.resume();
       } catch (error) {
-        return;
+        return false;
       }
     }
 
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
+    let source = audioSources.get(audio);
+
+    if (!source) {
+      try {
+        source = audioContext.createMediaElementSource(audio);
+        audioSources.set(audio, source);
+      } catch (error) {
+        return false;
+      }
     }
+
+    if (activeVisualizerSource !== source) {
+      if (activeVisualizerSource) {
+        try {
+          activeVisualizerSource.disconnect();
+        } catch (error) {
+          // Already disconnected by the browser.
+        }
+      }
+
+      source.connect(analyser);
+      activeVisualizerSource = source;
+    }
+
+    return resizeVisualizerCanvas();
   };
 
   const drawVisualizer = () => {
-    if (!visualizerCanvas || !analyser || reduceMotion) return;
+    if (!visualizerCanvas || !analyser || reduceMotion) {
+      return;
+    }
+
     const activeAudio = activePlayer ? getAudio(activePlayer) : null;
-    const context = visualizerCanvas.getContext('2d');
+    const context = getVisualizerContext();
+
+    if (!context || !activeAudio || activeAudio.paused || activeAudio.ended) {
+      stopVisualizer();
+      return;
+    }
+
+    resizeVisualizerCanvas();
+
     const { width, height } = visualizerCanvas;
     const frequencyData = new Uint8Array(analyser.frequencyBinCount);
-    const waveData = new Uint8Array(analyser.frequencyBinCount);
+    const waveData = new Uint8Array(analyser.fftSize);
     analyser.getByteFrequencyData(frequencyData);
     analyser.getByteTimeDomainData(waveData);
+
     context.clearRect(0, 0, width, height);
-    const gradient = context.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, 'rgba(74, 140, 255, 0.18)');
-    gradient.addColorStop(0.55, 'rgba(96, 165, 250, 0.68)');
-    gradient.addColorStop(1, 'rgba(234, 242, 255, 0.9)');
-    const gap = 6;
-    const barWidth = Math.max(5, (width / frequencyData.length) - gap);
-    frequencyData.forEach((value, index) => {
-      const barHeight = Math.max(8, (value / 255) * (height * 0.72));
+
+    const background = context.createLinearGradient(0, 0, width, height);
+    background.addColorStop(0, 'rgba(6, 23, 52, 0.7)');
+    background.addColorStop(1, 'rgba(16, 54, 108, 0.36)');
+    context.fillStyle = background;
+    context.fillRect(0, 0, width, height);
+
+    const barCount = Math.min(56, frequencyData.length);
+    const gap = Math.max(3, width * 0.005);
+    const barWidth = Math.max(4, (width - gap * (barCount - 1)) / barCount);
+    const barGradient = context.createLinearGradient(0, height, 0, 0);
+    barGradient.addColorStop(0, 'rgba(59, 130, 246, 0.78)');
+    barGradient.addColorStop(0.55, 'rgba(125, 211, 252, 0.86)');
+    barGradient.addColorStop(1, 'rgba(255, 255, 255, 0.96)');
+
+    for (let index = 0; index < barCount; index += 1) {
+      const value = frequencyData[index] || 0;
+      const barHeight = Math.max(height * 0.08, (value / 255) * (height * 0.68));
       const x = index * (barWidth + gap);
       const y = height - barHeight;
-      context.fillStyle = gradient;
+
+      context.fillStyle = barGradient;
       context.beginPath();
       if (typeof context.roundRect === 'function') {
-        context.roundRect(x, y, barWidth, barHeight, 999);
+        context.roundRect(x, y, barWidth, barHeight, Math.min(18, barWidth / 2));
       } else {
         context.rect(x, y, barWidth, barHeight);
       }
       context.fill();
-    });
+    }
+
     context.beginPath();
     waveData.forEach((value, index) => {
       const x = (index / (waveData.length - 1)) * width;
-      const y = (value / 255) * height * 0.6 + height * 0.18;
-      if (index === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
+      const y = (value / 255) * height * 0.5 + height * 0.2;
+      if (index === 0) {
+        context.moveTo(x, y);
+      } else {
+        context.lineTo(x, y);
+      }
     });
-    context.strokeStyle = 'rgba(234, 242, 255, 0.78)';
-    context.lineWidth = 2;
+    context.strokeStyle = 'rgba(248, 250, 252, 0.95)';
+    context.lineWidth = Math.max(2, width * 0.003);
+    context.shadowColor = 'rgba(125, 211, 252, 0.36)';
+    context.shadowBlur = 12;
     context.stroke();
+    context.shadowBlur = 0;
 
-    if (activeAudio && !activeAudio.paused && !activeAudio.ended) {
-      visualizerFrame = window.requestAnimationFrame(drawVisualizer);
-    }
+    visualizerFrame = window.requestAnimationFrame(drawVisualizer);
   };
 
-  const startVisualizer = (audio) => {
-    ensureVisualizer(audio);
-    if (!visualizerCanvas || reduceMotion) return;
+  const startVisualizer = async (audio) => {
+    const isReady = await ensureVisualizer(audio);
+
+    if (!isReady || !visualizerCanvas || reduceMotion || audio.paused || audio.ended) {
+      return;
+    }
+
     window.cancelAnimationFrame(visualizerFrame);
     visualizerCanvas.classList.add('is-visualizing');
     drawVisualizer();
@@ -1526,8 +1622,16 @@ if (musicPlayers.length) {
 
   const stopVisualizer = () => {
     window.cancelAnimationFrame(visualizerFrame);
-    if (visualizerCanvas) visualizerCanvas.classList.remove('is-visualizing');
+    visualizerFrame = 0;
+    if (visualizerCanvas) {
+      visualizerCanvas.classList.remove('is-visualizing');
+    }
   };
+
+  setVisualizerFallback();
+  resizeVisualizerCanvas();
+  window.addEventListener('resize', resizeVisualizerCanvas, { passive: true });
+  window.addEventListener('carine:languagechange', setVisualizerFallback);
 
   const getAudio = (player) => player.querySelector('audio');
   const getDurationLabel = (player) => player.querySelector('[data-duration]');
@@ -1702,7 +1806,7 @@ if (musicPlayers.length) {
     isSwitchingTracks = false;
     userStoppedPlayback = false;
     showMiniPlayer(player);
-    ensureVisualizer(audio);
+    await ensureVisualizer(audio);
 
     if (audio.ended || audio.currentTime >= getSafeDuration(audio, 0)) {
       audio.currentTime = 0;
@@ -1710,7 +1814,7 @@ if (musicPlayers.length) {
 
     try {
       await audio.play();
-      startVisualizer(audio);
+      await startVisualizer(audio);
       persistPlayerState();
       if (status) {
         status.textContent = '';
