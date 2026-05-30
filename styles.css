@@ -1697,12 +1697,26 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   opacity: 1;
 }
 
-.music-visualizer.is-visualizing {
-  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.38), 0 0 48px rgba(74, 140, 255, 0.24);
+.music-visualizer.is-visualizing,
+.music-visualizer.is-playing {
+  box-shadow:
+    inset 0 0 0 1px rgba(96, 165, 250, 0.38),
+    0 0 48px rgba(74, 140, 255, 0.24),
+    0 0 92px rgba(29, 185, 84, 0.14);
 }
 
+.music-visualizer.visualizer-fallback-active,
 .music-visualizer.is-fallback-visualizing {
-  box-shadow: inset 0 0 0 1px rgba(45, 212, 191, 0.34), 0 0 42px rgba(45, 212, 191, 0.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(45, 212, 191, 0.34),
+    0 0 42px rgba(45, 212, 191, 0.18),
+    0 0 84px rgba(29, 185, 84, 0.16);
+  animation: visualizerGlowPulse 1.65s ease-in-out infinite;
+}
+
+@keyframes visualizerGlowPulse {
+  0%, 100% { filter: saturate(1) brightness(1); }
+  50% { filter: saturate(1.18) brightness(1.08); }
 }
 
 .visualizer-note {
