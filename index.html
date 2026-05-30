@@ -196,11 +196,11 @@
           </button>
           <div class="language-switcher__menu" id="language-menu" role="menu" data-language-menu hidden>
             <button class="language-option is-active" type="button" role="menuitemradio" data-language-option="en" aria-checked="true">English</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="fr" aria-checked="false">Français</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="fr" aria-checked="false">French</button>
             <button class="language-option" type="button" role="menuitemradio" data-language-option="ln" aria-checked="false">Lingala</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="es" aria-checked="false">Español</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="es" aria-checked="false">Spanish</button>
             <button class="language-option" type="button" role="menuitemradio" data-language-option="sw" aria-checked="false">Swahili</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="yo" aria-checked="false">Yorùbá</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="yo" aria-checked="false">Yoruba</button>
           </div>
         </div>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
@@ -408,6 +408,26 @@
             <p class="discreet-notice" data-i18n="music.disclaimer">Music and media are presented for promotional listening and artist visibility. Rights remain with their respective owners. Unauthorized copying, redistribution, or commercial use is prohibited.</p>
           </div>
 
+          <div class="streaming-stage reveal" aria-label="Premium now playing experience" data-i18n-attr="aria-label:music.stageLabel">
+            <div class="stage-artwork" aria-hidden="true">
+              <img src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Consolation%20Cover.png" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-stage-cover />
+              <div class="stage-fallback">CS</div>
+            </div>
+            <div class="stage-copy">
+              <p class="eyebrow" data-i18n="music.nowPlaying">Now playing</p>
+              <h3 data-stage-title>Consolation</h3>
+              <p data-stage-artist>Carine Sanadina</p>
+              <canvas class="music-visualizer" width="960" height="220" aria-hidden="true" data-audio-visualizer></canvas>
+              <p class="visualizer-note" data-i18n="music.visualizerNote">Frequency bars and waveform respond while music is playing.</p>
+            </div>
+          </div>
+
+          <div class="player-command-center reveal" aria-label="Music playback controls" data-i18n-attr="aria-label:music.controlsLabel">
+            <button class="control-chip" type="button" data-shuffle-toggle aria-pressed="false" data-i18n="music.shuffle">Shuffle</button>
+            <button class="control-chip" type="button" data-repeat-toggle aria-pressed="false" data-repeat-mode="all" data-i18n="music.repeatAll">Repeat all</button>
+            <button class="control-chip" type="button" data-next-track data-i18n="music.nextTrack">Next track</button>
+          </div>
+
           <div class="playlist-panel reveal" aria-label="Carine Sanadina music playlist" data-i18n-attr="aria-label:music.playlistLabel">
             <div class="playlist-header" aria-hidden="true">
               <span data-i18n="music.playlist">Playlist</span>
@@ -577,6 +597,7 @@
           <button class="track-play-toggle mini-toggle" type="button" data-mini-toggle aria-label="Play or pause current track" data-i18n-attr="aria-label:mini.toggleLabel">
             <span class="play-icon" aria-hidden="true"></span>
           </button>
+          <button class="mini-expand" type="button" data-mini-expand aria-expanded="false" aria-controls="mobile-player-sheet" data-i18n="mini.expand">Expand</button>
           <div class="mini-time" aria-live="off">
             <span data-mini-current>0:00</span>
             <label class="sr-only" for="mini-player-progress" data-i18n="mini.progress">Current track progress</label>
@@ -610,6 +631,55 @@
           </div>
         </div>
       </aside>
+
+      <div class="mobile-player-sheet" id="mobile-player-sheet" data-mobile-player aria-hidden="true">
+        <div class="mobile-player-card" role="dialog" aria-modal="false" aria-labelledby="mobile-player-title">
+          <button class="mobile-player-close" type="button" data-mobile-close aria-label="Close player" data-i18n-attr="aria-label:mini.close">×</button>
+          <img class="mobile-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mobile-cover />
+          <p class="eyebrow" data-i18n="music.nowPlaying">Now playing</p>
+          <h3 id="mobile-player-title" data-mobile-title>No track selected</h3>
+          <p data-mobile-artist>Carine Sanadina</p>
+          <div class="mobile-player-actions">
+            <button class="control-chip" type="button" data-mobile-shuffle data-i18n="music.shuffle">Shuffle</button>
+            <button class="track-play-toggle" type="button" data-mobile-toggle aria-label="Play or pause current track" data-i18n-attr="aria-label:mini.toggleLabel"><span class="play-icon" aria-hidden="true"></span></button>
+            <button class="control-chip" type="button" data-mobile-repeat data-i18n="music.repeatAll">Repeat all</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="section premium-content" id="press" aria-labelledby="press-heading">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow" data-i18n="press.kicker">Press Kit</p>
+            <h2 id="press-heading" data-i18n="press.heading">A refined media hub for conversations about healing, authorship, faith, and restoration.</h2>
+            <p><span data-i18n="press.body">Carine Sanadina is available for thoughtful media conversations, community features, and healing-centered storytelling opportunities aligned with her books, music, survivor advocacy, and healthcare-rooted compassion.</span></p>
+          </div>
+          <div class="premium-grid">
+            <article class="premium-card reveal"><h3 data-i18n="bio.title">Media Bio</h3><p data-i18n="bio.body">Congolese-born and Jacksonville-based, Carine Sanadina brings together healthcare service, inspirational writing, music, and survivor advocacy to speak with tenderness about pain, courage, faith, and emotional restoration.</p></article>
+            <article class="premium-card reveal"><h3 data-i18n="speaking.title">Speaking Topics</h3><ul><li data-i18n="speaking.topic1">Domestic violence awareness and hidden survival</li><li data-i18n="speaking.topic2">Faith, resilience, and rebuilding self-worth</li><li data-i18n="speaking.topic3">Human-centered care, immigrant experience, and emotional wellness</li></ul></article>
+            <article class="premium-card reveal"><h3 data-i18n="inquiry.title">Collaboration Inquiry</h3><p data-i18n="inquiry.body">For interviews, speaking invitations, music conversations, or book-centered events, use the contact paths below so each opportunity can be reviewed with clarity and care.</p><a class="button button-primary" href="#contact" data-i18n="inquiry.cta">Start an inquiry</a></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section testimonials" id="testimonials" aria-labelledby="testimonials-heading">
+        <div class="container">
+          <div class="section-heading center reveal"><p class="eyebrow" data-i18n="testimonials.kicker">Testimonials</p><h2 id="testimonials-heading" data-i18n="testimonials.heading">Words that reflect the emotional impact of Carine’s platform.</h2></div>
+          <div class="testimonial-grid">
+            <blockquote class="testimonial-card reveal"><p data-i18n="testimonials.one">“Her voice makes survival feel seen, dignified, and possible.”</p></blockquote>
+            <blockquote class="testimonial-card reveal"><p data-i18n="testimonials.two">“Carine brings compassion to painful topics without losing courage or truth.”</p></blockquote>
+            <blockquote class="testimonial-card reveal"><p data-i18n="testimonials.three">“The work feels like a quiet room for healing, faith, and renewed strength.”</p></blockquote>
+          </div>
+        </div>
+      </section>
+
+      <section class="quote-wall" aria-label="Featured quote wall" data-i18n-attr="aria-label:quote.wallLabel">
+        <div class="container quote-wall-grid reveal">
+          <span data-i18n="quote.wall.one">Survival is not the end of the story.</span>
+          <span data-i18n="quote.wall.two">Healing can become a language.</span>
+          <span data-i18n="quote.wall.three">Faith gives the broken places a future.</span>
+        </div>
+      </section>
 
       <section class="section focus" id="focus" aria-labelledby="focus-heading">
         <div class="container">
@@ -692,6 +762,6 @@
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>
