@@ -3,11 +3,11 @@ const DEFAULT_LANGUAGE = 'en';
 
 const languageLabels = {
   en: 'English',
-  fr: 'Français',
+  fr: 'French',
   ln: 'Lingala',
-  es: 'Español',
+  es: 'Spanish',
   sw: 'Swahili',
-  yo: 'Yorùbá'
+  yo: 'Yoruba'
 };
 
 const translations = {};
@@ -149,7 +149,7 @@ translations.en = {
   'legal.intro': 'These notices clarify ownership, authorized use, and representation boundaries for the Carine Sanadina website while keeping the experience respectful, collaborative, and transparent.',
   'legal.ariaLabel': 'Legal terms and ownership notices',
   'legal.ownership.title': 'Ownership and Platform Notice',
-  'legal.ownership.body': 'The website concept, design, structure, code implementation, visual direction, digital experience, layout, and creative presentation are produced and managed by Omoluabi Productions, a creative project operated under ETL GIS Consulting LLC. Unless otherwise stated, the website platform and related digital presentation elements are owned or controlled by ETL GIS Consulting LLC.',
+  'legal.ownership.body': 'The digital presentation and website platform are operated under ETL GIS Consulting LLC. Omoluabi Productions serves as the creative production identity for the website concept, design, structure, code implementation, visual direction, digital experience, layout, and creative presentation. Unless otherwise stated, the website platform and related digital presentation elements are owned or controlled by ETL GIS Consulting LLC.',
   'legal.ip.title': 'Intellectual Property',
   'legal.ip.body': 'All website layouts, interface styling, code, copy presentation, and platform-level creative direction may not be copied, reused, modified, redistributed, or commercially exploited without written permission from ETL GIS Consulting LLC or the appropriate rights holder. Third-party, artist-owned, or separately credited materials remain with their respective owners.',
   'legal.artist.title': 'Artist Materials and Likeness',
@@ -956,6 +956,109 @@ translations.yo = {
   "footer.credit": "Agbekale oju opo wẹẹbu, apẹrẹ, ati igbejade oni-nọmba nipasẹ Awọn iṣelọpọ Omoluabi, iṣẹ akanṣe ẹda ti o ṣiṣẹ labẹ ETL GIS Consulting LLC."
 };
 
+const premiumExperienceTranslations = {
+  en: {
+    'music.stageLabel': 'Premium now playing experience',
+    'music.controlsLabel': 'Music playback controls',
+    'music.nowPlaying': 'Now playing',
+    'music.visualizerNote': 'Frequency bars and waveform respond while music is playing.',
+    'music.shuffle': 'Shuffle',
+    'music.shuffleOn': 'Shuffle on',
+    'music.shuffleOff': 'Shuffle off',
+    'music.repeatAll': 'Repeat all',
+    'music.repeatOne': 'Repeat one',
+    'music.repeatOff': 'Repeat off',
+    'music.nextTrack': 'Next track',
+    'mini.expand': 'Expand',
+    'mini.close': 'Close player',
+    'press.kicker': 'Press Kit',
+    'press.heading': 'A refined media hub for conversations about healing, authorship, faith, and restoration.',
+    'press.body': 'Carine Sanadina is available for thoughtful media conversations, community features, and healing-centered storytelling opportunities aligned with her books, music, survivor advocacy, and healthcare-rooted compassion.',
+    'bio.title': 'Media Bio',
+    'bio.body': 'Congolese-born and Jacksonville-based, Carine Sanadina brings together healthcare service, inspirational writing, music, and survivor advocacy to speak with tenderness about pain, courage, faith, and emotional restoration.',
+    'speaking.title': 'Speaking Topics',
+    'speaking.topic1': 'Domestic violence awareness and hidden survival',
+    'speaking.topic2': 'Faith, resilience, and rebuilding self-worth',
+    'speaking.topic3': 'Human-centered care, immigrant experience, and emotional wellness',
+    'inquiry.title': 'Collaboration Inquiry',
+    'inquiry.body': 'For interviews, speaking invitations, music conversations, or book-centered events, use the contact paths below so each opportunity can be reviewed with clarity and care.',
+    'inquiry.cta': 'Start an inquiry',
+    'testimonials.kicker': 'Testimonials',
+    'testimonials.heading': 'Words that reflect the emotional impact of Carine’s platform.',
+    'testimonials.one': '“Her voice makes survival feel seen, dignified, and possible.”',
+    'testimonials.two': '“Carine brings compassion to painful topics without losing courage or truth.”',
+    'testimonials.three': '“The work feels like a quiet room for healing, faith, and renewed strength.”',
+    'quote.wallLabel': 'Featured quote wall',
+    'quote.wall.one': 'Survival is not the end of the story.',
+    'quote.wall.two': 'Healing can become a language.',
+    'quote.wall.three': 'Faith gives the broken places a future.'
+  },
+  fr: {
+    'music.stageLabel': 'Expérience premium du titre en cours',
+    'music.controlsLabel': 'Commandes de lecture musicale',
+    'music.nowPlaying': 'En lecture',
+    'music.visualizerNote': 'Les barres de fréquence et la forme d’onde réagissent pendant la musique.',
+    'music.shuffle': 'Aléatoire',
+    'music.shuffleOn': 'Aléatoire activé',
+    'music.shuffleOff': 'Aléatoire désactivé',
+    'music.repeatAll': 'Répéter tout',
+    'music.repeatOne': 'Répéter un',
+    'music.repeatOff': 'Répétition désactivée',
+    'music.nextTrack': 'Titre suivant',
+    'mini.expand': 'Agrandir',
+    'mini.close': 'Fermer le lecteur',
+    'press.kicker': 'Dossier de presse',
+    'press.heading': 'Un espace média raffiné pour parler de guérison, d’écriture, de foi et de restauration.',
+    'press.body': 'Carine Sanadina est disponible pour des échanges médias réfléchis, des portraits communautaires et des récits centrés sur la guérison liés à ses livres, sa musique, son plaidoyer et sa compassion issue du soin.',
+    'bio.title': 'Bio média',
+    'bio.body': 'Née au Congo et basée à Jacksonville, Carine Sanadina unit le service en santé, l’écriture inspirante, la musique et le plaidoyer des survivantes pour parler avec tendresse de douleur, de courage, de foi et de restauration émotionnelle.',
+    'speaking.title': 'Sujets de conférence',
+    'speaking.topic1': 'Sensibilisation aux violences domestiques et survie cachée',
+    'speaking.topic2': 'Foi, résilience et reconstruction de l’estime de soi',
+    'speaking.topic3': 'Soin centré sur l’humain, expérience immigrée et bien-être émotionnel',
+    'inquiry.title': 'Demande de collaboration',
+    'inquiry.body': 'Pour les interviews, invitations, conversations musicales ou événements autour des livres, utilisez les chemins de contact ci-dessous afin que chaque opportunité soit examinée avec clarté et soin.',
+    'inquiry.cta': 'Commencer une demande',
+    'testimonials.kicker': 'Témoignages',
+    'testimonials.heading': 'Des mots qui reflètent l’impact émotionnel de la plateforme de Carine.',
+    'testimonials.one': '« Sa voix rend la survie visible, digne et possible. »',
+    'testimonials.two': '« Carine apporte de la compassion aux sujets douloureux sans perdre courage ni vérité. »',
+    'testimonials.three': '« Le travail ressemble à une pièce calme pour la guérison, la foi et une force renouvelée. »',
+    'quote.wallLabel': 'Mur de citations',
+    'quote.wall.one': 'La survie n’est pas la fin de l’histoire.',
+    'quote.wall.two': 'La guérison peut devenir une langue.',
+    'quote.wall.three': 'La foi donne un avenir aux lieux brisés.'
+  },
+  ln: {}, es: {}, sw: {}, yo: {}
+};
+
+premiumExperienceTranslations.es = {
+  ...premiumExperienceTranslations.en,
+  'music.nowPlaying': 'Reproduciendo ahora', 'music.shuffle': 'Aleatorio', 'music.repeatAll': 'Repetir todo', 'music.repeatOne': 'Repetir una', 'music.repeatOff': 'Repetición desactivada', 'music.nextTrack': 'Siguiente canción', 'mini.expand': 'Expandir', 'mini.close': 'Cerrar reproductor',
+  'press.kicker': 'Kit de prensa', 'bio.title': 'Biografía para medios', 'speaking.title': 'Temas para charlas', 'inquiry.title': 'Consulta de colaboración', 'inquiry.cta': 'Iniciar consulta', 'testimonials.kicker': 'Testimonios'
+};
+premiumExperienceTranslations.sw = {
+  ...premiumExperienceTranslations.en,
+  'music.nowPlaying': 'Inacheza sasa', 'music.shuffle': 'Changanya', 'music.repeatAll': 'Rudia zote', 'music.repeatOne': 'Rudia moja', 'music.repeatOff': 'Rudia imezimwa', 'music.nextTrack': 'Wimbo unaofuata', 'mini.expand': 'Panua', 'mini.close': 'Funga kicheza muziki',
+  'press.kicker': 'Seti ya Vyombo vya Habari', 'bio.title': 'Wasifu wa Vyombo vya Habari', 'speaking.title': 'Mada za Kuzungumza', 'inquiry.title': 'Ombi la Ushirikiano', 'inquiry.cta': 'Anza ombi', 'testimonials.kicker': 'Shuhuda'
+};
+premiumExperienceTranslations.ln = {
+  ...premiumExperienceTranslations.en,
+  'music.nowPlaying': 'Ezali kobeta sikoyo', 'music.shuffle': 'Sangisa', 'music.repeatAll': 'Zongela nyonso', 'music.repeatOne': 'Zongela moko', 'music.repeatOff': 'Kozongela ekangami', 'music.nextTrack': 'Loyembo elandi', 'mini.expand': 'Monisa mobimba', 'mini.close': 'Kanga lecteur',
+  'press.kicker': 'Dossier ya presse', 'bio.title': 'Bio ya média', 'speaking.title': 'Masolo ya koloba', 'inquiry.title': 'Bosengi ya kosala elongo', 'inquiry.cta': 'Banda bosengi', 'testimonials.kicker': 'Matatoli'
+};
+premiumExperienceTranslations.yo = {
+  ...premiumExperienceTranslations.en,
+  'music.nowPlaying': 'Ó ń dun báyìí', 'music.shuffle': 'Darapọ̀', 'music.repeatAll': 'Tun gbogbo rẹ ṣe', 'music.repeatOne': 'Tun ẹyọ kan ṣe', 'music.repeatOff': 'Ìtúnṣe pa', 'music.nextTrack': 'Orin tó kàn', 'mini.expand': 'Faagun', 'mini.close': 'Pa ẹrọ orin',
+  'press.kicker': 'Ohun elo atẹjade', 'bio.title': 'Ìtàn kukuru fún mídia', 'speaking.title': 'Àwọn koko ọrọ sisọ', 'inquiry.title': 'Ìbéèrè ìfọwọ́sowọ́pọ̀', 'inquiry.cta': 'Bẹrẹ ìbéèrè', 'testimonials.kicker': 'Ẹ̀rí'
+};
+
+Object.entries(premiumExperienceTranslations).forEach(([language, dictionary]) => {
+  if (translations[language]) {
+    Object.assign(translations[language], dictionary);
+  }
+});
+
 const supportedLanguages = Object.keys(translations);
 let currentLanguage = DEFAULT_LANGUAGE;
 
@@ -1248,6 +1351,183 @@ if (musicPlayers.length) {
   let activePlayer = null;
   let userStoppedPlayback = false;
   let isSwitchingTracks = false;
+  let shuffleEnabled = false;
+  let repeatMode = 'all';
+  const PLAYER_STORAGE_KEY = 'carine-sanadina-player-state';
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const shuffleButton = document.querySelector('[data-shuffle-toggle]');
+  const repeatButton = document.querySelector('[data-repeat-toggle]');
+  const nextButton = document.querySelector('[data-next-track]');
+  const visualizerCanvas = document.querySelector('[data-audio-visualizer]');
+  const stageCover = document.querySelector('[data-stage-cover]');
+  const stageTitle = document.querySelector('[data-stage-title]');
+  const stageArtist = document.querySelector('[data-stage-artist]');
+  const mobilePlayer = document.querySelector('[data-mobile-player]');
+  const mobileCover = document.querySelector('[data-mobile-cover]');
+  const mobileTitle = document.querySelector('[data-mobile-title]');
+  const mobileArtist = document.querySelector('[data-mobile-artist]');
+  const mobileToggle = document.querySelector('[data-mobile-toggle]');
+  const mobileShuffle = document.querySelector('[data-mobile-shuffle]');
+  const mobileRepeat = document.querySelector('[data-mobile-repeat]');
+  const miniExpand = document.querySelector('[data-mini-expand]');
+  const mobileClose = document.querySelector('[data-mobile-close]');
+  let audioContext = null;
+  let analyser = null;
+  let visualizerFrame = 0;
+  const audioSources = new WeakMap();
+
+  const getStoredPlayerState = () => {
+    try {
+      return JSON.parse(window.localStorage.getItem(PLAYER_STORAGE_KEY) || '{}');
+    } catch (error) {
+      return {};
+    }
+  };
+
+  const persistPlayerState = () => {
+    try {
+      const activeIndex = activePlayer ? musicPlayers.indexOf(activePlayer) : 0;
+      const audio = activePlayer ? getAudio(activePlayer) : null;
+      window.localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify({
+        activeIndex: Math.max(activeIndex, 0),
+        currentTime: audio ? Math.floor(audio.currentTime) : 0,
+        volume: mini?.volume ? Number(mini.volume.value) : 0.85,
+        shuffleEnabled,
+        repeatMode
+      }));
+    } catch (error) {
+      // Storage can be unavailable in restricted browsing contexts.
+    }
+  };
+
+  const updateCommandButtons = () => {
+    if (shuffleButton) {
+      shuffleButton.setAttribute('aria-pressed', String(shuffleEnabled));
+      shuffleButton.textContent = translate(shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle');
+      shuffleButton.classList.toggle('is-active', shuffleEnabled);
+    }
+
+    const repeatLabelKey = repeatMode === 'one' ? 'music.repeatOne' : repeatMode === 'all' ? 'music.repeatAll' : 'music.repeatOff';
+    [repeatButton, mobileRepeat].forEach((button) => {
+      if (!button) return;
+      button.dataset.repeatMode = repeatMode;
+      button.setAttribute('aria-pressed', String(repeatMode !== 'off'));
+      button.textContent = translate(repeatLabelKey);
+      button.classList.toggle('is-active', repeatMode !== 'off');
+    });
+
+    if (mobileShuffle) {
+      mobileShuffle.setAttribute('aria-pressed', String(shuffleEnabled));
+      mobileShuffle.textContent = translate(shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle');
+      mobileShuffle.classList.toggle('is-active', shuffleEnabled);
+    }
+  };
+
+  const syncStage = (player) => {
+    if (!player) return;
+    const title = getTrackTitle(player);
+    if (stageCover) stageCover.src = player.dataset.trackCover || '';
+    if (stageTitle) stageTitle.textContent = title;
+    if (stageArtist) stageArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
+    if (mobileCover) {
+      mobileCover.src = player.dataset.trackCover || '';
+      mobileCover.alt = `${title} ${translate('audio.coverArt')}`;
+    }
+    if (mobileTitle) mobileTitle.textContent = title;
+    if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
+  };
+
+  const setActiveTrack = (player) => {
+    musicPlayers.forEach((track) => track.classList.toggle('is-active', track === player));
+    syncStage(player);
+  };
+
+  const ensureVisualizer = (audio) => {
+    if (!visualizerCanvas || reduceMotion || !audio || !window.AudioContext && !window.webkitAudioContext) {
+      return;
+    }
+
+    if (!audioContext) {
+      const Context = window.AudioContext || window.webkitAudioContext;
+      audioContext = new Context();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 128;
+      analyser.smoothingTimeConstant = 0.82;
+      analyser.connect(audioContext.destination);
+    }
+
+    if (!audioSources.has(audio)) {
+      try {
+        const source = audioContext.createMediaElementSource(audio);
+        source.connect(analyser);
+        audioSources.set(audio, source);
+      } catch (error) {
+        return;
+      }
+    }
+
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+  };
+
+  const drawVisualizer = () => {
+    if (!visualizerCanvas || !analyser || reduceMotion) return;
+    const activeAudio = activePlayer ? getAudio(activePlayer) : null;
+    const context = visualizerCanvas.getContext('2d');
+    const { width, height } = visualizerCanvas;
+    const frequencyData = new Uint8Array(analyser.frequencyBinCount);
+    const waveData = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(frequencyData);
+    analyser.getByteTimeDomainData(waveData);
+    context.clearRect(0, 0, width, height);
+    const gradient = context.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, 'rgba(74, 140, 255, 0.18)');
+    gradient.addColorStop(0.55, 'rgba(96, 165, 250, 0.68)');
+    gradient.addColorStop(1, 'rgba(234, 242, 255, 0.9)');
+    const gap = 6;
+    const barWidth = Math.max(5, (width / frequencyData.length) - gap);
+    frequencyData.forEach((value, index) => {
+      const barHeight = Math.max(8, (value / 255) * (height * 0.72));
+      const x = index * (barWidth + gap);
+      const y = height - barHeight;
+      context.fillStyle = gradient;
+      context.beginPath();
+      if (typeof context.roundRect === 'function') {
+        context.roundRect(x, y, barWidth, barHeight, 999);
+      } else {
+        context.rect(x, y, barWidth, barHeight);
+      }
+      context.fill();
+    });
+    context.beginPath();
+    waveData.forEach((value, index) => {
+      const x = (index / (waveData.length - 1)) * width;
+      const y = (value / 255) * height * 0.6 + height * 0.18;
+      if (index === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    });
+    context.strokeStyle = 'rgba(234, 242, 255, 0.78)';
+    context.lineWidth = 2;
+    context.stroke();
+
+    if (activeAudio && !activeAudio.paused && !activeAudio.ended) {
+      visualizerFrame = window.requestAnimationFrame(drawVisualizer);
+    }
+  };
+
+  const startVisualizer = (audio) => {
+    ensureVisualizer(audio);
+    if (!visualizerCanvas || reduceMotion) return;
+    window.cancelAnimationFrame(visualizerFrame);
+    visualizerCanvas.classList.add('is-visualizing');
+    drawVisualizer();
+  };
+
+  const stopVisualizer = () => {
+    window.cancelAnimationFrame(visualizerFrame);
+    if (visualizerCanvas) visualizerCanvas.classList.remove('is-visualizing');
+  };
 
   const getAudio = (player) => player.querySelector('audio');
   const getDurationLabel = (player) => player.querySelector('[data-duration]');
@@ -1299,6 +1579,7 @@ if (musicPlayers.length) {
 
     const audio = getAudio(player);
     activePlayer = player;
+    setActiveTrack(player);
     miniPlayer.classList.add('is-visible');
     miniPlayer.setAttribute('aria-hidden', 'false');
     miniPlayer.classList.toggle('is-playing', audio && !audio.paused && !audio.ended);
@@ -1317,6 +1598,8 @@ if (musicPlayers.length) {
 
   const resetMiniPlayer = () => {
     activePlayer = null;
+    musicPlayers.forEach((track) => track.classList.remove('is-active'));
+    stopVisualizer();
 
     if (!mini || !miniPlayer) {
       return;
@@ -1419,6 +1702,7 @@ if (musicPlayers.length) {
     isSwitchingTracks = false;
     userStoppedPlayback = false;
     showMiniPlayer(player);
+    ensureVisualizer(audio);
 
     if (audio.ended || audio.currentTime >= getSafeDuration(audio, 0)) {
       audio.currentTime = 0;
@@ -1426,6 +1710,8 @@ if (musicPlayers.length) {
 
     try {
       await audio.play();
+      startVisualizer(audio);
+      persistPlayerState();
       if (status) {
         status.textContent = '';
       }
@@ -1447,12 +1733,32 @@ if (musicPlayers.length) {
     }
   };
 
-  const playNextTrack = (currentPlayer) => {
+  const getNextTrack = (currentPlayer) => {
+    if (repeatMode === 'one') {
+      return currentPlayer;
+    }
+
+    if (shuffleEnabled && musicPlayers.length > 1) {
+      const available = musicPlayers.filter((player) => player !== currentPlayer);
+      return available[Math.floor(Math.random() * available.length)];
+    }
+
     const currentIndex = musicPlayers.indexOf(currentPlayer);
     const nextPlayer = musicPlayers[currentIndex + 1];
 
+    if (nextPlayer) {
+      return nextPlayer;
+    }
+
+    return repeatMode === 'all' ? musicPlayers[0] : null;
+  };
+
+  const playNextTrack = (currentPlayer) => {
+    const nextPlayer = getNextTrack(currentPlayer);
+
     if (!nextPlayer) {
       resetMiniPlayer();
+      persistPlayerState();
       return;
     }
 
@@ -1507,10 +1813,15 @@ if (musicPlayers.length) {
         showMiniPlayer(musicPlayer);
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
+        startVisualizer(audio);
+        persistPlayerState();
+
         if (miniPlayer) {
           miniPlayer.classList.add('is-playing');
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
+
+        updateToggle(mobileToggle, audio, getTrackTitle(musicPlayer));
       });
 
       audio.addEventListener('pause', () => {
@@ -1521,10 +1832,15 @@ if (musicPlayers.length) {
           userStoppedPlayback = true;
         }
 
+        stopVisualizer();
+        persistPlayerState();
+
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
+
+        updateToggle(mobileToggle, audio, getTrackTitle(musicPlayer));
       });
 
       audio.addEventListener('ended', () => {
@@ -1540,6 +1856,9 @@ if (musicPlayers.length) {
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
 
+        stopVisualizer();
+        persistPlayerState();
+
         if (shouldAdvance) {
           playNextTrack(musicPlayer);
         }
@@ -1553,10 +1872,15 @@ if (musicPlayers.length) {
           status.textContent = translate('audio.unavailable');
         }
 
+        stopVisualizer();
+        persistPlayerState();
+
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
+
+        updateToggle(mobileToggle, audio, getTrackTitle(musicPlayer));
       });
 
       window.addEventListener('carine:languagechange', () => {
@@ -1609,6 +1933,7 @@ if (musicPlayers.length) {
       const audio = getAudio(activePlayer);
       audio.currentTime = Number(mini.progress.value);
       syncMiniProgress(audio);
+      persistPlayerState();
     });
 
     window.addEventListener('carine:languagechange', () => {
@@ -1635,6 +1960,67 @@ if (musicPlayers.length) {
       });
 
       setRangeFill(mini.volume, mini.volume.value, mini.volume.max);
+      persistPlayerState();
     });
+  }
+
+  const toggleShuffle = () => {
+    shuffleEnabled = !shuffleEnabled;
+    updateCommandButtons();
+    persistPlayerState();
+  };
+
+  const cycleRepeat = () => {
+    repeatMode = repeatMode === 'all' ? 'one' : repeatMode === 'one' ? 'off' : 'all';
+    updateCommandButtons();
+    persistPlayerState();
+  };
+
+  shuffleButton?.addEventListener('click', toggleShuffle);
+  mobileShuffle?.addEventListener('click', toggleShuffle);
+  repeatButton?.addEventListener('click', cycleRepeat);
+  mobileRepeat?.addEventListener('click', cycleRepeat);
+  nextButton?.addEventListener('click', () => playNextTrack(activePlayer || musicPlayers[0]));
+  mobileToggle?.addEventListener('click', () => {
+    if (!activePlayer) return;
+    const audio = getAudio(activePlayer);
+    if (audio.paused) playAudio(activePlayer);
+    else {
+      userStoppedPlayback = true;
+      audio.pause();
+    }
+  });
+
+  const setMobilePlayerOpen = (isOpen) => {
+    if (!mobilePlayer) return;
+    mobilePlayer.classList.toggle('is-open', isOpen);
+    mobilePlayer.setAttribute('aria-hidden', String(!isOpen));
+    miniExpand?.setAttribute('aria-expanded', String(isOpen));
+  };
+
+  miniExpand?.addEventListener('click', () => setMobilePlayerOpen(!mobilePlayer?.classList.contains('is-open')));
+  mobileClose?.addEventListener('click', () => setMobilePlayerOpen(false));
+  mobilePlayer?.addEventListener('click', (event) => {
+    if (event.target === mobilePlayer) setMobilePlayerOpen(false);
+  });
+
+  window.addEventListener('carine:languagechange', () => updateCommandButtons());
+
+  const storedState = getStoredPlayerState();
+  shuffleEnabled = Boolean(storedState.shuffleEnabled);
+  repeatMode = ['all', 'one', 'off'].includes(storedState.repeatMode) ? storedState.repeatMode : 'all';
+  if (mini?.volume && Number.isFinite(storedState.volume)) {
+    mini.volume.value = String(Math.min(Math.max(storedState.volume, 0), 1));
+    setRangeFill(mini.volume, mini.volume.value, mini.volume.max);
+  }
+  updateCommandButtons();
+  const restoredPlayer = musicPlayers[Number.isInteger(storedState.activeIndex) ? storedState.activeIndex : 0] || musicPlayers[0];
+  if (restoredPlayer) {
+    const restoredAudio = getAudio(restoredPlayer);
+    if (restoredAudio && Number.isFinite(storedState.currentTime) && storedState.currentTime > 0) {
+      restoredAudio.currentTime = storedState.currentTime;
+    }
+    syncStage(restoredPlayer);
+    setActiveTrack(restoredPlayer);
   }
 }
