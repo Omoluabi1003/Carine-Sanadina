@@ -1262,6 +1262,215 @@ Object.entries(fullSiteTranslationAdditions).forEach(([language, dictionary]) =>
   }
 });
 
+
+
+const completeTranslationOverrides = {
+  fr: {
+    'books.pain.coverLabel': 'Couverture du livre The Pain Nobody Saw de Carine Sanadina',
+    'books.toxic.coverLabel': 'Couverture du livre If It’s Red, It’s Toxic de Carine Sanadina',
+    'books.sunshine.coverLabel': 'Couverture du livre The Road to Sunshine de Carine Sanadina',
+    'books.storm.coverLabel': 'Couverture du livre After The Storm de Carine Sanadina',
+    'tracks.consolation.audioLabel': 'Consolation de Carine Sanadina',
+    'tracks.gentillesse.audioLabel': 'La Gentillesse de Carine Sanadina',
+    'tracks.wonderful.audioLabel': 'Wonderful de Carine Sanadina',
+    'music.playlist': 'Liste de lecture',
+    'mini.volumeShort': 'Volume'
+  },
+  es: {
+    'meta.description': 'Carine Sanadina es una profesional de salud, autora, artista, defensora de sobrevivientes y voz de bienestar emocional en Jacksonville, Florida, enfocada en la conciencia sobre la violencia doméstica, la fe y la restauración.',
+    'meta.ogTitle': 'Carine Sanadina | Autora, artista y defensora de sobrevivientes en Jacksonville, Florida',
+    'meta.ogDescription': 'Descubre los libros, la música, la defensa y la voz centrada en la sanación de Carine Sanadina para la conciencia sobre la violencia doméstica, el bienestar emocional, la fe y la restauración.',
+    'meta.twitterDescription': 'Profesional de salud, autora, artista, defensora de sobrevivientes y voz de bienestar emocional en Jacksonville que transforma el dolor en sanación y restauración.',
+    'books.pain.coverLabel': 'Portada del libro The Pain Nobody Saw de Carine Sanadina',
+    'books.toxic.coverLabel': 'Portada del libro If It’s Red, It’s Toxic de Carine Sanadina',
+    'books.sunshine.coverLabel': 'Portada del libro The Road to Sunshine de Carine Sanadina',
+    'books.storm.coverLabel': 'Portada del libro After The Storm de Carine Sanadina',
+    'music.stageLabel': 'Experiencia premium de reproducción actual',
+    'music.controlsLabel': 'Controles de reproducción musical',
+    'music.nowPlaying': 'Reproduciendo ahora',
+    'music.visualizerFallback': 'La visualización de audio no está disponible porque este navegador no admite la API Web Audio.',
+    'music.visualizerAvailable': 'La animación del visualizador aparece arriba.',
+    'music.shuffle': 'Aleatorio',
+    'music.shuffleOn': 'Aleatorio activado',
+    'music.shuffleOff': 'Aleatorio desactivado',
+    'music.repeatAll': 'Repetir todo',
+    'music.repeatOne': 'Repetir una',
+    'music.repeatOff': 'Repetición desactivada',
+    'music.nextTrack': 'Siguiente pista',
+    'mini.expand': 'Expandir',
+    'mini.close': 'Cerrar reproductor',
+    'mini.volumeShort': 'Vol.',
+    'reflections.kicker': 'Reflexiones',
+    'reflections.heading': 'Notas de sanación inspiradas en los libros, la música y los temas de restauración de Carine.',
+    'reflections.intro': 'Una biblioteca editorial estática para lectores que exploran supervivencia, conciencia sobre relaciones tóxicas, fe, bondad y restauración emocional.',
+    'reflections.toolbarLabel': 'Filtrar reflexiones',
+    'reflections.searchLabel': 'Buscar reflexiones',
+    'reflections.searchPlaceholder': 'Buscar por tema o título',
+    'reflections.categoryLabel': 'Categorías de reflexión',
+    'reflections.empty': 'Todavía no hay reflexiones que coincidan con esa búsqueda.',
+    'reflections.loadMore': 'Cargar más reflexiones',
+    'reflections.readTime': 'de lectura',
+    'reflections.featuredLabel': 'Reflexión destacada',
+    'reflections.promptLabel': 'Pregunta de reflexión',
+    'reflections.all': 'Todas',
+    'press.heading': 'Un centro de medios refinado para conversaciones sobre sanación, autoría, fe y restauración.',
+    'press.body': 'Carine Sanadina está disponible para conversaciones mediáticas cuidadosas, historias comunitarias y oportunidades narrativas centradas en la sanación y alineadas con sus libros, música, defensa de sobrevivientes y compasión arraigada en la salud.',
+    'bio.body': 'Nacida en el Congo y radicada en Jacksonville, Carine Sanadina une servicio de salud, escritura inspiradora, música y defensa de sobrevivientes para hablar con ternura sobre dolor, valentía, fe y restauración emocional.',
+    'speaking.topic1': 'Conciencia sobre la violencia doméstica y supervivencia oculta',
+    'speaking.topic2': 'Fe, resiliencia y reconstrucción de la autoestima',
+    'speaking.topic3': 'Cuidado centrado en la humanidad, experiencia inmigrante y bienestar emocional',
+    'inquiry.body': 'Para entrevistas, invitaciones a hablar, conversaciones musicales o eventos centrados en libros, usa las rutas de contacto de abajo para que cada oportunidad pueda revisarse con claridad y cuidado.',
+    'quote.wallLabel': 'Muro de citas destacadas',
+    'quote.wall.one': 'La supervivencia no es el final de la historia.',
+    'quote.wall.two': 'La sanación puede convertirse en un lenguaje.',
+    'quote.wall.three': 'La fe da futuro a los lugares rotos.',
+    'pwa.installText': 'Instala esta app centrada en la sanación para acceso rápido sin conexión.',
+    'pwa.installButton': 'Instalar',
+    'pwa.dismissLabel': 'Cerrar aviso de instalación',
+    'music.playlist': 'Lista de reproducción'
+  },
+  ln: {
+    'music.stageLabel': 'Esika ya lokumu ya loyembo oyo ezali koyokana',
+    'music.controlsLabel': 'Bikomande ya kobeta miziki',
+    'music.nowPlaying': 'Ezali koyokana sikoyo',
+    'music.visualizerFallback': 'Komonisa mongongo ezali te mpo navigateur oyo esimbaka API Web Audio te.',
+    'music.visualizerAvailable': 'Bilinoko ya visualizer ezali komonana likolo.',
+    'music.shuffle': 'Sangisa',
+    'music.shuffleOn': 'Kosangisa efungwami',
+    'music.shuffleOff': 'Kosangisa ekangami',
+    'music.repeatAll': 'Zongela nyonso',
+    'music.repeatOne': 'Zongela moko',
+    'music.repeatOff': 'Kozongela ekangami',
+    'music.nextTrack': 'Loyembo elandi',
+    'mini.expand': 'Fungola monene',
+    'mini.close': 'Kanga ebɛtelo',
+    'reflections.kicker': 'Makanisi',
+    'reflections.heading': 'Makanisi ya kobikisa oyo euti na mikanda, miziki, mpe makambo ya bozongisi ya Carine.',
+    'reflections.intro': 'Biblioteke ya makanisi mpo na batangi oyo bazali koluka kobika, koyeba boyokani ya mabe, kondima, boboto mpe bozongisi ya motema.',
+    'reflections.toolbarLabel': 'Kopona makanisi',
+    'reflections.searchLabel': 'Luka makanisi',
+    'reflections.searchPlaceholder': 'Luka na motó ya likambo to titre',
+    'reflections.categoryLabel': 'Biteni ya makanisi',
+    'reflections.empty': 'Makanisi oyo ekokani na boluki wana ezali naino te.',
+    'reflections.loadMore': 'Monisa makanisi mosusu',
+    'reflections.readTime': 'ya kotanga',
+    'reflections.featuredLabel': 'Likanisi ya kopona',
+    'reflections.promptLabel': 'Motuna ya kokanisa',
+    'reflections.all': 'Nyonso',
+    'press.heading': 'Esika ya bapanzi sango mpo na masolo ya kobika, bokomi, kondima mpe bozongisi.',
+    'press.body': 'Carine Sanadina azali pene mpo na masolo ya bapanzi sango, masolo ya lisanga, mpe mabaku ya koyebisa masolo ya kobika oyo ekokani na mikanda na ye, miziki, lisungi ya babiki mpe boboto ya bokolongono.',
+    'bio.body': 'Abotami na Congo mpe afandaka na Jacksonville, Carine Sanadina asangisaka mosala ya bokolongono, bokomi ya elikya, miziki mpe lisungi ya babiki mpo na koloba na boboto mpo na mpasi, mpiko, kondima mpe bozongisi ya motema.',
+    'speaking.topic1': 'Koyebisa likama ya bitumba ya ndako mpe kobika oyo ebombami',
+    'speaking.topic2': 'Kondima, mpiko mpe kotonga lisusu motuya ya yo moko',
+    'speaking.topic3': 'Kosalisa moto na bomoto, bomoi ya mopaya mpe bolamu ya motema',
+    'inquiry.body': 'Mpo na masolo na bapanzi sango, kobenga mpo na koloba, masolo ya miziki, to makambo ya mikanda, salelá banzela ya kokoma awa na nse mpo libaku nyonso etalelama na polele mpe boboto.',
+    'quote.wallLabel': 'Lopango ya maloba ya kopona',
+    'quote.wall.one': 'Kobika ezali suka ya lisolo te.',
+    'quote.wall.two': 'Kobikisama ekoki kokoma lokota.',
+    'quote.wall.three': 'Kondima epesaka mikili ebukani mikolo ezali koya.',
+    'pwa.installText': 'Tyá app oyo ya kobika mpo na kokota noki ata ntango internet ezali te.',
+    'pwa.installButton': 'Tyá',
+    'pwa.dismissLabel': 'Longola etinda ya kotya'
+  },
+  sw: {
+    'music.stageLabel': 'Uzoefu wa kiwango cha juu wa kinachochezwa sasa',
+    'music.controlsLabel': 'Vidhibiti vya uchezaji wa muziki',
+    'music.nowPlaying': 'Inacheza sasa',
+    'music.visualizerFallback': 'Onyesho la sauti halipatikani kwa sababu kivinjari hiki hakitumii API ya Web Audio.',
+    'music.visualizerAvailable': 'Mwendo wa onyesho la sauti unaonekana hapo juu.',
+    'music.shuffle': 'Changanya',
+    'music.shuffleOn': 'Changanya imewashwa',
+    'music.shuffleOff': 'Changanya imezimwa',
+    'music.repeatAll': 'Rudia zote',
+    'music.repeatOne': 'Rudia moja',
+    'music.repeatOff': 'Kurudia kumezimwa',
+    'music.nextTrack': 'Wimbo unaofuata',
+    'mini.expand': 'Panua',
+    'mini.close': 'Funga kichezaji',
+    'mini.volumeShort': 'Sauti',
+    'reflections.kicker': 'Tafakari',
+    'reflections.heading': 'Maandishi ya uponyaji yaliyoongozwa na vitabu, muziki, na mada za urejesho za Carine.',
+    'reflections.intro': 'Maktaba tuli ya wahariri kwa wasomaji wanaochunguza kupona, ufahamu wa mahusiano yenye sumu, imani, fadhili, na urejesho wa kihisia.',
+    'reflections.toolbarLabel': 'Chuja tafakari',
+    'reflections.searchLabel': 'Tafuta tafakari',
+    'reflections.searchPlaceholder': 'Tafuta kwa mada au kichwa',
+    'reflections.categoryLabel': 'Kategoria za tafakari',
+    'reflections.empty': 'Hakuna tafakari zinazolingana na utafutaji huo bado.',
+    'reflections.loadMore': 'Pakia tafakari zaidi',
+    'reflections.readTime': 'kusoma',
+    'reflections.featuredLabel': 'Tafakari iliyoangaziwa',
+    'reflections.promptLabel': 'Swali la kutafakari',
+    'reflections.all': 'Zote',
+    'press.heading': 'Kituo cha vyombo vya habari kilichoboreshwa kwa mazungumzo kuhusu uponyaji, uandishi, imani na urejesho.',
+    'press.body': 'Carine Sanadina anapatikana kwa mazungumzo makini ya vyombo vya habari, vipengele vya jamii, na fursa za kusimulia hadithi za uponyaji zinazoendana na vitabu vyake, muziki, utetezi wa walionusurika, na huruma yake yenye mizizi katika huduma ya afya.',
+    'bio.body': 'Mzaliwa wa Congo na mwenye makazi Jacksonville, Carine Sanadina huunganisha huduma ya afya, uandishi wa kutia moyo, muziki na utetezi wa walionusurika ili kuzungumza kwa upole kuhusu maumivu, ujasiri, imani na urejesho wa kihisia.',
+    'speaking.topic1': 'Ufahamu wa ukatili wa nyumbani na kupona kulikofichwa',
+    'speaking.topic2': 'Imani, uthabiti, na kujenga upya thamani binafsi',
+    'speaking.topic3': 'Huduma inayomweka binadamu katikati, uzoefu wa wahamiaji, na ustawi wa kihisia',
+    'inquiry.body': 'Kwa mahojiano, mialiko ya kuzungumza, mazungumzo ya muziki, au matukio yanayohusu vitabu, tumia njia za mawasiliano hapa chini ili kila fursa ipitiwe kwa uwazi na uangalifu.',
+    'quote.wallLabel': 'Ukuta wa nukuu zilizoangaziwa',
+    'quote.wall.one': 'Kupona si mwisho wa hadithi.',
+    'quote.wall.two': 'Uponyaji unaweza kuwa lugha.',
+    'quote.wall.three': 'Imani huyapa maeneo yaliyovunjika wakati ujao.',
+    'pwa.installText': 'Sakinisha app hii ya uponyaji kwa ufikiaji wa haraka bila mtandao.',
+    'pwa.installButton': 'Sakinisha',
+    'pwa.dismissLabel': 'Funga ujumbe wa kusakinisha',
+    'footer.rights': '© 2026 Carine Sanadina. Haki zote zimehifadhiwa.'
+  },
+  yo: {
+    'music.stageLabel': 'Iriri orin tó ń dun báyìí ní ipele gíga',
+    'music.controlsLabel': 'Àwọn ìṣàkóso orin',
+    'music.nowPlaying': 'Ó ń dun báyìí',
+    'music.visualizerFallback': 'Àfihàn ohun kò sí nítorí aṣàwákiri yìí kò ṣe atilẹyin Web Audio API.',
+    'music.visualizerAvailable': 'Àwòrán ìrìn ohun hàn lókè.',
+    'music.shuffle': 'Dapọ̀',
+    'music.shuffleOn': 'Dapọ̀ wà ní titan',
+    'music.shuffleOff': 'Dapọ̀ ti wa ní pipa',
+    'music.repeatAll': 'Tun gbogbo rẹ̀ ṣe',
+    'music.repeatOne': 'Tun ọkan ṣe',
+    'music.repeatOff': 'Ìtúnṣe ti wa ní pipa',
+    'music.nextTrack': 'Orin tó tẹ̀lé',
+    'tracks.gentillesse.playLabel': 'Mu La Gentillesse ṣiṣẹ́',
+    'mini.expand': 'Faagun',
+    'mini.close': 'Pa ẹrọ orin',
+    'mini.volumeShort': 'Ohùn',
+    'reflections.kicker': 'Àwọn ìrònú',
+    'reflections.heading': 'Àwọn akọsilẹ̀ ìwòsàn tí a mú láti inú àwọn iwe, orin, àti àwọn akori ìmúpadàbọ̀ ti Carine.',
+    'reflections.intro': 'Ibi ìkàwé olootu tí kò yí padà fún àwọn òǹkàwé tó ń ṣàwárí ìyè-lẹ́yìn ewu, ìmọ̀ ibáṣepọ̀ tó léwu, ìgbàgbọ́, inú rere, àti ìmúpadàbọ̀ ẹ̀dá ọkàn.',
+    'reflections.toolbarLabel': 'Ṣe àlẹmọ àwọn ìrònú',
+    'reflections.searchLabel': 'Wa àwọn ìrònú',
+    'reflections.searchPlaceholder': 'Wa nípa akori tàbí akọlé',
+    'reflections.categoryLabel': 'Àwọn ẹ̀ka ìrònú',
+    'reflections.empty': 'Kò sí ìrònú tó bá ìwádìí yẹn mu síbẹ̀.',
+    'reflections.loadMore': 'Gbe àwọn ìrònú míì wá',
+    'reflections.readTime': 'kíkà',
+    'reflections.featuredLabel': 'Ìrònú àfihàn',
+    'reflections.promptLabel': 'Ìbéèrè ìrònú',
+    'reflections.all': 'Gbogbo',
+    'press.heading': 'Ile-iṣẹ media tó dára fún ìjíròrò nípa ìwòsàn, òǹkọ̀wé, ìgbàgbọ́ àti ìmúpadàbọ̀.',
+    'press.body': 'Carine Sanadina wà fún àwọn ìjíròrò media tó ní ìtẹ́lọ́run, àwọn ẹya agbegbe, àti àwọn anfaani ìtàn ìwòsàn tó bá àwọn iwe rẹ, orin rẹ, ìdáàbò bo àwọn tó yè bọ́, àti àánú tó ní gbongbo nínú ilera mu.',
+    'bio.body': 'Ti a bí ní Congo tí ó sì ń gbé ní Jacksonville, Carine Sanadina darapọ̀ iṣẹ́ ilera, kikọ ìmísí, orin, àti ìdáàbò bo àwọn tó yè bọ́ láti sọ̀rọ̀ pẹ̀lú ìtẹ́lọ́run nípa ìrora, ìgboyà, ìgbàgbọ́ àti ìmúpadàbọ̀ ẹ̀dá ọkàn.',
+    'speaking.topic1': 'Ìmọ̀ nípa ìwa-ipa abẹ́lé àti ìyè-lẹ́yìn ewu tí a fi pamọ́',
+    'speaking.topic2': 'Ìgbàgbọ́, ìfaradà, àti títún iye ara ẹni kọ́',
+    'speaking.topic3': 'Itọju tó fi ènìyàn sí àárín, iriri aṣíwájú-ìbílẹ̀, àti àlàáfíà ẹ̀dá ọkàn',
+    'inquiry.body': 'Fún ìfọ̀rọ̀wánilẹ́nuwò, ìpè láti sọ̀rọ̀, ìjíròrò orin, tàbí ìṣẹ̀lẹ̀ tó dá lórí iwe, lo àwọn ọna olubasọrọ ní isalẹ kí a lè ṣe àyẹ̀wò gbogbo anfaani pẹ̀lú kedere àti ìtọju.',
+    'quote.wallLabel': 'Odi àwọn ọ̀rọ̀ àfihàn',
+    'quote.wall.one': 'Ìyè-lẹ́yìn ewu kì í ṣe opin ìtàn.',
+    'quote.wall.two': 'Ìwòsàn lè di ede.',
+    'quote.wall.three': 'Ìgbàgbọ́ fún àwọn ibi tí ó fọ́ ní ọjọ́ iwájú.',
+    'pwa.installText': 'Fi app ìwòsàn yìí sí ẹrọ fún ìwọlé kíákíá láì sí ayélujára.',
+    'pwa.installButton': 'Fi sí ẹrọ',
+    'pwa.dismissLabel': 'Pa ìkìlọ̀ fifi sí ẹrọ',
+    'footer.rights': '© 2026 Carine Sanadina. Gbogbo ẹ̀tọ́ wa ni ipamọ́.'
+  }
+};
+
+Object.entries(completeTranslationOverrides).forEach(([language, dictionary]) => {
+  if (translations[language]) {
+    Object.assign(translations[language], dictionary);
+  }
+});
+
 Object.values(translations).forEach((dictionary) => {
   Object.assign(dictionary, {
     'language.name.en': 'English',
@@ -1281,26 +1490,29 @@ let currentLanguage = DEFAULT_LANGUAGE;
 
 const isDevelopmentHost = () => ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
 
-const translate = (key, language = currentLanguage) => {
-  const languageDictionary = translations[language] || translations[DEFAULT_LANGUAGE];
-  const translatedValue = languageDictionary[key] || translations[DEFAULT_LANGUAGE][key];
+const t = (key, fallback = '', language = currentLanguage) => {
+  const languageDictionary = translations[language] || translations[DEFAULT_LANGUAGE] || {};
+  const defaultDictionary = translations[DEFAULT_LANGUAGE] || {};
+  const translatedValue = languageDictionary[key] ?? defaultDictionary[key] ?? fallback;
 
-  if (translatedValue) {
-    return translatedValue;
+  if (translatedValue !== undefined && translatedValue !== null && translatedValue !== '') {
+    return String(translatedValue);
   }
 
   if (isDevelopmentHost() && window.console && typeof window.console.warn === 'function') {
     window.console.warn(`[i18n] Missing translation key: ${key}`);
   }
 
-  return key;
+  return String(fallback || key);
 };
+
+const translate = (key, language = currentLanguage) => t(key, key, language);
 
 const translateTemplate = (key, replacements = {}, language = currentLanguage) => (
   translate(key, language).replace(/\{(\w+)\}/g, (match, token) => replacements[token] || match)
 );
 
-const getLanguageLabel = (language) => translate(`language.name.${language}`, DEFAULT_LANGUAGE);
+const getLanguageLabel = (language) => t(`language.name.${language}`, t(`language.name.${DEFAULT_LANGUAGE}`, 'English', DEFAULT_LANGUAGE), DEFAULT_LANGUAGE);
 
 const getStoredLanguage = () => {
   try {
@@ -1318,16 +1530,23 @@ const storeLanguage = (language) => {
   }
 };
 
-const applyLanguage = (language) => {
-  const nextLanguage = supportedLanguages.includes(language) ? language : DEFAULT_LANGUAGE;
+const normalizeLanguage = (language) => (supportedLanguages.includes(language) ? language : DEFAULT_LANGUAGE);
+
+const applyTranslations = (language) => {
+  const nextLanguage = normalizeLanguage(language);
   currentLanguage = nextLanguage;
+  document.documentElement.lang = t('html.lang', nextLanguage, nextLanguage);
 
   document.querySelectorAll('[data-i18n]').forEach((element) => {
-    if (element.matches('[data-mini-title][data-has-track="true"]')) {
+    if (element.matches('[data-mini-title][data-has-track="true"], [data-mobile-title][data-has-track="true"]')) {
       return;
     }
 
-    element.textContent = translate(element.dataset.i18n, nextLanguage);
+    element.textContent = t(element.dataset.i18n, element.textContent, nextLanguage);
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach((element) => {
+    element.innerHTML = t(element.dataset.i18nHtml, element.innerHTML, nextLanguage);
   });
 
   document.querySelectorAll('[data-i18n-attr]').forEach((element) => {
@@ -1335,7 +1554,7 @@ const applyLanguage = (language) => {
       const [attribute, key] = pair.split(':');
 
       if (attribute && key) {
-        element.setAttribute(attribute.trim(), translate(key.trim(), nextLanguage));
+        element.setAttribute(attribute.trim(), t(key.trim(), element.getAttribute(attribute.trim()) || '', nextLanguage));
       }
     });
   });
@@ -1347,7 +1566,7 @@ const applyLanguage = (language) => {
     ['i18nAlt', 'alt']
   ].forEach(([datasetKey, attribute]) => {
     document.querySelectorAll(`[data-${datasetKey.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}]`).forEach((element) => {
-      element.setAttribute(attribute, translate(element.dataset[datasetKey], nextLanguage));
+      element.setAttribute(attribute, t(element.dataset[datasetKey], element.getAttribute(attribute) || '', nextLanguage));
     });
   });
 
@@ -1369,11 +1588,23 @@ const applyLanguage = (language) => {
 
   document.querySelectorAll('[data-language-trigger]').forEach((trigger) => {
     const activeLabel = getLanguageLabel(nextLanguage) || getLanguageLabel(DEFAULT_LANGUAGE);
-    trigger.setAttribute('aria-label', `${translate('language.selectorLabel', nextLanguage)}: ${activeLabel}`);
+    trigger.setAttribute('aria-label', `${t('language.selectorLabel', 'Choose website language', nextLanguage)}: ${activeLabel}`);
   });
 
-  storeLanguage(nextLanguage);
+  return nextLanguage;
+};
+
+const renderLocalizedContent = (language) => {
+  const nextLanguage = normalizeLanguage(language);
+  currentLanguage = nextLanguage;
   window.dispatchEvent(new CustomEvent('carine:languagechange', { detail: { language: nextLanguage } }));
+};
+
+const applyLanguage = (language) => {
+  const nextLanguage = normalizeLanguage(language);
+  storeLanguage(nextLanguage);
+  applyTranslations(nextLanguage);
+  renderLocalizedContent(nextLanguage);
 };
 
 const languageSwitchers = document.querySelectorAll('.language-switcher');
