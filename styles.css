@@ -380,6 +380,8 @@ h1, h2, h3, blockquote {
   pointer-events: none;
 }
 .portrait-image {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -387,6 +389,13 @@ h1, h2, h3, blockquote {
   object-fit: cover;
   object-position: center 35%;
   filter: none;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+.portrait-image.is-active { opacity: 1; }
+.portrait-image.has-load-error { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .portrait-image { transition-duration: 0.01ms; }
 }
 .portrait-caption { padding: 18px 12px 4px; color: var(--cocoa); font-weight: 700; }
 
@@ -1283,7 +1292,6 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   background: linear-gradient(180deg, transparent 62%, rgba(2, 8, 23, 0.22));
 }
 
-.portrait-image.has-load-error,
 .track-cover.has-load-error,
 .mini-player-cover.has-load-error {
   opacity: 0;

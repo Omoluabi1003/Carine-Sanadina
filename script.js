@@ -1914,7 +1914,116 @@ if ('IntersectionObserver' in window) {
   revealElements.forEach((element) => element.classList.add('is-visible'));
 }
 
-const remoteImages = document.querySelectorAll('img[data-fallback-target]');
+const portraitImages = [...document.querySelectorAll('[data-portrait-image]')];
+const PORTRAIT_ROTATION_INTERVAL_MS = 2 * 60 * 1000;
+let activePortraitIndex = Math.max(0, portraitImages.findIndex((image) => image.classList.contains('is-active')));
+let portraitRotationTimer = 0;
+
+const setPortraitFallbackVisibility = () => {
+  const fallbackId = portraitImages[0]?.dataset.fallbackTarget;
+  const fallback = fallbackId ? document.getElementById(fallbackId) : null;
+  const allPortraitsFailed = portraitImages.length > 0 && portraitImages.every((image) => image.dataset.loadState === 'error');
+
+  fallback?.classList.toggle('is-visible', allPortraitsFailed);
+};
+
+const getAvailablePortraitIndexes = () =>
+  portraitImages
+    .map((image, index) => ({ image, index }))
+    .filter(({ image }) => image.dataset.loadState !== 'error')
+    .map(({ index }) => index);
+
+const showPortraitAtIndex = (nextIndex) => {
+  if (!portraitImages[nextIndex] || portraitImages[nextIndex].dataset.loadState === 'error') {
+    return;
+  }
+
+  activePortraitIndex = nextIndex;
+  portraitImages.forEach((image, index) => {
+    const isActive = index === activePortraitIndex;
+    image.classList.toggle('is-active', isActive);
+    image.toggleAttribute('aria-hidden', !isActive);
+  });
+  setPortraitFallbackVisibility();
+};
+
+const showNextAvailablePortrait = () => {
+  const availablePortraitIndexes = getAvailablePortraitIndexes();
+
+  if (availablePortraitIndexes.length === 0) {
+    setPortraitFallbackVisibility();
+    return;
+  }
+
+  const currentAvailablePosition = availablePortraitIndexes.indexOf(activePortraitIndex);
+  const nextAvailablePosition = currentAvailablePosition === -1
+    ? 0
+    : (currentAvailablePosition + 1) % availablePortraitIndexes.length;
+
+  showPortraitAtIndex(availablePortraitIndexes[nextAvailablePosition]);
+};
+
+const startPortraitRotation = () => {
+  window.clearInterval(portraitRotationTimer);
+
+  if (getAvailablePortraitIndexes().length < 2) {
+    return;
+  }
+
+  portraitRotationTimer = window.setInterval(showNextAvailablePortrait, PORTRAIT_ROTATION_INTERVAL_MS);
+};
+
+portraitImages.forEach((image, index) => {
+  image.addEventListener('load', () => {
+    image.dataset.loadState = 'loaded';
+    image.classList.remove('has-load-error');
+
+    if (!portraitImages[activePortraitIndex] || portraitImages[activePortraitIndex].dataset.loadState === 'error') {
+      showPortraitAtIndex(index);
+    } else {
+      setPortraitFallbackVisibility();
+    }
+
+    startPortraitRotation();
+  });
+
+  image.addEventListener('error', () => {
+    image.dataset.loadState = 'error';
+    image.classList.add('has-load-error');
+
+    if (index === activePortraitIndex) {
+      showNextAvailablePortrait();
+    } else {
+      setPortraitFallbackVisibility();
+    }
+
+    startPortraitRotation();
+  });
+
+  window.setTimeout(() => {
+    if (image.complete) {
+      if (image.naturalWidth > 0) {
+        image.dataset.loadState = 'loaded';
+        image.classList.remove('has-load-error');
+      } else {
+        image.dataset.loadState = 'error';
+        image.classList.add('has-load-error');
+      }
+
+      if (index === activePortraitIndex && image.dataset.loadState === 'error') {
+        showNextAvailablePortrait();
+      }
+
+      setPortraitFallbackVisibility();
+      startPortraitRotation();
+    }
+  }, 0);
+});
+
+showPortraitAtIndex(activePortraitIndex);
+startPortraitRotation();
+
+const remoteImages = document.querySelectorAll('img[data-fallback-target]:not([data-portrait-image])');
 
 const setImageFallbackState = (image, isFallbackVisible) => {
   const fallback = document.getElementById(image.dataset.fallbackTarget);
