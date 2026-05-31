@@ -1705,8 +1705,8 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   gap: clamp(8px, 1.4vw, 16px);
   width: 100%;
   min-width: 240px;
-  min-height: 140px;
-  height: clamp(140px, 22vw, 220px);
+  min-height: 168px;
+  height: clamp(168px, 24vw, 260px);
   contain: layout paint style;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -1734,7 +1734,7 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   box-shadow: 0 0 var(--bar-glow) rgba(96, 165, 250, 0.34);
   opacity: var(--bar-opacity);
   transform-origin: bottom;
-  transition: height 0.12s ease-out, opacity 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  transition: height 0.16s ease-out, opacity 0.22s ease, box-shadow 0.22s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: height, opacity, transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -1952,30 +1952,66 @@ h1, h2, h3, blockquote { color: var(--ivory); }
 .music-visualizer[data-visualization-style="waveform"] {
   align-items: center;
   gap: 0;
+  min-height: 188px;
+  height: clamp(188px, 26vw, 286px);
+  padding: clamp(28px, 4.8vw, 48px) clamp(18px, 3.8vw, 44px);
   background:
-    radial-gradient(circle at 50% 20%, rgba(96, 165, 250, 0.2), transparent 34%),
-    linear-gradient(180deg, rgba(8, 17, 32, 0.96), rgba(9, 35, 73, 0.84));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 18%, rgba(96, 165, 250, 0.05) 64%, rgba(255, 255, 255, 0.08) 100%),
+    repeating-linear-gradient(90deg, rgba(240, 216, 154, 0.08) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(0deg, rgba(125, 211, 252, 0.06) 0 1px, transparent 1px 24px),
+    radial-gradient(circle at 50% 20%, rgba(96, 165, 250, 0.28), transparent 40%),
+    radial-gradient(ellipse at 50% 112%, rgba(240, 216, 154, 0.18), transparent 48%),
+    linear-gradient(180deg, rgba(3, 10, 25, 0.98), rgba(7, 25, 56, 0.92) 58%, rgba(3, 12, 31, 0.98));
+  box-shadow:
+    inset 0 0 0 1px rgba(240, 216, 154, 0.16),
+    inset 0 24px 64px rgba(96, 165, 250, 0.08),
+    inset 0 -24px 60px rgba(240, 216, 154, 0.07),
+    0 22px 70px rgba(3, 12, 30, 0.34),
+    0 0 64px rgba(74, 140, 255, 0.13);
 }
 
 .music-visualizer[data-visualization-style="waveform"]::before {
   opacity: 1;
-  inset: 50% 8% auto;
-  height: 1px;
+  inset: 50% 5% auto;
+  height: 2px;
   border: 0;
-  background: linear-gradient(90deg, transparent, rgba(240, 216, 154, 0.38), rgba(248, 250, 252, 0.42), transparent);
-  box-shadow: 0 0 20px rgba(96, 165, 250, 0.18);
+  background: linear-gradient(90deg, transparent, rgba(240, 216, 154, 0.42), rgba(248, 250, 252, 0.56), rgba(96, 165, 250, 0.44), transparent);
+  box-shadow: 0 0 24px rgba(96, 165, 250, 0.26), 0 0 16px rgba(240, 216, 154, 0.16);
+}
+
+.music-visualizer[data-visualization-style="waveform"]::after {
+  opacity: 0.72;
+  inset: auto 9% 10% 9%;
+  height: 30%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 0%, rgba(96, 165, 250, 0.24), rgba(240, 216, 154, 0.09) 42%, transparent 72%);
+  filter: blur(10px);
+  transform: scaleY(0.5);
 }
 
 .music-visualizer[data-visualization-style="waveform"] span {
   position: absolute;
   left: 50%;
   bottom: 50%;
-  width: clamp(8px, 1.25vw, 18px);
-  height: 4px;
+  width: clamp(7px, 1vw, 14px);
+  height: 5px;
   min-height: 0;
   transform-origin: center;
-  background: linear-gradient(90deg, transparent, rgba(248, 250, 252, 0.96) 10%, #60A5FA 45%, #4A8CFF 76%, rgba(240, 216, 154, 0.82));
-  box-shadow: 0 0 var(--bar-glow) rgba(96, 165, 250, 0.38), 0 0 calc(var(--bar-glow) * 0.45) rgba(240, 216, 154, 0.2);
+  background: linear-gradient(90deg, transparent, rgba(248, 250, 252, 0.98) 8%, #7DD3FC 34%, #4A8CFF 68%, rgba(240, 216, 154, 0.9) 94%, transparent);
+  box-shadow:
+    0 0 var(--bar-glow) rgba(96, 165, 250, 0.48),
+    0 0 calc(var(--bar-glow) * 0.68) rgba(74, 140, 255, 0.3),
+    0 0 calc(var(--bar-glow) * 0.45) rgba(240, 216, 154, 0.24);
+}
+
+.music-visualizer[data-visualization-style="waveform"].is-playing {
+  box-shadow:
+    inset 0 0 0 1px rgba(240, 216, 154, 0.24),
+    inset 0 28px 72px rgba(96, 165, 250, 0.12),
+    inset 0 -26px 68px rgba(240, 216, 154, 0.1),
+    0 0 56px rgba(74, 140, 255, 0.28),
+    0 0 104px rgba(240, 216, 154, 0.11),
+    0 24px 74px rgba(3, 12, 30, 0.38);
 }
 
 .music-visualizer[data-visualization-style="orb"],
@@ -2321,7 +2357,8 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   }
 
   .streaming-stage { border-radius: 26px; }
-  .music-visualizer { min-width: 0; min-height: 150px; height: 150px; padding: 20px 14px; }
+  .music-visualizer { min-width: 0; min-height: 162px; height: 162px; padding: 20px 14px; }
+  .music-visualizer[data-visualization-style="waveform"] { min-height: 176px; height: 176px; padding-inline: 10px; }
   .stage-artwork { max-width: 320px; margin: 0 auto; width: 100%; }
   .mini-player { bottom: 12px; }
   .mini-player-shell { grid-template-columns: 44px minmax(0, 1fr) 44px auto; }
