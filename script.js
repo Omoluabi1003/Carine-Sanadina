@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const PLAYLIST_VERSION = '2026-05-31-womanifesto';
+const PLAYLIST_VERSION = '2026-05-31-womanifesto-title-artwork';
 
 const translations = {};
 
@@ -94,14 +94,14 @@ translations.en = {
   'tracks.wonderful.number': 'Track 03',
   'tracks.wonderful.description': 'Joyful praise and gratitude',
   'tracks.wonderful.playLabel': 'Play Wonderful',
-  'tracks.womanifesto.title': 'WOMANIFESTO',
-  'tracks.womanifesto.audioLabel': 'WOMANIFESTO by Carine Sanadina',
-  'tracks.womanifesto.coverAlt': 'WOMANIFESTO cover art',
-  'tracks.womanifesto.fallback': 'WOMANIFESTO cover art is temporarily unavailable.',
+  'tracks.womanifesto.title': 'Womanifesto',
+  'tracks.womanifesto.audioLabel': 'Womanifesto by Carine Sanadina',
+  'tracks.womanifesto.coverAlt': 'Womanifesto cover art',
+  'tracks.womanifesto.fallback': 'Womanifesto cover art is temporarily unavailable.',
   'tracks.womanifesto.number': 'Track 04',
   'tracks.womanifesto.shortDescription': 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, and victory through faith.',
   'tracks.womanifesto.description': 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, and victory through faith.',
-  'tracks.womanifesto.playLabel': 'Play WOMANIFESTO',
+  'tracks.womanifesto.playLabel': 'Play Womanifesto',
   'mini.label': 'Current track mini player',
   'mini.noTrack': 'No track selected',
   'mini.toggleLabel': 'Play or pause current track',
@@ -253,13 +253,13 @@ translations.fr = {
   'tracks.wonderful.number': 'Titre 03',
   'tracks.wonderful.description': 'Louange joyeuse et gratitude',
   'tracks.wonderful.playLabel': 'Lire Wonderful',
-  'tracks.womanifesto.audioLabel': 'WOMANIFESTO de Carine Sanadina',
-  'tracks.womanifesto.coverAlt': 'Pochette de WOMANIFESTO',
-  'tracks.womanifesto.fallback': 'La pochette de WOMANIFESTO est temporairement indisponible.',
+  'tracks.womanifesto.audioLabel': 'Womanifesto de Carine Sanadina',
+  'tracks.womanifesto.coverAlt': 'Pochette de Womanifesto',
+  'tracks.womanifesto.fallback': 'La pochette de Womanifesto est temporairement indisponible.',
   'tracks.womanifesto.number': 'Titre 04',
   'tracks.womanifesto.shortDescription': 'Un hymne gospel africain plein d’âme qui célèbre la résilience féminine, la guérison, la grâce et la victoire par la foi.',
   'tracks.womanifesto.description': 'Un hymne gospel africain plein d’âme qui célèbre la résilience féminine, la guérison, la grâce et la victoire par la foi.',
-  'tracks.womanifesto.playLabel': 'Lire WOMANIFESTO',
+  'tracks.womanifesto.playLabel': 'Lire Womanifesto',
   'mini.label': 'Mini lecteur du titre en cours',
   'mini.noTrack': 'Aucun titre sélectionné',
   'mini.toggleLabel': 'Lire ou mettre en pause le titre en cours',
@@ -410,13 +410,13 @@ translations.es = {
   'tracks.wonderful.number': 'Pista 03',
   'tracks.wonderful.description': 'Alabanza alegre y gratitud',
   'tracks.wonderful.playLabel': 'Reproducir Wonderful',
-  'tracks.womanifesto.audioLabel': 'WOMANIFESTO de Carine Sanadina',
-  'tracks.womanifesto.coverAlt': 'Portada de WOMANIFESTO',
-  'tracks.womanifesto.fallback': 'La portada de WOMANIFESTO no está disponible temporalmente.',
+  'tracks.womanifesto.audioLabel': 'Womanifesto de Carine Sanadina',
+  'tracks.womanifesto.coverAlt': 'Portada de Womanifesto',
+  'tracks.womanifesto.fallback': 'La portada de Womanifesto no está disponible temporalmente.',
   'tracks.womanifesto.number': 'Pista 04',
   'tracks.womanifesto.shortDescription': 'Un himno gospel africano con alma que celebra la resiliencia femenina, la sanación, la gracia y la victoria por la fe.',
   'tracks.womanifesto.description': 'Un himno gospel africano con alma que celebra la resiliencia femenina, la sanación, la gracia y la victoria por la fe.',
-  'tracks.womanifesto.playLabel': 'Reproducir WOMANIFESTO',
+  'tracks.womanifesto.playLabel': 'Reproducir Womanifesto',
   'mini.label': 'Minirreproductor de la pista actual',
   'mini.noTrack': 'No hay pista seleccionada',
   'mini.toggleLabel': 'Reproducir o pausar la pista actual',
@@ -577,13 +577,13 @@ translations.ln = {
   'tracks.wonderful.number': 'Loyembo 03',
   'tracks.wonderful.description': 'Masanzoli ya esengo mpe matondi',
   'tracks.wonderful.playLabel': 'Beta Loyembo Kitoko mingi',
-  'tracks.womanifesto.audioLabel': 'WOMANIFESTO ya Carine Sanadina',
-  'tracks.womanifesto.coverAlt': 'Elilingi ya ezipeli ya WOMANIFESTO',
-  'tracks.womanifesto.fallback': 'Elilingi ya ezipeli ya WOMANIFESTO ezali te mpo na mwa ntango.',
+  'tracks.womanifesto.audioLabel': 'Womanifesto ya Carine Sanadina',
+  'tracks.womanifesto.coverAlt': 'Elilingi ya ezipeli ya Womanifesto',
+  'tracks.womanifesto.fallback': 'Elilingi ya ezipeli ya Womanifesto ezali te mpo na mwa ntango.',
   'tracks.womanifesto.number': 'Loyembo 04',
   'tracks.womanifesto.shortDescription': 'Loyembo ya gospel ya Afrika ya mozindo oyo ekumisaka mpiko ya basi, kobika, ngolu, mpe elonga na nzela ya kondima.',
   'tracks.womanifesto.description': 'Loyembo ya gospel ya Afrika ya mozindo oyo ekumisaka mpiko ya basi, kobika, ngolu, mpe elonga na nzela ya kondima.',
-  'tracks.womanifesto.playLabel': 'Beta WOMANIFESTO',
+  'tracks.womanifesto.playLabel': 'Beta Womanifesto',
   'mini.label': 'Mwa ebɛtelo ya loyembo oyo ezali koyokana',
   'mini.noTrack': 'Loyembo eponami naino te',
   'mini.toggleLabel': 'Beta to pemisa loyembo oyo ezali koyokana',
@@ -745,13 +745,13 @@ translations.sw = {
   "tracks.wonderful.number": "Wimbo wa 03",
   "tracks.wonderful.description": "Sifa za furaha na shukrani",
   "tracks.wonderful.playLabel": "Cheza Ajabu",
-  "tracks.womanifesto.audioLabel": "WOMANIFESTO na Carine Sanadina",
-  "tracks.womanifesto.coverAlt": "Sanaa ya jalada la WOMANIFESTO",
-  "tracks.womanifesto.fallback": "Sanaa ya jalada la WOMANIFESTO haipatikani kwa muda.",
+  "tracks.womanifesto.audioLabel": "Womanifesto na Carine Sanadina",
+  "tracks.womanifesto.coverAlt": "Sanaa ya jalada la Womanifesto",
+  "tracks.womanifesto.fallback": "Sanaa ya jalada la Womanifesto haipatikani kwa muda.",
   "tracks.womanifesto.number": "Wimbo 04",
   "tracks.womanifesto.shortDescription": "Wimbo wa injili ya Kiafrika wenye hisia unaosherehekea uthabiti wa wanawake, uponyaji, neema, na ushindi kupitia imani.",
   "tracks.womanifesto.description": "Wimbo wa injili ya Kiafrika wenye hisia unaosherehekea uthabiti wa wanawake, uponyaji, neema, na ushindi kupitia imani.",
-  "tracks.womanifesto.playLabel": "Cheza WOMANIFESTO",
+  "tracks.womanifesto.playLabel": "Cheza Womanifesto",
   "mini.label": "Mchezaji mdogo wa wimbo wa sasa",
   "mini.noTrack": "Hakuna wimbo uliochaguliwa",
   "mini.toggleLabel": "Cheza au sitisha wimbo wa sasa",
@@ -913,13 +913,13 @@ translations.yo = {
   "tracks.wonderful.number": "Orin 03",
   "tracks.wonderful.description": "Iyin ati idupe",
   "tracks.wonderful.playLabel": "Play Iyanu",
-  "tracks.womanifesto.audioLabel": "WOMANIFESTO nipasẹ Carine Sanadina",
-  "tracks.womanifesto.coverAlt": "Aworan ideri WOMANIFESTO",
-  "tracks.womanifesto.fallback": "Iṣẹ ọna ideri WOMANIFESTO ko si fun igba diẹ.",
+  "tracks.womanifesto.audioLabel": "Womanifesto nipasẹ Carine Sanadina",
+  "tracks.womanifesto.coverAlt": "Aworan ideri Womanifesto",
+  "tracks.womanifesto.fallback": "Iṣẹ ọna ideri Womanifesto ko si fun igba diẹ.",
   "tracks.womanifesto.number": "Orin 04",
   "tracks.womanifesto.shortDescription": "Orin gospel Áfíríkà alárinrin tí ń ṣe ayẹyẹ ìfaradà obìnrin, ìwòsàn, oore-ọfẹ́, àti ìṣẹ́gun nípasẹ̀ ìgbàgbọ́.",
   "tracks.womanifesto.description": "Orin gospel Áfíríkà alárinrin tí ń ṣe ayẹyẹ ìfaradà obìnrin, ìwòsàn, oore-ọfẹ́, àti ìṣẹ́gun nípasẹ̀ ìgbàgbọ́.",
-  "tracks.womanifesto.playLabel": "Play WOMANIFESTO",
+  "tracks.womanifesto.playLabel": "Play Womanifesto",
   "mini.label": "Ẹrọ orin mini lọwọlọwọ",
   "mini.noTrack": "Ko si orin ti o yan",
   "mini.toggleLabel": "Ṣiṣẹ tabi da duro orin lọwọlọwọ",
@@ -1526,7 +1526,7 @@ Object.values(translations).forEach((dictionary) => {
     'tracks.consolation.title': 'Consolation',
     'tracks.gentillesse.title': 'La Gentillesse',
     'tracks.wonderful.title': 'Wonderful',
-    'tracks.womanifesto.title': 'WOMANIFESTO'
+    'tracks.womanifesto.title': 'Womanifesto'
   });
 });
 
@@ -1839,7 +1839,7 @@ const CARINE_MUSIC_PLAYLIST = [
   },
   {
     id: 'womanifesto',
-    title: 'WOMANIFESTO',
+    title: 'Womanifesto',
     artist: 'Carine Sanadina',
     genre: 'Soukous • Rumba • Makossa Gospel',
     mood: 'Restoration • Feminine Strength • Grace • Healing',
@@ -1847,6 +1847,7 @@ const CARINE_MUSIC_PLAYLIST = [
     description: 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, and victory through faith.',
     coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/4B4AE259-EC5A-46A2-BB9A-355667A3C23C.png',
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Womanifesto%20(1).mp3',
+    artworkFit: 'contain',
     translationKey: 'tracks.womanifesto'
   }
 ];
@@ -1886,6 +1887,7 @@ const renderCarinePlaylist = () => {
     const coverUrl = escapePlaylistAttribute(track.coverUrl);
     const audioUrl = escapePlaylistAttribute(track.audioUrl);
     const durationValue = Number.isFinite(Number(track.duration)) && Number(track.duration) > 0 ? String(Number(track.duration)) : '';
+    const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
 
     return `
       <article
@@ -1900,6 +1902,7 @@ const renderCarinePlaylist = () => {
         data-track-duration="${escapePlaylistAttribute(durationValue)}"
         data-track-mood="${trackMood}"
         data-track-description="${escapePlaylistAttribute(track.description)}"
+        data-track-artwork-fit="${artworkFit}"
       >
         <audio aria-label="${escapePlaylistAttribute(`${track.title} by ${track.artist}`)}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
         <div class="track-cover-wrap">
@@ -1914,6 +1917,7 @@ const renderCarinePlaylist = () => {
             decoding="async"
             referrerpolicy="no-referrer"
             data-fallback-target="${fallbackId}"
+            data-artwork-fit="${artworkFit}"
           />
           <div class="image-fallback music-cover-fallback" id="${fallbackId}" role="note" aria-live="polite">
             <span data-i18n="${trackKey}.fallback">${trackTitle} cover art is temporarily unavailable.</span>
@@ -2402,6 +2406,12 @@ if (musicPlayers.length) {
   };
 
   const getVerifiedAudioSource = (player) => (player?.dataset.audioSrc || '').trim();
+  const getTrackArtworkFit = (player) => (player?.dataset.trackArtworkFit === 'contain' ? 'contain' : 'cover');
+
+  const syncArtworkFit = (image, player) => {
+    if (!image) return;
+    image.dataset.artworkFit = getTrackArtworkFit(player);
+  };
 
   const applyResolvedAudioSource = (player, audio) => {
     const verifiedSource = getVerifiedAudioSource(player);
@@ -2491,12 +2501,16 @@ if (musicPlayers.length) {
   const syncStage = (player) => {
     if (!player) return;
     const title = getTrackTitle(player);
-    if (stageCover) stageCover.src = player.dataset.trackCover || '';
+    if (stageCover) {
+      stageCover.src = player.dataset.trackCover || '';
+      syncArtworkFit(stageCover, player);
+    }
     if (stageTitle) stageTitle.textContent = title;
     if (stageArtist) stageArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
     if (mobileCover) {
       mobileCover.src = player.dataset.trackCover || '';
       mobileCover.alt = `${title} ${translate('audio.coverArt')}`;
+      syncArtworkFit(mobileCover, player);
     }
     if (mobileTitle) mobileTitle.textContent = title;
     if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
@@ -2799,6 +2813,7 @@ if (musicPlayers.length) {
     miniPlayer.setAttribute('aria-hidden', 'false');
     miniPlayer.classList.toggle('is-playing', audio && !audio.paused && !audio.ended);
     mini.cover.src = player.dataset.trackCover;
+    syncArtworkFit(mini.cover, player);
     const trackTitle = getTrackTitle(player);
     mini.cover.alt = `${trackTitle} ${translate('audio.coverArt')}`;
     mini.cover.referrerPolicy = 'no-referrer';
