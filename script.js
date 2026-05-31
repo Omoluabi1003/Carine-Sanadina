@@ -1527,6 +1527,8 @@ Object.values(translations).forEach((dictionary) => {
     'music.visualizerToggleAria': 'Toggle audio visualizer',
     'music.visualizerOn': 'Visualizer on',
     'music.visualizerOff': 'Visualizer off',
+    'music.visualizerStyleLabel': 'Visualization Style',
+    'music.visualizerStyleAria': 'Choose visualization style',
     'music.visualizerHelperTap': 'Tap Visualizer, then press Play.',
     'music.visualizerFallback': dictionary['music.visualizerFallback'] || 'Visualizer is resting. Audio playback will continue normally.',
     'tracks.consolation.title': 'Consolation',
@@ -2383,12 +2385,14 @@ if (musicPlayers.length) {
   let repeatMode = 'all';
   const PLAYER_STORAGE_KEY = 'carine-sanadina-player-state';
   const VISUALIZER_STORAGE_KEY = 'carine-sanadina-visualizer-enabled';
+  const VISUALIZER_STYLE_STORAGE_KEY = 'carine-sanadina-visualizer-style';
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
   const shuffleButton = document.querySelector('[data-shuffle-toggle]');
   const repeatButton = document.querySelector('[data-repeat-toggle]');
   const nextButton = document.querySelector('[data-next-track]');
   const visualizerToggle = document.querySelector('[data-visualizer-toggle]');
+  const visualizerStyleSelect = document.querySelector('[data-visualizer-style]');
   const visualizerHelper = document.querySelector('[data-visualizer-helper]');
   const visualizerCanvas = document.querySelector('[data-audio-visualizer]');
   const visualizerFallback = document.querySelector('[data-visualizer-fallback]');
@@ -2553,9 +2557,43 @@ if (musicPlayers.length) {
 
   const isCoarsePointerDevice = () => Boolean(coarsePointerQuery && coarsePointerQuery.matches);
 
-  let visualizerEnabled = readVisualizerPreference();
+  const VISUALIZATION_STYLES = [
+    { id: 'orb', label: 'Orb' },
+    { id: 'neon-bars', label: 'Neon Bars' },
+    { id: 'particle-field', label: 'Particle Field' },
+    { id: 'wireframe-lattice', label: 'Wireframe Lattice' },
+    { id: 'waveform-tunnel', label: 'Wave Tunnel' },
+    { id: 'holographic-rings', label: 'Holographic Rings' }
+  ];
+  const DEFAULT_VISUALIZATION_STYLE = 'neon-bars';
 
-  const visualizerBars = visualizerCanvas ? Array.from(visualizerCanvas.querySelectorAll('span')) : [];
+  const readVisualizerStylePreference = () => {
+    try {
+      const stored = window.localStorage.getItem(VISUALIZER_STYLE_STORAGE_KEY);
+      if (VISUALIZATION_STYLES.some((style) => style.id === stored)) {
+        return stored;
+      }
+    } catch (error) {
+      // Storage can be unavailable in restricted browsing contexts.
+    }
+
+    return DEFAULT_VISUALIZATION_STYLE;
+  };
+
+  const writeVisualizerStylePreference = (styleId) => {
+    try {
+      window.localStorage.setItem(VISUALIZER_STYLE_STORAGE_KEY, styleId);
+    } catch (error) {
+      // Storage can be unavailable in restricted browsing contexts.
+    }
+  };
+
+  let visualizerEnabled = readVisualizerPreference();
+  let selectedVisualizationStyle = readVisualizerStylePreference();
+
+  const visualizerUnits = [];
+  const spectrumBands = new Float32Array(64);
+  const waveformData = new Uint8Array(128);
   const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
   const mediaSourceNodes = new WeakMap();
   const sourceConnectionState = new WeakMap();
@@ -2577,11 +2615,29 @@ if (musicPlayers.length) {
     visualizerHelper.textContent = message;
   };
 
+  const setupVisualizationStyleSelector = () => {
+    if (!visualizerStyleSelect) {
+      return;
+    }
+
+    visualizerStyleSelect.innerHTML = VISUALIZATION_STYLES.map((style) => (
+      `<option value="${style.id}">${style.label}</option>`
+    )).join('');
+    visualizerStyleSelect.value = selectedVisualizationStyle;
+  };
+
   const updateVisualizerToggleUI = () => {
     if (visualizerToggle) {
       visualizerToggle.checked = visualizerEnabled;
       visualizerToggle.setAttribute('aria-checked', String(visualizerEnabled));
       visualizerToggle.setAttribute('aria-label', translate('music.visualizerToggleAria'));
+    }
+
+    if (visualizerStyleSelect) {
+      visualizerStyleSelect.disabled = !visualizerEnabled;
+      visualizerStyleSelect.value = selectedVisualizationStyle;
+      visualizerStyleSelect.setAttribute('aria-disabled', String(!visualizerEnabled));
+      visualizerStyleSelect.setAttribute('aria-label', translate('music.visualizerStyleAria'));
     }
 
     if (!visualizerEnabled) {
@@ -2611,18 +2667,177 @@ if (musicPlayers.length) {
     window.console.warn('[music audio] analyser unavailable; using idle visualizer fallback', reason);
   };
 
-  const setVisualizerBars = (heights = [], mode = visualizerMode) => {
-    if (!visualizerBars.length) {
+  const createVisualizerUnits = () => {
+    if (!visualizerCanvas || visualizerUnits.length) {
       return;
     }
 
-    visualizerBars.forEach((bar, index) => {
-      const base = mode === 'playing' ? 18 : mode === 'paused' ? 12 : 8;
-      const value = Number.isFinite(heights[index]) ? heights[index] : base + ((index % 5) * 3);
-      const clamped = Math.min(Math.max(value, 6), 100);
-      bar.style.setProperty('--bar-height', `${clamped}%`);
-      bar.style.setProperty('--bar-opacity', String(mode === 'playing' ? 0.76 + (clamped / 100) * 0.24 : 0.42));
-      bar.style.setProperty('--bar-glow', `${Math.round(8 + (clamped / 100) * 24)}px`);
+    visualizerCanvas.replaceChildren();
+
+    for (let index = 0; index < 64; index += 1) {
+      const unit = document.createElement('span');
+      unit.className = 'visualizer-unit';
+      unit.style.setProperty('--unit-index', index);
+      visualizerCanvas.appendChild(unit);
+      visualizerUnits.push(unit);
+    }
+  };
+
+  const averageRange = (array, start, end) => {
+    let total = 0;
+    for (let index = start; index < end; index += 1) {
+      total += array[index] || 0;
+    }
+    return total / Math.max(1, end - start);
+  };
+
+  const sampleAudioBands = (time = 0, useIdle = false) => {
+    if (sharedAnalyser && !useIdle) {
+      sharedAnalyser.getByteFrequencyData(frequencyData);
+      if (typeof sharedAnalyser.getByteTimeDomainData === 'function') {
+        sharedAnalyser.getByteTimeDomainData(waveformData);
+      }
+    } else {
+      for (let index = 0; index < frequencyData.length; index += 1) {
+        const wave = Math.sin((time / 680) + index * 0.42);
+        frequencyData[index] = Math.round(18 + ((wave + 1) * 10));
+        waveformData[index] = Math.round(128 + Math.sin((time / 520) + index * 0.24) * 18);
+      }
+    }
+
+    const step = Math.max(1, Math.floor(frequencyData.length / spectrumBands.length));
+    for (let index = 0; index < spectrumBands.length; index += 1) {
+      const value = (frequencyData[index * step] || 0) / 255;
+      spectrumBands[index] += (value - spectrumBands[index]) * (useIdle ? 0.08 : 0.42);
+    }
+
+    const bass = averageRange(spectrumBands, 0, 10);
+    const mid = averageRange(spectrumBands, 10, 32);
+    const high = averageRange(spectrumBands, 32, 64);
+    return {
+      bass,
+      mid,
+      high,
+      energy: Math.min(Math.max((bass + mid + high) / 3, 0), 1),
+      spectrum: spectrumBands,
+      waveform: waveformData
+    };
+  };
+
+  const paintVisualizerUnit = (unit, customProperties) => {
+    Object.entries(customProperties).forEach(([name, value]) => {
+      unit.style.setProperty(name, value);
+    });
+  };
+
+  const setVisualizerTheme = (state = visualizerMode) => {
+    if (!visualizerCanvas) {
+      return;
+    }
+
+    visualizerMode = state;
+    visualizerCanvas.dataset.visualizationStyle = selectedVisualizationStyle;
+    visualizerCanvas.classList.toggle('is-playing', state === 'playing');
+    visualizerCanvas.classList.toggle('is-paused', state === 'paused');
+    visualizerCanvas.classList.toggle('is-idle', state !== 'playing');
+    visualizerCanvas.classList.toggle('is-off', !visualizerEnabled || reduceMotion);
+  };
+
+  const renderVisualizationFrame = (bands, time = 0, state = 'playing') => {
+    if (!visualizerUnits.length) {
+      return;
+    }
+
+    const isQuiet = state !== 'playing' || !visualizerEnabled || reduceMotion;
+    const quietScale = isQuiet ? 0.34 : 1;
+    const center = (visualizerUnits.length - 1) / 2;
+
+    visualizerUnits.forEach((unit, index) => {
+      const normalized = index / Math.max(visualizerUnits.length - 1, 1);
+      const centered = index - center;
+      const angle = normalized * Math.PI * 2;
+      const value = bands.spectrum[index] || 0;
+      const mirroredValue = bands.spectrum[Math.min(63, Math.abs(Math.round(centered)))] || value;
+      const pulse = Math.max(0.06, value * quietScale);
+      const height = 10 + pulse * 90;
+      const opacity = isQuiet ? 0.28 + pulse * 0.6 : 0.45 + pulse * 0.55;
+      const glow = 8 + pulse * 34;
+      const timeSeconds = time / 1000;
+      let x = 0;
+      let y = 0;
+      let scaleX = 1;
+      let scaleY = 1;
+      let rotate = 0;
+      let radius = 0;
+      let hue = 205 + normalized * 42;
+
+      switch (selectedVisualizationStyle) {
+        case 'orb':
+          radius = 28 + Math.sin(index * 1.7) * 8 + (bands.bass * 24 * quietScale);
+          x = Math.cos(angle + timeSeconds * 0.45) * radius;
+          y = Math.sin(angle + timeSeconds * 0.35) * radius;
+          scaleX = 0.62 + bands.energy * 1.6 * quietScale;
+          scaleY = 0.62 + bands.bass * 2.2 * quietScale;
+          rotate = angle * 57.2958 + timeSeconds * 18;
+          hue = 200 + bands.high * 70;
+          break;
+        case 'particle-field':
+          radius = 18 + (index % 8) * 9 + bands.energy * 38 * quietScale;
+          x = Math.cos(angle * 2.7 + timeSeconds * (0.18 + (index % 5) * 0.02)) * radius;
+          y = Math.sin(angle * 1.9 + timeSeconds * 0.22) * radius * 0.72;
+          scaleX = 0.48 + pulse * 1.8;
+          scaleY = scaleX;
+          rotate = timeSeconds * 24 + index * 11;
+          hue = 198 + (index % 9) * 6;
+          break;
+        case 'wireframe-lattice':
+          x = centered * 4.2;
+          y = Math.sin((index * 0.52) + timeSeconds * 1.3) * (18 + bands.high * 32 * quietScale);
+          scaleX = 0.46;
+          scaleY = 0.5 + bands.bass * 4.2 * quietScale + (index % 2) * 0.35;
+          rotate = (index % 2 ? 54 : -54) + bands.high * 42;
+          hue = 212 + (index % 4) * 10;
+          break;
+        case 'waveform-tunnel':
+          radius = 12 + (index % 16) * 3.1 + bands.mid * 32 * quietScale;
+          x = Math.cos(angle + timeSeconds * (0.24 + bands.energy * 0.4)) * radius;
+          y = Math.sin(angle + timeSeconds * 0.18) * radius * 0.46;
+          scaleX = 2.1 + (index % 4) * 0.18;
+          scaleY = 0.32 + bands.mid * 1.9 * quietScale;
+          rotate = angle * 57.2958 + 90;
+          hue = 196 + normalized * 30;
+          break;
+        case 'holographic-rings':
+          radius = 18 + (index % 12) * 4.4 + bands.mid * 34 * quietScale;
+          x = Math.cos(angle + (index % 6) * 0.08) * radius;
+          y = Math.sin(angle + timeSeconds * 0.2) * radius * (0.3 + (index % 6) * 0.035);
+          scaleX = 2.6 + bands.high * 3.4 * quietScale;
+          scaleY = 0.34 + bands.bass * 1.8 * quietScale;
+          rotate = angle * 57.2958 + Math.sin(timeSeconds + index) * 16;
+          hue = 202 + (index % 6) * 8 + bands.high * 30;
+          break;
+        case 'neon-bars':
+        default:
+          x = 0;
+          y = 0;
+          scaleX = 1;
+          scaleY = 1;
+          rotate = 0;
+          hue = 202 + mirroredValue * 46;
+          break;
+      }
+
+      paintVisualizerUnit(unit, {
+        '--bar-height': `${Math.min(Math.max(height, 6), 100)}%`,
+        '--bar-opacity': String(Math.min(Math.max(opacity, 0.18), 1)),
+        '--bar-glow': `${Math.round(glow)}px`,
+        '--unit-x': `${x}px`,
+        '--unit-y': `${y}px`,
+        '--unit-scale-x': String(scaleX),
+        '--unit-scale-y': String(scaleY),
+        '--unit-rotate': `${rotate}deg`,
+        '--unit-hue': `${Math.round(hue)}deg`
+      });
     });
   };
 
@@ -2639,12 +2854,8 @@ if (musicPlayers.length) {
     }
 
     cancelVisualizerFrame();
-    visualizerMode = mode;
-    visualizerCanvas.classList.remove('is-playing');
-    visualizerCanvas.classList.toggle('is-paused', mode === 'paused');
-    visualizerCanvas.classList.toggle('is-idle', mode !== 'playing');
-    visualizerCanvas.classList.toggle('is-off', !visualizerEnabled || reduceMotion);
-    setVisualizerBars([], mode);
+    setVisualizerTheme(mode);
+    renderVisualizationFrame(sampleAudioBands(window.performance.now(), true), window.performance.now(), mode);
   };
 
   const runIdleVisualizer = (mode = 'idle') => {
@@ -2657,18 +2868,10 @@ if (musicPlayers.length) {
       return;
     }
 
-    visualizerMode = mode;
-    visualizerCanvas.classList.remove('is-playing', 'is-off');
-    visualizerCanvas.classList.toggle('is-paused', mode === 'paused');
-    visualizerCanvas.classList.toggle('is-idle', mode !== 'playing');
+    setVisualizerTheme(mode);
 
     const tick = (time = 0) => {
-      const calmMultiplier = mode === 'paused' ? 1.2 : 1;
-      const heights = visualizerBars.map((_, index) => {
-        const wave = Math.sin((time / 720) + (index * 0.78));
-        return (10 + (index % 4) * 2 + ((wave + 1) * 5)) * calmMultiplier;
-      });
-      setVisualizerBars(heights, mode);
+      renderVisualizationFrame(sampleAudioBands(time, true), time, mode);
       visualizerFrameId = window.requestAnimationFrame(tick);
     };
 
@@ -2790,17 +2993,15 @@ if (musicPlayers.length) {
 
     cancelVisualizerFrame();
     silentAnalyzerFrames = 0;
-    visualizerMode = 'playing';
-    visualizerCanvas.classList.add('is-playing');
-    visualizerCanvas.classList.remove('is-idle', 'is-paused');
+    setVisualizerTheme('playing');
 
-    const tick = () => {
+    const tick = (time = 0) => {
       if (!audio || audio.paused || audio.ended || !sharedAnalyser) {
         runIdleVisualizer(audio && !audio.ended ? 'paused' : 'idle');
         return;
       }
 
-      sharedAnalyser.getByteFrequencyData(frequencyData);
+      const bands = sampleAudioBands(time, false);
       const maxFrequency = frequencyData.reduce((max, value) => Math.max(max, value), 0);
 
       if (maxFrequency === 0) {
@@ -2814,19 +3015,7 @@ if (musicPlayers.length) {
         silentAnalyzerFrames = 0;
       }
 
-      const bass = frequencyData.slice(2, 12);
-      const mids = frequencyData.slice(12, 46);
-      const highs = frequencyData.slice(46, 96);
-      const average = (values) => values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1);
-      const bands = [average(bass), average(bass), average(mids), average(mids), average(highs), average(highs)];
-      const heights = visualizerBars.map((_, index) => {
-        const bandValue = bands[index % bands.length] || 0;
-        const detailIndex = Math.min(frequencyData.length - 1, 4 + Math.floor((index / Math.max(visualizerBars.length, 1)) * 96));
-        const detail = frequencyData[detailIndex] || 0;
-        return 10 + ((bandValue * 0.23) + (detail * 0.16));
-      });
-
-      setVisualizerBars(heights, 'playing');
+      renderVisualizationFrame(bands, time, 'playing');
       visualizerFrameId = window.requestAnimationFrame(tick);
     };
 
@@ -2841,6 +3030,8 @@ if (musicPlayers.length) {
     runIdleVisualizer(mode);
   };
 
+  createVisualizerUnits();
+  setupVisualizationStyleSelector();
   setVisualizerFallback();
   runIdleVisualizer('idle');
   window.addEventListener('carine:languagechange', () => {
@@ -3384,6 +3575,22 @@ if (musicPlayers.length) {
       enableVisualizerFromGesture();
     } else {
       disableVisualizer();
+    }
+  });
+
+  visualizerStyleSelect?.addEventListener('change', () => {
+    const nextStyle = VISUALIZATION_STYLES.some((style) => style.id === visualizerStyleSelect.value)
+      ? visualizerStyleSelect.value
+      : DEFAULT_VISUALIZATION_STYLE;
+    selectedVisualizationStyle = nextStyle;
+    writeVisualizerStylePreference(nextStyle);
+    updateVisualizerToggleUI();
+
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    if (visualizerEnabled && audio && !audio.paused && !audio.ended) {
+      startVisualizer(audio);
+    } else {
+      runIdleVisualizer(audio && !audio.ended ? 'paused' : 'idle');
     }
   });
 
