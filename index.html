@@ -488,6 +488,24 @@
           </div>
 
           <div class="player-command-center reveal" aria-label="Music playback controls" data-i18n-aria-label="music.controlsLabel">
+            <div class="visualizer-toggle-panel">
+              <label class="visualizer-toggle" for="visualizer-toggle">
+                <span class="visualizer-toggle__text" data-i18n="music.visualizerToggleLabel">Visualizer</span>
+                <input
+                  id="visualizer-toggle"
+                  class="visualizer-toggle__input"
+                  type="checkbox"
+                  role="switch"
+                  data-visualizer-toggle
+                  aria-label="Toggle audio visualizer"
+                  data-i18n-aria-label="music.visualizerToggleAria"
+                />
+                <span class="visualizer-toggle__track" aria-hidden="true">
+                  <span class="visualizer-toggle__thumb"></span>
+                </span>
+              </label>
+              <p class="visualizer-helper" data-visualizer-helper role="status" aria-live="polite"></p>
+            </div>
             <button class="control-chip" type="button" data-shuffle-toggle aria-pressed="false" data-i18n="music.shuffle">Shuffle</button>
             <button class="control-chip" type="button" data-repeat-toggle aria-pressed="false" data-repeat-mode="all" data-i18n="music.repeatAll">Repeat all</button>
             <button class="control-chip" type="button" data-next-track data-i18n="music.nextTrack">Next track</button>

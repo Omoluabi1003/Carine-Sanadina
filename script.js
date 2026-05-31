@@ -998,7 +998,7 @@ const premiumExperienceTranslations = {
     'music.stageLabel': 'Premium now playing experience',
     'music.controlsLabel': 'Music playback controls',
     'music.nowPlaying': 'Now playing',
-    'music.visualizerFallback': 'Audio visualization is unavailable because this browser does not support the Web Audio API.',
+    'music.visualizerFallback': 'Visualizer is resting. Audio playback will continue normally.',
     'music.visualizerAvailable': 'Visualizer animation appears above.',
     'music.shuffle': 'Shuffle',
     'music.shuffleOn': 'Shuffle on',
@@ -1046,7 +1046,7 @@ const premiumExperienceTranslations = {
     'music.stageLabel': 'Expérience premium du titre en cours',
     'music.controlsLabel': 'Commandes de lecture musicale',
     'music.nowPlaying': 'En lecture',
-    'music.visualizerFallback': 'La visualisation audio est indisponible, car ce navigateur ne prend pas en charge l’API Web Audio.',
+    'music.visualizerFallback': 'Le visualiseur se repose. La lecture audio continue normalement.',
     'music.visualizerAvailable': 'L’animation de visualisation apparaît ci-dessus.',
     'music.shuffle': 'Aléatoire',
     'music.shuffleOn': 'Aléatoire activé',
@@ -1332,7 +1332,7 @@ const completeTranslationOverrides = {
     'music.stageLabel': 'Experiencia premium de reproducción actual',
     'music.controlsLabel': 'Controles de reproducción musical',
     'music.nowPlaying': 'Reproduciendo ahora',
-    'music.visualizerFallback': 'La visualización de audio no está disponible porque este navegador no admite la API Web Audio.',
+    'music.visualizerFallback': 'El visualizador está en reposo. El audio continuará normalmente.',
     'music.visualizerAvailable': 'La animación del visualizador aparece arriba.',
     'music.shuffle': 'Aleatorio',
     'music.shuffleOn': 'Aleatorio activado',
@@ -1377,7 +1377,7 @@ const completeTranslationOverrides = {
     'music.stageLabel': 'Esika ya lokumu ya loyembo oyo ezali koyokana',
     'music.controlsLabel': 'Bikomande ya kobeta miziki',
     'music.nowPlaying': 'Ezali koyokana sikoyo',
-    'music.visualizerFallback': 'Komonisa mongongo ezali te mpo navigateur oyo esimbaka API Web Audio te.',
+    'music.visualizerFallback': 'Visualizer ezali kopema. Loyembo ekokoba koyokana malamu.',
     'music.visualizerAvailable': 'Bilinoko ya visualizer ezali komonana likolo.',
     'music.shuffle': 'Sangisa',
     'music.shuffleOn': 'Kosangisa efungwami',
@@ -1420,7 +1420,7 @@ const completeTranslationOverrides = {
     'music.stageLabel': 'Uzoefu wa kiwango cha juu wa kinachochezwa sasa',
     'music.controlsLabel': 'Vidhibiti vya uchezaji wa muziki',
     'music.nowPlaying': 'Inacheza sasa',
-    'music.visualizerFallback': 'Onyesho la sauti halipatikani kwa sababu kivinjari hiki hakitumii API ya Web Audio.',
+    'music.visualizerFallback': 'Visualizer imetulia. Sauti itaendelea kucheza kawaida.',
     'music.visualizerAvailable': 'Mwendo wa onyesho la sauti unaonekana hapo juu.',
     'music.shuffle': 'Changanya',
     'music.shuffleOn': 'Changanya imewashwa',
@@ -1465,7 +1465,7 @@ const completeTranslationOverrides = {
     'music.stageLabel': 'Iriri orin tó ń dun báyìí ní ipele gíga',
     'music.controlsLabel': 'Àwọn ìṣàkóso orin',
     'music.nowPlaying': 'Ó ń dun báyìí',
-    'music.visualizerFallback': 'Àfihàn ohun kò sí nítorí aṣàwákiri yìí kò ṣe atilẹyin Web Audio API.',
+    'music.visualizerFallback': 'Visualizer ń sinmi. Ohùn yóò tẹ̀síwájú láìsí ìṣòro.',
     'music.visualizerAvailable': 'Àwòrán ìrìn ohun hàn lókè.',
     'music.shuffle': 'Dapọ̀',
     'music.shuffleOn': 'Dapọ̀ wà ní titan',
@@ -1523,6 +1523,12 @@ Object.values(translations).forEach((dictionary) => {
     'language.name.es': 'Spanish',
     'language.name.sw': 'Swahili',
     'language.name.yo': 'Yoruba',
+    'music.visualizerToggleLabel': 'Visualizer',
+    'music.visualizerToggleAria': 'Toggle audio visualizer',
+    'music.visualizerOn': 'Visualizer on',
+    'music.visualizerOff': 'Visualizer off',
+    'music.visualizerHelperTap': 'Tap Visualizer, then press Play.',
+    'music.visualizerFallback': dictionary['music.visualizerFallback'] || 'Visualizer is resting. Audio playback will continue normally.',
     'tracks.consolation.title': 'Consolation',
     'tracks.gentillesse.title': 'La Gentillesse',
     'tracks.wonderful.title': 'Wonderful',
@@ -2376,10 +2382,14 @@ if (musicPlayers.length) {
   let shuffleEnabled = false;
   let repeatMode = 'all';
   const PLAYER_STORAGE_KEY = 'carine-sanadina-player-state';
+  const VISUALIZER_STORAGE_KEY = 'carine-sanadina-visualizer-enabled';
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
   const shuffleButton = document.querySelector('[data-shuffle-toggle]');
   const repeatButton = document.querySelector('[data-repeat-toggle]');
   const nextButton = document.querySelector('[data-next-track]');
+  const visualizerToggle = document.querySelector('[data-visualizer-toggle]');
+  const visualizerHelper = document.querySelector('[data-visualizer-helper]');
   const visualizerCanvas = document.querySelector('[data-audio-visualizer]');
   const visualizerFallback = document.querySelector('[data-visualizer-fallback]');
   const stageCover = document.querySelector('[data-stage-cover]');
@@ -2521,6 +2531,30 @@ if (musicPlayers.length) {
     syncStage(player);
   };
 
+  const readVisualizerPreference = () => {
+    try {
+      const stored = window.localStorage.getItem(VISUALIZER_STORAGE_KEY);
+      if (stored === 'true') return true;
+      if (stored === 'false') return false;
+    } catch (error) {
+      // Storage can be unavailable in restricted browsing contexts.
+    }
+
+    return !reduceMotion && !isCoarsePointerDevice();
+  };
+
+  const writeVisualizerPreference = (isEnabled) => {
+    try {
+      window.localStorage.setItem(VISUALIZER_STORAGE_KEY, isEnabled ? 'true' : 'false');
+    } catch (error) {
+      // Storage can be unavailable in restricted browsing contexts.
+    }
+  };
+
+  const isCoarsePointerDevice = () => Boolean(coarsePointerQuery && coarsePointerQuery.matches);
+
+  let visualizerEnabled = readVisualizerPreference();
+
   const visualizerBars = visualizerCanvas ? Array.from(visualizerCanvas.querySelectorAll('span')) : [];
   const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
   const mediaSourceNodes = new WeakMap();
@@ -2534,6 +2568,30 @@ if (musicPlayers.length) {
   let visualizerMode = 'idle';
   let silentAnalyzerFrames = 0;
   let corsFallbackWarned = false;
+
+  const setVisualizerHelper = (message = '') => {
+    if (!visualizerHelper) {
+      return;
+    }
+
+    visualizerHelper.textContent = message;
+  };
+
+  const updateVisualizerToggleUI = () => {
+    if (visualizerToggle) {
+      visualizerToggle.checked = visualizerEnabled;
+      visualizerToggle.setAttribute('aria-checked', String(visualizerEnabled));
+      visualizerToggle.setAttribute('aria-label', translate('music.visualizerToggleAria'));
+    }
+
+    if (!visualizerEnabled) {
+      setVisualizerHelper(isCoarsePointerDevice() ? translate('music.visualizerHelperTap') : translate('music.visualizerOff'));
+    } else if (isCoarsePointerDevice() && (!activePlayer || getAudio(activePlayer)?.paused)) {
+      setVisualizerHelper(translate('music.visualizerHelperTap'));
+    } else {
+      setVisualizerHelper('');
+    }
+  };
 
   const setVisualizerFallback = (isUnavailable = false) => {
     if (!visualizerFallback) {
@@ -2575,13 +2633,32 @@ if (musicPlayers.length) {
     }
   };
 
+  const setVisualizerStatic = (mode = 'idle') => {
+    if (!visualizerCanvas) {
+      return;
+    }
+
+    cancelVisualizerFrame();
+    visualizerMode = mode;
+    visualizerCanvas.classList.remove('is-playing');
+    visualizerCanvas.classList.toggle('is-paused', mode === 'paused');
+    visualizerCanvas.classList.toggle('is-idle', mode !== 'playing');
+    visualizerCanvas.classList.toggle('is-off', !visualizerEnabled || reduceMotion);
+    setVisualizerBars([], mode);
+  };
+
   const runIdleVisualizer = (mode = 'idle') => {
-    if (!visualizerCanvas || reduceMotion) {
+    if (!visualizerCanvas) {
+      return;
+    }
+
+    if (!visualizerEnabled || reduceMotion) {
+      setVisualizerStatic(mode);
       return;
     }
 
     visualizerMode = mode;
-    visualizerCanvas.classList.remove('is-playing');
+    visualizerCanvas.classList.remove('is-playing', 'is-off');
     visualizerCanvas.classList.toggle('is-paused', mode === 'paused');
     visualizerCanvas.classList.toggle('is-idle', mode !== 'playing');
 
@@ -2669,7 +2746,12 @@ if (musicPlayers.length) {
 
     let nodeRecord = mediaSourceNodes.get(audio);
 
-    if (!nodeRecord || nodeRecord.context !== sharedAudioContext) {
+    if (nodeRecord && nodeRecord.context !== sharedAudioContext) {
+      warnAnalyzerFallback('Audio element already has a media source for another audio context.');
+      return false;
+    }
+
+    if (!nodeRecord) {
       try {
         nodeRecord = {
           context: sharedAudioContext,
@@ -2697,7 +2779,12 @@ if (musicPlayers.length) {
   };
 
   const startVisualizer = (audio) => {
-    if (!visualizerCanvas || reduceMotion) {
+    if (!visualizerCanvas) {
+      return;
+    }
+
+    if (!visualizerEnabled || reduceMotion) {
+      setVisualizerStatic(audio && !audio.paused && !audio.ended ? 'paused' : 'idle');
       return;
     }
 
@@ -2756,7 +2843,10 @@ if (musicPlayers.length) {
 
   setVisualizerFallback();
   runIdleVisualizer('idle');
-  window.addEventListener('carine:languagechange', setVisualizerFallback);
+  window.addEventListener('carine:languagechange', () => {
+    setVisualizerFallback(false);
+    updateVisualizerToggleUI();
+  });
 
   const getAudio = (player) => player.querySelector('audio');
   const getDurationLabel = (player) => player.querySelector('[data-duration]');
@@ -2768,6 +2858,8 @@ if (musicPlayers.length) {
       ? translate(playToggle.dataset.trackKey)
       : player.dataset.trackTitle;
   };
+
+  updateVisualizerToggleUI();
 
   const updateToggle = (button, audio, title) => {
     if (!button) {
@@ -2784,6 +2876,46 @@ if (musicPlayers.length) {
     }
 
     return Number.isFinite(fallback) && fallback > 0 ? fallback : 0;
+  };
+
+  const enableVisualizerFromGesture = async () => {
+    visualizerEnabled = true;
+    writeVisualizerPreference(true);
+    updateVisualizerToggleUI();
+
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+
+    if (!audio || audio.paused || audio.ended || reduceMotion) {
+      runIdleVisualizer(audio && !audio?.ended ? 'paused' : 'idle');
+      return;
+    }
+
+    try {
+      const context = await ensureAudioContextForGesture({ allowCreate: true, allowResume: true });
+      const analyserReady = context ? connectAudioToAnalyser(audio) : false;
+
+      if (analyserReady) {
+        setVisualizerHelper('');
+        startVisualizer(audio);
+      } else {
+        setVisualizerFallback(true);
+        setVisualizerHelper(isCoarsePointerDevice() ? translate('music.visualizerHelperTap') : '');
+        runIdleVisualizer('idle');
+      }
+    } catch (error) {
+      warnAnalyzerFallback(error?.message || error);
+      setVisualizerFallback(true);
+      setVisualizerHelper(isCoarsePointerDevice() ? translate('music.visualizerHelperTap') : '');
+      runIdleVisualizer('idle');
+    }
+  };
+
+  const disableVisualizer = () => {
+    visualizerEnabled = false;
+    writeVisualizerPreference(false);
+    setVisualizerFallback(false);
+    setVisualizerStatic('idle');
+    updateVisualizerToggleUI();
   };
 
   const syncMiniProgress = (audio) => {
@@ -2943,9 +3075,15 @@ if (musicPlayers.length) {
     }
 
     try {
-      const context = await ensureAudioContextForGesture({ allowCreate: !isAutoAdvance, allowResume: !isAutoAdvance });
-      const analyserReady = context ? connectAudioToAnalyser(audio) : false;
-      if (!analyserReady) {
+      let analyserReady = false;
+
+      if (visualizerEnabled && !reduceMotion) {
+        const context = await ensureAudioContextForGesture({ allowCreate: !isAutoAdvance, allowResume: !isAutoAdvance });
+        analyserReady = context ? connectAudioToAnalyser(audio) : false;
+        if (!analyserReady) {
+          stopVisualizer('idle');
+        }
+      } else {
         stopVisualizer('idle');
       }
 
@@ -3069,6 +3207,7 @@ if (musicPlayers.length) {
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
         startVisualizer(audio);
+        updateVisualizerToggleUI();
         persistPlayerState();
 
         if (miniPlayer) {
@@ -3088,6 +3227,7 @@ if (musicPlayers.length) {
         }
 
         stopVisualizer(audio.ended ? 'idle' : 'paused');
+        updateVisualizerToggleUI();
         persistPlayerState();
 
         if (activePlayer === musicPlayer && miniPlayer) {
@@ -3112,6 +3252,7 @@ if (musicPlayers.length) {
         }
 
         stopVisualizer('idle');
+        updateVisualizerToggleUI();
         persistPlayerState();
 
         if (shouldAdvance) {
@@ -3134,6 +3275,7 @@ if (musicPlayers.length) {
         }
 
         stopVisualizer('idle');
+        updateVisualizerToggleUI();
         persistPlayerState();
 
         if (activePlayer === musicPlayer && miniPlayer) {
@@ -3236,6 +3378,14 @@ if (musicPlayers.length) {
     updateCommandButtons();
     persistPlayerState();
   };
+
+  visualizerToggle?.addEventListener('change', () => {
+    if (visualizerToggle.checked) {
+      enableVisualizerFromGesture();
+    } else {
+      disableVisualizer();
+    }
+  });
 
   shuffleButton?.addEventListener('click', toggleShuffle);
   mobileShuffle?.addEventListener('click', toggleShuffle);
