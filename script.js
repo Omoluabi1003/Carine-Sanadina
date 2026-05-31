@@ -1530,6 +1530,7 @@ Object.values(translations).forEach((dictionary) => {
     'music.visualizerStyleLabel': 'Visualization Style',
     'music.visualizerStyleAria': 'Choose visualization style',
     'music.visualizerHelperTap': 'Tap Visualizer, then press Play.',
+    'music.visualizerHelperIphone': 'Tap Play to activate visuals on iPhone.',
     'music.visualizerFallback': dictionary['music.visualizerFallback'] || 'Visualizer is resting. Audio playback will continue normally.',
     'tracks.consolation.title': 'Consolation',
     'tracks.gentillesse.title': 'La Gentillesse',
@@ -2388,6 +2389,8 @@ if (musicPlayers.length) {
   const VISUALIZER_STYLE_STORAGE_KEY = 'carine-sanadina-visualizer-style';
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
+  const isIosSafari = /iP(ad|hone|od)/.test(window.navigator.userAgent)
+    || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
   const shuffleButton = document.querySelector('[data-shuffle-toggle]');
   const repeatButton = document.querySelector('[data-repeat-toggle]');
   const nextButton = document.querySelector('[data-next-track]');
@@ -2528,6 +2531,7 @@ if (musicPlayers.length) {
     }
     if (mobileTitle) mobileTitle.textContent = title;
     if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
+    resizeVisualizerSurface();
   };
 
   const setActiveTrack = (player) => {
@@ -2605,6 +2609,8 @@ if (musicPlayers.length) {
   let visualizerFrameId = 0;
   let visualizerMode = 'idle';
   let silentAnalyzerFrames = 0;
+  let analyserFallbackActive = false;
+  let canvasSizeWarned = false;
   let corsFallbackWarned = false;
 
   const setVisualizerHelper = (message = '') => {
@@ -2642,6 +2648,8 @@ if (musicPlayers.length) {
 
     if (!visualizerEnabled) {
       setVisualizerHelper(isCoarsePointerDevice() ? translate('music.visualizerHelperTap') : translate('music.visualizerOff'));
+    } else if (isIosSafari && (!activePlayer || getAudio(activePlayer)?.paused)) {
+      setVisualizerHelper(translate('music.visualizerHelperIphone'));
     } else if (isCoarsePointerDevice() && (!activePlayer || getAudio(activePlayer)?.paused)) {
       setVisualizerHelper(translate('music.visualizerHelperTap'));
     } else {
@@ -2658,17 +2666,54 @@ if (musicPlayers.length) {
     visualizerFallback.textContent = translate(isUnavailable ? 'music.visualizerFallback' : 'music.visualizerAvailable');
   };
 
+
+  const warnAudioContextState = (state) => {
+    if (!isAudioDebugEnabled || !window.console || typeof window.console.warn !== 'function') {
+      return;
+    }
+
+    window.console.warn('[music audio] AudioContext state', state);
+  };
+
   const warnAnalyzerFallback = (reason) => {
     if (corsFallbackWarned || !isAudioDebugEnabled || !window.console || typeof window.console.warn !== 'function') {
       return;
     }
 
     corsFallbackWarned = true;
-    window.console.warn('[music audio] analyser unavailable; using idle visualizer fallback', reason);
+    window.console.warn('[music audio] analyser unavailable; using beat-simulated visualizer fallback', reason);
+  };
+
+  const warnCanvasSize = (details) => {
+    if (canvasSizeWarned || !isAudioDebugEnabled || !window.console || typeof window.console.warn !== 'function') {
+      return;
+    }
+
+    canvasSizeWarned = true;
+    window.console.warn('[music audio] visualizer surface has an unsafe size', details);
+  };
+
+  const resizeVisualizerSurface = () => {
+    if (!visualizerCanvas) {
+      return;
+    }
+
+    const rect = visualizerCanvas.getBoundingClientRect();
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 3);
+    const width = Math.max(1, Math.round(rect.width * pixelRatio));
+    const height = Math.max(1, Math.round(rect.height * pixelRatio));
+    visualizerCanvas.style.setProperty('--visualizer-pixel-ratio', String(pixelRatio));
+    visualizerCanvas.style.setProperty('--visualizer-width', `${width}px`);
+    visualizerCanvas.style.setProperty('--visualizer-height', `${height}px`);
+
+    if ((rect.width < 2 || rect.height < 2) && !document.hidden) {
+      warnCanvasSize({ width: rect.width, height: rect.height, pixelRatio });
+    }
   };
 
   const createVisualizerUnits = () => {
     if (!visualizerCanvas || visualizerUnits.length) {
+      resizeVisualizerSurface();
       return;
     }
 
@@ -2681,6 +2726,8 @@ if (musicPlayers.length) {
       visualizerCanvas.appendChild(unit);
       visualizerUnits.push(unit);
     }
+
+    resizeVisualizerSurface();
   };
 
   const averageRange = (array, start, end) => {
@@ -2691,17 +2738,23 @@ if (musicPlayers.length) {
     return total / Math.max(1, end - start);
   };
 
-  const sampleAudioBands = (time = 0, useIdle = false) => {
-    if (sharedAnalyser && !useIdle) {
+  const sampleAudioBands = (time = 0, useIdle = false, useBeatFallback = false) => {
+    if (sharedAnalyser && !useIdle && !useBeatFallback) {
       sharedAnalyser.getByteFrequencyData(frequencyData);
       if (typeof sharedAnalyser.getByteTimeDomainData === 'function') {
         sharedAnalyser.getByteTimeDomainData(waveformData);
       }
     } else {
+      const seconds = time / 1000;
+      const beat = useBeatFallback ? Math.pow((Math.sin(seconds * Math.PI * 2.15) + 1) / 2, 2.4) : 0;
+      const breath = useBeatFallback ? 28 + beat * 126 : 18;
+      const movement = useBeatFallback ? 0.18 : 0.42;
       for (let index = 0; index < frequencyData.length; index += 1) {
-        const wave = Math.sin((time / 680) + index * 0.42);
-        frequencyData[index] = Math.round(18 + ((wave + 1) * 10));
-        waveformData[index] = Math.round(128 + Math.sin((time / 520) + index * 0.24) * 18);
+        const wave = Math.sin((time / (useBeatFallback ? 210 : 680)) + index * movement);
+        const harmonic = Math.sin((time / 390) + index * 0.11) * (useBeatFallback ? 22 : 10);
+        const taper = 1 - (index / frequencyData.length) * 0.54;
+        frequencyData[index] = Math.round(Math.min(255, Math.max(0, (breath + ((wave + 1) * 26) + harmonic) * taper)));
+        waveformData[index] = Math.round(128 + Math.sin((time / (useBeatFallback ? 145 : 520)) + index * 0.24) * (useBeatFallback ? 46 : 18));
       }
     }
 
@@ -2736,7 +2789,8 @@ if (musicPlayers.length) {
     }
 
     visualizerMode = state;
-    visualizerCanvas.dataset.visualizationStyle = selectedVisualizationStyle;
+    visualizerCanvas.dataset.visualizationStyle = analyserFallbackActive && isIosSafari ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
+    visualizerCanvas.classList.toggle('is-analyser-fallback', analyserFallbackActive);
     visualizerCanvas.classList.toggle('is-playing', state === 'playing');
     visualizerCanvas.classList.toggle('is-paused', state === 'paused');
     visualizerCanvas.classList.toggle('is-idle', state !== 'playing');
@@ -2854,6 +2908,8 @@ if (musicPlayers.length) {
     }
 
     cancelVisualizerFrame();
+    analyserFallbackActive = false;
+    resizeVisualizerSurface();
     setVisualizerTheme(mode);
     renderVisualizationFrame(sampleAudioBands(window.performance.now(), true), window.performance.now(), mode);
   };
@@ -2868,6 +2924,8 @@ if (musicPlayers.length) {
       return;
     }
 
+    analyserFallbackActive = false;
+    resizeVisualizerSurface();
     setVisualizerTheme(mode);
 
     const tick = (time = 0) => {
@@ -2917,6 +2975,7 @@ if (musicPlayers.length) {
         return null;
       }
 
+      warnAudioContextState(sharedAudioContext.state);
       await sharedAudioContext.resume();
       logAudioDiagnostics('audio-context-resumed', { state: sharedAudioContext.state });
     }
@@ -2992,30 +3051,43 @@ if (musicPlayers.length) {
     }
 
     cancelVisualizerFrame();
+    resizeVisualizerSurface();
     silentAnalyzerFrames = 0;
+    analyserFallbackActive = !sharedAnalyser;
+    if (analyserFallbackActive) {
+      warnAnalyzerFallback('Analyser is not ready while audio is playing.');
+    }
     setVisualizerTheme('playing');
+    setVisualizerHelper('');
+    setVisualizerFallback(false);
 
     const tick = (time = 0) => {
-      if (!audio || audio.paused || audio.ended || !sharedAnalyser) {
+      if (!audio || audio.paused || audio.ended) {
+        analyserFallbackActive = false;
         runIdleVisualizer(audio && !audio.ended ? 'paused' : 'idle');
         return;
       }
 
-      const bands = sampleAudioBands(time, false);
-      const maxFrequency = frequencyData.reduce((max, value) => Math.max(max, value), 0);
+      const fallbackTime = Math.max(0, audio.currentTime || 0) * 1000;
+      const bands = sampleAudioBands(analyserFallbackActive ? fallbackTime : time, false, analyserFallbackActive);
 
-      if (maxFrequency === 0) {
-        silentAnalyzerFrames += 1;
-        if (silentAnalyzerFrames > 90) {
-          warnAnalyzerFallback('Frequency data stayed silent while audio was playing.');
-          runIdleVisualizer('idle');
-          return;
+      if (!analyserFallbackActive) {
+        const maxFrequency = frequencyData.reduce((max, value) => Math.max(max, value), 0);
+        const minFrequency = frequencyData.reduce((min, value) => Math.min(min, value), 255);
+
+        if (maxFrequency === 0 || maxFrequency - minFrequency < 2) {
+          silentAnalyzerFrames += 1;
+          if (silentAnalyzerFrames > 45) {
+            analyserFallbackActive = true;
+            warnAnalyzerFallback('Frequency data stayed flat while audio was playing.');
+            setVisualizerTheme('playing');
+          }
+        } else {
+          silentAnalyzerFrames = 0;
         }
-      } else {
-        silentAnalyzerFrames = 0;
       }
 
-      renderVisualizationFrame(bands, time, 'playing');
+      renderVisualizationFrame(bands, analyserFallbackActive ? fallbackTime : time, 'playing');
       visualizerFrameId = window.requestAnimationFrame(tick);
     };
 
@@ -3034,6 +3106,17 @@ if (musicPlayers.length) {
   setupVisualizationStyleSelector();
   setVisualizerFallback();
   runIdleVisualizer('idle');
+  window.addEventListener('resize', resizeVisualizerSurface, { passive: true });
+  window.addEventListener('orientationchange', () => window.setTimeout(resizeVisualizerSurface, 180), { passive: true });
+  document.addEventListener('visibilitychange', () => {
+    resizeVisualizerSurface();
+    if (!document.hidden && visualizerEnabled && activePlayer) {
+      const audio = getAudio(activePlayer);
+      if (audio && !audio.paused && !audio.ended) {
+        startVisualizer(audio);
+      }
+    }
+  });
   window.addEventListener('carine:languagechange', () => {
     setVisualizerFallback(false);
     updateVisualizerToggleUI();
@@ -3085,19 +3168,16 @@ if (musicPlayers.length) {
       const context = await ensureAudioContextForGesture({ allowCreate: true, allowResume: true });
       const analyserReady = context ? connectAudioToAnalyser(audio) : false;
 
-      if (analyserReady) {
-        setVisualizerHelper('');
-        startVisualizer(audio);
-      } else {
+      if (!analyserReady) {
         setVisualizerFallback(true);
-        setVisualizerHelper(isCoarsePointerDevice() ? translate('music.visualizerHelperTap') : '');
-        runIdleVisualizer('idle');
       }
+      setVisualizerHelper('');
+      startVisualizer(audio);
     } catch (error) {
       warnAnalyzerFallback(error?.message || error);
       setVisualizerFallback(true);
-      setVisualizerHelper(isCoarsePointerDevice() ? translate('music.visualizerHelperTap') : '');
-      runIdleVisualizer('idle');
+      setVisualizerHelper('');
+      startVisualizer(audio);
     }
   };
 
@@ -3397,7 +3477,6 @@ if (musicPlayers.length) {
         showMiniPlayer(musicPlayer);
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
-        startVisualizer(audio);
         updateVisualizerToggleUI();
         persistPlayerState();
 
@@ -3578,16 +3657,23 @@ if (musicPlayers.length) {
     }
   });
 
-  visualizerStyleSelect?.addEventListener('change', () => {
+  visualizerStyleSelect?.addEventListener('change', async () => {
     const nextStyle = VISUALIZATION_STYLES.some((style) => style.id === visualizerStyleSelect.value)
       ? visualizerStyleSelect.value
       : DEFAULT_VISUALIZATION_STYLE;
     selectedVisualizationStyle = nextStyle;
     writeVisualizerStylePreference(nextStyle);
+    resizeVisualizerSurface();
     updateVisualizerToggleUI();
 
     const audio = activePlayer ? getAudio(activePlayer) : null;
     if (visualizerEnabled && audio && !audio.paused && !audio.ended) {
+      try {
+        const context = await ensureAudioContextForGesture({ allowCreate: true, allowResume: true });
+        if (context) connectAudioToAnalyser(audio);
+      } catch (error) {
+        warnAnalyzerFallback(error?.message || error);
+      }
       startVisualizer(audio);
     } else {
       runIdleVisualizer(audio && !audio.ended ? 'paused' : 'idle');
