@@ -1949,11 +1949,33 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   transform: translate3d(var(--unit-x), var(--unit-y), 0) rotate(var(--unit-rotate)) scale(var(--unit-scale-x), var(--unit-scale-y));
 }
 
-.music-visualizer[data-visualization-style="neon-bars"] span {
-  position: relative;
-  inset: auto;
-  width: clamp(4px, 0.55vw, 10px);
-  transform-origin: bottom;
+.music-visualizer[data-visualization-style="waveform"] {
+  align-items: center;
+  gap: 0;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(96, 165, 250, 0.2), transparent 34%),
+    linear-gradient(180deg, rgba(8, 17, 32, 0.96), rgba(9, 35, 73, 0.84));
+}
+
+.music-visualizer[data-visualization-style="waveform"]::before {
+  opacity: 1;
+  inset: 50% 8% auto;
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(240, 216, 154, 0.38), rgba(248, 250, 252, 0.42), transparent);
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.18);
+}
+
+.music-visualizer[data-visualization-style="waveform"] span {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  width: clamp(8px, 1.25vw, 18px);
+  height: 4px;
+  min-height: 0;
+  transform-origin: center;
+  background: linear-gradient(90deg, transparent, rgba(248, 250, 252, 0.96) 10%, #60A5FA 45%, #4A8CFF 76%, rgba(240, 216, 154, 0.82));
+  box-shadow: 0 0 var(--bar-glow) rgba(96, 165, 250, 0.38), 0 0 calc(var(--bar-glow) * 0.45) rgba(240, 216, 154, 0.2);
 }
 
 .music-visualizer[data-visualization-style="orb"],
@@ -2640,7 +2662,9 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   padding: clamp(10px, 3vw, 18px);
 }
 
-.music-visualizer:not([data-visualization-style="neon-bars"]).is-idle span,
-.music-visualizer:not([data-visualization-style="neon-bars"]).is-paused span {
+.music-visualizer[data-visualization-style="waveform"].is-idle span,
+.music-visualizer[data-visualization-style="waveform"].is-paused span,
+.music-visualizer:not([data-visualization-style="waveform"]).is-idle span,
+.music-visualizer:not([data-visualization-style="waveform"]).is-paused span {
   animation: none;
 }
