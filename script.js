@@ -2613,6 +2613,7 @@ if (musicPlayers.length) {
   const spectrumBands = new Float32Array(64);
   const waveformData = new Uint8Array(128);
   const waveformPoints = new Float32Array(64);
+  const waveformTargetPoints = new Float32Array(64);
   const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
   const mediaSourceNodes = new WeakMap();
   const sourceConnectionState = new WeakMap();
@@ -2762,14 +2763,14 @@ if (musicPlayers.length) {
     } else {
       const seconds = time / 1000;
       const beat = useBeatFallback ? Math.pow((Math.sin(seconds * Math.PI * 2.15) + 1) / 2, 2.4) : 0;
-      const breath = useBeatFallback ? 28 + beat * 126 : 18;
-      const movement = useBeatFallback ? 0.18 : 0.42;
+      const breath = useBeatFallback ? 32 + beat * 152 : 18;
+      const movement = useBeatFallback ? 0.16 : 0.42;
       for (let index = 0; index < frequencyData.length; index += 1) {
         const wave = Math.sin((time / (useBeatFallback ? 210 : 680)) + index * movement);
         const harmonic = Math.sin((time / 390) + index * 0.11) * (useBeatFallback ? 22 : 10);
         const taper = 1 - (index / frequencyData.length) * 0.54;
         frequencyData[index] = Math.round(Math.min(255, Math.max(0, (breath + ((wave + 1) * 26) + harmonic) * taper)));
-        waveformData[index] = Math.round(128 + Math.sin((time / (useBeatFallback ? 145 : 520)) + index * 0.24) * (useBeatFallback ? 46 : 18));
+        waveformData[index] = Math.round(128 + Math.sin((time / (useBeatFallback ? 132 : 520)) + index * 0.2) * (useBeatFallback ? 62 : 18));
       }
     }
 
@@ -2779,6 +2780,15 @@ if (musicPlayers.length) {
       spectrumBands[index] += (value - spectrumBands[index]) * (useIdle ? 0.08 : 0.42);
     }
 
+    let waveformPeak = 0;
+    let waveformTotal = 0;
+    for (let index = 0; index < waveformData.length; index += 1) {
+      const centeredSample = Math.abs(((waveformData[index] || 128) - 128) / 128);
+      waveformPeak = Math.max(waveformPeak, centeredSample);
+      waveformTotal += centeredSample * centeredSample;
+    }
+
+    const waveformRms = Math.sqrt(waveformTotal / Math.max(1, waveformData.length));
     const bass = averageRange(spectrumBands, 0, 10);
     const mid = averageRange(spectrumBands, 10, 32);
     const high = averageRange(spectrumBands, 32, 64);
@@ -2788,7 +2798,9 @@ if (musicPlayers.length) {
       high,
       energy: Math.min(Math.max((bass + mid + high) / 3, 0), 1),
       spectrum: spectrumBands,
-      waveform: waveformData
+      waveform: waveformData,
+      waveformPeak,
+      waveformRms
     };
   };
 
@@ -2824,8 +2836,11 @@ if (musicPlayers.length) {
     const visualizerRect = visualizerCanvas?.getBoundingClientRect?.();
     const surfaceWidth = Math.max(240, visualizerRect?.width || 320);
     const surfaceHeight = Math.max(140, visualizerRect?.height || 180);
-    const waveformStep = (surfaceWidth * 0.84) / Math.max(visualizerUnits.length - 1, 1);
-    const waveformAmplitude = surfaceHeight * (isQuiet ? 0.08 : 0.26);
+    const waveformStep = (surfaceWidth * (isQuiet ? 0.9 : 0.94)) / Math.max(visualizerUnits.length - 1, 1);
+    const waveformAmplitude = surfaceHeight * (isQuiet ? 0.16 : 0.42);
+    const waveformPeak = Math.max(bands.waveformPeak || 0, bands.waveformRms || 0, 0.015);
+    const waveformGain = isQuiet ? 0.78 : Math.min(3.6, Math.max(1.35, 0.44 / waveformPeak));
+    const minimumWaveformLift = isQuiet ? 0.035 : 0.12 + Math.min(bands.energy * 0.16, 0.12);
 
     visualizerUnits.forEach((unit, index) => {
       const normalized = index / Math.max(visualizerUnits.length - 1, 1);
@@ -2837,7 +2852,16 @@ if (musicPlayers.length) {
       const nextWaveformSampleIndex = Math.min(bands.waveform.length - 1, waveformSampleIndex + 1);
       const waveformValue = ((bands.waveform[waveformSampleIndex] || 128) - 128) / 128;
       const nextWaveformValue = ((bands.waveform[nextWaveformSampleIndex] || 128) - 128) / 128;
-      waveformPoints[index] += (waveformValue - waveformPoints[index]) * (isQuiet ? 0.08 : 0.5);
+      const shapedWaveformValue = Math.max(-0.92, Math.min(0.92, waveformValue * waveformGain));
+      const waveSign = shapedWaveformValue === 0
+        ? Math.sin((time / 480) + index * 0.31) >= 0 ? 1 : -1
+        : Math.sign(shapedWaveformValue);
+      const liftedWaveformValue = !isQuiet && Math.abs(shapedWaveformValue) < minimumWaveformLift
+        ? waveSign * minimumWaveformLift
+        : shapedWaveformValue;
+      const shapedNextWaveformValue = Math.max(-0.92, Math.min(0.92, nextWaveformValue * waveformGain));
+      waveformTargetPoints[index] += (liftedWaveformValue - waveformTargetPoints[index]) * (isQuiet ? 0.1 : 0.34);
+      waveformPoints[index] += (waveformTargetPoints[index] - waveformPoints[index]) * (isQuiet ? 0.1 : 0.32);
       const pulse = Math.max(0.06, value * quietScale);
       const height = 10 + pulse * 90;
       const opacity = isQuiet ? 0.28 + pulse * 0.6 : 0.45 + pulse * 0.55;
@@ -2898,15 +2922,16 @@ if (musicPlayers.length) {
           break;
         case 'waveform':
         default: {
-          const idlePulse = Math.sin(timeSeconds * 1.2 + normalized * Math.PI * 2) * (isQuiet ? 0.28 : 0.04);
-          const waveY = (waveformPoints[index] + idlePulse) * waveformAmplitude * quietScale;
-          const slope = (nextWaveformValue - waveformValue) * waveformAmplitude;
+          const idlePulse = Math.sin(timeSeconds * 1.12 + normalized * Math.PI * 2) * (isQuiet ? 0.18 : 0.025);
+          const warmNeedleLift = Math.sin(timeSeconds * 2.4 + index * 0.18) * (isQuiet ? 0.012 : 0.024);
+          const waveY = (waveformPoints[index] + idlePulse + warmNeedleLift) * waveformAmplitude;
+          const slope = (shapedNextWaveformValue - shapedWaveformValue) * waveformAmplitude;
           x = centered * waveformStep;
-          y = waveY;
-          scaleX = Math.max(1.35, waveformStep / 8);
-          scaleY = 0.72 + Math.max(0.08, Math.abs(waveformPoints[index])) * 1.8 + bands.energy * 0.82 * quietScale;
+          y = Math.max(-surfaceHeight * 0.43, Math.min(surfaceHeight * 0.43, waveY));
+          scaleX = Math.max(1.7, waveformStep / 5.6);
+          scaleY = 0.92 + Math.max(0.12, Math.abs(waveformPoints[index])) * 2.65 + bands.energy * 1.05 * quietScale;
           rotate = Math.atan2(slope, waveformStep) * 57.2958;
-          hue = 207 + mirroredValue * 28 + normalized * 12;
+          hue = 204 + mirroredValue * 26 + normalized * 10;
           break;
         }
       }
@@ -3018,7 +3043,7 @@ if (musicPlayers.length) {
     if (!sharedAnalyser) {
       sharedAnalyser = sharedAudioContext.createAnalyser();
       sharedAnalyser.fftSize = 256;
-      sharedAnalyser.smoothingTimeConstant = 0.78;
+      sharedAnalyser.smoothingTimeConstant = 0.84;
       sharedAnalyser.minDecibels = -90;
       sharedAnalyser.maxDecibels = -10;
     }
