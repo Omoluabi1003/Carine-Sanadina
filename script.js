@@ -2563,20 +2563,34 @@ if (musicPlayers.length) {
 
   const VISUALIZATION_STYLES = [
     { id: 'orb', label: 'Orb' },
-    { id: 'neon-bars', label: 'Neon Bars' },
+    { id: 'waveform', label: 'Waveform' },
     { id: 'particle-field', label: 'Particle Field' },
     { id: 'wireframe-lattice', label: 'Wireframe Lattice' },
     { id: 'waveform-tunnel', label: 'Wave Tunnel' },
     { id: 'holographic-rings', label: 'Holographic Rings' }
   ];
-  const DEFAULT_VISUALIZATION_STYLE = 'neon-bars';
+  const DEFAULT_VISUALIZATION_STYLE = 'waveform';
+  const normalizeVisualizationStyle = (styleId) => {
+    const normalizedStyleId = String(styleId || '');
+    const compactStyleId = normalizedStyleId.replace(/[\s-]/g, '').toLowerCase();
+
+    if (compactStyleId === 'neonbars') {
+      return 'waveform';
+    }
+
+    return VISUALIZATION_STYLES.some((style) => style.id === normalizedStyleId)
+      ? normalizedStyleId
+      : DEFAULT_VISUALIZATION_STYLE;
+  };
 
   const readVisualizerStylePreference = () => {
     try {
       const stored = window.localStorage.getItem(VISUALIZER_STYLE_STORAGE_KEY);
-      if (VISUALIZATION_STYLES.some((style) => style.id === stored)) {
-        return stored;
+      const normalized = normalizeVisualizationStyle(stored);
+      if (stored && normalized !== stored) {
+        window.localStorage.setItem(VISUALIZER_STYLE_STORAGE_KEY, normalized);
       }
+      return normalized;
     } catch (error) {
       // Storage can be unavailable in restricted browsing contexts.
     }
@@ -2598,6 +2612,7 @@ if (musicPlayers.length) {
   const visualizerUnits = [];
   const spectrumBands = new Float32Array(64);
   const waveformData = new Uint8Array(128);
+  const waveformPoints = new Float32Array(64);
   const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
   const mediaSourceNodes = new WeakMap();
   const sourceConnectionState = new WeakMap();
@@ -2789,6 +2804,7 @@ if (musicPlayers.length) {
     }
 
     visualizerMode = state;
+    selectedVisualizationStyle = normalizeVisualizationStyle(selectedVisualizationStyle);
     visualizerCanvas.dataset.visualizationStyle = analyserFallbackActive && isIosSafari ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
     visualizerCanvas.classList.toggle('is-analyser-fallback', analyserFallbackActive);
     visualizerCanvas.classList.toggle('is-playing', state === 'playing');
@@ -2805,6 +2821,11 @@ if (musicPlayers.length) {
     const isQuiet = state !== 'playing' || !visualizerEnabled || reduceMotion;
     const quietScale = isQuiet ? 0.34 : 1;
     const center = (visualizerUnits.length - 1) / 2;
+    const visualizerRect = visualizerCanvas?.getBoundingClientRect?.();
+    const surfaceWidth = Math.max(240, visualizerRect?.width || 320);
+    const surfaceHeight = Math.max(140, visualizerRect?.height || 180);
+    const waveformStep = (surfaceWidth * 0.84) / Math.max(visualizerUnits.length - 1, 1);
+    const waveformAmplitude = surfaceHeight * (isQuiet ? 0.08 : 0.26);
 
     visualizerUnits.forEach((unit, index) => {
       const normalized = index / Math.max(visualizerUnits.length - 1, 1);
@@ -2812,6 +2833,11 @@ if (musicPlayers.length) {
       const angle = normalized * Math.PI * 2;
       const value = bands.spectrum[index] || 0;
       const mirroredValue = bands.spectrum[Math.min(63, Math.abs(Math.round(centered)))] || value;
+      const waveformSampleIndex = Math.min(bands.waveform.length - 1, Math.round(normalized * (bands.waveform.length - 1)));
+      const nextWaveformSampleIndex = Math.min(bands.waveform.length - 1, waveformSampleIndex + 1);
+      const waveformValue = ((bands.waveform[waveformSampleIndex] || 128) - 128) / 128;
+      const nextWaveformValue = ((bands.waveform[nextWaveformSampleIndex] || 128) - 128) / 128;
+      waveformPoints[index] += (waveformValue - waveformPoints[index]) * (isQuiet ? 0.08 : 0.5);
       const pulse = Math.max(0.06, value * quietScale);
       const height = 10 + pulse * 90;
       const opacity = isQuiet ? 0.28 + pulse * 0.6 : 0.45 + pulse * 0.55;
@@ -2870,15 +2896,19 @@ if (musicPlayers.length) {
           rotate = angle * 57.2958 + Math.sin(timeSeconds + index) * 16;
           hue = 202 + (index % 6) * 8 + bands.high * 30;
           break;
-        case 'neon-bars':
-        default:
-          x = 0;
-          y = 0;
-          scaleX = 1;
-          scaleY = 1;
-          rotate = 0;
-          hue = 202 + mirroredValue * 46;
+        case 'waveform':
+        default: {
+          const idlePulse = Math.sin(timeSeconds * 1.2 + normalized * Math.PI * 2) * (isQuiet ? 0.28 : 0.04);
+          const waveY = (waveformPoints[index] + idlePulse) * waveformAmplitude * quietScale;
+          const slope = (nextWaveformValue - waveformValue) * waveformAmplitude;
+          x = centered * waveformStep;
+          y = waveY;
+          scaleX = Math.max(1.35, waveformStep / 8);
+          scaleY = 0.72 + Math.max(0.08, Math.abs(waveformPoints[index])) * 1.8 + bands.energy * 0.82 * quietScale;
+          rotate = Math.atan2(slope, waveformStep) * 57.2958;
+          hue = 207 + mirroredValue * 28 + normalized * 12;
           break;
+        }
       }
 
       paintVisualizerUnit(unit, {
@@ -3658,9 +3688,7 @@ if (musicPlayers.length) {
   });
 
   visualizerStyleSelect?.addEventListener('change', async () => {
-    const nextStyle = VISUALIZATION_STYLES.some((style) => style.id === visualizerStyleSelect.value)
-      ? visualizerStyleSelect.value
-      : DEFAULT_VISUALIZATION_STYLE;
+    const nextStyle = normalizeVisualizationStyle(visualizerStyleSelect.value);
     selectedVisualizationStyle = nextStyle;
     writeVisualizerStylePreference(nextStyle);
     resizeVisualizerSurface();
