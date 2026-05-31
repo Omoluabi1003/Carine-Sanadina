@@ -1,13 +1,11 @@
-const CACHE_VERSION = 'carine-static-v3';
+const PLAYLIST_VERSION = '2026-05-31-womanifesto';
+const CACHE_VERSION = `carine-static-v4-${PLAYLIST_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
-  './',
-  './index.html',
+  './offline.html',
   './styles.css',
   './script.js',
-  './manifest.json',
-  './offline.html',
-  './legal/'
+  './manifest.json'
 ];
 
 const isMediaRequest = (request) => {
@@ -15,10 +13,43 @@ const isMediaRequest = (request) => {
   return /\.(mp3|wav|ogg|m4a|mp4|webm)$/i.test(url.pathname);
 };
 
-const isSafeStaticAsset = (request) => {
+const isHtmlRequest = (request) => request.mode === 'navigate'
+  || (request.headers.get('accept') || '').includes('text/html')
+  || /\/($|index\.html$)/i.test(new URL(request.url).pathname);
+
+const isManifestOrPlaylistDataRequest = (request) => {
   const url = new URL(request.url);
-  return request.method === 'GET' && url.origin === self.location.origin && /\.(html|css|js|json|png|jpg|jpeg|webp|svg)$/i.test(url.pathname) && !isMediaRequest(request);
+  return /manifest\.json$/i.test(url.pathname) || /playlist/i.test(url.pathname);
 };
+
+const isVersionedStaticAsset = (request) => {
+  const url = new URL(request.url);
+  return request.method === 'GET'
+    && url.origin === self.location.origin
+    && /\.[a-f0-9]{8,}\.(css|js)$/i.test(url.pathname)
+    && !isMediaRequest(request);
+};
+
+const isUnversionedAppShellAsset = (request) => {
+  const url = new URL(request.url);
+  return request.method === 'GET'
+    && url.origin === self.location.origin
+    && (/\.(css|js|json)$/i.test(url.pathname) || isManifestOrPlaylistDataRequest(request))
+    && !isVersionedStaticAsset(request)
+    && !isMediaRequest(request);
+};
+
+const cacheResponse = async (request, response) => {
+  if (!response || !response.ok || response.type === 'opaque') {
+    return response;
+  }
+
+  const cache = await caches.open(CACHE_VERSION);
+  await cache.put(request, response.clone());
+  return response;
+};
+
+const fetchFresh = async (request) => fetch(request, { cache: 'no-store' });
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -36,6 +67,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
@@ -43,30 +80,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (request.mode === 'navigate') {
+  if (isHtmlRequest(request) || isUnversionedAppShellAsset(request)) {
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
-          return response;
-        })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match(OFFLINE_URL)))
+      fetchFresh(request)
+        .then((response) => cacheResponse(request, response))
+        .catch(() => caches.match(request).then((cached) => cached || (isHtmlRequest(request) ? caches.match(OFFLINE_URL) : undefined)))
     );
     return;
   }
 
-  if (isSafeStaticAsset(request)) {
+  if (isVersionedStaticAsset(request)) {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;
-        return fetch(request).then((response) => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        });
+        return fetch(request).then((response) => cacheResponse(request, response));
       })
     );
   }

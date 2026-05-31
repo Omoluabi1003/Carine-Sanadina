@@ -1,5 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
+const PLAYLIST_VERSION = '2026-05-31-womanifesto';
 
 const translations = {};
 
@@ -1534,6 +1535,12 @@ let currentLanguage = DEFAULT_LANGUAGE;
 
 const isDevelopmentHost = () => ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
 
+window.__CARINE_PLAYLIST_VERSION__ = PLAYLIST_VERSION;
+
+if (isDevelopmentHost() && window.console && typeof window.console.info === 'function') {
+  window.console.info(`Playlist version loaded: ${PLAYLIST_VERSION}`);
+}
+
 const t = (key, fallback = '', language = currentLanguage) => {
   const languageDictionary = translations[language] || translations[DEFAULT_LANGUAGE] || {};
   const defaultDictionary = translations[DEFAULT_LANGUAGE] || {};
@@ -1786,6 +1793,15 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/'/g, '&#39;');
 
 const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto'];
+const PLAYLIST_STORAGE_KEYS = ['carine-sanadina-player-state'];
+
+const clearVersionedPlaylistState = () => {
+  try {
+    PLAYLIST_STORAGE_KEYS.forEach((key) => window.localStorage.removeItem(key));
+  } catch (error) {
+    // Storage can be unavailable in restricted browsing contexts.
+  }
+};
 
 const CARINE_MUSIC_PLAYLIST = [
   {
@@ -1845,6 +1861,9 @@ const renderCarinePlaylist = () => {
   if (!playlistMount) {
     return;
   }
+
+  playlistMount.dataset.playlistVersion = PLAYLIST_VERSION;
+  document.documentElement.dataset.playlistVersion = PLAYLIST_VERSION;
 
   const safePlaylist = CARINE_MUSIC_PLAYLIST.filter((track) => track && track.id && track.title && track.audioUrl && track.coverUrl);
 
@@ -2255,8 +2274,26 @@ const initializeReflections = () => {
 const initializePwaExperience = () => {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      const scriptUrl = document.querySelector('script[src$="script.js"]')?.src || window.location.href;
-      navigator.serviceWorker.register(new URL('sw.js', scriptUrl)).catch((error) => {
+      const scriptUrl = document.currentScript?.src || document.querySelector('script[src*="script"]')?.src || window.location.href;
+      const serviceWorkerUrl = new URL('sw.js', scriptUrl);
+      serviceWorkerUrl.searchParams.set('v', PLAYLIST_VERSION);
+
+      navigator.serviceWorker.register(serviceWorkerUrl).then((registration) => {
+        registration.update();
+
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+
+        registration.addEventListener('updatefound', () => {
+          const installingWorker = registration.installing;
+          installingWorker?.addEventListener('statechange', () => {
+            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              installingWorker.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+      }).catch((error) => {
         console.info('Service worker registration skipped:', error);
       });
     });
@@ -2391,8 +2428,21 @@ if (musicPlayers.length) {
 
   const getStoredPlayerState = () => {
     try {
-      return JSON.parse(window.localStorage.getItem(PLAYER_STORAGE_KEY) || '{}');
+      const storedState = JSON.parse(window.localStorage.getItem(PLAYER_STORAGE_KEY) || '{}');
+
+      if (storedState.playlistVersion && storedState.playlistVersion !== PLAYLIST_VERSION) {
+        clearVersionedPlaylistState();
+        return {};
+      }
+
+      if (!storedState.playlistVersion && Object.keys(storedState).length > 0) {
+        clearVersionedPlaylistState();
+        return {};
+      }
+
+      return storedState;
     } catch (error) {
+      clearVersionedPlaylistState();
       return {};
     }
   };
@@ -2402,6 +2452,8 @@ if (musicPlayers.length) {
       const activeIndex = activePlayer ? musicPlayers.indexOf(activePlayer) : 0;
       const audio = activePlayer ? getAudio(activePlayer) : null;
       window.localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify({
+        playlistVersion: PLAYLIST_VERSION,
+        activeTrackId: activePlayer?.dataset.trackId || CARINE_MUSIC_PLAYLIST[0]?.id || '',
         activeIndex: Math.max(activeIndex, 0),
         currentTime: audio ? Math.floor(audio.currentTime) : 0,
         volume: mini?.volume ? Number(mini.volume.value) : 0.85,
@@ -3216,7 +3268,9 @@ if (musicPlayers.length) {
     setRangeFill(mini.volume, mini.volume.value, mini.volume.max);
   }
   updateCommandButtons();
-  const restoredPlayer = musicPlayers[Number.isInteger(storedState.activeIndex) ? storedState.activeIndex : 0] || musicPlayers[0];
+  const restoredPlayer = musicPlayers.find((player) => player.dataset.trackId === storedState.activeTrackId)
+    || musicPlayers[Number.isInteger(storedState.activeIndex) ? storedState.activeIndex : 0]
+    || musicPlayers[0];
   if (restoredPlayer) {
     const restoredAudio = getAudio(restoredPlayer);
     if (restoredAudio && Number.isFinite(storedState.currentTime) && storedState.currentTime > 0) {
