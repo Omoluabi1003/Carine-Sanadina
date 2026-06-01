@@ -12,6 +12,7 @@
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#081120" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Carine Sanadina" />
     <link rel="canonical" href="https://omoluabi1003.github.io/Carine-Sanadina/" />
 
@@ -517,7 +518,7 @@
               <p class="visualizer-helper" data-visualizer-helper role="status" aria-live="polite"></p>
             </div>
             <button class="control-chip" type="button" data-shuffle-toggle aria-pressed="false" data-i18n="music.shuffle">Shuffle</button>
-            <button class="control-chip" type="button" data-repeat-toggle aria-pressed="false" data-repeat-mode="all" data-i18n="music.repeatAll">Repeat all</button>
+            <button class="control-chip" type="button" data-repeat-toggle aria-pressed="false" data-repeat-mode="off" data-i18n="music.repeatOff">Repeat Off</button>
             <button class="control-chip" type="button" data-next-track data-i18n="music.nextTrack">Next track</button>
           </div>
 
@@ -555,6 +556,8 @@
               value="0"
               step="0.1"
               data-mini-progress
+              disabled
+              aria-disabled="true"
               aria-label="Current track progress" data-i18n-aria-label="mini.progress"
             />
             <span data-mini-duration>0:00</span>
@@ -587,7 +590,7 @@
           <div class="mobile-player-actions">
             <button class="control-chip" type="button" data-mobile-shuffle data-i18n="music.shuffle">Shuffle</button>
             <button class="track-play-toggle" type="button" data-mobile-toggle aria-label="Play or pause current track" data-i18n-aria-label="mini.toggleLabel"><span class="play-icon" aria-hidden="true"></span></button>
-            <button class="control-chip" type="button" data-mobile-repeat data-i18n="music.repeatAll">Repeat all</button>
+            <button class="control-chip" type="button" data-mobile-repeat data-i18n="music.repeatOff">Repeat Off</button>
           </div>
         </div>
       </div>
@@ -715,7 +718,7 @@
 
     <div class="install-toast" data-install-toast hidden role="status" aria-live="polite">
       <span data-i18n="pwa.installText">Install this healing-centered app for quick offline access.</span>
-      <button class="button button-primary install-toast__button" type="button" data-install-button data-i18n="pwa.installButton">Install</button>
+      <button class="button button-primary install-toast__button" type="button" data-install-button data-i18n="pwa.installButton">Install App</button>
       <button class="install-toast__dismiss" type="button" data-install-dismiss aria-label="Dismiss install prompt" data-i18n-aria-label="pwa.dismissLabel">×</button>
     </div>
 

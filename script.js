@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const PLAYLIST_VERSION = '2026-05-31-womanifesto-title-artwork';
+const PLAYLIST_VERSION = '2026-06-01-pwa-repeat-wave-bars';
 
 const translations = {};
 
@@ -1003,9 +1003,9 @@ const premiumExperienceTranslations = {
     'music.shuffle': 'Shuffle',
     'music.shuffleOn': 'Shuffle on',
     'music.shuffleOff': 'Shuffle off',
-    'music.repeatAll': 'Repeat all',
-    'music.repeatOne': 'Repeat one',
-    'music.repeatOff': 'Repeat off',
+    'music.repeatAll': 'Repeat All',
+    'music.repeatOne': 'Repeat One',
+    'music.repeatOff': 'Repeat Off',
     'music.nextTrack': 'Next track',
     'mini.expand': 'Expand',
     'mini.close': 'Close player',
@@ -1035,7 +1035,7 @@ const premiumExperienceTranslations = {
     'reflections.promptLabel': 'Reflection prompt',
     'reflections.all': 'All',
     'pwa.installText': 'Install this healing-centered app for quick offline access.',
-    'pwa.installButton': 'Install',
+    'pwa.installButton': 'Install App',
     'pwa.dismissLabel': 'Dismiss install prompt',
     'quote.wallLabel': 'Featured quote wall',
     'quote.wall.one': 'Survival is not the end of the story.',
@@ -2383,7 +2383,7 @@ if (musicPlayers.length) {
   let userStoppedPlayback = false;
   let isSwitchingTracks = false;
   let shuffleEnabled = false;
-  let repeatMode = 'all';
+  let repeatMode = 'off';
   const PLAYER_STORAGE_KEY = 'carine-sanadina-player-state';
   const VISUALIZER_STORAGE_KEY = 'carine-sanadina-visualizer-enabled';
   const VISUALIZER_STYLE_STORAGE_KEY = 'carine-sanadina-visualizer-style';
@@ -2500,12 +2500,16 @@ if (musicPlayers.length) {
     }
 
     const repeatLabelKey = repeatMode === 'one' ? 'music.repeatOne' : repeatMode === 'all' ? 'music.repeatAll' : 'music.repeatOff';
+    const repeatLabel = translate(repeatLabelKey);
     [repeatButton, mobileRepeat].forEach((button) => {
       if (!button) return;
       button.dataset.repeatMode = repeatMode;
       button.setAttribute('aria-pressed', String(repeatMode !== 'off'));
-      button.textContent = translate(repeatLabelKey);
+      button.setAttribute('aria-label', repeatLabel);
+      button.setAttribute('title', repeatLabel);
+      button.textContent = repeatLabel;
       button.classList.toggle('is-active', repeatMode !== 'off');
+      button.classList.toggle('is-repeat-one', repeatMode === 'one');
     });
 
     if (mobileShuffle) {
@@ -2563,7 +2567,7 @@ if (musicPlayers.length) {
 
   const VISUALIZATION_STYLES = [
     { id: 'orb', label: 'Orb' },
-    { id: 'waveform', label: 'Waveform' },
+    { id: 'waveform', label: 'Wave Bars' },
     { id: 'particle-field', label: 'Particle Field' },
     { id: 'wireframe-lattice', label: 'Wireframe Lattice' },
     { id: 'waveform-tunnel', label: 'Wave Tunnel' },
@@ -3237,12 +3241,15 @@ if (musicPlayers.length) {
     }
 
     const fallbackDuration = activePlayer ? getFallbackDuration(activePlayer) : 0;
-    const max = getSafeDuration(audio, fallbackDuration || 100);
     const safeDuration = getSafeDuration(audio, fallbackDuration);
+    const seekDuration = getSafeDuration(audio, 0);
+    const max = safeDuration > 0 ? safeDuration : 100;
     mini.current.textContent = formatTime(audio.currentTime);
     mini.duration.textContent = safeDuration > 0 ? formatTime(safeDuration) : '0:00';
     mini.progress.max = String(max);
     mini.progress.value = String(Math.min(audio.currentTime, max));
+    mini.progress.disabled = seekDuration <= 0;
+    mini.progress.setAttribute('aria-disabled', String(seekDuration <= 0));
     setRangeFill(mini.progress, mini.progress.value, mini.progress.max);
   };
 
@@ -3291,6 +3298,8 @@ if (musicPlayers.length) {
     mini.duration.textContent = '0:00';
     mini.progress.max = '100';
     mini.progress.value = '0';
+    mini.progress.disabled = true;
+    mini.progress.setAttribute('aria-disabled', 'true');
     setRangeFill(mini.progress, 0, 100);
     updateToggle(mini.toggle, null, translate('mini.noTrack'));
   };
@@ -3640,16 +3649,71 @@ if (musicPlayers.length) {
       }
     });
 
-    mini.progress.addEventListener('input', () => {
-      if (!activePlayer) {
+    let isSeekingWithPointer = false;
+
+    const canSeekActiveAudio = () => {
+      const audio = activePlayer ? getAudio(activePlayer) : null;
+      return Boolean(audio && getSafeDuration(audio, 0) > 0);
+    };
+
+    const seekMiniProgress = ({ commit = false } = {}) => {
+      if (!activePlayer || !canSeekActiveAudio()) {
+        if (mini.progress) {
+          mini.progress.disabled = true;
+          mini.progress.setAttribute('aria-disabled', 'true');
+        }
         return;
       }
 
       const audio = getAudio(activePlayer);
-      audio.currentTime = Number(mini.progress.value);
-      syncMiniProgress(audio);
-      persistPlayerState();
+      const safeDuration = getSafeDuration(audio, 0);
+      const nextTime = Math.min(Math.max(Number(mini.progress.value) || 0, 0), safeDuration);
+      mini.progress.disabled = false;
+      mini.progress.setAttribute('aria-disabled', 'false');
+      mini.current.textContent = formatTime(nextTime);
+      setRangeFill(mini.progress, nextTime, safeDuration);
+
+      if (commit || !isSeekingWithPointer) {
+        audio.currentTime = nextTime;
+        syncMiniProgress(audio);
+        persistPlayerState();
+      }
+    };
+
+    const beginMiniSeek = (event) => {
+      if (!canSeekActiveAudio()) {
+        return;
+      }
+      isSeekingWithPointer = true;
+      mini.progress.classList.add('is-seeking');
+      if (event.pointerId !== undefined && typeof mini.progress.setPointerCapture === 'function') {
+        mini.progress.setPointerCapture(event.pointerId);
+      }
+    };
+
+    const endMiniSeek = (event) => {
+      if (!isSeekingWithPointer) {
+        return;
+      }
+      isSeekingWithPointer = false;
+      mini.progress.classList.remove('is-seeking');
+      if (event?.pointerId !== undefined && typeof mini.progress.releasePointerCapture === 'function') {
+        try { mini.progress.releasePointerCapture(event.pointerId); } catch (error) { /* Pointer capture may already be released. */ }
+      }
+      seekMiniProgress({ commit: true });
+    };
+
+    mini.progress.addEventListener('pointerdown', beginMiniSeek);
+    mini.progress.addEventListener('pointermove', () => {
+      if (isSeekingWithPointer) seekMiniProgress();
     });
+    mini.progress.addEventListener('pointerup', endMiniSeek);
+    mini.progress.addEventListener('pointercancel', endMiniSeek);
+    mini.progress.addEventListener('touchstart', beginMiniSeek, { passive: true });
+    mini.progress.addEventListener('touchmove', () => seekMiniProgress(), { passive: true });
+    mini.progress.addEventListener('touchend', endMiniSeek);
+    mini.progress.addEventListener('input', () => seekMiniProgress());
+    mini.progress.addEventListener('change', () => seekMiniProgress({ commit: true }));
 
     window.addEventListener('carine:languagechange', () => {
       if (!activePlayer) {
@@ -3760,7 +3824,7 @@ if (musicPlayers.length) {
 
   const storedState = getStoredPlayerState();
   shuffleEnabled = Boolean(storedState.shuffleEnabled);
-  repeatMode = ['all', 'one', 'off'].includes(storedState.repeatMode) ? storedState.repeatMode : 'all';
+  repeatMode = ['all', 'one', 'off'].includes(storedState.repeatMode) ? storedState.repeatMode : 'off';
   if (mini?.volume && Number.isFinite(storedState.volume)) {
     mini.volume.value = String(Math.min(Math.max(storedState.volume, 0), 1));
     setRangeFill(mini.volume, mini.volume.value, mini.volume.max);

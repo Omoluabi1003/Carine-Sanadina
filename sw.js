@@ -1,5 +1,5 @@
-const PLAYLIST_VERSION = '2026-05-31-womanifesto';
-const CACHE_VERSION = `carine-static-v4-${PLAYLIST_VERSION}`;
+const PLAYLIST_VERSION = '2026-06-01-pwa-repeat-wave-bars';
+const CACHE_VERSION = `carine-static-v5-${PLAYLIST_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
