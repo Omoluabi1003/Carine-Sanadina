@@ -717,10 +717,45 @@
 
 
     <div class="install-toast" data-install-toast hidden role="status" aria-live="polite">
-      <span data-i18n="pwa.installText">Install this healing-centered app for quick offline access.</span>
-      <button class="button button-primary install-toast__button" type="button" data-install-button data-i18n="pwa.installButton">Install App</button>
-      <button class="install-toast__dismiss" type="button" data-install-dismiss aria-label="Dismiss install prompt" data-i18n-aria-label="pwa.dismissLabel">×</button>
+      <div class="install-toast__copy">
+        <p data-i18n="pwa.installText">Enjoy Carine’s music, books, and healing-centered message anytime. Install the app for a smoother experience.</p>
+        <p class="install-toast__instructions" data-install-instructions hidden data-i18n="pwa.iosInstructions">Tap Share, then Add to Home Screen.</p>
+      </div>
+      <div class="install-toast__actions">
+        <button class="button button-primary install-toast__button" type="button" data-install-button data-i18n="pwa.installButton">Install App</button>
+        <button class="button button-secondary install-toast__later" type="button" data-install-dismiss data-i18n="pwa.maybeLater">Maybe Later</button>
+      </div>
     </div>
+
+    <section class="guide-widget" data-guide-widget aria-label="Carine’s conversational guide" data-i18n-aria-label="guide.widgetLabel">
+      <button class="guide-launcher" type="button" data-guide-toggle aria-expanded="false" aria-controls="carine-guide-panel">
+        <span class="guide-launcher__spark" aria-hidden="true">✦</span>
+        <span data-i18n="guide.launcher">Ask Carine’s Guide</span>
+      </button>
+      <div class="guide-panel" id="carine-guide-panel" data-guide-panel hidden role="dialog" aria-modal="false" aria-labelledby="guide-title">
+        <div class="guide-panel__header">
+          <div>
+            <p class="guide-panel__eyebrow" data-i18n="guide.eyebrow">Healing-centered guide</p>
+            <h2 id="guide-title" data-i18n="guide.title">Ask Carine’s Guide</h2>
+          </div>
+          <button class="guide-panel__close" type="button" data-guide-close aria-label="Close Carine’s Guide" data-i18n-aria-label="guide.close">×</button>
+        </div>
+        <div class="guide-panel__messages" data-guide-messages aria-live="polite"></div>
+        <div class="guide-panel__starters" aria-label="Suggested starter questions" data-i18n-aria-label="guide.startersLabel">
+          <button type="button" data-guide-starter="What is Carine’s story?" data-i18n="guide.starter.story">What is Carine’s story?</button>
+          <button type="button" data-guide-starter="Which book should I start with?" data-i18n="guide.starter.book">Which book should I start with?</button>
+          <button type="button" data-guide-starter="What is Womanifesto about?" data-i18n="guide.starter.womanifesto">What is Womanifesto about?</button>
+          <button type="button" data-guide-starter="What themes does her advocacy focus on?" data-i18n="guide.starter.advocacy">What themes does her advocacy focus on?</button>
+          <button type="button" data-guide-starter="How can I invite Carine to speak?" data-i18n="guide.starter.speak">How can I invite Carine to speak?</button>
+        </div>
+        <form class="guide-panel__form" data-guide-form>
+          <label class="sr-only" for="guide-input" data-i18n="guide.inputLabel">Ask a question about Carine’s books, music, or advocacy</label>
+          <input id="guide-input" type="text" data-guide-input autocomplete="off" data-i18n-placeholder="guide.placeholder" placeholder="Ask about books, music, advocacy…" />
+          <button class="button button-primary" type="submit" data-i18n="guide.send">Send</button>
+        </form>
+        <p class="guide-panel__notice" data-i18n="guide.notice">This guide shares general information only and does not provide legal, medical, crisis, or counseling advice.</p>
+      </div>
+    </section>
 
     <footer class="site-footer">
       <div class="container footer-inner">
