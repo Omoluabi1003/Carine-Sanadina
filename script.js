@@ -1,6 +1,8 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const PLAYLIST_VERSION = '2026-06-01-pwa-repeat-wave-bars';
+const APP_VERSION = 'carine-site-2026-06-01-chatbot-position';
+const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
+const PLAYLIST_VERSION = APP_VERSION;
 
 const translations = {};
 
@@ -1910,6 +1912,12 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
 
 const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto'];
 const PLAYLIST_STORAGE_KEYS = ['carine-sanadina-player-state'];
+const CACHE_SENSITIVE_STORAGE_KEYS = [
+  ...PLAYLIST_STORAGE_KEYS,
+  'carine-sanadina-app-shell-cache',
+  'carine-sanadina-playlist-cache',
+  'carine-sanadina-guide-state'
+];
 
 const clearVersionedPlaylistState = () => {
   try {
@@ -1918,6 +1926,23 @@ const clearVersionedPlaylistState = () => {
     // Storage can be unavailable in restricted browsing contexts.
   }
 };
+
+const refreshCacheSensitiveStateForAppVersion = () => {
+  try {
+    const storedVersion = window.localStorage.getItem(APP_VERSION_STORAGE_KEY);
+
+    if (storedVersion === APP_VERSION) {
+      return;
+    }
+
+    CACHE_SENSITIVE_STORAGE_KEYS.forEach((key) => window.localStorage.removeItem(key));
+    window.localStorage.setItem(APP_VERSION_STORAGE_KEY, APP_VERSION);
+  } catch (error) {
+    // Storage can be unavailable in restricted browsing contexts.
+  }
+};
+
+refreshCacheSensitiveStateForAppVersion();
 
 const CARINE_MUSIC_PLAYLIST = [
   {
@@ -2403,7 +2428,7 @@ const initializePwaExperience = () => {
     window.addEventListener('load', () => {
       const scriptUrl = document.currentScript?.src || document.querySelector('script[src*="script"]')?.src || window.location.href;
       const serviceWorkerUrl = new URL('sw.js', scriptUrl);
-      serviceWorkerUrl.searchParams.set('v', PLAYLIST_VERSION);
+      serviceWorkerUrl.searchParams.set('v', APP_VERSION);
 
       navigator.serviceWorker.register(serviceWorkerUrl).then((registration) => {
         registration.update();
@@ -2411,6 +2436,10 @@ const initializePwaExperience = () => {
         if (registration.waiting) {
           registration.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          document.body.classList.add('app-update-ready');
+        });
 
         registration.addEventListener('updatefound', () => {
           const installingWorker = registration.installing;
@@ -2684,6 +2713,7 @@ const initializeGuideAssistant = () => {
 
   const setOpen = (isOpen) => {
     panel.hidden = !isOpen;
+    document.body.classList.toggle('chat-open', isOpen);
     toggle.setAttribute('aria-expanded', String(isOpen));
     panel.setAttribute('aria-modal', String(isOpen));
     if (isOpen) {
@@ -2739,6 +2769,20 @@ if (musicPlayers.length) {
     const percentage = numericMax > 0 ? (Number(value) / numericMax) * 100 : 0;
     range.style.setProperty('--range-progress', `${Math.min(Math.max(percentage, 0), 100)}%`);
   };
+
+  const updateMiniPlayerBodyState = () => {
+    const isActive = Boolean(miniPlayer?.classList.contains('is-visible'));
+    document.body.classList.toggle('mini-player-active', isActive);
+
+    if (miniPlayer) {
+      const height = Math.ceil(miniPlayer.getBoundingClientRect().height || 120);
+      document.documentElement.style.setProperty('--mini-player-height', `${height}px`);
+    }
+  };
+
+  updateMiniPlayerBodyState();
+  window.addEventListener('resize', updateMiniPlayerBodyState);
+  window.addEventListener('orientationchange', updateMiniPlayerBodyState);
 
   const mini = miniPlayer
     ? {
@@ -3637,6 +3681,7 @@ if (musicPlayers.length) {
     setActiveTrack(player);
     miniPlayer.classList.add('is-visible');
     miniPlayer.setAttribute('aria-hidden', 'false');
+    updateMiniPlayerBodyState();
     miniPlayer.classList.toggle('is-playing', audio && !audio.paused && !audio.ended);
     mini.cover.src = player.dataset.trackCover;
     syncArtworkFit(mini.cover, player);
@@ -3663,6 +3708,7 @@ if (musicPlayers.length) {
 
     miniPlayer.classList.remove('is-playing', 'is-visible');
     miniPlayer.setAttribute('aria-hidden', 'true');
+    updateMiniPlayerBodyState();
     mini.cover.removeAttribute('src');
     mini.cover.alt = '';
     mini.title.dataset.hasTrack = 'false';

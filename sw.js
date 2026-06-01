@@ -1,5 +1,6 @@
-const PLAYLIST_VERSION = '2026-06-01-pwa-repeat-wave-bars';
-const CACHE_VERSION = `carine-static-v5-${PLAYLIST_VERSION}`;
+const APP_VERSION = 'carine-site-2026-06-01-chatbot-position';
+const PLAYLIST_VERSION = APP_VERSION;
+const CACHE_VERSION = `carine-static-v6-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
@@ -51,6 +52,8 @@ const cacheResponse = async (request, response) => {
 
 const fetchFresh = async (request) => fetch(request, { cache: 'no-store' });
 
+const offlineHtmlResponse = () => caches.match(OFFLINE_URL);
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION)
@@ -80,11 +83,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (isHtmlRequest(request) || isUnversionedAppShellAsset(request)) {
+  if (isHtmlRequest(request)) {
     event.respondWith(
       fetchFresh(request)
         .then((response) => cacheResponse(request, response))
-        .catch(() => caches.match(request).then((cached) => cached || (isHtmlRequest(request) ? caches.match(OFFLINE_URL) : undefined)))
+        .catch(() => offlineHtmlResponse())
+    );
+    return;
+  }
+
+  if (isUnversionedAppShellAsset(request)) {
+    event.respondWith(
+      fetchFresh(request)
+        .then((response) => cacheResponse(request, response))
     );
     return;
   }
