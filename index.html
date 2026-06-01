@@ -719,11 +719,20 @@
     <div class="install-toast" data-install-toast hidden role="status" aria-live="polite">
       <div class="install-toast__copy">
         <p data-i18n="pwa.installText">Enjoy Carine’s music, books, and healing-centered message anytime. Install the app for a smoother experience.</p>
-        <p class="install-toast__instructions" data-install-instructions hidden data-i18n="pwa.iosInstructions">Tap Share, then Add to Home Screen.</p>
+        <p class="install-toast__instructions" data-install-instructions hidden data-i18n="pwa.fallbackHint">Installation steps are available for this browser.</p>
       </div>
       <div class="install-toast__actions">
         <button class="button button-primary install-toast__button" type="button" data-install-button data-i18n="pwa.installButton">Install App</button>
         <button class="button button-secondary install-toast__later" type="button" data-install-dismiss data-i18n="pwa.maybeLater">Maybe Later</button>
+      </div>
+    </div>
+
+    <div class="install-instructions-panel" data-install-panel hidden role="dialog" aria-modal="false" aria-labelledby="install-panel-title">
+      <div class="install-instructions-panel__card">
+        <button class="install-instructions-panel__close" type="button" data-install-panel-close aria-label="Close install instructions" data-i18n-aria-label="pwa.closeInstructions">×</button>
+        <p class="install-instructions-panel__eyebrow" data-i18n="pwa.instructionsEyebrow">Install Carine Sanadina</p>
+        <h2 id="install-panel-title" data-i18n="pwa.instructionsTitle">Add the app to your device</h2>
+        <p data-install-panel-copy data-i18n="pwa.iosInstructions">To install this app on iPhone: tap the Share button, then choose Add to Home Screen.</p>
       </div>
     </div>
 
