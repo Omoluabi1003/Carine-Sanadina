@@ -738,22 +738,26 @@
             <p class="guide-panel__eyebrow" data-i18n="guide.eyebrow">Healing-centered guide</p>
             <h2 id="guide-title" data-i18n="guide.title">Ask Carine’s Guide</h2>
           </div>
-          <button class="guide-panel__close" type="button" data-guide-close aria-label="Close Carine’s Guide" data-i18n-aria-label="guide.close">×</button>
+          <button class="guide-panel__close" type="button" data-guide-close aria-label="Close" data-i18n-aria-label="guide.close">×</button>
         </div>
         <div class="guide-panel__messages" data-guide-messages aria-live="polite"></div>
-        <div class="guide-panel__starters" aria-label="Suggested starter questions" data-i18n-aria-label="guide.startersLabel">
-          <button type="button" data-guide-starter="What is Carine’s story?" data-i18n="guide.starter.story">What is Carine’s story?</button>
-          <button type="button" data-guide-starter="Which book should I start with?" data-i18n="guide.starter.book">Which book should I start with?</button>
-          <button type="button" data-guide-starter="What is Womanifesto about?" data-i18n="guide.starter.womanifesto">What is Womanifesto about?</button>
-          <button type="button" data-guide-starter="What themes does her advocacy focus on?" data-i18n="guide.starter.advocacy">What themes does her advocacy focus on?</button>
-          <button type="button" data-guide-starter="How can I invite Carine to speak?" data-i18n="guide.starter.speak">How can I invite Carine to speak?</button>
+        <div class="guide-panel__starters-wrap">
+          <p class="guide-panel__starters-title" data-i18n="guide.startersTitle">Suggested questions</p>
+          <div class="guide-panel__starters" aria-label="Suggested questions" data-i18n-aria-label="guide.startersLabel">
+            <button type="button" data-guide-starter="What is Carine’s story?" data-i18n="guide.starter.story">What is Carine’s story?</button>
+            <button type="button" data-guide-starter="Which book should I start with?" data-i18n="guide.starter.book">Which book should I start with?</button>
+            <button type="button" data-guide-starter="What is Womanifesto about?" data-i18n="guide.starter.womanifesto">What is Womanifesto about?</button>
+            <button type="button" data-guide-starter="What does Carine advocate for?" data-i18n="guide.starter.advocacy">What does Carine advocate for?</button>
+            <button type="button" data-guide-starter="How can I invite Carine to speak?" data-i18n="guide.starter.speak">How can I invite Carine to speak?</button>
+            <button type="button" data-guide-starter="Show me her music." data-i18n="guide.starter.music">Show me her music.</button>
+          </div>
         </div>
         <form class="guide-panel__form" data-guide-form>
           <label class="sr-only" for="guide-input" data-i18n="guide.inputLabel">Ask a question about Carine’s books, music, or advocacy</label>
-          <input id="guide-input" type="text" data-guide-input autocomplete="off" data-i18n-placeholder="guide.placeholder" placeholder="Ask about books, music, advocacy…" />
+          <input id="guide-input" type="text" data-guide-input autocomplete="off" data-i18n-placeholder="guide.placeholder" placeholder="Type your question" />
           <button class="button button-primary" type="submit" data-i18n="guide.send">Send</button>
         </form>
-        <p class="guide-panel__notice" data-i18n="guide.notice">This guide shares general information only and does not provide legal, medical, crisis, or counseling advice.</p>
+        <p class="guide-panel__notice" data-i18n="guide.notice">This guide shares general information about Carine’s work and cannot replace professional, legal, medical, or crisis support.</p>
       </div>
     </section>
 

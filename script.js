@@ -1547,23 +1547,98 @@ Object.values(translations).forEach((dictionary) => {
     'guide.launcher': 'Ask Carine’s Guide',
     'guide.eyebrow': 'Healing-centered guide',
     'guide.title': 'Ask Carine’s Guide',
-    'guide.close': 'Close Carine’s Guide',
-    'guide.startersLabel': 'Suggested starter questions',
+    'guide.close': 'Close',
+    'guide.startersLabel': 'Suggested questions',
+    'guide.startersTitle': 'Suggested questions',
     'guide.starter.story': 'What is Carine’s story?',
     'guide.starter.book': 'Which book should I start with?',
     'guide.starter.womanifesto': 'What is Womanifesto about?',
-    'guide.starter.advocacy': 'What themes does her advocacy focus on?',
+    'guide.starter.advocacy': 'What does Carine advocate for?',
     'guide.starter.speak': 'How can I invite Carine to speak?',
+    'guide.starter.music': 'Show me her music.',
     'guide.inputLabel': 'Ask a question about Carine’s books, music, or advocacy',
-    'guide.placeholder': 'Ask about books, music, advocacy…',
+    'guide.placeholder': 'Type your question',
     'guide.send': 'Send',
-    'guide.notice': 'This guide shares general information only and does not provide legal, medical, crisis, or counseling advice.',
+    'guide.notice': 'This guide shares general information about Carine’s work and cannot replace professional, legal, medical, or crisis support.',
     'music.visualizerFallback': dictionary['music.visualizerFallback'] || 'Visualizer is resting. Audio playback will continue normally.',
     'tracks.consolation.title': 'Consolation',
     'tracks.gentillesse.title': 'La Gentillesse',
     'tracks.wonderful.title': 'Wonderful',
     'tracks.womanifesto.title': 'Womanifesto'
   });
+});
+
+
+const localizedGuideLabels = {
+  fr: {
+    'guide.widgetLabel': 'Guide conversationnel de Carine',
+    'guide.launcher': 'Demander au guide de Carine',
+    'guide.eyebrow': 'Guide centré sur la guérison',
+    'guide.title': 'Demander au guide de Carine',
+    'guide.close': 'Fermer',
+    'guide.startersLabel': 'Questions suggérées',
+    'guide.startersTitle': 'Questions suggérées',
+    'guide.starter.story': 'Quelle est l’histoire de Carine ?',
+    'guide.starter.book': 'Par quel livre commencer ?',
+    'guide.starter.womanifesto': 'De quoi parle Womanifesto ?',
+    'guide.starter.advocacy': 'Que défend Carine ?',
+    'guide.starter.speak': 'Comment inviter Carine à parler ?',
+    'guide.starter.music': 'Montrez-moi sa musique.',
+    'guide.inputLabel': 'Posez une question sur les livres, la musique ou le plaidoyer de Carine',
+    'guide.placeholder': 'Tapez votre question',
+    'guide.send': 'Envoyer',
+    'guide.notice': 'Ce guide partage des informations générales sur le travail de Carine et ne remplace pas une aide professionnelle, juridique, médicale ou de crise.'
+  },
+  es: {
+    'guide.widgetLabel': 'Guía conversacional de Carine',
+    'guide.launcher': 'Preguntar a la guía de Carine',
+    'guide.eyebrow': 'Guía centrada en sanación',
+    'guide.title': 'Preguntar a la guía de Carine',
+    'guide.close': 'Cerrar',
+    'guide.startersLabel': 'Preguntas sugeridas',
+    'guide.startersTitle': 'Preguntas sugeridas',
+    'guide.starter.story': '¿Cuál es la historia de Carine?',
+    'guide.starter.book': '¿Con qué libro empiezo?',
+    'guide.starter.womanifesto': '¿De qué trata Womanifesto?',
+    'guide.starter.advocacy': '¿Qué causas defiende Carine?',
+    'guide.starter.speak': '¿Cómo puedo invitar a Carine a hablar?',
+    'guide.starter.music': 'Muéstrame su música.',
+    'guide.inputLabel': 'Pregunta sobre los libros, la música o la defensa de Carine',
+    'guide.placeholder': 'Escribe tu pregunta',
+    'guide.send': 'Enviar',
+    'guide.notice': 'Esta guía comparte información general sobre el trabajo de Carine y no reemplaza apoyo profesional, legal, médico o de crisis.'
+  },
+  ln: {
+    'guide.launcher': 'Tuna guide ya Carine',
+    'guide.title': 'Tuna guide ya Carine',
+    'guide.close': 'Kanga',
+    'guide.startersLabel': 'Mituna epesami',
+    'guide.startersTitle': 'Mituna epesami',
+    'guide.placeholder': 'Koma motuna na yo',
+    'guide.send': 'Tinda'
+  },
+  sw: {
+    'guide.launcher': 'Uliza Mwongozo wa Carine',
+    'guide.title': 'Uliza Mwongozo wa Carine',
+    'guide.close': 'Funga',
+    'guide.startersLabel': 'Maswali yaliyopendekezwa',
+    'guide.startersTitle': 'Maswali yaliyopendekezwa',
+    'guide.placeholder': 'Andika swali lako',
+    'guide.send': 'Tuma'
+  },
+  yo: {
+    'guide.launcher': 'Béèrè lọwọ Guide Carine',
+    'guide.title': 'Béèrè lọwọ Guide Carine',
+    'guide.close': 'Pa dé',
+    'guide.startersLabel': 'Àwọn ìbéèrè àbá',
+    'guide.startersTitle': 'Àwọn ìbéèrè àbá',
+    'guide.placeholder': 'Tẹ ìbéèrè rẹ',
+    'guide.send': 'Firanṣẹ'
+  }
+};
+
+Object.entries(localizedGuideLabels).forEach(([language, labels]) => {
+  if (translations[language]) Object.assign(translations[language], labels);
 });
 
 const supportedLanguages = Object.keys(translations);
@@ -2426,7 +2501,7 @@ const initializePwaExperience = () => {
 };
 
 const initializeGuideAssistant = () => {
-  // TODO: Connect this chat UI to a secure backend AI endpoint.
+  // TODO: Connect this guide to a secure server-side AI endpoint for deeper conversational intelligence.
   const widget = document.querySelector('[data-guide-widget]');
   if (!widget) return;
 
@@ -2439,24 +2514,50 @@ const initializeGuideAssistant = () => {
   const starters = Array.from(widget.querySelectorAll('[data-guide-starter]'));
 
   const knowledgeBase = {
-    biography: 'Carine Sanadina is a Congolese-born, Jacksonville-based healthcare professional, author, artist, survivor advocate, and emotional wellness voice. Her work turns lived pain into healing-centered literature, music, and encouragement shaped by faith, resilience, motherhood, immigrant experience, and restoration.',
-    books: [
-      'The Pain Nobody Saw: A Hidden Story of Abuse and Survival — a memoir about hidden domestic abuse, cultural pressure, silent suffering, freedom, faith, and reclaimed self-worth.',
-      'If It’s Red, It’s Toxic — a guide to red flags, emotional manipulation, spiritual danger, unhealthy attachments, clarity, and peace.',
-      'The Road to Sunshine: A Journey of Struggles, Faith and Hope — a hope-forward reflection on struggle, perseverance, and brighter days.',
-      'After The Storm — a restoration-centered work about quiet strength after hardship and moving beyond survival toward peace.'
-    ],
-    music: [
-      'Consolation — comfort and hope for healing.',
-      'La Gentillesse — a faith-shaped anthem of kindness.',
-      'Wonderful — joyful praise and gratitude.',
-      'Womanifesto — a soulful African gospel anthem celebrating women’s resilience, healing, grace, victory, and faith.'
-    ],
-    advocacy: 'Carine’s advocacy focuses on domestic violence awareness, survivor empowerment, toxic relationship awareness, emotional healing, faith, resilience, self-worth, human-centered care, immigrant and refugee experience, motherhood, and restoration.',
-    booking: 'To invite Carine to speak, request an interview, discuss music collaboration, or start a book-centered conversation, use the contact buttons on this site or email hello@example.com with the opportunity details.'
+    biography: 'Carine Sanadina is Congolese-born and Jacksonville-based. She is a healthcare professional, author, artist, survivor advocate, and emotional wellness voice whose work transforms lived pain into healing-centered literature, music, and inspiration. Her message often carries faith, resilience, motherhood, immigrant experience, survival, and restoration.',
+    books: {
+      pain: {
+        title: 'The Pain Nobody Saw: A Hidden Story of Abuse and Survival',
+        themes: ['hidden abuse', 'survival', 'healing', 'silent pain', 'domestic violence'],
+        response: 'Start with The Pain Nobody Saw: A Hidden Story of Abuse and Survival if you want Carine’s hidden-abuse, survival, and healing-centered testimony. It gives language to pain that was often unseen.'
+      },
+      toxic: {
+        title: 'If It’s Red, It’s Toxic',
+        themes: ['toxic relationships', 'red flags', 'emotional clarity', 'self-worth'],
+        response: 'For toxic relationships, start with If It’s Red, It’s Toxic. It centers red flags, emotional clarity, self-worth, and the courage to protect your peace.'
+      },
+      sunshine: {
+        title: 'The Road to Sunshine: A Journey of Struggles, Faith and Hope',
+        themes: ['struggle', 'faith', 'hope', 'restoration', 'resilience'],
+        response: 'For faith, hope, and restoration, The Road to Sunshine: A Journey of Struggles, Faith and Hope is the best starting point. It speaks to resilience while walking through difficulty.'
+      },
+      storm: {
+        title: 'After The Storm',
+        themes: ['recovery', 'survival after hardship', 'healing beyond the storm'],
+        response: 'Choose After The Storm if your question is about recovery after hardship — healing beyond the storm, peace after survival, and renewed possibility.'
+      }
+    },
+    music: {
+      consolation: 'Consolation is about comfort, encouragement, faith, and emotional restoration — a gentle song for the heart that needs reassurance.',
+      gentillesse: 'La Gentillesse centers kindness, compassion, healing, and human connection.',
+      wonderful: 'Wonderful is a praise-filled song of gratitude and God’s goodness.',
+      womanifesto: 'Womanifesto is a Soukous • Rumba • Makossa Gospel anthem about feminine resilience, healing, grace, victory, faith, identity, and restoration.'
+    },
+    advocacy: 'Carine advocates for domestic violence awareness, emotional healing, survivor empowerment, women’s self-worth, faith-centered restoration, toxic relationship recovery, and human-centered care.',
+    booking: 'You may use the contact or booking section to request speaking, media, music collaboration, or advocacy-related conversations.',
+    navigation: 'Use the site navigation to explore Music, Books/Author Spotlight, About, Advocacy/Focus Areas, Reflections, or Contact. For invitations or media, the Contact section is the best next step.',
+    unsure: 'I can speak from the information available on Carine’s website, but this detail may need confirmation through the contact section.'
   };
 
-  const crisisWords = ['abuse', 'danger', 'hurt myself', 'suicide', 'kill myself', 'emergency', 'violence', 'threat', 'unsafe', 'crisis'];
+  const containsAny = (text, words) => words.some((word) => text.includes(word));
+  const isImmediateSafetyConcern = (text) => {
+    const emergencySignals = [
+      'immediate danger', 'right now', 'currently unsafe', 'emergency', 'call 911', 'threatening me', 'being threatened',
+      'hurt myself', 'harm myself', 'suicide', 'kill myself', 'want to die', 'self harm', 'self-harm', 'in danger', 'not safe'
+    ];
+    return containsAny(text, emergencySignals);
+  };
+
   const addMessage = (text, sender = 'bot') => {
     const bubble = document.createElement('div');
     bubble.className = `guide-message guide-message--${sender}`;
@@ -2464,20 +2565,41 @@ const initializeGuideAssistant = () => {
     messages.appendChild(bubble);
     messages.scrollTop = messages.scrollHeight;
   };
+
+  const recommendBook = (normalized) => {
+    if (containsAny(normalized, ['toxic', 'red flag', 'red flags', 'relationship', 'manipulation', 'self-worth', 'worth'])) return knowledgeBase.books.toxic.response;
+    if (containsAny(normalized, ['hope', 'faith', 'restoration', 'sunshine', 'resilience', 'struggle'])) return knowledgeBase.books.sunshine.response;
+    if (containsAny(normalized, ['storm', 'after hardship', 'hardship', 'recovery', 'recover', 'beyond survival'])) return knowledgeBase.books.storm.response;
+    if (containsAny(normalized, ['abuse', 'survival', 'survivor', 'domestic violence', 'hidden pain', 'pain nobody saw'])) return knowledgeBase.books.pain.response;
+    return `${knowledgeBase.books.pain.response} If your focus is red flags, choose ${knowledgeBase.books.toxic.title}; for faith and hope, choose ${knowledgeBase.books.sunshine.title}; for recovery after hardship, choose ${knowledgeBase.books.storm.title}.`;
+  };
+
+  const recommendSong = (normalized) => {
+    if (containsAny(normalized, ['womanifesto', 'women', 'woman', 'female', 'feminine', 'identity', 'victory'])) return knowledgeBase.music.womanifesto;
+    if (containsAny(normalized, ['kindness', 'gentillesse', 'compassion'])) return knowledgeBase.music.gentillesse;
+    if (containsAny(normalized, ['gratitude', 'praise', 'wonderful', 'goodness'])) return knowledgeBase.music.wonderful;
+    if (containsAny(normalized, ['comfort', 'consolation', 'encouragement', 'restoration'])) return knowledgeBase.music.consolation;
+    return `Carine’s featured music includes Consolation, La Gentillesse, Wonderful, and Womanifesto. ${knowledgeBase.music.womanifesto}`;
+  };
+
   const answerQuestion = (question) => {
     const normalized = question.toLowerCase();
-    if (crisisWords.some((word) => normalized.includes(word))) {
-      return 'I’m so sorry you may be facing something heavy. This guide cannot provide legal, medical, crisis, or counseling advice. If you or someone else is in immediate danger, please contact local emergency services now. For ongoing abuse, consider reaching out to a qualified local advocate, counselor, or trusted professional support.';
+    if (isImmediateSafetyConcern(normalized)) {
+      return 'I’m sorry you may be facing something urgent. If you or someone else is in immediate danger, please contact local emergency services now or reach a trusted professional immediately. This guide can share information about Carine’s work, but it cannot replace professional, legal, medical, or crisis support.';
     }
-    if (normalized.includes('story') || normalized.includes('bio') || normalized.includes('carine')) return knowledgeBase.biography;
-    if (normalized.includes('womanifesto')) return knowledgeBase.music.find((track) => track.startsWith('Womanifesto'));
-    if (normalized.includes('music') || normalized.includes('song') || normalized.includes('track')) return `Carine’s featured songs include ${knowledgeBase.music.join(' ')}`;
-    if (normalized.includes('book') || normalized.includes('start') || normalized.includes('read')) return `If you want her core survivor testimony, start with ${knowledgeBase.books[0]} If you want practical discernment around relationships, begin with ${knowledgeBase.books[1]} For encouragement, try ${knowledgeBase.books[2]} or ${knowledgeBase.books[3]}`;
-    if (normalized.includes('advocacy') || normalized.includes('mission') || normalized.includes('theme') || normalized.includes('focus')) return knowledgeBase.advocacy;
-    if (normalized.includes('invite') || normalized.includes('speak') || normalized.includes('booking') || normalized.includes('contact') || normalized.includes('interview')) return knowledgeBase.booking;
-    if (normalized.includes('faith') || normalized.includes('healing') || normalized.includes('resilience') || normalized.includes('survivor')) return 'Carine’s voice is warm, faith-centered, and restoration-oriented. Across her books, music, and advocacy, she emphasizes healing after pain, resilient self-worth, survivor dignity, emotional restoration, kindness, and hope.';
-    return 'I can help with Carine’s story, books, music, advocacy themes, healing-centered message, or speaking invitations. Try asking which book to start with, what Womanifesto is about, or how to invite Carine to speak.';
+    if (containsAny(normalized, ['book', 'read', 'start with', 'recommend', 'which one'])) return recommendBook(normalized);
+    if (containsAny(normalized, ['womanifesto'])) return knowledgeBase.music.womanifesto;
+    if (containsAny(normalized, ['music', 'song', 'track', 'listen', 'consolation', 'gentillesse', 'wonderful', 'kindness', 'praise', 'gratitude', 'comfort'])) return recommendSong(normalized);
+    if (containsAny(normalized, ['advocacy', 'advocate', 'mission', 'domestic violence', 'empowerment', 'self-worth', 'healing', 'toxic relationship', 'human-centered care'])) return knowledgeBase.advocacy;
+    if (containsAny(normalized, ['invite', 'speak', 'speaking', 'booking', 'media', 'interview', 'collaboration', 'contact'])) return knowledgeBase.booking;
+    if (containsAny(normalized, ['where', 'navigate', 'navigation', 'find', 'section', 'page', 'website'])) return knowledgeBase.navigation;
+    if (containsAny(normalized, ['story', 'bio', 'biography', 'background', 'healthcare', 'jacksonville', 'congolese', 'immigrant', 'refugee', 'motherhood', 'survivor', 'author', 'artist', 'carine'])) return knowledgeBase.biography;
+    if (containsAny(normalized, ['faith', 'resilience', 'restoration', 'emotional wellness', 'women'])) {
+      return 'Carine’s voice is warm, faith-centered, and restoration-oriented. Across her books, music, and advocacy, she speaks about emotional healing, resilient self-worth, survivor dignity, women’s empowerment, motherhood, and hope after pain.';
+    }
+    return knowledgeBase.unsure;
   };
+
   const submitQuestion = (question) => {
     const cleanQuestion = String(question || '').trim();
     if (!cleanQuestion) return;
@@ -2485,16 +2607,20 @@ const initializeGuideAssistant = () => {
     addMessage(answerQuestion(cleanQuestion), 'bot');
     input.value = '';
   };
+
   const setOpen = (isOpen) => {
     panel.hidden = !isOpen;
     toggle.setAttribute('aria-expanded', String(isOpen));
+    panel.setAttribute('aria-modal', String(isOpen));
     if (isOpen) {
       if (!messages.dataset.initialized) {
-        addMessage('Welcome. I’m Carine’s Guide — here to help you explore her books, music, advocacy, and healing-centered message with warmth and care.');
+        addMessage('Welcome. I’m Carine’s Guide — a compact guide to her story, books, music, advocacy, and healing-centered mission. How may I help you explore?');
         messages.dataset.initialized = 'true';
       }
-      window.setTimeout(() => input.focus(), 50);
+      window.setTimeout(() => input.focus({ preventScroll: true }), 50);
+      return;
     }
+    toggle.focus({ preventScroll: true });
   };
 
   toggle?.addEventListener('click', () => setOpen(panel.hidden));
@@ -2504,8 +2630,14 @@ const initializeGuideAssistant = () => {
     event.preventDefault();
     submitQuestion(input.value);
   });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !panel.hidden) setOpen(false);
+  });
+  document.addEventListener('pointerdown', (event) => {
+    if (panel.hidden || widget.contains(event.target)) return;
+    setOpen(false);
+  });
 };
-
 initializeReflections();
 initializePwaExperience();
 initializeGuideAssistant();
