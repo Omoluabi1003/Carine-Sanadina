@@ -1035,7 +1035,7 @@ const premiumExperienceTranslations = {
     'reflections.promptLabel': 'Reflection prompt',
     'reflections.all': 'All',
     'pwa.installText': 'Enjoy Carine’s music, books, and healing-centered message anytime. Install the app for a smoother experience.',
-    'pwa.iosInstructions': 'Tap Share, then Add to Home Screen.',
+    'pwa.iosInstructions': 'To install this app on iPhone: tap the Share button, then choose Add to Home Screen.',
     'pwa.installButton': 'Install App',
     'pwa.maybeLater': 'Maybe Later',
     'pwa.dismissLabel': 'Dismiss install prompt',
@@ -1560,6 +1560,11 @@ Object.values(translations).forEach((dictionary) => {
     'guide.placeholder': 'Type your question',
     'guide.send': 'Send',
     'guide.notice': 'This guide shares general information about Carine’s work and cannot replace professional, legal, medical, or crisis support.',
+    'pwa.fallbackHint': 'Installation steps are available for this browser.',
+    'pwa.instructionsEyebrow': 'Install Carine Sanadina',
+    'pwa.instructionsTitle': 'Add the app to your device',
+    'pwa.safariInstructions': 'To install this app in Safari: open the Share menu, then choose Add to Dock or Add to Home Screen when available.',
+    'pwa.closeInstructions': 'Close install instructions',
     'music.visualizerFallback': dictionary['music.visualizerFallback'] || 'Visualizer is resting. Audio playback will continue normally.',
     'tracks.consolation.title': 'Consolation',
     'tracks.gentillesse.title': 'La Gentillesse',
@@ -2387,9 +2392,11 @@ const initializeReflections = () => {
 };
 
 const initializePwaExperience = () => {
-  const INSTALL_DISMISSED_KEY = 'carineAppInstallPromptDismissed';
-  const INSTALL_SHOWN_AT_KEY = 'carineAppInstallPromptShownAt';
+  const INSTALL_DISMISSED_AT_KEY = 'carineInstallDismissedAt';
+  const INSTALL_SHOWN_AT_KEY = 'carineInstallPromptShownAt';
   const INSTALL_INSTALLED_KEY = 'carineAppInstalled';
+  const LEGACY_DISMISSED_KEY = 'carineAppInstallPromptDismissed';
+  const LEGACY_SHOWN_AT_KEY = 'carineAppInstallPromptShownAt';
   const INSTALL_DISMISSAL_WINDOW = 7 * 24 * 60 * 60 * 1000;
 
   if ('serviceWorker' in navigator) {
@@ -2423,6 +2430,9 @@ const initializePwaExperience = () => {
   const installButton = document.querySelector('[data-install-button]');
   const dismissButton = document.querySelector('[data-install-dismiss]');
   const installInstructions = document.querySelector('[data-install-instructions]');
+  const installPanel = document.querySelector('[data-install-panel]');
+  const installPanelClose = document.querySelector('[data-install-panel-close]');
+  const installPanelCopy = document.querySelector('[data-install-panel-copy]');
   let deferredInstallPrompt = null;
 
   const readStorage = (key) => {
@@ -2431,32 +2441,66 @@ const initializePwaExperience = () => {
   const writeStorage = (key, value) => {
     try { window.localStorage.setItem(key, value); } catch (error) { /* localStorage can be unavailable. */ }
   };
+  const removeStorage = (key) => {
+    try { window.localStorage.removeItem(key); } catch (error) { /* localStorage can be unavailable. */ }
+  };
 
   const isStandaloneDisplay = () => Boolean(
     window.matchMedia?.('(display-mode: standalone)').matches
     || window.navigator.standalone === true
   );
-  const isIosSafari = () => /iphone|ipad|ipod/i.test(window.navigator.userAgent || '') && !window.MSStream;
+  const getUserAgent = () => window.navigator.userAgent || '';
+  const isIosDevice = () => /iphone|ipad|ipod/i.test(getUserAgent()) || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+  const isSafari = () => /^((?!chrome|android|crios|fxios|edg|opr).)*safari/i.test(getUserAgent());
+  const supportsDirectInstallPrompt = () => Boolean(deferredInstallPrompt);
+  const canShowManualInstructions = () => isSafari();
+  const getDismissedAt = () => {
+    const currentDismissedAt = Number(readStorage(INSTALL_DISMISSED_AT_KEY));
+    if (Number.isFinite(currentDismissedAt) && currentDismissedAt > 0) return currentDismissedAt;
+
+    const legacyShownAt = Number(readStorage(LEGACY_SHOWN_AT_KEY));
+    if (readStorage(LEGACY_DISMISSED_KEY) === 'true' && Number.isFinite(legacyShownAt) && legacyShownAt > 0) {
+      writeStorage(INSTALL_DISMISSED_AT_KEY, String(legacyShownAt));
+      removeStorage(LEGACY_DISMISSED_KEY);
+      return legacyShownAt;
+    }
+    return 0;
+  };
   const wasRecentlyDismissed = () => {
-    const dismissed = readStorage(INSTALL_DISMISSED_KEY) === 'true';
-    const shownAt = Number(readStorage(INSTALL_SHOWN_AT_KEY));
-    return dismissed && Number.isFinite(shownAt) && Date.now() - shownAt < INSTALL_DISMISSAL_WINDOW;
+    const dismissedAt = getDismissedAt();
+    return dismissedAt > 0 && Date.now() - dismissedAt < INSTALL_DISMISSAL_WINDOW;
   };
   const shouldShowInstallToast = () => !isStandaloneDisplay() && readStorage(INSTALL_INSTALLED_KEY) !== 'true' && !wasRecentlyDismissed();
+  const setFallbackInstructionCopy = () => {
+    if (!installPanelCopy) return;
+    const key = isIosDevice() ? 'pwa.iosInstructions' : 'pwa.safariInstructions';
+    installPanelCopy.dataset.i18n = key;
+    installPanelCopy.textContent = translate(key);
+  };
 
+  const hideInstallPanel = () => {
+    if (installPanel) installPanel.hidden = true;
+  };
+  const showInstallPanel = () => {
+    if (!installPanel) return;
+    setFallbackInstructionCopy();
+    installPanel.hidden = false;
+    installPanelClose?.focus({ preventScroll: true });
+  };
   const hideInstallToast = () => {
     if (installToast) installToast.hidden = true;
+    hideInstallPanel();
   };
-  const showInstallToast = ({ iosInstructions = false } = {}) => {
+  const showInstallToast = ({ manualInstructions = false } = {}) => {
     if (!installToast || !shouldShowInstallToast()) return;
-    installInstructions.hidden = !iosInstructions;
-    installButton.hidden = iosInstructions;
+    if (installInstructions) installInstructions.hidden = !manualInstructions;
+    if (installButton) installButton.hidden = false;
     installToast.hidden = false;
     writeStorage(INSTALL_SHOWN_AT_KEY, String(Date.now()));
+    removeStorage(LEGACY_SHOWN_AT_KEY);
   };
   const dismissInstallToast = () => {
-    writeStorage(INSTALL_DISMISSED_KEY, 'true');
-    writeStorage(INSTALL_SHOWN_AT_KEY, String(Date.now()));
+    writeStorage(INSTALL_DISMISSED_AT_KEY, String(Date.now()));
     hideInstallToast();
   };
 
@@ -2472,28 +2516,58 @@ const initializePwaExperience = () => {
   });
 
   window.addEventListener('load', () => {
-    if (!deferredInstallPrompt && isIosSafari()) {
-      window.setTimeout(() => showInstallToast({ iosInstructions: true }), 1400);
+    if (!supportsDirectInstallPrompt() && canShowManualInstructions()) {
+      window.setTimeout(() => showInstallToast({ manualInstructions: true }), 1400);
     }
   });
 
-  installButton?.addEventListener('click', async () => {
-    if (!deferredInstallPrompt) {
-      if (isIosSafari()) showInstallToast({ iosInstructions: true });
+  installButton?.addEventListener('click', async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!supportsDirectInstallPrompt()) {
+      showInstallPanel();
       return;
     }
-    deferredInstallPrompt.prompt();
-    const choice = await deferredInstallPrompt.userChoice;
-    if (choice?.outcome === 'accepted') {
-      writeStorage(INSTALL_INSTALLED_KEY, 'true');
-    } else {
-      dismissInstallToast();
+
+    try {
+      await deferredInstallPrompt.prompt();
+      const choice = await deferredInstallPrompt.userChoice;
+      if (choice?.outcome === 'accepted') {
+        writeStorage(INSTALL_INSTALLED_KEY, 'true');
+        hideInstallToast();
+      } else {
+        dismissInstallToast();
+      }
+    } catch (error) {
+      console.info('PWA install prompt could not be opened:', error);
+      showInstallPanel();
+    } finally {
+      deferredInstallPrompt = null;
     }
-    deferredInstallPrompt = null;
-    hideInstallToast();
   });
 
-  dismissButton?.addEventListener('click', dismissInstallToast);
+  dismissButton?.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dismissInstallToast();
+  });
+
+  installPanelClose?.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    hideInstallPanel();
+    installButton?.focus({ preventScroll: true });
+  });
+
+  installPanel?.addEventListener('click', (event) => {
+    if (event.target === installPanel) hideInstallPanel();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && installPanel && !installPanel.hidden) hideInstallPanel();
+  });
+
   window.addEventListener('appinstalled', () => {
     writeStorage(INSTALL_INSTALLED_KEY, 'true');
     hideInstallToast();
