@@ -1034,8 +1034,10 @@ const premiumExperienceTranslations = {
     'reflections.featuredLabel': 'Featured reflection',
     'reflections.promptLabel': 'Reflection prompt',
     'reflections.all': 'All',
-    'pwa.installText': 'Install this healing-centered app for quick offline access.',
+    'pwa.installText': 'Enjoy Carine’s music, books, and healing-centered message anytime. Install the app for a smoother experience.',
+    'pwa.iosInstructions': 'Tap Share, then Add to Home Screen.',
     'pwa.installButton': 'Install App',
+    'pwa.maybeLater': 'Maybe Later',
     'pwa.dismissLabel': 'Dismiss install prompt',
     'quote.wallLabel': 'Featured quote wall',
     'quote.wall.one': 'Survival is not the end of the story.',
@@ -1084,8 +1086,10 @@ const premiumExperienceTranslations = {
     'reflections.featuredLabel': 'Réflexion en vedette',
     'reflections.promptLabel': 'Question de réflexion',
     'reflections.all': 'Tout',
-    'pwa.installText': 'Installez cette application centrée sur la guérison pour un accès hors ligne rapide.',
+    'pwa.installText': 'Profitez de la musique, des livres et du message centré sur la guérison de Carine à tout moment. Installez l’application pour une expérience plus fluide.',
+    'pwa.iosInstructions': 'Touchez Partager, puis Ajouter à l’écran d’accueil.',
     'pwa.installButton': 'Installer',
+    'pwa.maybeLater': 'Peut-être plus tard',
     'pwa.dismissLabel': 'Fermer l’invite d’installation',
     'quote.wallLabel': 'Mur de citations',
     'quote.wall.one': 'La survie n’est pas la fin de l’histoire.',
@@ -1368,8 +1372,10 @@ const completeTranslationOverrides = {
     'quote.wall.one': 'La supervivencia no es el final de la historia.',
     'quote.wall.two': 'La sanación puede convertirse en un lenguaje.',
     'quote.wall.three': 'La fe da futuro a los lugares rotos.',
-    'pwa.installText': 'Instala esta app centrada en la sanación para acceso rápido sin conexión.',
+    'pwa.installText': 'Disfruta la música, los libros y el mensaje de sanación de Carine en cualquier momento. Instala la app para una experiencia más fluida.',
+    'pwa.iosInstructions': 'Toca Compartir y luego Agregar a pantalla de inicio.',
     'pwa.installButton': 'Instalar',
+    'pwa.maybeLater': 'Quizás después',
     'pwa.dismissLabel': 'Cerrar aviso de instalación',
     'music.playlist': 'Lista de reproducción'
   },
@@ -1412,8 +1418,10 @@ const completeTranslationOverrides = {
     'quote.wall.one': 'Kobika ezali suka ya lisolo te.',
     'quote.wall.two': 'Kobikisama ekoki kokoma lokota.',
     'quote.wall.three': 'Kondima epesaka mikili ebukani mikolo ezali koya.',
-    'pwa.installText': 'Tyá app oyo ya kobika mpo na kokota noki ata ntango internet ezali te.',
+    'pwa.installText': 'Sepelá na miziki, mikanda, mpe nsango ya kobikisama ya Carine ntango nyonso. Tyá app mpo na expérience ya malamu.',
+    'pwa.iosInstructions': 'Finá Share, na nsima Add to Home Screen.',
     'pwa.installButton': 'Tyá',
+    'pwa.maybeLater': 'Mbala mosusu sima',
     'pwa.dismissLabel': 'Longola etinda ya kotya'
   },
   sw: {
@@ -1456,8 +1464,10 @@ const completeTranslationOverrides = {
     'quote.wall.one': 'Kupona si mwisho wa hadithi.',
     'quote.wall.two': 'Uponyaji unaweza kuwa lugha.',
     'quote.wall.three': 'Imani huyapa maeneo yaliyovunjika wakati ujao.',
-    'pwa.installText': 'Sakinisha app hii ya uponyaji kwa ufikiaji wa haraka bila mtandao.',
+    'pwa.installText': 'Furahia muziki, vitabu na ujumbe wa uponyaji wa Carine wakati wowote. Sakinisha app kwa matumizi laini zaidi.',
+    'pwa.iosInstructions': 'Gusa Share, kisha Add to Home Screen.',
     'pwa.installButton': 'Sakinisha',
+    'pwa.maybeLater': 'Labda baadaye',
     'pwa.dismissLabel': 'Funga ujumbe wa kusakinisha',
     'footer.rights': '© 2026 Carine Sanadina. Haki zote zimehifadhiwa.'
   },
@@ -1502,8 +1512,10 @@ const completeTranslationOverrides = {
     'quote.wall.one': 'Ìyè-lẹ́yìn ewu kì í ṣe opin ìtàn.',
     'quote.wall.two': 'Ìwòsàn lè di ede.',
     'quote.wall.three': 'Ìgbàgbọ́ fún àwọn ibi tí ó fọ́ ní ọjọ́ iwájú.',
-    'pwa.installText': 'Fi app ìwòsàn yìí sí ẹrọ fún ìwọlé kíákíá láì sí ayélujára.',
+    'pwa.installText': 'Gbadun orin, iwe, ati ifiranṣẹ iwosan Carine nigbakugba. Fi app sí ẹrọ fún iriri tó rọrùn.',
+    'pwa.iosInstructions': 'Tẹ Share, lẹ́yìn náà Add to Home Screen.',
     'pwa.installButton': 'Fi sí ẹrọ',
+    'pwa.maybeLater': 'Bóyá nigbamii',
     'pwa.dismissLabel': 'Pa ìkìlọ̀ fifi sí ẹrọ',
     'footer.rights': '© 2026 Carine Sanadina. Gbogbo ẹ̀tọ́ wa ni ipamọ́.'
   }
@@ -1531,6 +1543,21 @@ Object.values(translations).forEach((dictionary) => {
     'music.visualizerStyleAria': 'Choose visualization style',
     'music.visualizerHelperTap': 'Tap Visualizer, then press Play.',
     'music.visualizerHelperIphone': 'Tap Play to activate visuals on iPhone.',
+    'guide.widgetLabel': 'Carine’s conversational guide',
+    'guide.launcher': 'Ask Carine’s Guide',
+    'guide.eyebrow': 'Healing-centered guide',
+    'guide.title': 'Ask Carine’s Guide',
+    'guide.close': 'Close Carine’s Guide',
+    'guide.startersLabel': 'Suggested starter questions',
+    'guide.starter.story': 'What is Carine’s story?',
+    'guide.starter.book': 'Which book should I start with?',
+    'guide.starter.womanifesto': 'What is Womanifesto about?',
+    'guide.starter.advocacy': 'What themes does her advocacy focus on?',
+    'guide.starter.speak': 'How can I invite Carine to speak?',
+    'guide.inputLabel': 'Ask a question about Carine’s books, music, or advocacy',
+    'guide.placeholder': 'Ask about books, music, advocacy…',
+    'guide.send': 'Send',
+    'guide.notice': 'This guide shares general information only and does not provide legal, medical, crisis, or counseling advice.',
     'music.visualizerFallback': dictionary['music.visualizerFallback'] || 'Visualizer is resting. Audio playback will continue normally.',
     'tracks.consolation.title': 'Consolation',
     'tracks.gentillesse.title': 'La Gentillesse',
@@ -2285,6 +2312,11 @@ const initializeReflections = () => {
 };
 
 const initializePwaExperience = () => {
+  const INSTALL_DISMISSED_KEY = 'carineAppInstallPromptDismissed';
+  const INSTALL_SHOWN_AT_KEY = 'carineAppInstallPromptShownAt';
+  const INSTALL_INSTALLED_KEY = 'carineAppInstalled';
+  const INSTALL_DISMISSAL_WINDOW = 7 * 24 * 60 * 60 * 1000;
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       const scriptUrl = document.currentScript?.src || document.querySelector('script[src*="script"]')?.src || window.location.href;
@@ -2315,32 +2347,168 @@ const initializePwaExperience = () => {
   const installToast = document.querySelector('[data-install-toast]');
   const installButton = document.querySelector('[data-install-button]');
   const dismissButton = document.querySelector('[data-install-dismiss]');
+  const installInstructions = document.querySelector('[data-install-instructions]');
   let deferredInstallPrompt = null;
+
+  const readStorage = (key) => {
+    try { return window.localStorage.getItem(key); } catch (error) { return null; }
+  };
+  const writeStorage = (key, value) => {
+    try { window.localStorage.setItem(key, value); } catch (error) { /* localStorage can be unavailable. */ }
+  };
+
+  const isStandaloneDisplay = () => Boolean(
+    window.matchMedia?.('(display-mode: standalone)').matches
+    || window.navigator.standalone === true
+  );
+  const isIosSafari = () => /iphone|ipad|ipod/i.test(window.navigator.userAgent || '') && !window.MSStream;
+  const wasRecentlyDismissed = () => {
+    const dismissed = readStorage(INSTALL_DISMISSED_KEY) === 'true';
+    const shownAt = Number(readStorage(INSTALL_SHOWN_AT_KEY));
+    return dismissed && Number.isFinite(shownAt) && Date.now() - shownAt < INSTALL_DISMISSAL_WINDOW;
+  };
+  const shouldShowInstallToast = () => !isStandaloneDisplay() && readStorage(INSTALL_INSTALLED_KEY) !== 'true' && !wasRecentlyDismissed();
 
   const hideInstallToast = () => {
     if (installToast) installToast.hidden = true;
   };
+  const showInstallToast = ({ iosInstructions = false } = {}) => {
+    if (!installToast || !shouldShowInstallToast()) return;
+    installInstructions.hidden = !iosInstructions;
+    installButton.hidden = iosInstructions;
+    installToast.hidden = false;
+    writeStorage(INSTALL_SHOWN_AT_KEY, String(Date.now()));
+  };
+  const dismissInstallToast = () => {
+    writeStorage(INSTALL_DISMISSED_KEY, 'true');
+    writeStorage(INSTALL_SHOWN_AT_KEY, String(Date.now()));
+    hideInstallToast();
+  };
+
+  if (isStandaloneDisplay()) {
+    writeStorage(INSTALL_INSTALLED_KEY, 'true');
+    hideInstallToast();
+  }
 
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     deferredInstallPrompt = event;
-    if (installToast) installToast.hidden = false;
+    showInstallToast();
+  });
+
+  window.addEventListener('load', () => {
+    if (!deferredInstallPrompt && isIosSafari()) {
+      window.setTimeout(() => showInstallToast({ iosInstructions: true }), 1400);
+    }
   });
 
   installButton?.addEventListener('click', async () => {
-    if (!deferredInstallPrompt) return;
+    if (!deferredInstallPrompt) {
+      if (isIosSafari()) showInstallToast({ iosInstructions: true });
+      return;
+    }
     deferredInstallPrompt.prompt();
-    await deferredInstallPrompt.userChoice;
+    const choice = await deferredInstallPrompt.userChoice;
+    if (choice?.outcome === 'accepted') {
+      writeStorage(INSTALL_INSTALLED_KEY, 'true');
+    } else {
+      dismissInstallToast();
+    }
     deferredInstallPrompt = null;
     hideInstallToast();
   });
 
-  dismissButton?.addEventListener('click', hideInstallToast);
-  window.addEventListener('appinstalled', hideInstallToast);
+  dismissButton?.addEventListener('click', dismissInstallToast);
+  window.addEventListener('appinstalled', () => {
+    writeStorage(INSTALL_INSTALLED_KEY, 'true');
+    hideInstallToast();
+  });
+};
+
+const initializeGuideAssistant = () => {
+  // TODO: Connect this chat UI to a secure backend AI endpoint.
+  const widget = document.querySelector('[data-guide-widget]');
+  if (!widget) return;
+
+  const toggle = widget.querySelector('[data-guide-toggle]');
+  const panel = widget.querySelector('[data-guide-panel]');
+  const close = widget.querySelector('[data-guide-close]');
+  const messages = widget.querySelector('[data-guide-messages]');
+  const form = widget.querySelector('[data-guide-form]');
+  const input = widget.querySelector('[data-guide-input]');
+  const starters = Array.from(widget.querySelectorAll('[data-guide-starter]'));
+
+  const knowledgeBase = {
+    biography: 'Carine Sanadina is a Congolese-born, Jacksonville-based healthcare professional, author, artist, survivor advocate, and emotional wellness voice. Her work turns lived pain into healing-centered literature, music, and encouragement shaped by faith, resilience, motherhood, immigrant experience, and restoration.',
+    books: [
+      'The Pain Nobody Saw: A Hidden Story of Abuse and Survival — a memoir about hidden domestic abuse, cultural pressure, silent suffering, freedom, faith, and reclaimed self-worth.',
+      'If It’s Red, It’s Toxic — a guide to red flags, emotional manipulation, spiritual danger, unhealthy attachments, clarity, and peace.',
+      'The Road to Sunshine: A Journey of Struggles, Faith and Hope — a hope-forward reflection on struggle, perseverance, and brighter days.',
+      'After The Storm — a restoration-centered work about quiet strength after hardship and moving beyond survival toward peace.'
+    ],
+    music: [
+      'Consolation — comfort and hope for healing.',
+      'La Gentillesse — a faith-shaped anthem of kindness.',
+      'Wonderful — joyful praise and gratitude.',
+      'Womanifesto — a soulful African gospel anthem celebrating women’s resilience, healing, grace, victory, and faith.'
+    ],
+    advocacy: 'Carine’s advocacy focuses on domestic violence awareness, survivor empowerment, toxic relationship awareness, emotional healing, faith, resilience, self-worth, human-centered care, immigrant and refugee experience, motherhood, and restoration.',
+    booking: 'To invite Carine to speak, request an interview, discuss music collaboration, or start a book-centered conversation, use the contact buttons on this site or email hello@example.com with the opportunity details.'
+  };
+
+  const crisisWords = ['abuse', 'danger', 'hurt myself', 'suicide', 'kill myself', 'emergency', 'violence', 'threat', 'unsafe', 'crisis'];
+  const addMessage = (text, sender = 'bot') => {
+    const bubble = document.createElement('div');
+    bubble.className = `guide-message guide-message--${sender}`;
+    bubble.textContent = text;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+  };
+  const answerQuestion = (question) => {
+    const normalized = question.toLowerCase();
+    if (crisisWords.some((word) => normalized.includes(word))) {
+      return 'I’m so sorry you may be facing something heavy. This guide cannot provide legal, medical, crisis, or counseling advice. If you or someone else is in immediate danger, please contact local emergency services now. For ongoing abuse, consider reaching out to a qualified local advocate, counselor, or trusted professional support.';
+    }
+    if (normalized.includes('story') || normalized.includes('bio') || normalized.includes('carine')) return knowledgeBase.biography;
+    if (normalized.includes('womanifesto')) return knowledgeBase.music.find((track) => track.startsWith('Womanifesto'));
+    if (normalized.includes('music') || normalized.includes('song') || normalized.includes('track')) return `Carine’s featured songs include ${knowledgeBase.music.join(' ')}`;
+    if (normalized.includes('book') || normalized.includes('start') || normalized.includes('read')) return `If you want her core survivor testimony, start with ${knowledgeBase.books[0]} If you want practical discernment around relationships, begin with ${knowledgeBase.books[1]} For encouragement, try ${knowledgeBase.books[2]} or ${knowledgeBase.books[3]}`;
+    if (normalized.includes('advocacy') || normalized.includes('mission') || normalized.includes('theme') || normalized.includes('focus')) return knowledgeBase.advocacy;
+    if (normalized.includes('invite') || normalized.includes('speak') || normalized.includes('booking') || normalized.includes('contact') || normalized.includes('interview')) return knowledgeBase.booking;
+    if (normalized.includes('faith') || normalized.includes('healing') || normalized.includes('resilience') || normalized.includes('survivor')) return 'Carine’s voice is warm, faith-centered, and restoration-oriented. Across her books, music, and advocacy, she emphasizes healing after pain, resilient self-worth, survivor dignity, emotional restoration, kindness, and hope.';
+    return 'I can help with Carine’s story, books, music, advocacy themes, healing-centered message, or speaking invitations. Try asking which book to start with, what Womanifesto is about, or how to invite Carine to speak.';
+  };
+  const submitQuestion = (question) => {
+    const cleanQuestion = String(question || '').trim();
+    if (!cleanQuestion) return;
+    addMessage(cleanQuestion, 'user');
+    addMessage(answerQuestion(cleanQuestion), 'bot');
+    input.value = '';
+  };
+  const setOpen = (isOpen) => {
+    panel.hidden = !isOpen;
+    toggle.setAttribute('aria-expanded', String(isOpen));
+    if (isOpen) {
+      if (!messages.dataset.initialized) {
+        addMessage('Welcome. I’m Carine’s Guide — here to help you explore her books, music, advocacy, and healing-centered message with warmth and care.');
+        messages.dataset.initialized = 'true';
+      }
+      window.setTimeout(() => input.focus(), 50);
+    }
+  };
+
+  toggle?.addEventListener('click', () => setOpen(panel.hidden));
+  close?.addEventListener('click', () => setOpen(false));
+  starters.forEach((button) => button.addEventListener('click', () => submitQuestion(button.dataset.guideStarter || button.textContent)));
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    submitQuestion(input.value);
+  });
 };
 
 initializeReflections();
 initializePwaExperience();
+initializeGuideAssistant();
 
 const musicPlayers = Array.from(document.querySelectorAll('[data-audio-player]'));
 const miniPlayer = document.querySelector('[data-mini-player]');
