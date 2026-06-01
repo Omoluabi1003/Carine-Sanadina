@@ -57,6 +57,24 @@ const copyStaticDirectory = (relativeDirectory) => {
   cpSync(sourceDirectory, join(dist, relativeDirectory), { recursive: true });
 };
 
+const staticRootAssets = [
+  'CS logo.png',
+  'Carine Sanadina.png',
+  '0F2574B3-8BD8-42CF-B229-3CA96FA94214.png',
+  'Consolation Cover.png',
+  'La Gentillesse.png',
+  'Wonderful cover.png',
+  '4B4AE259-EC5A-46A2-BB9A-355667A3C23C.png'
+];
+
+for (const file of staticRootAssets) {
+  const sourceFile = join(root, file);
+
+  if (existsSync(sourceFile) && statSync(sourceFile).isFile()) {
+    cpSync(sourceFile, join(dist, file));
+  }
+}
+
 copyStaticDirectory('legal');
 
 const legalIndex = join(dist, 'legal', 'index.html');
