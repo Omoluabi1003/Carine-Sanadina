@@ -1725,9 +1725,13 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   min-width: 240px;
   min-height: 168px;
   height: clamp(168px, 24vw, 260px);
-  contain: layout paint style;
+  contain: layout paint size;
+  isolation: isolate;
+  will-change: transform, opacity;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   margin-top: 18px;
   padding: clamp(22px, 4vw, 38px);
   overflow: hidden;
@@ -1739,21 +1743,37 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   opacity: 1;
 }
 
+.music-visualizer .visualizer-surface {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 1;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 .music-visualizer span {
-  --bar-height: 18%;
+  --bar-height: 0.18;
   --bar-opacity: 0.42;
   --bar-glow: 12px;
   display: block;
   width: clamp(8px, 1.25vw, 15px);
-  height: var(--bar-height);
+  height: 100%;
   min-height: 10px;
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), #60A5FA 46%, #4A8CFF 100%);
   box-shadow: 0 0 var(--bar-glow) rgba(96, 165, 250, 0.34);
   opacity: var(--bar-opacity);
+  transform: scaleY(var(--bar-height));
   transform-origin: bottom;
-  transition: height 0.16s ease-out, opacity 0.22s ease, box-shadow 0.22s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: height, opacity, transform;
+  transition: opacity 0.22s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }

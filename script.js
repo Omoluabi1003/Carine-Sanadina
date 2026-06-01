@@ -3034,6 +3034,13 @@ if (musicPlayers.length) {
   const WAVEFORM_UNIT_COUNT = 64;
   const WAVEFORM_SAMPLE_COUNT = 128;
   const visualizerUnits = [];
+  let visualizerSurface = null;
+  let visualizerSurfaceContext = null;
+  let visualizerCssWidth = 360;
+  let visualizerCssHeight = 210;
+  let visualizerLastThemeKey = '';
+  let visualizerLastDrawTime = 0;
+  let lastAnalyserAudioTime = 0;
   const spectrumBands = new Float32Array(WAVEFORM_UNIT_COUNT);
   const waveformData = new Uint8Array(WAVEFORM_SAMPLE_COUNT);
   const waveformPoints = new Float32Array(WAVEFORM_UNIT_COUNT);
@@ -3133,37 +3140,52 @@ if (musicPlayers.length) {
   };
 
   const resizeVisualizerSurface = () => {
-    if (!visualizerCanvas) {
+    if (!visualizerCanvas || !visualizerSurface) {
       return;
     }
 
     const rect = visualizerCanvas.getBoundingClientRect();
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 3);
-    const width = Math.max(1, Math.round(rect.width * pixelRatio));
-    const height = Math.max(1, Math.round(rect.height * pixelRatio));
-    visualizerCanvas.style.setProperty('--visualizer-pixel-ratio', String(pixelRatio));
-    visualizerCanvas.style.setProperty('--visualizer-width', `${width}px`);
-    visualizerCanvas.style.setProperty('--visualizer-height', `${height}px`);
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const cssWidth = Math.max(1, Math.round(rect.width || visualizerCanvas.clientWidth || 360));
+    const cssHeight = Math.max(1, Math.round(rect.height || visualizerCanvas.clientHeight || 210));
+    const width = Math.max(1, Math.round(cssWidth * pixelRatio));
+    const height = Math.max(1, Math.round(cssHeight * pixelRatio));
 
-    if ((rect.width < 2 || rect.height < 2) && !document.hidden) {
-      warnCanvasSize({ width: rect.width, height: rect.height, pixelRatio });
+    visualizerCssWidth = Math.max(260, cssWidth);
+    visualizerCssHeight = Math.max(160, cssHeight);
+
+    if (visualizerSurface.width !== width || visualizerSurface.height !== height) {
+      visualizerSurface.width = width;
+      visualizerSurface.height = height;
+    }
+
+    visualizerSurface.style.width = `${cssWidth}px`;
+    visualizerSurface.style.height = `${cssHeight}px`;
+
+    if (visualizerSurfaceContext) {
+      visualizerSurfaceContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    }
+
+    if ((cssWidth < 2 || cssHeight < 2) && !document.hidden) {
+      warnCanvasSize({ width: cssWidth, height: cssHeight, pixelRatio });
     }
   };
 
   const createVisualizerUnits = () => {
-    if (!visualizerCanvas || visualizerUnits.length) {
-      resizeVisualizerSurface();
+    if (!visualizerCanvas) {
       return;
     }
 
-    visualizerCanvas.replaceChildren();
-
-    for (let index = 0; index < WAVEFORM_UNIT_COUNT; index += 1) {
-      const unit = document.createElement('span');
-      unit.className = 'visualizer-unit';
-      unit.style.setProperty('--unit-index', index);
-      visualizerCanvas.appendChild(unit);
-      visualizerUnits.push(unit);
+    if (!visualizerSurface) {
+      visualizerCanvas.replaceChildren();
+      visualizerSurface = document.createElement('canvas');
+      visualizerSurface.className = 'visualizer-surface';
+      visualizerSurface.setAttribute('aria-hidden', 'true');
+      visualizerSurfaceContext = visualizerSurface.getContext('2d', { alpha: true });
+      visualizerCanvas.appendChild(visualizerSurface);
+      for (let index = 0; index < WAVEFORM_UNIT_COUNT; index += 1) {
+        visualizerUnits.push(index);
+      }
     }
 
     resizeVisualizerSurface();
@@ -3216,10 +3238,19 @@ if (musicPlayers.length) {
     };
   };
 
-  const paintVisualizerUnit = (unit, customProperties) => {
-    Object.entries(customProperties).forEach(([name, value]) => {
-      unit.style.setProperty(name, value);
-    });
+  const roundedRect = (context, x, y, width, height, radius) => {
+    const safeRadius = Math.min(radius, Math.abs(width) / 2, Math.abs(height) / 2);
+    context.beginPath();
+    context.moveTo(x + safeRadius, y);
+    context.lineTo(x + width - safeRadius, y);
+    context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+    context.lineTo(x + width, y + height - safeRadius);
+    context.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+    context.lineTo(x + safeRadius, y + height);
+    context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+    context.lineTo(x, y + safeRadius);
+    context.quadraticCurveTo(x, y, x + safeRadius, y);
+    context.closePath();
   };
 
   const setVisualizerTheme = (state = visualizerMode) => {
@@ -3229,7 +3260,15 @@ if (musicPlayers.length) {
 
     visualizerMode = state;
     selectedVisualizationStyle = normalizeVisualizationStyle(selectedVisualizationStyle);
-    visualizerCanvas.dataset.visualizationStyle = analyserFallbackActive && isIosSafari ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
+    const safeStyle = analyserFallbackActive && isIosSafari ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
+    const nextThemeKey = [safeStyle, analyserFallbackActive, state, visualizerEnabled, reduceMotion].join('|');
+
+    if (nextThemeKey === visualizerLastThemeKey) {
+      return;
+    }
+
+    visualizerLastThemeKey = nextThemeKey;
+    visualizerCanvas.dataset.visualizationStyle = safeStyle;
     visualizerCanvas.classList.toggle('is-analyser-fallback', analyserFallbackActive);
     visualizerCanvas.classList.toggle('is-playing', state === 'playing');
     visualizerCanvas.classList.toggle('is-paused', state === 'paused');
@@ -3238,125 +3277,118 @@ if (musicPlayers.length) {
   };
 
   const renderVisualizationFrame = (bands, time = 0, state = 'playing') => {
-    if (!visualizerUnits.length) {
+    if (!visualizerSurfaceContext || !visualizerSurface) {
       return;
     }
 
+    const context = visualizerSurfaceContext;
     const isQuiet = state !== 'playing' || !visualizerEnabled || reduceMotion;
-    const quietScale = isQuiet ? 0.42 : 1;
-    const center = (visualizerUnits.length - 1) / 2;
-    const visualizerRect = visualizerCanvas?.getBoundingClientRect?.();
-    const surfaceWidth = Math.max(260, visualizerRect?.width || 360);
-    const surfaceHeight = Math.max(160, visualizerRect?.height || 210);
-    const waveformReach = selectedVisualizationStyle === 'waveform' ? 0.94 : 0.84;
-    const waveformStep = (surfaceWidth * waveformReach) / Math.max(visualizerUnits.length - 1, 1);
-    const waveformAmplitude = Math.min(surfaceHeight * 0.42, surfaceHeight * (isQuiet ? 0.16 : 0.38));
+    const quietScale = isQuiet ? 0.38 : 1;
+    const width = visualizerCssWidth;
+    const height = visualizerCssHeight;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const timeSeconds = time / 1000;
+    const currentStyle = analyserFallbackActive && isIosSafari ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
+    const barCount = WAVEFORM_UNIT_COUNT;
+    const gap = Math.max(3, width / 190);
+    const barWidth = Math.max(3, Math.min(12, (width * 0.86) / barCount - gap));
+    const startX = (width - (barCount * barWidth + (barCount - 1) * gap)) / 2;
+    const waveformAmplitude = height * (isQuiet ? 0.16 : 0.34);
     const waveformMinimumMotion = isQuiet ? 0.035 : Math.min(0.16, 0.08 + bands.energy * 0.12);
     const waveformResponse = isQuiet ? 0.12 : 0.34;
-    const shapeWaveformSample = (sample = 128, sampleIndex = 0) => {
-      const rawValue = (sample - 128) / 128;
-      const fallbackSign = Math.sin((time / 360) + sampleIndex * 0.41) >= 0 ? 1 : -1;
-      const sign = rawValue === 0 ? fallbackSign : Math.sign(rawValue);
-      const liftedValue = Math.pow(Math.min(1, Math.abs(rawValue) * 2.1 + bands.energy * 0.22), 0.74);
-      const expressiveValue = Math.max(liftedValue, waveformMinimumMotion) * sign;
-      return Math.min(0.9, Math.max(-0.9, expressiveValue));
-    };
 
-    visualizerUnits.forEach((unit, index) => {
-      const normalized = index / Math.max(visualizerUnits.length - 1, 1);
-      const centered = index - center;
-      const angle = normalized * Math.PI * 2;
+    context.clearRect(0, 0, width, height);
+    context.save();
+    context.globalCompositeOperation = 'source-over';
+
+    const glowGradient = context.createRadialGradient(centerX, centerY, 4, centerX, centerY, Math.max(width, height) * 0.55);
+    glowGradient.addColorStop(0, `rgba(96, 165, 250, ${0.08 + bands.energy * 0.14 * quietScale})`);
+    glowGradient.addColorStop(1, 'rgba(96, 165, 250, 0)');
+    context.fillStyle = glowGradient;
+    context.fillRect(0, 0, width, height);
+
+    for (let index = 0; index < barCount; index += 1) {
+      const normalized = index / Math.max(barCount - 1, 1);
+      const centered = index - (barCount - 1) / 2;
       const value = bands.spectrum[index] || 0;
-      const mirroredValue = bands.spectrum[Math.min(spectrumBands.length - 1, Math.abs(Math.round(centered)))] || value;
-      const waveformSampleIndex = Math.min(bands.waveform.length - 1, Math.round(normalized * (bands.waveform.length - 1)));
-      const waveformValue = shapeWaveformSample(bands.waveform[waveformSampleIndex] || 128, waveformSampleIndex);
-      waveformPoints[index] += (waveformValue - waveformPoints[index]) * waveformResponse;
-      const pulse = Math.max(0.06, value * quietScale);
-      const height = 10 + pulse * 90;
-      const opacity = isQuiet ? 0.28 + pulse * 0.6 : 0.45 + pulse * 0.55;
-      const glow = 8 + pulse * 34;
-      const timeSeconds = time / 1000;
-      let x = 0;
-      let y = 0;
-      let scaleX = 1;
-      let scaleY = 1;
-      let rotate = 0;
-      let radius = 0;
-      let hue = 205 + normalized * 42;
+      const sampleIndex = Math.min(bands.waveform.length - 1, Math.round(normalized * (bands.waveform.length - 1)));
+      const rawWave = ((bands.waveform[sampleIndex] || 128) - 128) / 128;
+      const fallbackWave = Math.sin((time / 360) + sampleIndex * 0.41) * waveformMinimumMotion;
+      const shapedWave = Math.min(0.9, Math.max(-0.9, rawWave || fallbackWave));
+      waveformPoints[index] += (shapedWave - waveformPoints[index]) * waveformResponse;
 
-      switch (selectedVisualizationStyle) {
-        case 'orb':
-          radius = 28 + Math.sin(index * 1.7) * 8 + (bands.bass * 24 * quietScale);
-          x = Math.cos(angle + timeSeconds * 0.45) * radius;
-          y = Math.sin(angle + timeSeconds * 0.35) * radius;
-          scaleX = 0.62 + bands.energy * 1.6 * quietScale;
-          scaleY = 0.62 + bands.bass * 2.2 * quietScale;
-          rotate = angle * 57.2958 + timeSeconds * 18;
-          hue = 200 + bands.high * 70;
-          break;
-        case 'particle-field':
-          radius = 18 + (index % 8) * 9 + bands.energy * 38 * quietScale;
-          x = Math.cos(angle * 2.7 + timeSeconds * (0.18 + (index % 5) * 0.02)) * radius;
-          y = Math.sin(angle * 1.9 + timeSeconds * 0.22) * radius * 0.72;
-          scaleX = 0.48 + pulse * 1.8;
-          scaleY = scaleX;
-          rotate = timeSeconds * 24 + index * 11;
-          hue = 198 + (index % 9) * 6;
-          break;
-        case 'wireframe-lattice':
-          x = centered * 4.2;
-          y = Math.sin((index * 0.52) + timeSeconds * 1.3) * (18 + bands.high * 32 * quietScale);
-          scaleX = 0.46;
-          scaleY = 0.5 + bands.bass * 4.2 * quietScale + (index % 2) * 0.35;
-          rotate = (index % 2 ? 54 : -54) + bands.high * 42;
-          hue = 212 + (index % 4) * 10;
-          break;
-        case 'waveform-tunnel':
-          radius = 12 + (index % 16) * 3.1 + bands.mid * 32 * quietScale;
-          x = Math.cos(angle + timeSeconds * (0.24 + bands.energy * 0.4)) * radius;
-          y = Math.sin(angle + timeSeconds * 0.18) * radius * 0.46;
-          scaleX = 2.1 + (index % 4) * 0.18;
-          scaleY = 0.32 + bands.mid * 1.9 * quietScale;
-          rotate = angle * 57.2958 + 90;
-          hue = 196 + normalized * 30;
-          break;
-        case 'holographic-rings':
-          radius = 18 + (index % 12) * 4.4 + bands.mid * 34 * quietScale;
-          x = Math.cos(angle + (index % 6) * 0.08) * radius;
-          y = Math.sin(angle + timeSeconds * 0.2) * radius * (0.3 + (index % 6) * 0.035);
-          scaleX = 2.6 + bands.high * 3.4 * quietScale;
-          scaleY = 0.34 + bands.bass * 1.8 * quietScale;
-          rotate = angle * 57.2958 + Math.sin(timeSeconds + index) * 16;
-          hue = 202 + (index % 6) * 8 + bands.high * 30;
-          break;
-        case 'waveform':
-        default: {
-          const idlePulse = Math.sin(timeSeconds * 1.05 + normalized * Math.PI * 2) * (isQuiet ? 0.16 : 0.025);
-          const clampedWavePoint = Math.min(0.92, Math.max(-0.92, waveformPoints[index] + idlePulse));
-          const nextUnitIndex = Math.min(waveformPoints.length - 1, index + 1);
-          const slope = (waveformPoints[nextUnitIndex] - waveformPoints[index]) * waveformAmplitude;
-          x = centered * waveformStep;
-          y = Math.min(surfaceHeight * 0.42, Math.max(surfaceHeight * -0.42, clampedWavePoint * waveformAmplitude * quietScale));
-          scaleX = Math.max(2.15, waveformStep / 3.65);
-          scaleY = 1.05 + Math.max(0.1, Math.abs(waveformPoints[index])) * 3.1 + bands.energy * 1.28 * quietScale;
-          rotate = Math.atan2(slope, waveformStep) * 57.2958;
-          hue = 205 + mirroredValue * 34 + normalized * 14;
+      const pulse = Math.max(0.06, value * quietScale);
+      const hue = 205 + normalized * 36 + (bands.high * 24);
+      const alpha = Math.min(0.95, isQuiet ? 0.34 + pulse * 0.36 : 0.5 + pulse * 0.45);
+      let x = startX + index * (barWidth + gap);
+      let y = centerY;
+      let drawWidth = barWidth;
+      let drawHeight = 10 + pulse * height * 0.46;
+      let rotation = 0;
+
+      switch (currentStyle) {
+        case 'orb': {
+          const angle = normalized * Math.PI * 2 + timeSeconds * 0.42;
+          const radius = Math.min(width, height) * (0.14 + bands.bass * 0.1 * quietScale);
+          x = centerX + Math.cos(angle) * radius;
+          y = centerY + Math.sin(angle) * radius * 0.72;
+          drawWidth = Math.max(4, barWidth * 0.78);
+          drawHeight = 8 + pulse * height * 0.22;
+          rotation = angle + Math.PI / 2;
           break;
         }
+        case 'particle-field': {
+          const angle = normalized * Math.PI * 6 + timeSeconds * 0.22;
+          const radius = Math.min(width, height) * (0.08 + ((index % 9) / 16) + bands.energy * 0.08 * quietScale);
+          x = centerX + Math.cos(angle) * radius;
+          y = centerY + Math.sin(angle * 0.74) * radius * 0.72;
+          drawWidth = Math.max(3, barWidth * 0.7);
+          drawHeight = Math.max(drawWidth, 5 + pulse * 22);
+          break;
+        }
+        case 'wireframe-lattice':
+          x = centerX + centered * Math.min(7, width / 82);
+          y = centerY + Math.sin(index * 0.52 + timeSeconds * 1.3) * height * 0.12;
+          drawWidth = Math.max(2, barWidth * 0.38);
+          drawHeight = 18 + pulse * height * 0.38;
+          rotation = (index % 2 ? Math.PI / 3 : -Math.PI / 3) + bands.high * 0.35;
+          break;
+        case 'waveform-tunnel':
+        case 'holographic-rings': {
+          const angle = normalized * Math.PI * 2 + timeSeconds * 0.24;
+          const radius = Math.min(width, height) * (0.1 + (index % 16) / 80 + bands.mid * 0.12 * quietScale);
+          x = centerX + Math.cos(angle) * radius;
+          y = centerY + Math.sin(angle) * radius * 0.45;
+          drawWidth = Math.max(9, barWidth * 1.4);
+          drawHeight = 4 + pulse * height * 0.1;
+          rotation = angle + Math.PI / 2;
+          break;
+        }
+        case 'waveform':
+        default:
+          y = centerY + Math.min(height * 0.38, Math.max(height * -0.38, waveformPoints[index] * waveformAmplitude * quietScale));
+          drawHeight = 10 + Math.abs(waveformPoints[index]) * height * 0.32 + bands.energy * height * 0.12 * quietScale;
+          rotation = Math.atan2(waveformPoints[Math.min(waveformPoints.length - 1, index + 1)] - waveformPoints[index], 0.08);
+          break;
       }
 
-      paintVisualizerUnit(unit, {
-        '--bar-height': `${Math.min(Math.max(height, 6), 100)}%`,
-        '--bar-opacity': String(Math.min(Math.max(opacity, 0.18), 1)),
-        '--bar-glow': `${Math.round(glow)}px`,
-        '--unit-x': `${x}px`,
-        '--unit-y': `${y}px`,
-        '--unit-scale-x': String(scaleX),
-        '--unit-scale-y': String(scaleY),
-        '--unit-rotate': `${rotate}deg`,
-        '--unit-hue': `${Math.round(hue)}deg`
-      });
-    });
+      context.save();
+      context.translate(x + drawWidth / 2, y);
+      context.rotate(rotation);
+      const gradient = context.createLinearGradient(0, -drawHeight / 2, 0, drawHeight / 2);
+      gradient.addColorStop(0, 'rgba(248, 250, 252, 0.96)');
+      gradient.addColorStop(0.45, `hsla(${hue}, 90%, 68%, ${alpha})`);
+      gradient.addColorStop(1, `hsla(${hue + 18}, 88%, 56%, ${alpha})`);
+      context.fillStyle = gradient;
+      context.shadowColor = `hsla(${hue}, 90%, 66%, ${isQuiet ? 0.12 : 0.22})`;
+      context.shadowBlur = isQuiet ? 6 : 10;
+      roundedRect(context, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight, Math.max(3, drawWidth));
+      context.fill();
+      context.restore();
+    }
+
+    context.restore();
   };
 
   const cancelVisualizerFrame = () => {
@@ -3373,6 +3405,7 @@ if (musicPlayers.length) {
 
     cancelVisualizerFrame();
     analyserFallbackActive = false;
+    visualizerLastDrawTime = 0;
     resizeVisualizerSurface();
     setVisualizerTheme(mode);
     renderVisualizationFrame(sampleAudioBands(window.performance.now(), true), window.performance.now(), mode);
@@ -3389,11 +3422,16 @@ if (musicPlayers.length) {
     }
 
     analyserFallbackActive = false;
+    visualizerLastDrawTime = 0;
     resizeVisualizerSurface();
     setVisualizerTheme(mode);
 
     const tick = (time = 0) => {
-      renderVisualizationFrame(sampleAudioBands(time, true), time, mode);
+      const mobileFrameInterval = (isCoarsePointerDevice() || isIosSafari) ? 30 : 0;
+      if (!mobileFrameInterval || !visualizerLastDrawTime || time - visualizerLastDrawTime >= mobileFrameInterval) {
+        visualizerLastDrawTime = time;
+        renderVisualizationFrame(sampleAudioBands(time, true), time, mode);
+      }
       visualizerFrameId = window.requestAnimationFrame(tick);
     };
 
@@ -3516,6 +3554,8 @@ if (musicPlayers.length) {
 
     cancelVisualizerFrame();
     resizeVisualizerSurface();
+    visualizerLastDrawTime = 0;
+    lastAnalyserAudioTime = Math.max(0, audio?.currentTime || 0);
     silentAnalyzerFrames = 0;
     analyserFallbackActive = !sharedAnalyser;
     if (analyserFallbackActive) {
@@ -3533,25 +3573,43 @@ if (musicPlayers.length) {
       }
 
       const fallbackTime = Math.max(0, audio.currentTime || 0) * 1000;
-      const bands = sampleAudioBands(analyserFallbackActive ? fallbackTime : time, false, analyserFallbackActive);
+      const drawTime = analyserFallbackActive ? fallbackTime : time;
+      const mobileFrameInterval = (isCoarsePointerDevice() || isIosSafari) ? 30 : 0;
+
+      if (mobileFrameInterval && visualizerLastDrawTime && time - visualizerLastDrawTime < mobileFrameInterval) {
+        visualizerFrameId = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      visualizerLastDrawTime = time;
+      const bands = sampleAudioBands(drawTime, false, analyserFallbackActive);
 
       if (!analyserFallbackActive) {
-        const maxFrequency = frequencyData.reduce((max, value) => Math.max(max, value), 0);
-        const minFrequency = frequencyData.reduce((min, value) => Math.min(min, value), 255);
+        let maxFrequency = 0;
+        let minFrequency = 255;
+        for (let index = 0; index < frequencyData.length; index += 1) {
+          const value = frequencyData[index];
+          if (value > maxFrequency) maxFrequency = value;
+          if (value < minFrequency) minFrequency = value;
+        }
 
-        if (maxFrequency === 0 || maxFrequency - minFrequency < 2) {
+        const audioTime = Math.max(0, audio.currentTime || 0);
+        const audioAdvanced = audioTime - lastAnalyserAudioTime > 0.015;
+        lastAnalyserAudioTime = audioTime;
+
+        if (audioAdvanced && (maxFrequency === 0 || maxFrequency - minFrequency < 2)) {
           silentAnalyzerFrames += 1;
-          if (silentAnalyzerFrames > 45) {
+          if (silentAnalyzerFrames > 30) {
             analyserFallbackActive = true;
             warnAnalyzerFallback('Frequency data stayed flat while audio was playing.');
             setVisualizerTheme('playing');
           }
-        } else {
+        } else if (maxFrequency > 0 && maxFrequency - minFrequency >= 2) {
           silentAnalyzerFrames = 0;
         }
       }
 
-      renderVisualizationFrame(bands, analyserFallbackActive ? fallbackTime : time, 'playing');
+      renderVisualizationFrame(bands, drawTime, 'playing');
       visualizerFrameId = window.requestAnimationFrame(tick);
     };
 
@@ -3572,11 +3630,17 @@ if (musicPlayers.length) {
   runIdleVisualizer('idle');
   window.addEventListener('resize', resizeVisualizerSurface, { passive: true });
   window.addEventListener('orientationchange', () => window.setTimeout(resizeVisualizerSurface, 180), { passive: true });
-  document.addEventListener('visibilitychange', () => {
+  document.addEventListener('visibilitychange', async () => {
     resizeVisualizerSurface();
     if (!document.hidden && visualizerEnabled && activePlayer) {
       const audio = getAudio(activePlayer);
       if (audio && !audio.paused && !audio.ended) {
+        try {
+          const context = await ensureAudioContextForGesture({ allowCreate: false, allowResume: true });
+          if (context) connectAudioToAnalyser(audio);
+        } catch (error) {
+          warnAnalyzerFallback(error?.message || error);
+        }
         startVisualizer(audio);
       }
     }
