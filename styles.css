@@ -16,7 +16,12 @@
   --radius-md: 22px;
   --radius-sm: 999px;
   --container: min(1120px, calc(100% - 40px));
+  --mini-player-height: 120px;
+  --guide-safe-gap: 24px;
+  --guide-launcher-bottom: calc(env(safe-area-inset-bottom) + var(--guide-safe-gap));
+  --guide-panel-bottom: calc(env(safe-area-inset-bottom) + 88px);
 }
+
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -2719,7 +2724,7 @@ h1, h2, h3, blockquote { color: var(--ivory); }
 .guide-widget {
   position: fixed;
   right: max(18px, env(safe-area-inset-right));
-  bottom: calc(92px + env(safe-area-inset-bottom));
+  bottom: var(--guide-launcher-bottom);
   z-index: 125;
   display: grid;
   justify-items: end;
@@ -2729,6 +2734,15 @@ h1, h2, h3, blockquote { color: var(--ivory); }
 
 .guide-launcher,
 .guide-panel { pointer-events: auto; }
+
+body.mini-player-active {
+  --guide-launcher-bottom: calc(var(--mini-player-height, 120px) + env(safe-area-inset-bottom) + 24px);
+  --guide-panel-bottom: calc(var(--mini-player-height, 120px) + env(safe-area-inset-bottom) + 18px);
+}
+
+body.chat-open.mini-player-active {
+  --guide-launcher-bottom: calc(var(--mini-player-height, 120px) + env(safe-area-inset-bottom) + 18px);
+}
 
 .guide-launcher {
   display: inline-flex;
@@ -2962,23 +2976,38 @@ h1, h2, h3, blockquote { color: var(--ivory); }
     width: auto;
   }
   .guide-widget {
-    left: 12px;
-    right: 12px;
-    bottom: calc(84px + env(safe-area-inset-bottom));
+    left: auto;
+    right: max(12px, env(safe-area-inset-right));
+    bottom: var(--guide-launcher-bottom);
+    max-width: min(180px, calc(100vw - 24px));
   }
   .guide-panel {
     position: fixed;
     left: 12px;
     right: 12px;
-    bottom: calc(78px + env(safe-area-inset-bottom));
+    bottom: var(--guide-panel-bottom);
     width: auto;
-    height: min(92vh, 720px);
-    max-height: min(82vh, calc(100dvh - 96px));
+    height: auto;
+    max-height: min(78vh, calc(100dvh - var(--guide-panel-bottom) - 16px));
     border-radius: 28px 28px 22px 22px;
     animation-name: guideSheetIn;
     padding-bottom: env(safe-area-inset-bottom);
   }
-  .guide-launcher { justify-self: end; }
+  .guide-launcher {
+    justify-self: end;
+    max-width: 180px;
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    gap: 8px;
+    font-size: 0.9rem;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .guide-launcher [data-i18n="guide.launcher"] {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .guide-panel__header { padding: 16px 16px 12px; }
   .guide-panel__messages { padding: 14px 16px; }
   .guide-panel__starters-wrap,
@@ -3089,4 +3118,59 @@ h1, h2, h3, blockquote { color: var(--ivory); }
 .music-visualizer:not([data-visualization-style="waveform"]).is-idle span,
 .music-visualizer:not([data-visualization-style="waveform"]).is-paused span {
   animation: none;
+}
+
+
+/* Chat launcher/player collision safeguards. Keep the guide above the sticky player at every viewport width. */
+body.mini-player-active .guide-widget {
+  bottom: var(--guide-launcher-bottom);
+}
+
+body.mini-player-active .guide-panel {
+  max-height: min(86vh, calc(100dvh - var(--guide-panel-bottom) - 24px));
+}
+
+@media (max-width: 900px) {
+  body.mini-player-active {
+    --guide-launcher-bottom: calc(var(--mini-player-height, 120px) + env(safe-area-inset-bottom) + 18px);
+    --guide-panel-bottom: calc(var(--mini-player-height, 120px) + env(safe-area-inset-bottom) + 14px);
+  }
+
+  .guide-launcher {
+    max-width: 180px;
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .guide-widget {
+    right: max(10px, env(safe-area-inset-right));
+    max-width: min(168px, calc(100vw - 20px));
+  }
+
+  .guide-launcher {
+    max-width: 168px;
+    padding-inline: 0.9rem;
+  }
+
+  .guide-launcher [data-i18n="guide.launcher"] {
+    max-width: 84px;
+  }
+
+  html[lang="en"] .guide-launcher [data-i18n="guide.launcher"] {
+    font-size: 0;
+  }
+
+  html[lang="en"] .guide-launcher [data-i18n="guide.launcher"]::after {
+    content: "Ask Guide";
+    font-size: 0.9rem;
+  }
+
+  .guide-panel {
+    left: 10px;
+    right: 10px;
+    max-height: min(74vh, calc(100dvh - var(--guide-panel-bottom) - 12px));
+  }
 }
