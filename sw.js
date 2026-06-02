@@ -1,4 +1,4 @@
-const APP_VERSION = 'carine-site-2026-06-02-visualizer-diagnostics';
+const APP_VERSION = 'carine-site-2026-06-02-vinyl-diagnostics';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v9-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
