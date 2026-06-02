@@ -2167,7 +2167,7 @@ const renderCarinePlaylist = () => {
         </div>
 
         <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play ${escapePlaylistAttribute(track.title)}" data-track-key="${trackKey}.title" data-i18n-aria-label="${trackKey}.playLabel">
-          <span class="play-icon" aria-hidden="true"></span>
+          <span class="play-icon" aria-hidden="true">▶</span>
         </button>
         <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
       </article>
@@ -3724,12 +3724,14 @@ if (musicPlayers.length) {
     if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
     if (activeLyricsTab !== 'lyrics') renderTrackInfo(player);
     loadLyricsForPlayer(player);
+    syncTransportButtons(getAudio(player));
     resizeVisualizerSurface();
   };
 
   const setActiveTrack = (player) => {
     musicPlayers.forEach((track) => track.classList.toggle('is-active', track === player));
     syncStage(player);
+    window.dispatchEvent(new CustomEvent('carine:trackchange', { detail: { trackId: player?.dataset.trackId || '' } }));
   };
 
   const readVisualizerPreference = () => {
@@ -4817,13 +4819,41 @@ if (musicPlayers.length) {
 
   updateVisualizerToggleUI();
 
-  const updateToggle = (button, audio, title) => {
-    if (!button) {
-      return;
-    }
+  const setTransportButtonState = (button, isPlaying) => {
+    if (!button) return;
 
-    const isPlaying = audio && !audio.paused && !audio.ended;
-    button.setAttribute('aria-label', `${isPlaying ? translate('audio.pause') : translate('audio.play')} ${title}`);
+    const label = translate(isPlaying ? 'audio.pause' : 'audio.play');
+    const icon = isPlaying ? '❚❚' : '▶';
+    const iconElement = button.querySelector('.play-icon');
+
+    if (iconElement) iconElement.textContent = icon;
+    button.classList.toggle('is-playing', isPlaying);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    button.setAttribute('aria-pressed', String(isPlaying));
+  };
+
+  const updateToggle = (button, audio, title, { forceIdle = false } = {}) => {
+    if (!button) return;
+
+    const isPlaying = Boolean(audio && !audio.paused && !audio.ended && !forceIdle);
+    setTransportButtonState(button, isPlaying);
+  };
+
+  const syncTransportButtons = (activeAudio = activePlayer ? getAudio(activePlayer) : null, { forceIdle = false } = {}) => {
+    const activeIsPlaying = Boolean(activeAudio && !activeAudio.paused && !activeAudio.ended && !forceIdle);
+
+    musicPlayers.forEach((player) => {
+      const audio = getAudio(player);
+      const isPlaying = Boolean(audio && !audio.paused && !audio.ended && !forceIdle);
+      player.classList.toggle('is-playing', isPlaying);
+      setTransportButtonState(getPlayToggle(player), isPlaying);
+    });
+
+    if (miniPlayer) miniPlayer.classList.toggle('is-playing', activeIsPlaying);
+    expandedVisualizer?.classList.toggle('is-playing', activeIsPlaying);
+    setTransportButtonState(mini?.toggle, activeIsPlaying);
+    setTransportButtonState(mobileToggle, activeIsPlaying);
   };
 
   const getSafeDuration = (audio, fallback = 0) => {
@@ -4917,6 +4947,7 @@ if (musicPlayers.length) {
     setRangeFill(mini.volume, mini.volume.value, mini.volume.max);
     syncMiniProgress(audio);
     updateToggle(mini.toggle, audio, getTrackTitle(player));
+    syncTransportButtons(audio);
     updateMediaSessionMetadata(player);
   };
 
@@ -4946,6 +4977,7 @@ if (musicPlayers.length) {
     mini.progress.setAttribute('aria-disabled', 'true');
     setRangeFill(mini.progress, 0, 100);
     updateToggle(mini.toggle, null, translate('mini.noTrack'));
+    syncTransportButtons(null, { forceIdle: true });
     if ('mediaSession' in navigator) {
       navigator.mediaSession.playbackState = 'none';
     }
@@ -5057,6 +5089,7 @@ if (musicPlayers.length) {
       }
 
       await audio.play();
+      syncTransportButtons(audio);
       updateMediaSessionMetadata(player);
       logAudioDiagnostics('play-succeeded', {
         track: getTrackTitle(player),
@@ -5077,12 +5110,14 @@ if (musicPlayers.length) {
         message: error?.message || String(error)
       });
       player.classList.remove('is-playing');
-      updateToggle(getPlayToggle(player), audio, getTrackTitle(player));
+      updateToggle(getPlayToggle(player), audio, getTrackTitle(player), { forceIdle: true });
 
       if (miniPlayer && activePlayer === player) {
         miniPlayer.classList.remove('is-playing');
-        updateToggle(mini.toggle, audio, getTrackTitle(player));
+        updateToggle(mini.toggle, audio, getTrackTitle(player), { forceIdle: true });
       }
+      updateToggle(mobileToggle, audio, getTrackTitle(player), { forceIdle: true });
+      syncTransportButtons(audio, { forceIdle: true });
 
       if (status) {
         status.textContent = isAutoAdvance ? translate('audio.unavailable') : translate('audio.playbackError');
@@ -5168,7 +5203,7 @@ if (musicPlayers.length) {
     const status = musicPlayer.querySelector('[data-audio-status]');
 
     if (audio && musicPlayer.dataset.audioSrc) {
-      ['loadstart', 'loadedmetadata', 'durationchange', 'canplay', 'loadeddata', 'waiting', 'timeupdate', 'seeking', 'seeked', 'play', 'playing', 'pause', 'ended', 'error'].forEach((eventName) => {
+      ['loadstart', 'loadedmetadata', 'durationchange', 'canplay', 'loadeddata', 'waiting', 'stalled', 'timeupdate', 'seeking', 'seeked', 'play', 'playing', 'pause', 'ended', 'error'].forEach((eventName) => {
         audio.addEventListener(eventName, () => {
           lastAudioEvent = eventName;
         }, { passive: true });
@@ -5203,10 +5238,17 @@ if (musicPlayers.length) {
         syncDuration(musicPlayer);
       });
 
-      audio.addEventListener('waiting', () => {
-        if (activePlayer === musicPlayer && status) {
-          status.textContent = '';
-        }
+      const syncActiveTransportFromEvent = () => {
+        if (activePlayer === musicPlayer) syncTransportButtons(audio);
+      };
+
+      ['waiting', 'stalled', 'playing'].forEach((eventName) => {
+        audio.addEventListener(eventName, () => {
+          if (activePlayer === musicPlayer && status && eventName === 'waiting') {
+            status.textContent = '';
+          }
+          syncActiveTransportFromEvent();
+        });
       });
 
       audio.addEventListener('timeupdate', () => {
@@ -5232,6 +5274,7 @@ if (musicPlayers.length) {
         musicPlayer.classList.add('is-playing');
         showMiniPlayer(musicPlayer);
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
+        syncTransportButtons(audio);
 
         updateVisualizerToggleUI();
         if (visualizerEnabled) {
@@ -5248,6 +5291,7 @@ if (musicPlayers.length) {
         }
 
         updateToggle(mobileToggle, audio, getTrackTitle(musicPlayer));
+        syncTransportButtons(audio);
       });
 
       audio.addEventListener('pause', () => {
@@ -5273,31 +5317,46 @@ if (musicPlayers.length) {
         }
 
         updateToggle(mobileToggle, audio, getTrackTitle(musicPlayer));
+        syncTransportButtons(audio);
       });
 
       audio.addEventListener('ended', () => {
         const shouldAdvance = activePlayer === musicPlayer && !userStoppedPlayback;
+        const nextPlayer = shouldAdvance ? getNextTrack(musicPlayer) : null;
+        const willAutoContinue = Boolean(nextPlayer);
 
-        musicPlayer.classList.remove('is-playing');
+        musicPlayer.classList.toggle('is-playing', willAutoContinue && nextPlayer === musicPlayer);
         audio.currentTime = 0;
-        updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
-
-        if (activePlayer === musicPlayer && miniPlayer) {
-          miniPlayer.classList.remove('is-playing');
-          expandedVisualizer?.classList.remove('is-playing');
-          syncMiniProgress(audio);
-          updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
+        if (!willAutoContinue) {
+          updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
         }
 
-        stopVisualizer('idle');
+        if (activePlayer === musicPlayer && miniPlayer) {
+          miniPlayer.classList.toggle('is-playing', willAutoContinue);
+          expandedVisualizer?.classList.toggle('is-playing', willAutoContinue);
+          syncMiniProgress(audio);
+          if (!willAutoContinue) {
+            updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
+          }
+        }
+
+        stopVisualizer(willAutoContinue ? 'paused' : 'idle');
         updateVisualizerToggleUI();
         if ('mediaSession' in navigator && activePlayer === musicPlayer) {
-          navigator.mediaSession.playbackState = 'none';
+          navigator.mediaSession.playbackState = willAutoContinue ? 'paused' : 'none';
         }
         persistPlayerState();
 
+        if (willAutoContinue) {
+          playAudio(nextPlayer, { isAutoAdvance: true });
+          return;
+        }
+
+        syncTransportButtons(audio);
+
         if (shouldAdvance) {
-          playNextTrack(musicPlayer);
+          resetMiniPlayer();
+          persistPlayerState();
         }
       });
 
@@ -5329,11 +5388,13 @@ if (musicPlayers.length) {
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
 
-        updateToggle(mobileToggle, audio, getTrackTitle(musicPlayer));
+        updateToggle(mobileToggle, audio, getTrackTitle(musicPlayer), { forceIdle: true });
+        syncTransportButtons(audio, { forceIdle: true });
       });
 
       window.addEventListener('carine:languagechange', () => {
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
+        if (activePlayer === musicPlayer) syncTransportButtons(audio);
 
         if (status && status.textContent) {
           status.textContent = musicPlayer.classList.contains('is-ready') ? '' : translate('audio.unavailable');
@@ -5651,6 +5712,11 @@ if (musicPlayers.length) {
       if (mobileTitle) mobileTitle.textContent = translate('mini.noTrack');
       updateToggle(mobileToggle, null, translate('mini.noTrack'));
     }
+  });
+
+  window.addEventListener('carine:trackchange', () => {
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    syncTransportButtons(audio);
   });
 
   const storedState = getStoredPlayerState();
