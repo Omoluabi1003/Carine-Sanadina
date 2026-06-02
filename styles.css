@@ -4514,6 +4514,49 @@ html.splash-ready body > :not(.cinematic-splash) {
   --bar-glow: 10px;
 }
 
+.splash-enter-button {
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(18px, 4vw, 26px);
+  min-height: 44px;
+  padding: 0.78rem 1.35rem;
+  border: 1px solid rgba(234, 211, 162, 0.46);
+  border-radius: 999px;
+  color: rgba(255, 248, 238, 0.96);
+  background:
+    linear-gradient(135deg, rgba(234, 211, 162, 0.16), rgba(96, 165, 250, 0.08)),
+    rgba(8, 17, 32, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 16px 40px rgba(0, 8, 24, 0.24);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.splash-enter-button:hover,
+.splash-enter-button:focus-visible {
+  border-color: rgba(234, 211, 162, 0.82);
+  background-color: rgba(16, 35, 71, 0.76);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 18px 48px rgba(0, 8, 24, 0.28);
+  transform: translateY(-1px);
+}
+
+.splash-enter-button:focus-visible {
+  outline: 3px solid rgba(234, 211, 162, 0.58);
+  outline-offset: 4px;
+}
+
 @keyframes splashOverlayEnter {
   to { opacity: 1; }
 }
@@ -4550,20 +4593,109 @@ html.splash-ready body > :not(.cinematic-splash) {
   .splash-wave-bars.music-visualizer { height: 66px; min-height: 66px; padding: 14px 16px; }
 }
 
+@keyframes splashReducedLogoReveal {
+  0%, 38% { opacity: 0; }
+  72%, 100% { opacity: 1; }
+}
+
+@keyframes splashReducedKickerReveal {
+  0%, 78% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes splashReducedWaveReveal {
+  0%, 76% { opacity: 0; }
+  100% { opacity: 0.42; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html.splash-booting body { overflow: hidden; }
-  .cinematic-splash,
+
+  .cinematic-splash {
+    background:
+      radial-gradient(circle at 50% 112%, rgba(191, 141, 63, 0.12), transparent 30%),
+      radial-gradient(circle at 18% 16%, rgba(74, 140, 255, 0.1), transparent 34%),
+      linear-gradient(145deg, #081120 0%, #102347 58%, #07101e 100%);
+    animation: splashOverlayEnter 600ms ease-out forwards !important;
+    transition:
+      opacity 680ms ease,
+      visibility 0s linear 680ms;
+  }
+
   .cinematic-splash::before,
   .splash-ambient,
-  .splash-card,
   .splash-logo-ring,
   .splash-quotes span,
   .splash-wave-bars.music-visualizer span {
     animation: none !important;
-    transition-duration: 0.01ms !important;
   }
-  .splash-card { opacity: 1; transform: none; }
-  .splash-quotes span:first-child { opacity: 1; transform: none; filter: none; }
-  .splash-quotes span:not(:first-child) { display: none; }
-  .splash-wave-bars.music-visualizer span { transform: scaleY(0.62); opacity: 0.68; }
+
+  .cinematic-splash::before {
+    opacity: 0.34;
+    transform: none;
+  }
+
+  .splash-ambient {
+    opacity: 0.2;
+    filter: blur(18px);
+    transform: none;
+  }
+
+  .splash-card {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.1), transparent 42%),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.088), rgba(255, 255, 255, 0.035));
+    box-shadow:
+      0 26px 88px rgba(0, 8, 24, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+
+  .splash-logo-ring {
+    opacity: 0.26;
+    transform: none;
+  }
+
+  .splash-logo {
+    opacity: 0;
+    transform: none;
+    filter: drop-shadow(0 14px 28px rgba(0, 10, 28, 0.28));
+    animation: splashReducedLogoReveal 5s ease forwards;
+  }
+
+  .splash-kicker {
+    opacity: 0;
+    animation: splashReducedKickerReveal 5s ease forwards;
+  }
+
+  .splash-quotes span { display: none; }
+
+  .splash-wave-bars.music-visualizer {
+    opacity: 0;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.12), transparent 56%),
+      linear-gradient(180deg, rgba(8, 17, 32, 0.5), rgba(16, 35, 71, 0.38));
+    box-shadow: inset 0 0 0 1px rgba(234, 242, 255, 0.09);
+    animation: splashReducedWaveReveal 5s ease forwards;
+  }
+
+  .splash-wave-bars.music-visualizer span {
+    opacity: 0.34;
+    transform: scaleY(0.36);
+    box-shadow: none;
+  }
+
+  .splash-enter-button {
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .splash-enter-button:hover,
+  .splash-enter-button:focus-visible {
+    transform: none;
+  }
 }

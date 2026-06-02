@@ -16,6 +16,7 @@ translations.en = {
   'language.label': 'Language',
   'language.selectorLabel': 'Choose website language',
   'a11y.skip': 'Skip to main content',
+  'splash.enterApp': 'Enter App',
   'a11y.primaryNav': 'Primary navigation',
   'a11y.home': 'Carine Sanadina home',
   'a11y.toggleNav': 'Toggle navigation',
@@ -188,6 +189,7 @@ translations.fr = {
   'language.label': 'Langue',
   'language.selectorLabel': 'Choisir la langue du site',
   'a11y.skip': 'Aller au contenu principal',
+  'splash.enterApp': 'Entrer dans l’application',
   'a11y.primaryNav': 'Navigation principale',
   'a11y.home': 'Accueil Carine Sanadina',
   'a11y.toggleNav': 'Ouvrir ou fermer la navigation',
@@ -342,6 +344,7 @@ translations.es = {
   'language.label': 'Idioma',
   'language.selectorLabel': 'Elegir idioma del sitio',
   'a11y.skip': 'Saltar al contenido principal',
+  'splash.enterApp': 'Entrar a la aplicación',
   'a11y.primaryNav': 'Navegación principal',
   'a11y.home': 'Inicio de Carine Sanadina',
   'a11y.toggleNav': 'Alternar navegación',
@@ -501,6 +504,7 @@ translations.ln = {
   'language.label': 'Lokota',
   'language.selectorLabel': 'Pona lokota ya lokasa oyo',
   'a11y.skip': 'Kende mbala moko na makambo ya ntina',
+  'splash.enterApp': 'Kota na appli',
   'a11y.primaryNav': 'Nzela monene ya kotambola na lokasa',
   'a11y.home': 'Ebandeli ya Carine Sanadina',
   'a11y.toggleNav': 'Fungola to kanga nzela ya kotambola',
@@ -669,6 +673,7 @@ translations.sw = {
   "language.label": "Lugha",
   "language.selectorLabel": "Chagua lugha ya tovuti",
   "a11y.skip": "Ruka hadi kwa yaliyomo kuu",
+  "splash.enterApp": "Ingia kwenye programu",
   "a11y.primaryNav": "Urambazaji msingi",
   "a11y.home": "Carine Sanadina nyumbani",
   "a11y.toggleNav": "Geuza urambazaji",
@@ -837,6 +842,7 @@ translations.yo = {
   "language.label": "Èdè",
   "language.selectorLabel": "Yan èdè oju opo wẹẹbu",
   "a11y.skip": "Rekọja si akoonu akọkọ",
+  "splash.enterApp": "Wọle si app",
   "a11y.primaryNav": "Lilọ kiri akọkọ",
   "a11y.home": "Carine Sanadina ile",
   "a11y.toggleNav": "Yipada lilọ kiri",
@@ -2142,6 +2148,7 @@ const CARINE_SPLASH_SEEN_KEY = 'carineSplashSeen';
 const CARINE_SPLASH_SUCCESS_KEY = 'carineSplashSuccessfulLoad';
 const CARINE_SPLASH_STARTED_AT = window.__carineSplashBootAt || performance.now();
 const CARINE_SPLASH_MAX_VISIBLE_MS = 3000;
+const CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS = 5000;
 const CARINE_SPLASH_FIRST_VISIT_MS = 1900;
 const CARINE_SPLASH_RETURN_VISIT_MS = 850;
 
@@ -2269,7 +2276,10 @@ const initializeCinematicSplash = () => {
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const returningVisitor = hasSuccessfulSplashLoad();
-  const minimumVisibleMs = reducedMotion ? 650 : (returningVisitor ? CARINE_SPLASH_RETURN_VISIT_MS : CARINE_SPLASH_FIRST_VISIT_MS);
+  const maximumVisibleMs = reducedMotion ? CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS : CARINE_SPLASH_MAX_VISIBLE_MS;
+  const minimumVisibleMs = reducedMotion
+    ? CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS
+    : (returningVisitor ? CARINE_SPLASH_RETURN_VISIT_MS : CARINE_SPLASH_FIRST_VISIT_MS);
   const elapsed = performance.now() - CARINE_SPLASH_STARTED_AT;
   const minimumDelay = waitForSplashDelay(minimumVisibleMs - elapsed);
   const criticalResources = Promise.all([
@@ -2277,7 +2287,9 @@ const initializeCinematicSplash = () => {
     waitForHeroImages(),
     waitForCriticalShells()
   ]);
-  const hardStop = waitForSplashDelay(CARINE_SPLASH_MAX_VISIBLE_MS - elapsed);
+  const hardStop = waitForSplashDelay(maximumVisibleMs - elapsed);
+
+  splash.querySelector('[data-splash-skip]')?.addEventListener('click', completeCinematicSplash, { once: true });
 
   Promise.race([
     Promise.all([minimumDelay, criticalResources]),
