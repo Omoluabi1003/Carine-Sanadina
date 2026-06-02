@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-02-lrc-suno-sync';
+const APP_VERSION = 'carine-site-2026-06-02-plain-lyrics';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3028,18 +3028,6 @@ if (musicPlayers.length) {
     return normalizedPath;
   };
 
-  const parseTimedLyricsDataset = (player) => {
-    try {
-      const parsed = JSON.parse(player?.dataset.trackLyricsTimed || '[]');
-      return Array.isArray(parsed)
-        ? parsed.filter((entry) => Number.isFinite(Number(entry.time)) && String(entry.text || '').trim())
-          .map((entry) => ({ time: Number(entry.time), text: String(entry.text).trim(), type: entry.type || 'line' }))
-        : [];
-    } catch (error) {
-      return [];
-    }
-  };
-
   const parseLyricText = (text) => String(text || '')
     .replace(/\r\n?/g, '\n')
     .split('\n')
@@ -3056,9 +3044,29 @@ if (musicPlayers.length) {
     const parsedMinutes = Number(minutes);
     const parsedSeconds = Number(seconds);
     if (!Number.isFinite(parsedMinutes) || !Number.isFinite(parsedSeconds)) return null;
+    if (parsedMinutes < 0 || parsedSeconds < 0 || parsedSeconds >= 60) return null;
     const normalizedFraction = String(fraction || '').padEnd(2, '0').slice(0, 3);
     const fractionSeconds = normalizedFraction ? Number(`0.${normalizedFraction}`) : 0;
     return (parsedMinutes * 60) + parsedSeconds + (Number.isFinite(fractionSeconds) ? fractionSeconds : 0);
+  };
+
+  const isReliableLrcText = (text, timedEntries) => {
+    const sourceText = String(text || '');
+    const timedLines = timedEntries.filter((entry) => entry.type === 'line');
+
+    if (/\b(?:estimated|auto[-\s]?sync|generated|starter)\b/i.test(sourceText)) return false;
+    if (timedLines.length < 4) return false;
+
+    const uniqueTimes = new Set(timedLines.map((entry) => entry.time.toFixed(2)));
+    if (uniqueTimes.size < timedLines.length * 0.8) return false;
+
+    const firstLineTime = timedLines[0]?.time ?? 0;
+    const lastLineTime = timedLines[timedLines.length - 1]?.time ?? 0;
+    if (lastLineTime <= firstLineTime) return false;
+
+    const averageGap = (lastLineTime - firstLineTime) / Math.max(timedLines.length - 1, 1);
+    const hasLargeGap = timedLines.some((entry, index) => index > 0 && entry.time - timedLines[index - 1].time > 45);
+    return averageGap <= 18 && !hasLargeGap;
   };
 
   const parseLrcText = (text) => {
@@ -3088,39 +3096,18 @@ if (musicPlayers.length) {
         });
       });
 
-    return timedEntries
+    const sortedEntries = timedEntries
       .filter((entry) => Number.isFinite(entry.time) && entry.text)
       .sort((a, b) => a.time - b.time);
-  };
 
-  const estimateLyricTiming = (entries, duration) => {
-    const singableIndexes = entries
-      .map((entry, index) => entry.type === 'line' ? index : -1)
-      .filter((index) => index >= 0);
-    const safeDuration = Number.isFinite(duration) && duration > 0 ? duration : Math.max(90, singableIndexes.length * 5.2);
-    const introPadding = Math.min(Math.max(safeDuration * 0.045, 3), 12);
-    const outroPadding = Math.min(Math.max(safeDuration * 0.035, 4), 14);
-    const usableDuration = Math.max(safeDuration - introPadding - outroPadding, singableIndexes.length * 2.8);
-    const weights = singableIndexes.map((entryIndex) => {
-      const text = entries[entryIndex].text;
-      const previousSection = entries.slice(0, entryIndex).reverse().find((entry) => entry.type === 'section')?.text?.toLowerCase() || '';
-      const wordWeight = Math.min(Math.max(text.split(/\s+/).length / 7, 0.8), 1.75);
-      const sectionWeight = /chorus|refrain|hook/.test(previousSection) ? 1.12 : /bridge|outro/.test(previousSection) ? 1.22 : /intro/.test(previousSection) ? 0.82 : 1;
-      return wordWeight * sectionWeight;
-    });
-    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0) || 1;
-    let cursor = introPadding;
-
-    return singableIndexes.map((entryIndex, timingIndex) => {
-      const time = cursor;
-      cursor += usableDuration * (weights[timingIndex] / totalWeight);
-      return { index: entryIndex, time };
-    });
+    return isReliableLrcText(text, sortedEntries) ? sortedEntries : [];
   };
 
   const setLyricsMessage = (message) => {
     if (!lyricsScroll) return;
+    lyricsScroll.dataset.lyricsMode = 'plain';
     lyricsScroll.innerHTML = `<p class="lyrics-empty">${escapePlaylistText(message)}</p>`;
+    lyricsScroll.scrollTop = 0;
   };
 
   const renderLyrics = () => {
@@ -3136,6 +3123,7 @@ if (musicPlayers.length) {
       }
       return `<p class="lyric-line" data-lyric-index="${index}">${escapePlaylistText(entry.text)}</p>`;
     }).join('');
+    lyricsScroll.scrollTop = 0;
     activeLyricIndex = -1;
   };
 
@@ -3175,14 +3163,17 @@ if (musicPlayers.length) {
 
   const applyTimedLyrics = (timedLyrics) => {
     lyricEntries = timedLyrics.map((entry) => ({ type: entry.type || 'line', text: entry.text }));
-    lyricTiming = timedLyrics.map((entry, index) => ({ index, time: entry.time }));
+    lyricTiming = timedLyrics
+      .map((entry, index) => ({ index, time: entry.time, type: entry.type || 'line' }))
+      .filter((entry) => entry.type === 'line');
+    if (lyricsScroll) lyricsScroll.dataset.lyricsMode = 'timed';
     renderLyrics();
   };
 
-  const applyFallbackLyrics = (lyricsText, player) => {
+  const applyFallbackLyrics = (lyricsText) => {
     lyricEntries = parseLyricText(lyricsText);
-    const audio = getAudio(player);
-    lyricTiming = estimateLyricTiming(lyricEntries, getSafeDuration(audio, getFallbackDuration(player)));
+    lyricTiming = [];
+    if (lyricsScroll) lyricsScroll.dataset.lyricsMode = 'plain';
     renderLyrics();
   };
 
@@ -3205,13 +3196,6 @@ if (musicPlayers.length) {
       }
     }
 
-    const timedLyrics = parseTimedLyricsDataset(player);
-    if (timedLyrics.length) {
-      applyTimedLyrics(timedLyrics);
-      updateActiveLyric(getAudio(player));
-      return;
-    }
-
     const lyricsPath = player.dataset.trackLyrics || '';
     if (!resolveSiteAssetPath(lyricsPath)) {
       lyricEntries = [];
@@ -3223,8 +3207,7 @@ if (musicPlayers.length) {
     try {
       const fallbackLyrics = await fetchCachedText(lyricsPath);
       if (currentLyricsPlayer !== player) return;
-      applyFallbackLyrics(fallbackLyrics, player);
-      updateActiveLyric(getAudio(player));
+      applyFallbackLyrics(fallbackLyrics);
     } catch (error) {
       if (currentLyricsPlayer !== player) return;
       lyricEntries = [];
@@ -4437,10 +4420,6 @@ if (musicPlayers.length) {
           duration: Number.isFinite(audio.duration) ? Math.round(audio.duration * 100) / 100 : 'unknown'
         });
         syncDuration(musicPlayer);
-        if (activePlayer === musicPlayer && lyricEntries.length && !parseTimedLyricsDataset(musicPlayer).length) {
-          lyricTiming = estimateLyricTiming(lyricEntries, getSafeDuration(audio, getFallbackDuration(musicPlayer)));
-          updateActiveLyric(audio);
-        }
         setPlayerReadyState(musicPlayer, true);
       });
 
