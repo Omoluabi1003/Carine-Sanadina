@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-01-ios-webkit-visualizer-audio';
+const APP_VERSION = 'carine-site-2026-06-02-lrc-suno-sync';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -1955,6 +1955,8 @@ const CARINE_MUSIC_PLAYLIST = [
     description: 'Healing-centered comfort and hope',
     duration: 242.712,
     lyrics: '/lyrics/consolation.txt',
+    lyricsLrc: '/lyrics/consolation.lrc',
+    sunoSource: 'https://suno.com/s/BaimWhdIhaQBX547',
     about: 'A tender song of comfort, reassurance, faith, and emotional restoration for hearts that need courage after hardship.',
     credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
     lyricsTimed: [],
@@ -1970,6 +1972,8 @@ const CARINE_MUSIC_PLAYLIST = [
     description: 'Faith-filled kindness anthem',
     duration: 218.064,
     lyrics: '/lyrics/la-gentillesse.txt',
+    lyricsLrc: '/lyrics/la-gentillesse.lrc',
+    sunoSource: 'https://suno.com/s/ujHS0FT3b8BGh3u1',
     about: 'A faith-filled meditation on kindness as strength: compassion that protects dignity, restores atmosphere, and makes room for grace.',
     credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
     lyricsTimed: [],
@@ -1985,6 +1989,8 @@ const CARINE_MUSIC_PLAYLIST = [
     description: 'Joyful praise and gratitude',
     duration: 230.28,
     lyrics: '/lyrics/wonderful.txt',
+    lyricsLrc: '/lyrics/wonderful.lrc',
+    sunoSource: 'https://suno.com/s/edxhIW1RKBDaVy5X',
     about: 'A praise-filled expression of gratitude, joy, and wonder at God’s goodness through every season.',
     credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
     lyricsTimed: [],
@@ -2002,6 +2008,8 @@ const CARINE_MUSIC_PLAYLIST = [
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Womanifesto%20(1).mp3',
     artworkFit: 'contain',
     lyrics: '/lyrics/womanifesto.txt',
+    lyricsLrc: '/lyrics/womanifesto.lrc',
+    sunoSource: 'https://suno.com/s/xitTjO4yEApxiSv5',
     about: 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, victory, identity, and restoration through faith.',
     credits: 'Performed by Carine Sanadina. Style: Soukous • Rumba • Makossa Gospel. Music and lyrics rights remain with their respective owners.',
     lyricsTimed: [],
@@ -2046,6 +2054,8 @@ const renderCarinePlaylist = () => {
     const durationValue = Number.isFinite(Number(track.duration)) && Number(track.duration) > 0 ? String(Number(track.duration)) : '';
     const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
     const lyricsPath = escapePlaylistAttribute(track.lyrics || '');
+    const lyricsLrcPath = escapePlaylistAttribute(track.lyricsLrc || '');
+    const sunoSource = escapePlaylistAttribute(track.sunoSource || '');
     const about = escapePlaylistAttribute(track.about || track.description || '');
     const credits = escapePlaylistAttribute(track.credits || 'Credits unavailable.');
     const lyricsTimed = escapePlaylistAttribute(JSON.stringify(Array.isArray(track.lyricsTimed) ? track.lyricsTimed : []));
@@ -2065,6 +2075,8 @@ const renderCarinePlaylist = () => {
         data-track-description="${escapePlaylistAttribute(track.description)}"
         data-track-artwork-fit="${artworkFit}"
         data-track-lyrics="${lyricsPath}"
+        data-track-lyrics-lrc="${lyricsLrcPath}"
+        data-track-suno-source="${sunoSource}"
         data-track-about="${about}"
         data-track-credits="${credits}"
         data-track-lyrics-timed="${lyricsTimed}"
@@ -3040,6 +3052,47 @@ if (musicPlayers.length) {
         : { type: 'line', text: line, raw: line };
     });
 
+  const parseLrcTimestamp = (minutes, seconds, fraction = '') => {
+    const parsedMinutes = Number(minutes);
+    const parsedSeconds = Number(seconds);
+    if (!Number.isFinite(parsedMinutes) || !Number.isFinite(parsedSeconds)) return null;
+    const normalizedFraction = String(fraction || '').padEnd(2, '0').slice(0, 3);
+    const fractionSeconds = normalizedFraction ? Number(`0.${normalizedFraction}`) : 0;
+    return (parsedMinutes * 60) + parsedSeconds + (Number.isFinite(fractionSeconds) ? fractionSeconds : 0);
+  };
+
+  const parseLrcText = (text) => {
+    const timedEntries = [];
+    String(text || '')
+      .replace(/\r\n?/g, '\n')
+      .split('\n')
+      .forEach((rawLine) => {
+        const line = rawLine.trim();
+        if (!line) return;
+
+        const timestamps = [...line.matchAll(/\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?]/g)];
+        if (!timestamps.length) return;
+
+        const textValue = line.replace(/(?:\[\d{1,2}:\d{2}(?:[.:]\d{1,3})?])+/g, '').trim();
+        if (!textValue || /^\[(?:ti|ar|al|by|offset|length|source):/i.test(textValue)) return;
+
+        const sectionMatch = textValue.match(/^\[(.+)]$/);
+        const entryType = sectionMatch ? 'section' : 'line';
+        const entryText = sectionMatch ? sectionMatch[1].trim() : textValue;
+
+        timestamps.forEach((timestamp) => {
+          const time = parseLrcTimestamp(timestamp[1], timestamp[2], timestamp[3]);
+          if (time !== null) {
+            timedEntries.push({ time, text: entryText, raw: textValue, type: entryType });
+          }
+        });
+      });
+
+    return timedEntries
+      .filter((entry) => Number.isFinite(entry.time) && entry.text)
+      .sort((a, b) => a.time - b.time);
+  };
+
   const estimateLyricTiming = (entries, duration) => {
     const singableIndexes = entries
       .map((entry, index) => entry.type === 'line' ? index : -1)
@@ -3107,20 +3160,60 @@ if (musicPlayers.length) {
     if (activePlayer && activeLyricsTab !== 'lyrics') renderTrackInfo(activePlayer);
   };
 
+  const fetchCachedText = async (assetPath) => {
+    const resolvedPath = resolveSiteAssetPath(assetPath);
+    if (!resolvedPath) return '';
+
+    if (!lyricsCache.has(resolvedPath)) {
+      const response = await fetch(resolvedPath, { cache: 'force-cache' });
+      if (!response.ok) throw new Error(`Lyrics request failed: ${response.status}`);
+      lyricsCache.set(resolvedPath, await response.text());
+    }
+
+    return lyricsCache.get(resolvedPath);
+  };
+
+  const applyTimedLyrics = (timedLyrics) => {
+    lyricEntries = timedLyrics.map((entry) => ({ type: entry.type || 'line', text: entry.text }));
+    lyricTiming = timedLyrics.map((entry, index) => ({ index, time: entry.time }));
+    renderLyrics();
+  };
+
+  const applyFallbackLyrics = (lyricsText, player) => {
+    lyricEntries = parseLyricText(lyricsText);
+    const audio = getAudio(player);
+    lyricTiming = estimateLyricTiming(lyricEntries, getSafeDuration(audio, getFallbackDuration(player)));
+    renderLyrics();
+  };
+
   const loadLyricsForPlayer = async (player) => {
     if (!player || !lyricsScroll) return;
     currentLyricsPlayer = player;
+
+    const lrcPath = player.dataset.trackLyricsLrc || '';
+    if (lrcPath) {
+      try {
+        const lrcLyrics = parseLrcText(await fetchCachedText(lrcPath));
+        if (currentLyricsPlayer !== player) return;
+        if (lrcLyrics.length) {
+          applyTimedLyrics(lrcLyrics);
+          updateActiveLyric(getAudio(player));
+          return;
+        }
+      } catch (error) {
+        // Editable LRC files are the primary source; plain text remains the fallback below.
+      }
+    }
+
     const timedLyrics = parseTimedLyricsDataset(player);
     if (timedLyrics.length) {
-      lyricEntries = timedLyrics.map((entry) => ({ type: entry.type || 'line', text: entry.text }));
-      lyricTiming = timedLyrics.map((entry, index) => ({ index, time: entry.time }));
-      renderLyrics();
+      applyTimedLyrics(timedLyrics);
+      updateActiveLyric(getAudio(player));
       return;
     }
 
     const lyricsPath = player.dataset.trackLyrics || '';
-    const resolvedLyricsPath = resolveSiteAssetPath(lyricsPath);
-    if (!resolvedLyricsPath) {
+    if (!resolveSiteAssetPath(lyricsPath)) {
       lyricEntries = [];
       lyricTiming = [];
       setLyricsMessage('Lyrics unavailable for this track.');
@@ -3128,16 +3221,10 @@ if (musicPlayers.length) {
     }
 
     try {
-      if (!lyricsCache.has(resolvedLyricsPath)) {
-        const response = await fetch(resolvedLyricsPath, { cache: 'force-cache' });
-        if (!response.ok) throw new Error(`Lyrics request failed: ${response.status}`);
-        lyricsCache.set(resolvedLyricsPath, await response.text());
-      }
+      const fallbackLyrics = await fetchCachedText(lyricsPath);
       if (currentLyricsPlayer !== player) return;
-      lyricEntries = parseLyricText(lyricsCache.get(resolvedLyricsPath));
-      const audio = getAudio(player);
-      lyricTiming = estimateLyricTiming(lyricEntries, getSafeDuration(audio, getFallbackDuration(player)));
-      renderLyrics();
+      applyFallbackLyrics(fallbackLyrics, player);
+      updateActiveLyric(getAudio(player));
     } catch (error) {
       if (currentLyricsPlayer !== player) return;
       lyricEntries = [];
@@ -3149,9 +3236,9 @@ if (musicPlayers.length) {
   const updateActiveLyric = (audio) => {
     if (!lyricsScroll || activeLyricsTab !== 'lyrics' || !lyricTiming.length || !audio) return;
     const currentTime = Number(audio.currentTime) || 0;
-    let nextIndex = lyricTiming[0].index;
+    let nextIndex = -1;
     for (const timing of lyricTiming) {
-      if (currentTime + 0.35 >= timing.time) nextIndex = timing.index;
+      if (currentTime >= timing.time) nextIndex = timing.index;
       else break;
     }
     if (nextIndex === activeLyricIndex) return;
@@ -4385,6 +4472,16 @@ if (musicPlayers.length) {
         }
       });
 
+      ['seeking', 'seeked'].forEach((eventName) => {
+        audio.addEventListener(eventName, () => {
+          if (activePlayer === musicPlayer) {
+            syncMiniProgress(audio);
+            syncExpandedProgress(audio);
+            updateActiveLyric(audio);
+          }
+        });
+      });
+
       audio.addEventListener('play', () => {
         musicPlayer.classList.add('is-playing');
         showMiniPlayer(musicPlayer);
@@ -4554,6 +4651,7 @@ if (musicPlayers.length) {
       if (commit || !isSeekingWithPointer) {
         audio.currentTime = nextTime;
         syncMiniProgress(audio);
+        updateActiveLyric(audio);
         persistPlayerState();
       }
     };
