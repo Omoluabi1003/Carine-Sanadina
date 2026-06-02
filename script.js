@@ -3160,6 +3160,7 @@ if (musicPlayers.length) {
     expandedPlayerCard?.classList.toggle('is-lyrics-expanded', isExpanded);
     lyricsPanel?.classList.toggle('is-lyrics-expanded', isExpanded);
     document.body.classList.toggle('lyrics-expanded-open', isExpanded);
+    document.body.classList.toggle('lyrics-expanded', isExpanded);
 
     if (lyricsExpandToggle) {
       lyricsExpandToggle.hidden = !canExpandLyrics;
