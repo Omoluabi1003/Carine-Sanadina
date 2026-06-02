@@ -545,16 +545,17 @@
 
       <aside class="mini-player" data-mini-player aria-label="Current track mini player" aria-hidden="true" data-i18n-aria-label="mini.label">
         <div class="mini-player-shell">
-          <img class="mini-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mini-cover />
-          <div class="mini-player-meta">
-            <p data-mini-title data-i18n="mini.noTrack">No track selected</p>
-            <span data-mini-artist>Carine Sanadina</span>
+          <div class="mini-player-row mini-player-track-row">
+            <img class="mini-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mini-cover />
+            <div class="mini-player-meta">
+              <span class="mini-player-kicker" data-i18n="music.nowPlaying">Now playing</span>
+              <p data-mini-title data-i18n="mini.noTrack">No track selected</p>
+              <span data-mini-artist>Carine Sanadina</span>
+            </div>
+            <button class="mini-expand" type="button" data-mini-expand aria-expanded="false" aria-controls="mobile-player-sheet" data-i18n="mini.expand">Expand</button>
           </div>
-          <button class="track-play-toggle mini-toggle" type="button" data-mini-toggle aria-label="Play or pause current track" data-i18n-aria-label="mini.toggleLabel">
-            <span class="play-icon" aria-hidden="true"></span>
-          </button>
-          <button class="mini-expand" type="button" data-mini-expand aria-expanded="false" aria-controls="mobile-player-sheet" data-i18n="mini.expand">Expand</button>
-          <div class="mini-time" aria-live="off">
+
+          <div class="mini-player-row mini-time" aria-live="off">
             <span data-mini-current>0:00</span>
             <label class="sr-only" for="mini-player-progress" data-i18n="mini.progress">Current track progress</label>
             <input
@@ -572,7 +573,21 @@
             />
             <span data-mini-duration>0:00</span>
           </div>
-          <div class="mini-volume">
+
+          <div class="mini-player-row mini-controls-row">
+            <button class="control-chip mini-control-chip" type="button" data-mini-shuffle aria-pressed="false" data-i18n="music.shuffle">Shuffle</button>
+            <button class="track-play-toggle mini-toggle" type="button" data-mini-toggle aria-label="Play or pause current track" data-i18n-aria-label="mini.toggleLabel">
+              <span class="play-icon" aria-hidden="true"></span>
+            </button>
+            <button class="control-chip mini-control-chip" type="button" data-mini-repeat aria-pressed="false" data-repeat-mode="off" data-i18n="music.repeatOff">Repeat Off</button>
+          </div>
+
+          <div class="mini-player-row mini-visualizer" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+
+          <div class="mini-player-row mini-volume">
             <span aria-hidden="true" data-i18n="mini.volumeShort">Vol</span>
             <label class="sr-only" for="mini-player-volume" data-i18n="mini.volume">Current track volume</label>
             <input
