@@ -4326,6 +4326,7 @@ html.splash-ready body > :not(.cinematic-splash) {
   z-index: 2147483000;
   display: grid;
   place-items: center;
+  min-height: 100vh;
   min-height: 100svh;
   padding: max(22px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
   overflow: hidden;
@@ -4343,6 +4344,14 @@ html.splash-ready body > :not(.cinematic-splash) {
     visibility 0s linear 860ms;
   isolation: isolate;
   contain: layout paint style;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@supports (min-height: 100dvh) {
+  .cinematic-splash { min-height: 100dvh; }
 }
 
 .cinematic-splash::before {
@@ -4383,8 +4392,7 @@ html.splash-ready body > :not(.cinematic-splash) {
   aspect-ratio: 1;
   border-radius: 999px;
   background: radial-gradient(circle, rgba(96, 165, 250, 0.38), rgba(74, 140, 255, 0.14) 38%, transparent 68%);
-  filter: blur(12px);
-  opacity: 0.62;
+  opacity: 0.46;
   transform: translate3d(0, 0, 0);
   will-change: transform, opacity;
 }
@@ -4418,8 +4426,8 @@ html.splash-ready body > :not(.cinematic-splash) {
   box-shadow:
     0 34px 110px rgba(0, 8, 24, 0.46),
     inset 0 1px 0 rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(24px) saturate(1.22);
-  -webkit-backdrop-filter: blur(24px) saturate(1.22);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   transform: translate3d(0, 8px, 0) scale(0.985);
   animation: splashCardEnter 900ms cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards;
 }
@@ -4492,61 +4500,80 @@ html.splash-ready body > :not(.cinematic-splash) {
 .splash-quotes span:nth-child(3) { animation-delay: 4s; }
 .splash-quotes span:nth-child(4) { animation-delay: 6s; }
 
-.splash-wave-bars.music-visualizer {
-  width: min(280px, 78vw);
-  min-width: 0;
-  min-height: 76px;
+.splash-wave-bars {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: min(320px, 82vw);
+  min-width: 240px;
   height: 76px;
+  min-height: 76px;
   margin-top: clamp(18px, 4vw, 26px);
   padding: 16px 18px;
-  gap: 7px;
+  gap: 6px;
+  overflow: hidden;
   border: 1px solid rgba(234, 211, 162, 0.14);
   border-radius: 999px;
   background:
-    linear-gradient(180deg, rgba(255, 248, 238, 0.08), transparent 18%, rgba(96, 165, 250, 0.08) 100%),
-    repeating-linear-gradient(90deg, rgba(234, 211, 162, 0.07) 0 1px, transparent 1px 22px),
-    radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.28), transparent 56%),
+    linear-gradient(180deg, rgba(255, 248, 238, 0.08), rgba(96, 165, 250, 0.08)),
     linear-gradient(180deg, rgba(8, 17, 32, 0.84), rgba(16, 35, 71, 0.66));
   box-shadow:
-    inset 0 0 0 1px rgba(234, 242, 255, 0.14),
-    inset 0 18px 34px rgba(96, 165, 250, 0.08),
-    0 18px 44px rgba(0, 8, 24, 0.22),
-    0 0 42px rgba(74, 140, 255, 0.14);
+    inset 0 0 0 1px rgba(234, 242, 255, 0.12),
+    0 14px 34px rgba(0, 8, 24, 0.2);
+  opacity: 1;
+  visibility: visible;
+  contain: layout paint style;
+  isolation: isolate;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-.splash-wave-bars.music-visualizer::before {
-  opacity: 1;
+.splash-wave-bars::before {
+  content: "";
+  position: absolute;
   inset: 50% 9% auto;
   height: 1px;
-  border: 0;
+  border-radius: 999px;
   background: linear-gradient(90deg, transparent, rgba(234, 211, 162, 0.42), rgba(255, 248, 238, 0.72), rgba(96, 165, 250, 0.48), transparent);
-  box-shadow: 0 0 18px rgba(96, 165, 250, 0.24), 0 0 12px rgba(234, 211, 162, 0.16);
+  opacity: 0.9;
+  pointer-events: none;
 }
 
-.splash-wave-bars.music-visualizer::after {
-  opacity: 0.62;
-  inset: auto 12% 9%;
-  height: 26%;
+.splash-wave-bars::after {
+  content: "";
+  position: absolute;
+  inset: auto 14% 10%;
+  height: 18%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 0%, rgba(96, 165, 250, 0.26), rgba(234, 211, 162, 0.1) 42%, transparent 72%);
-  filter: blur(9px);
+  background: radial-gradient(ellipse at 50% 0%, rgba(96, 165, 250, 0.22), rgba(234, 211, 162, 0.08) 46%, transparent 74%);
+  opacity: 0.62;
+  pointer-events: none;
 }
 
-.splash-wave-bars.music-visualizer span {
-  width: clamp(5px, 1.5vw, 9px);
-  --bar-opacity: 0.82;
-  --bar-glow: 14px;
-  background: linear-gradient(180deg, rgba(255, 248, 238, 0.98), #60A5FA 42%, #4A8CFF 74%, rgba(234, 211, 162, 0.9) 100%);
-  box-shadow:
-    0 0 var(--bar-glow) rgba(96, 165, 250, 0.52),
-    0 0 calc(var(--bar-glow) * 1.55) rgba(74, 140, 255, 0.24),
-    0 0 calc(var(--bar-glow) * 0.72) rgba(234, 211, 162, 0.28);
+.splash-wave-bars span {
+  display: block;
+  flex: 0 0 clamp(5px, 1.4vw, 8px);
+  width: clamp(5px, 1.4vw, 8px);
+  height: 100%;
+  min-height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 248, 238, 0.98), #60A5FA 48%, #4A8CFF 78%, rgba(234, 211, 162, 0.9));
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.36);
+  opacity: 0.55;
+  transform: translate3d(0, 0, 0) scaleY(var(--splash-bar-start, 0.36));
+  -webkit-transform: translate3d(0, 0, 0) scaleY(var(--splash-bar-start, 0.36));
+  transform-origin: bottom center;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-.splash-wave-bars.music-visualizer.is-idle span {
-  animation: splashBarDance 2.85s cubic-bezier(0.42, 0, 0.2, 1) var(--splash-delay, 0s) infinite;
-  opacity: var(--bar-opacity);
-  transform: scaleY(var(--splash-bar, 0.5));
+.cinematic-splash.splash-ready .splash-wave-bars span {
+  animation: splashBarPulse var(--splash-bar-duration, 1.28s) cubic-bezier(0.42, 0, 0.2, 1) var(--splash-bar-delay, 0s) infinite;
 }
 
 .splash-status {
@@ -4652,30 +4679,32 @@ html.splash-ready body > :not(.cinematic-splash) {
 }
 
 @keyframes splashQuoteCycle {
-  0%, 8% { opacity: 0; transform: translate3d(0, 12px, 0); filter: blur(5px); }
-  12%, 24% { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
-  31%, 100% { opacity: 0; transform: translate3d(0, -10px, 0); filter: blur(5px); }
+  0%, 8% { opacity: 0; transform: translate3d(0, 12px, 0); }
+  12%, 24% { opacity: 1; transform: translate3d(0, 0, 0); }
+  31%, 100% { opacity: 0; transform: translate3d(0, -10px, 0); }
 }
 
-@keyframes splashBarDance {
-  0%, 100% { opacity: 0.62; transform: scaleY(calc(var(--splash-bar, 0.5) * 0.78)); filter: saturate(0.96); }
-  18% { opacity: 0.92; transform: scaleY(var(--splash-bar-peak, 1)); filter: saturate(1.18); }
-  38% { opacity: 0.76; transform: scaleY(calc(var(--splash-bar, 0.5) * 1.08)); filter: saturate(1.04); }
-  58% { opacity: 1; transform: scaleY(calc(var(--splash-bar-peak, 1) * 0.86)); filter: saturate(1.22); }
-  78% { opacity: 0.72; transform: scaleY(calc(var(--splash-bar, 0.5) * 0.92)); filter: saturate(1); }
+@keyframes splashBarPulse {
+  0%, 100% { opacity: 0.55; transform: translate3d(0, 0, 0) scaleY(0.25); -webkit-transform: translate3d(0, 0, 0) scaleY(0.25); }
+  50% { opacity: 1; transform: translate3d(0, 0, 0) scaleY(1); -webkit-transform: translate3d(0, 0, 0) scaleY(1); }
+}
+
+@keyframes splashReducedBarPulse {
+  0%, 100% { opacity: 0.34; transform: translate3d(0, 0, 0) scaleY(0.32); -webkit-transform: translate3d(0, 0, 0) scaleY(0.32); }
+  50% { opacity: 0.48; transform: translate3d(0, 0, 0) scaleY(0.46); -webkit-transform: translate3d(0, 0, 0) scaleY(0.46); }
 }
 
 @keyframes splashStatusCycle {
-  0%, 7% { opacity: 0; transform: translate3d(0, 6px, 0); filter: blur(4px); }
-  11%, 28% { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
-  34%, 100% { opacity: 0; transform: translate3d(0, -6px, 0); filter: blur(4px); }
+  0%, 7% { opacity: 0; transform: translate3d(0, 6px, 0); }
+  11%, 28% { opacity: 1; transform: translate3d(0, 0, 0); }
+  34%, 100% { opacity: 0; transform: translate3d(0, -6px, 0); }
 }
 
 @media (max-width: 640px) {
   .cinematic-splash { padding-inline: 16px; }
   .splash-card { border-radius: 30px; }
-  .splash-ambient { filter: blur(6px); opacity: 0.48; }
-  .splash-wave-bars.music-visualizer { height: 66px; min-height: 66px; padding: 14px 16px; }
+  .splash-ambient { opacity: 0.42; }
+  .splash-wave-bars { height: 66px; min-height: 66px; min-width: min(240px, 78vw); padding: 14px 14px; gap: 5px; }
 }
 
 @keyframes splashReducedLogoReveal {
@@ -4710,8 +4739,7 @@ html.splash-ready body > :not(.cinematic-splash) {
   .cinematic-splash::before,
   .splash-ambient,
   .splash-logo-ring,
-  .splash-quotes span,
-  .splash-wave-bars.music-visualizer span {
+  .splash-quotes span {
     animation: none !important;
   }
 
@@ -4722,7 +4750,6 @@ html.splash-ready body > :not(.cinematic-splash) {
 
   .splash-ambient {
     opacity: 0.2;
-    filter: blur(18px);
     transform: none;
   }
 
@@ -4765,7 +4792,7 @@ html.splash-ready body > :not(.cinematic-splash) {
 
   .splash-status span:first-child { opacity: 1; }
 
-  .splash-wave-bars.music-visualizer {
+  .splash-wave-bars {
     opacity: 0;
     background:
       radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.12), transparent 56%),
@@ -4774,15 +4801,15 @@ html.splash-ready body > :not(.cinematic-splash) {
     animation: splashReducedWaveReveal 5s ease forwards;
   }
 
-  .splash-wave-bars.music-visualizer span {
+  .splash-wave-bars span {
     opacity: 0.34;
-    transform: scaleY(0.36);
+    transform: translate3d(0, 0, 0) scaleY(0.34);
+    -webkit-transform: translate3d(0, 0, 0) scaleY(0.34);
     box-shadow: none;
   }
 
-  .splash-wave-bars.music-visualizer.is-idle span {
-    animation: none !important;
-    transform: scaleY(0.36);
+  .cinematic-splash.splash-ready .splash-wave-bars span {
+    animation: splashReducedBarPulse 2.8s ease-in-out var(--splash-bar-delay, 0s) infinite !important;
   }
 
   .splash-enter-button {
