@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-01-chatbot-position';
+const APP_VERSION = 'carine-site-2026-06-01-ios-webkit-visualizer-audio';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -2807,8 +2807,13 @@ if (musicPlayers.length) {
   const VISUALIZER_STYLE_STORAGE_KEY = 'carine-sanadina-visualizer-style';
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
-  const isIosSafari = /iP(ad|hone|od)/.test(window.navigator.userAgent)
-    || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+  const userAgent = window.navigator.userAgent || '';
+  const platform = window.navigator.platform || '';
+  const isAppleTouchDevice = /iP(ad|hone|od)/.test(userAgent)
+    || (platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+  const isWebKitEngine = /AppleWebKit/i.test(userAgent) && !/Android/i.test(userAgent);
+  const isIosWebKit = isAppleTouchDevice && isWebKitEngine;
+  const isIosSafari = isIosWebKit;
   const shuffleButton = document.querySelector('[data-shuffle-toggle]');
   const repeatButton = document.querySelector('[data-repeat-toggle]');
   const nextButton = document.querySelector('[data-next-track]');
@@ -2832,12 +2837,32 @@ if (musicPlayers.length) {
   const isAudioDebugEnabled = ['localhost', '127.0.0.1', ''].includes(window.location.hostname)
     || new URLSearchParams(window.location.search).has('debugAudio');
 
+  const collectAudioDiagnostics = (audio = activePlayer ? getAudio(activePlayer) : null) => ({
+    platform,
+    userAgent,
+    maxTouchPoints: window.navigator.maxTouchPoints || 0,
+    isAppleTouchDevice,
+    isIosWebKit,
+    visibilityState: document.visibilityState,
+    audioContextState: getAudioContextState(),
+    audioReadyState: audio?.readyState ?? 'none',
+    audioPaused: audio?.paused ?? true,
+    audioEnded: audio?.ended ?? false,
+    audioCurrentTime: Number.isFinite(audio?.currentTime) ? Math.round(audio.currentTime * 1000) / 1000 : 0,
+    analyserFlatFrames: silentAnalyzerFrames,
+    visualizerWidth: visualizerCssWidth,
+    visualizerHeight: visualizerCssHeight,
+    activeVisualizationMode: selectedVisualizationStyle,
+    renderedVisualizationMode: analyserFallbackActive && isIosWebKit ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle,
+    fallbackActive: analyserFallbackActive
+  });
+
   const logAudioDiagnostics = (event, details = {}) => {
     if (!isAudioDebugEnabled || !window.console || typeof window.console.info !== 'function') {
       return;
     }
 
-    window.console.info('[music audio]', { event, ...details });
+    window.console.info('[music audio]', { event, ...collectAudioDiagnostics(details.audio), ...details });
   };
 
   const getVerifiedAudioSource = (player) => (player?.dataset.audioSrc || '').trim();
@@ -2858,6 +2883,9 @@ if (musicPlayers.length) {
     audio.crossOrigin = 'anonymous';
     audio.setAttribute('crossorigin', 'anonymous');
     audio.preload = 'metadata';
+    audio.playsInline = true;
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
 
     if (audio.getAttribute('src') !== verifiedSource) {
       audio.src = verifiedSource;
@@ -3046,7 +3074,7 @@ if (musicPlayers.length) {
   const waveformPoints = new Float32Array(WAVEFORM_UNIT_COUNT);
   const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
   const mediaSourceNodes = new WeakMap();
-  const sourceConnectionState = new WeakMap();
+  let sourceConnectionState = new WeakMap();
   const frequencyBinCount = 128;
   const frequencyData = new Uint8Array(frequencyBinCount);
   let sharedAudioContext = null;
@@ -3201,18 +3229,27 @@ if (musicPlayers.length) {
 
   const sampleAudioBands = (time = 0, useIdle = false, useBeatFallback = false) => {
     if (sharedAnalyser && !useIdle && !useBeatFallback) {
-      sharedAnalyser.getByteFrequencyData(frequencyData);
-      if (typeof sharedAnalyser.getByteTimeDomainData === 'function') {
-        sharedAnalyser.getByteTimeDomainData(waveformData);
+      try {
+        sharedAnalyser.getByteFrequencyData(frequencyData);
+        if (typeof sharedAnalyser.getByteTimeDomainData === 'function') {
+          sharedAnalyser.getByteTimeDomainData(waveformData);
+        }
+      } catch (error) {
+        analyserFallbackActive = true;
+        warnAnalyzerFallback(error?.message || error);
+        return sampleAudioBands(time, useIdle, true);
       }
     } else {
       const seconds = time / 1000;
-      const beat = useBeatFallback ? Math.pow((Math.sin(seconds * Math.PI * 2.15) + 1) / 2, 2.4) : 0;
-      const breath = useBeatFallback ? 28 + beat * 126 : 18;
-      const movement = useBeatFallback ? 0.18 : 0.42;
+      const trackIndex = Math.max(0, activePlayer ? musicPlayers.indexOf(activePlayer) : 0);
+      const styleSeed = Math.max(1, VISUALIZATION_STYLES.findIndex((style) => style.id === selectedVisualizationStyle) + 1);
+      const beat = useBeatFallback ? Math.pow((Math.sin((seconds * (2.05 + trackIndex * 0.06)) + styleSeed) + 1) / 2, 2.35) : 0;
+      const pulse = useBeatFallback ? Math.pow((Math.sin((seconds * 4.15) + trackIndex * 0.7) + 1) / 2, 3.2) : 0;
+      const breath = useBeatFallback ? 34 + beat * 112 + pulse * 46 : 18;
+      const movement = useBeatFallback ? 0.18 + styleSeed * 0.01 : 0.42;
       for (let index = 0; index < frequencyData.length; index += 1) {
         const wave = Math.sin((time / (useBeatFallback ? 210 : 680)) + index * movement);
-        const harmonic = Math.sin((time / 390) + index * 0.11) * (useBeatFallback ? 22 : 10);
+        const harmonic = Math.sin((time / (340 + trackIndex * 23)) + index * (0.11 + styleSeed * 0.005)) * (useBeatFallback ? 24 : 10);
         const taper = 1 - (index / frequencyData.length) * 0.54;
         frequencyData[index] = Math.round(Math.min(255, Math.max(0, (breath + ((wave + 1) * 26) + harmonic) * taper)));
         waveformData[index] = Math.round(128 + Math.sin((time / (useBeatFallback ? 145 : 520)) + index * 0.24) * (useBeatFallback ? 46 : 18));
@@ -3260,7 +3297,7 @@ if (musicPlayers.length) {
 
     visualizerMode = state;
     selectedVisualizationStyle = normalizeVisualizationStyle(selectedVisualizationStyle);
-    const safeStyle = analyserFallbackActive && isIosSafari ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
+    const safeStyle = analyserFallbackActive && isIosWebKit ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
     const nextThemeKey = [safeStyle, analyserFallbackActive, state, visualizerEnabled, reduceMotion].join('|');
 
     if (nextThemeKey === visualizerLastThemeKey) {
@@ -3289,7 +3326,7 @@ if (musicPlayers.length) {
     const centerX = width / 2;
     const centerY = height / 2;
     const timeSeconds = time / 1000;
-    const currentStyle = analyserFallbackActive && isIosSafari ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
+    const currentStyle = analyserFallbackActive && isIosWebKit ? DEFAULT_VISUALIZATION_STYLE : selectedVisualizationStyle;
     const barCount = WAVEFORM_UNIT_COUNT;
     const gap = Math.max(3, width / 190);
     const barWidth = Math.max(3, Math.min(12, (width * 0.86) / barCount - gap));
@@ -3427,7 +3464,7 @@ if (musicPlayers.length) {
     setVisualizerTheme(mode);
 
     const tick = (time = 0) => {
-      const mobileFrameInterval = (isCoarsePointerDevice() || isIosSafari) ? 30 : 0;
+      const mobileFrameInterval = (isCoarsePointerDevice() || isIosWebKit) ? 33 : 0;
       if (!mobileFrameInterval || !visualizerLastDrawTime || time - visualizerLastDrawTime >= mobileFrameInterval) {
         visualizerLastDrawTime = time;
         renderVisualizationFrame(sampleAudioBands(time, true), time, mode);
@@ -3449,7 +3486,7 @@ if (musicPlayers.length) {
     sharedAudioContext = null;
     sharedAnalyser = null;
     analyserConnectedToDestination = false;
-    sourceConnectionState.clear?.();
+    sourceConnectionState = new WeakMap();
   };
 
   const ensureAudioContextForGesture = async ({ allowCreate = true, allowResume = true } = {}) => {
@@ -3557,7 +3594,7 @@ if (musicPlayers.length) {
     visualizerLastDrawTime = 0;
     lastAnalyserAudioTime = Math.max(0, audio?.currentTime || 0);
     silentAnalyzerFrames = 0;
-    analyserFallbackActive = !sharedAnalyser;
+    analyserFallbackActive = !sharedAnalyser || Boolean(audio?.dataset.analyserBlocked);
     if (analyserFallbackActive) {
       warnAnalyzerFallback('Analyser is not ready while audio is playing.');
     }
@@ -3574,7 +3611,12 @@ if (musicPlayers.length) {
 
       const fallbackTime = Math.max(0, audio.currentTime || 0) * 1000;
       const drawTime = analyserFallbackActive ? fallbackTime : time;
-      const mobileFrameInterval = (isCoarsePointerDevice() || isIosSafari) ? 30 : 0;
+      const mobileFrameInterval = (isCoarsePointerDevice() || isIosWebKit) ? 33 : 0;
+
+      if (document.hidden) {
+        visualizerFrameId = window.requestAnimationFrame(tick);
+        return;
+      }
 
       if (mobileFrameInterval && visualizerLastDrawTime && time - visualizerLastDrawTime < mobileFrameInterval) {
         visualizerFrameId = window.requestAnimationFrame(tick);
@@ -3599,9 +3641,11 @@ if (musicPlayers.length) {
 
         if (audioAdvanced && (maxFrequency === 0 || maxFrequency - minFrequency < 2)) {
           silentAnalyzerFrames += 1;
-          if (silentAnalyzerFrames > 30) {
+          if (silentAnalyzerFrames >= 30) {
             analyserFallbackActive = true;
+            audio.dataset.analyserBlocked = 'true';
             warnAnalyzerFallback('Frequency data stayed flat while audio was playing.');
+            setVisualizerFallback(true);
             setVisualizerTheme('playing');
           }
         } else if (maxFrequency > 0 && maxFrequency - minFrequency >= 2) {
@@ -3609,7 +3653,14 @@ if (musicPlayers.length) {
         }
       }
 
-      renderVisualizationFrame(bands, drawTime, 'playing');
+      try {
+        renderVisualizationFrame(bands, drawTime, 'playing');
+      } catch (error) {
+        analyserFallbackActive = true;
+        audio.dataset.analyserBlocked = 'true';
+        warnAnalyzerFallback(error?.message || error);
+        renderVisualizationFrame(sampleAudioBands(fallbackTime, false, true), fallbackTime, 'playing');
+      }
       visualizerFrameId = window.requestAnimationFrame(tick);
     };
 
@@ -3628,10 +3679,23 @@ if (musicPlayers.length) {
   setupVisualizationStyleSelector();
   setVisualizerFallback();
   runIdleVisualizer('idle');
-  window.addEventListener('resize', resizeVisualizerSurface, { passive: true });
-  window.addEventListener('orientationchange', () => window.setTimeout(resizeVisualizerSurface, 180), { passive: true });
+  let visualizerResizeTimer = 0;
+  const scheduleVisualizerResize = (delay = 80) => {
+    window.clearTimeout(visualizerResizeTimer);
+    visualizerResizeTimer = window.setTimeout(resizeVisualizerSurface, delay);
+  };
+  window.addEventListener('resize', () => scheduleVisualizerResize(80), { passive: true });
+  window.addEventListener('orientationchange', () => scheduleVisualizerResize(180), { passive: true });
+  window.addEventListener('pageshow', () => {
+    scheduleVisualizerResize(40);
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    if (visualizerEnabled && audio && !audio.paused && !audio.ended) {
+      startVisualizer(audio);
+    }
+  });
   document.addEventListener('visibilitychange', async () => {
     resizeVisualizerSurface();
+    logAudioDiagnostics('visibilitychange');
     if (!document.hidden && visualizerEnabled && activePlayer) {
       const audio = getAudio(activePlayer);
       if (audio && !audio.paused && !audio.ended) {
@@ -3659,6 +3723,49 @@ if (musicPlayers.length) {
     return playToggle && playToggle.dataset.trackKey
       ? translate(playToggle.dataset.trackKey)
       : player.dataset.trackTitle;
+  };
+
+  const updateMediaSessionPosition = (audio = activePlayer ? getAudio(activePlayer) : null) => {
+    if (!('mediaSession' in navigator) || typeof navigator.mediaSession.setPositionState !== 'function' || !audio) {
+      return;
+    }
+
+    const duration = getSafeDuration(audio, activePlayer ? getFallbackDuration(activePlayer) : 0);
+    if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(audio.currentTime)) {
+      return;
+    }
+
+    try {
+      navigator.mediaSession.setPositionState({
+        duration,
+        playbackRate: Number.isFinite(audio.playbackRate) && audio.playbackRate > 0 ? audio.playbackRate : 1,
+        position: Math.min(Math.max(audio.currentTime, 0), duration)
+      });
+    } catch (error) {
+      // Some browsers reject position updates until metadata is visible.
+    }
+  };
+
+  const updateMediaSessionMetadata = (player = activePlayer) => {
+    if (!player || !('mediaSession' in navigator) || typeof window.MediaMetadata !== 'function') {
+      return;
+    }
+
+    const audio = getAudio(player);
+    const artworkSrc = player.dataset.trackCover || '';
+
+    try {
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: getTrackTitle(player),
+        artist: player.dataset.trackArtist || 'Carine Sanadina',
+        album: 'Carine Sanadina',
+        artwork: artworkSrc ? [{ src: artworkSrc, sizes: '512x512', type: 'image/png' }] : []
+      });
+      navigator.mediaSession.playbackState = audio && !audio.paused && !audio.ended ? 'playing' : 'paused';
+      updateMediaSessionPosition(audio);
+    } catch (error) {
+      logAudioDiagnostics('media-session-metadata-failed', { message: error?.message || String(error) });
+    }
   };
 
   updateVisualizerToggleUI();
@@ -3759,6 +3866,7 @@ if (musicPlayers.length) {
     setRangeFill(mini.volume, mini.volume.value, mini.volume.max);
     syncMiniProgress(audio);
     updateToggle(mini.toggle, audio, getTrackTitle(player));
+    updateMediaSessionMetadata(player);
   };
 
   const resetMiniPlayer = () => {
@@ -3786,6 +3894,9 @@ if (musicPlayers.length) {
     mini.progress.setAttribute('aria-disabled', 'true');
     setRangeFill(mini.progress, 0, 100);
     updateToggle(mini.toggle, null, translate('mini.noTrack'));
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = 'none';
+    }
   };
 
   const setPlayerReadyState = (player, isReady) => {
@@ -3894,6 +4005,7 @@ if (musicPlayers.length) {
       }
 
       await audio.play();
+      updateMediaSessionMetadata(player);
       logAudioDiagnostics('play-succeeded', {
         track: getTrackTitle(player),
         currentSrc: audio.currentSrc || audio.src,
@@ -3960,6 +4072,44 @@ if (musicPlayers.length) {
     playAudio(nextPlayer, { isAutoAdvance: true });
   };
 
+  const setMediaSessionActionHandler = (action, handler) => {
+    if (!('mediaSession' in navigator) || typeof navigator.mediaSession.setActionHandler !== 'function') {
+      return;
+    }
+
+    try {
+      navigator.mediaSession.setActionHandler(action, handler);
+    } catch (error) {
+      logAudioDiagnostics('media-session-action-unsupported', { action, message: error?.message || String(error) });
+    }
+  };
+
+  setMediaSessionActionHandler('play', () => {
+    if (activePlayer) playAudio(activePlayer);
+  });
+  setMediaSessionActionHandler('pause', () => {
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    if (audio) {
+      userStoppedPlayback = true;
+      audio.pause();
+    }
+  });
+  setMediaSessionActionHandler('previoustrack', () => {
+    if (!activePlayer) return;
+    const currentIndex = musicPlayers.indexOf(activePlayer);
+    const previousPlayer = musicPlayers[Math.max(0, currentIndex - 1)] || musicPlayers[0];
+    if (previousPlayer) playAudio(previousPlayer);
+  });
+  setMediaSessionActionHandler('nexttrack', () => playNextTrack(activePlayer || musicPlayers[0]));
+  setMediaSessionActionHandler('seekto', (details) => {
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    if (!audio || !Number.isFinite(details.seekTime)) return;
+    const duration = getSafeDuration(audio, getFallbackDuration(activePlayer));
+    audio.currentTime = duration > 0 ? Math.min(Math.max(details.seekTime, 0), duration) : Math.max(details.seekTime, 0);
+    syncMiniProgress(audio);
+    updateMediaSessionPosition(audio);
+  });
+
   musicPlayers.forEach((musicPlayer) => {
     const audio = getAudio(musicPlayer);
     const playToggle = getPlayToggle(musicPlayer);
@@ -4004,6 +4154,7 @@ if (musicPlayers.length) {
       audio.addEventListener('timeupdate', () => {
         if (activePlayer === musicPlayer) {
           syncMiniProgress(audio);
+          updateMediaSessionPosition(audio);
         }
       });
 
@@ -4013,6 +4164,7 @@ if (musicPlayers.length) {
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
         updateVisualizerToggleUI();
+        updateMediaSessionMetadata(musicPlayer);
         persistPlayerState();
 
         if (miniPlayer) {
@@ -4033,6 +4185,10 @@ if (musicPlayers.length) {
 
         stopVisualizer(audio.ended ? 'idle' : 'paused');
         updateVisualizerToggleUI();
+        if ('mediaSession' in navigator && activePlayer === musicPlayer) {
+          navigator.mediaSession.playbackState = 'paused';
+          updateMediaSessionPosition(audio);
+        }
         persistPlayerState();
 
         if (activePlayer === musicPlayer && miniPlayer) {
@@ -4058,6 +4214,9 @@ if (musicPlayers.length) {
 
         stopVisualizer('idle');
         updateVisualizerToggleUI();
+        if ('mediaSession' in navigator && activePlayer === musicPlayer) {
+          navigator.mediaSession.playbackState = 'none';
+        }
         persistPlayerState();
 
         if (shouldAdvance) {
@@ -4081,6 +4240,10 @@ if (musicPlayers.length) {
 
         stopVisualizer('idle');
         updateVisualizerToggleUI();
+        if ('mediaSession' in navigator && activePlayer === musicPlayer) {
+          navigator.mediaSession.playbackState = 'paused';
+          updateMediaSessionPosition(audio);
+        }
         persistPlayerState();
 
         if (activePlayer === musicPlayer && miniPlayer) {
