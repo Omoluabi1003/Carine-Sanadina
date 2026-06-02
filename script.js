@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-02-visualizer-controller';
+const APP_VERSION = 'carine-site-2026-06-02-visualizer-diagnostics';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3234,6 +3234,7 @@ if (musicPlayers.length) {
     : null;
 
   let activePlayer = null;
+  let lastAudioEvent = 'none';
   let userStoppedPlayback = false;
   let isSwitchingTracks = false;
   let shuffleEnabled = false;
@@ -3241,7 +3242,8 @@ if (musicPlayers.length) {
   const PLAYER_STORAGE_KEY = 'carine-sanadina-player-state';
   const VISUALIZER_STORAGE_KEY = 'carine-sanadina-visualizer-enabled';
   const VISUALIZER_STYLE_STORAGE_KEY = 'carine-sanadina-visualizer-style';
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reduceMotion = reduceMotionQuery.matches;
   const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
   const userAgent = window.navigator.userAgent || '';
   const platform = window.navigator.platform || '';
@@ -3250,6 +3252,23 @@ if (musicPlayers.length) {
   const isWebKitEngine = /AppleWebKit/i.test(userAgent) && !/Android/i.test(userAgent);
   const isIosWebKit = isAppleTouchDevice && isWebKitEngine;
   const isIosSafari = isIosWebKit;
+  const browserName = (() => {
+    if (/CriOS/i.test(userAgent)) return 'Chrome iOS';
+    if (/FxiOS/i.test(userAgent)) return 'Firefox iOS';
+    if (/EdgiOS/i.test(userAgent)) return 'Edge iOS';
+    if (/Safari/i.test(userAgent) && !/Chrome|Chromium|Android/i.test(userAgent)) return 'Safari';
+    if (/Chrome|Chromium/i.test(userAgent)) return 'Chrome';
+    if (/Firefox/i.test(userAgent)) return 'Firefox';
+    return 'Unknown';
+  })();
+  const safariVersion = (() => {
+    const match = userAgent.match(/Version\/([\d.]+).*Safari/i);
+    return match ? match[1] : 'unavailable';
+  })();
+  const iosVersion = (() => {
+    const match = userAgent.match(/OS ([\d_]+) like Mac OS X/i);
+    return match ? match[1].replace(/_/g, '.') : 'unavailable';
+  })();
   const shuffleButton = document.querySelector('[data-shuffle-toggle]');
   const repeatButton = document.querySelector('[data-repeat-toggle]');
   const nextButton = document.querySelector('[data-next-track]');
@@ -3722,7 +3741,7 @@ if (musicPlayers.length) {
       // Storage can be unavailable in restricted browsing contexts.
     }
 
-    return !reduceMotion && !isCoarsePointerDevice();
+    return !reduceMotion;
   };
 
   const writeVisualizerPreference = (isEnabled) => {
@@ -3788,10 +3807,46 @@ if (musicPlayers.length) {
   const frequencyBinCount = 128;
   const VISUALIZER_DEBUG_STORAGE_KEY = 'carineVisualizerDebug';
   const VISUALIZER_FORCE_MODE_STORAGE_KEY = 'carineVisualizerForceMode';
+  const VISUALIZER_DEBUG_QUERY_KEY = 'visualizerDebug';
+  const isVisualizerDebugEnabled = () => {
+    try {
+      if (new URLSearchParams(window.location.search).get(VISUALIZER_DEBUG_QUERY_KEY) === 'true') return true;
+      return window.localStorage.getItem(VISUALIZER_DEBUG_STORAGE_KEY) === 'true';
+    } catch (error) {
+      return false;
+    }
+  };
 
   const setVisualizerHelper = (message = '') => {
     if (!visualizerHelper) return;
     visualizerHelper.textContent = message;
+  };
+
+  const parseCssScaleY = (transformValue = '') => {
+    if (!transformValue || transformValue === 'none') return null;
+    const matrix3d = transformValue.match(/^matrix3d\(([^)]+)\)$/);
+    if (matrix3d) {
+      const values = matrix3d[1].split(',').map((value) => Number(value.trim()));
+      return Number.isFinite(values[5]) ? values[5] : null;
+    }
+    const matrix = transformValue.match(/^matrix\(([^)]+)\)$/);
+    if (matrix) {
+      const values = matrix[1].split(',').map((value) => Number(value.trim()));
+      return Number.isFinite(values[3]) ? values[3] : null;
+    }
+    return null;
+  };
+
+  const getBlockingRenderStyles = (element) => {
+    if (!element) return ['missing-element'];
+    const computed = window.getComputedStyle(element);
+    const blockers = [];
+    if (computed.display === 'none') blockers.push('display:none');
+    if (computed.visibility === 'hidden' || computed.visibility === 'collapse') blockers.push(`visibility:${computed.visibility}`);
+    if (Number(computed.opacity) <= 0.01) blockers.push(`opacity:${computed.opacity}`);
+    if (computed.clipPath && computed.clipPath !== 'none') blockers.push(`clip-path:${computed.clipPath}`);
+    if ((computed.overflow === 'hidden' || computed.overflowX === 'hidden' || computed.overflowY === 'hidden') && element.getBoundingClientRect().height < 2) blockers.push('overflow-hidden-zero-height');
+    return blockers;
   };
 
   const setupVisualizationStyleSelector = () => {
@@ -3850,6 +3905,7 @@ if (musicPlayers.length) {
       this.lastThemeKey = '';
       this.lastDrawTime = 0;
       this.lastDiagnosticsTime = 0;
+      this.lastReportedFrameCount = 0;
       this.lastAnalyserAudioTime = 0;
       this.flatFrames = 0;
       this.activeFrames = 0;
@@ -3910,7 +3966,7 @@ if (musicPlayers.length) {
 
     isDebugEnabled() {
       try {
-        return window.localStorage.getItem(VISUALIZER_DEBUG_STORAGE_KEY) === 'true';
+        return isVisualizerDebugEnabled();
       } catch (error) {
         return false;
       }
@@ -4438,43 +4494,92 @@ if (musicPlayers.length) {
       context.restore();
     }
 
-    collectDiagnostics(audio = this.activeAudio) {
+    getAnalyserSnapshot() {
+      if (!this.analyser) return { connected: false, variance: 0, average: 0 };
+      try {
+        this.analyser.getByteFrequencyData(this.probeFrequencyData);
+      } catch (error) {
+        return { connected: this.sourceConnected, variance: 0, average: 0, error: error?.message || String(error) };
+      }
+      let min = 255;
+      let max = 0;
+      let total = 0;
+      for (let index = 0; index < this.probeFrequencyData.length; index += 1) {
+        const value = this.probeFrequencyData[index];
+        min = Math.min(min, value);
+        max = Math.max(max, value);
+        total += value;
+      }
       return {
+        connected: this.sourceConnected,
+        variance: max - min,
+        average: Math.round((total / Math.max(1, this.probeFrequencyData.length)) * 100) / 100
+      };
+    }
+
+    collectDiagnostics(audio = this.activeAudio) {
+      const firstBar = this.units[0] || null;
+      const barStyles = firstBar ? window.getComputedStyle(firstBar) : null;
+      const containerRect = this.container?.getBoundingClientRect?.() || { width: 0, height: 0 };
+      const containerStyles = this.container ? window.getComputedStyle(this.container) : null;
+      const analyserSnapshot = this.getAnalyserSnapshot();
+      const transformValue = barStyles?.transform || barStyles?.webkitTransform || 'unavailable';
+      const gpuHints = {
+        transform: Boolean(containerStyles?.transform && containerStyles.transform !== 'none'),
+        translate3d: /translate3d|matrix3d/.test(transformValue) || /translate3d/i.test(firstBar?.style?.transform || ''),
+        willChange: Boolean((barStyles?.willChange && barStyles.willChange !== 'auto') || (containerStyles?.willChange && containerStyles.willChange !== 'auto'))
+      };
+      return {
+        timestamp: new Date().toISOString(),
+        browserPlatform: `${browserName} / ${platform || 'unknown platform'}`,
+        safariVersion,
+        iosVersion,
+        iosDetected: isAppleTouchDevice,
         userAgent,
-        platform,
-        maxTouchPoints: window.navigator.maxTouchPoints || 0,
-        isAppleTouchDevice,
-        isIosWebKit,
-        isIosSafari,
         visualizerEnabled: this.enabled,
-        mode: this.mode,
         selectedVisualizationStyle,
-        forceMode: this.getForceMode() || 'none',
-        currentTrackTitle: this.activeTrackTitle || (activePlayer ? getTrackTitle(activePlayer) : ''),
-        audioPaused: audio?.paused ?? true,
-        audioEnded: audio?.ended ?? false,
+        activeTrackTitle: this.activeTrackTitle || (activePlayer ? getTrackTitle(activePlayer) : ''),
+        audioPlaying: Boolean(audio && !audio.paused && !audio.ended),
         audioCurrentTime: Number.isFinite(audio?.currentTime) ? Math.round(audio.currentTime * 1000) / 1000 : 0,
+        audioDuration: Number.isFinite(audio?.duration) ? Math.round(audio.duration * 1000) / 1000 : 0,
+        lastAudioEvent,
+        visualizerPlayingClassPresent: Boolean(this.container?.classList.contains('visualizer-playing')),
+        animationFrameLoopRunning: Boolean(this.frameId),
+        frameCount: this.frameCount,
+        frameCountIncreasing: this.frameCount > (this.lastReportedFrameCount || 0),
+        containerSize: `${Math.round(containerRect.width)} × ${Math.round(containerRect.height)}`,
+        barCountInDom: this.units.length,
+        firstBarAnimationName: barStyles?.animationName || 'unavailable',
+        firstBarAnimationPlayState: barStyles?.animationPlayState || 'unavailable',
+        firstBarTransform: transformValue,
+        firstBarScaleY: parseCssScaleY(transformValue),
+        prefersReducedMotion: reduceMotionQuery.matches,
         audioContextState: this.getAudioContextState(),
-        sourceNode: this.sourceConnected ? (this.sourceReused ? 'reused' : 'connected') : 'not-connected',
+        analyserConnected: analyserSnapshot.connected,
+        analyserVariance: analyserSnapshot.variance,
+        analyserAverage: analyserSnapshot.average,
         analyserActive: this.analyserActive,
         analyserFlat: this.analyserFlat,
         flatFrames: this.flatFrames,
         activeFrames: this.activeFrames,
-        fallbackActive: this.fallbackActive,
-        animationFrameCount: this.frameCount,
-        barCount: this.units.length,
-        width: this.cssWidth,
-        height: this.cssHeight
+        fallbackModeActive: this.fallbackActive,
+        documentVisibilityState: document.visibilityState,
+        gpuHints,
+        renderBlockers: getBlockingRenderStyles(this.container),
+        mode: this.mode,
+        forceMode: this.getForceMode() || 'none'
       };
     }
 
     logDiagnostics(event = 'state', immediate = false) {
       if (!this.isDebugEnabled() || !window.console?.groupCollapsed) return;
       const now = window.performance.now();
-      if (!immediate && now - this.lastDiagnosticsTime < 2000) return;
+      if (!immediate && now - this.lastDiagnosticsTime < 3000) return;
       this.lastDiagnosticsTime = now;
-      window.console.groupCollapsed(`[music visualizer] ${event}`);
-      window.console.info(this.collectDiagnostics());
+      const diagnostics = this.collectDiagnostics();
+      this.lastReportedFrameCount = this.frameCount;
+      window.console.groupCollapsed(`[music visualizer] ${event} ${diagnostics.timestamp}`);
+      window.console.info(diagnostics);
       window.console.groupEnd();
     }
   }
@@ -4494,6 +4599,132 @@ if (musicPlayers.length) {
   visualizerController = new VisualizerController({ container: visualizerCanvas, note: visualizerFallback });
   visualizerController.setEnabled(visualizerEnabled);
   visualizerController.init();
+
+  const formatDiagnosticValue = (value) => {
+    if (value && typeof value === 'object') return JSON.stringify(value);
+    return String(value ?? 'unavailable');
+  };
+
+  const escapeDiagnosticHtml = (value) => formatDiagnosticValue(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  const setupVisualizerDebugPanel = () => {
+    if (!isVisualizerDebugEnabled() || !visualizerController) return;
+    const panel = document.createElement('aside');
+    panel.className = 'visualizer-debug-panel';
+    panel.setAttribute('aria-live', 'polite');
+    panel.setAttribute('aria-label', 'Visualizer diagnostics');
+    document.body.appendChild(panel);
+
+    const render = () => {
+      const diagnostics = visualizerController.collectDiagnostics(activePlayer ? getAudio(activePlayer) : null);
+      const rows = [
+        ['Browser/platform detected', diagnostics.browserPlatform],
+        ['Safari version', diagnostics.safariVersion],
+        ['iOS version', diagnostics.iosVersion],
+        ['iOS detected', diagnostics.iosDetected],
+        ['Visualizer enabled', diagnostics.visualizerEnabled],
+        ['Selected visualization style', diagnostics.selectedVisualizationStyle],
+        ['Active track title', diagnostics.activeTrackTitle],
+        ['Audio playing', diagnostics.audioPlaying],
+        ['Audio currentTime / duration', `${diagnostics.audioCurrentTime} / ${diagnostics.audioDuration}`],
+        ['Last audio event', diagnostics.lastAudioEvent],
+        ['visualizer-playing class present', diagnostics.visualizerPlayingClassPresent],
+        ['Animation frame loop running', diagnostics.animationFrameLoopRunning],
+        ['Frame count increasing', diagnostics.frameCountIncreasing],
+        ['Visualizer container width × height', diagnostics.containerSize],
+        ['Bar count in DOM', diagnostics.barCountInDom],
+        ['First bar computed animation-name', diagnostics.firstBarAnimationName],
+        ['First bar computed animation-play-state', diagnostics.firstBarAnimationPlayState],
+        ['First bar computed transform', diagnostics.firstBarTransform],
+        ['prefers-reduced-motion detected', diagnostics.prefersReducedMotion],
+        ['AudioContext state if used', diagnostics.audioContextState],
+        ['Analyser connected', diagnostics.analyserConnected],
+        ['Analyser variance / average value if used', `${diagnostics.analyserVariance} / ${diagnostics.analyserAverage}`],
+        ['Fallback mode active', diagnostics.fallbackModeActive],
+        ['document.visibilityState', diagnostics.documentVisibilityState],
+        ['GPU hints detected', diagnostics.gpuHints]
+      ];
+      panel.innerHTML = `<strong>Visualizer diagnostics</strong>${rows.map(([label, value]) => `<div><span>${escapeDiagnosticHtml(label)}</span><b>${escapeDiagnosticHtml(value)}</b></div>`).join('')}`;
+    };
+
+    render();
+    window.setInterval(render, 1000);
+  };
+
+  const collectVisualizerSelfCheck = async (audio, startedAtTime, startedAtFrame, startedAtEvent) => {
+    const firstBar = visualizerController?.units?.[0] || null;
+    const beforeStyles = firstBar ? window.getComputedStyle(firstBar) : null;
+    const beforeTransform = beforeStyles?.transform || beforeStyles?.webkitTransform || '';
+    const beforeHeight = beforeStyles?.height || '';
+    const beforeFrame = visualizerController?.frameCount || 0;
+    await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+    const afterStyles = firstBar ? window.getComputedStyle(firstBar) : null;
+    const afterTransform = afterStyles?.transform || afterStyles?.webkitTransform || '';
+    const afterHeight = afterStyles?.height || '';
+    const afterFrame = visualizerController?.frameCount || 0;
+    const rect = visualizerCanvas?.getBoundingClientRect?.() || { width: 0, height: 0 };
+    const diagnostics = visualizerController?.collectDiagnostics(audio) || {};
+    const blockers = getBlockingRenderStyles(visualizerCanvas);
+    const checks = {
+      audioPlaying: Boolean(audio && !audio.paused && !audio.ended),
+      currentTimeIncreasing: Boolean(audio && audio.currentTime > startedAtTime + 0.05),
+      requestAnimationFrameRunning: afterFrame > Math.max(startedAtFrame, beforeFrame),
+      visualizerPlayingClass: Boolean(visualizerCanvas?.classList.contains('visualizer-playing')),
+      barsPresentInDom: Boolean(visualizerController?.units?.length),
+      firstBarHasActiveCssAnimation: Boolean(afterStyles && afterStyles.animationName !== 'none'),
+      animationPlayStateRunning: Boolean(afterStyles && afterStyles.animationPlayState === 'running'),
+      transformOrHeightChanging: beforeTransform !== afterTransform || beforeHeight !== afterHeight,
+      containerHasSize: rect.width > 0 && rect.height > 0,
+      renderingNotBlocked: blockers.length === 0,
+      reducedMotionNotDisabling: !reduceMotionQuery.matches,
+      audioContextUsable: !['suspended', 'interrupted', 'closed'].includes(visualizerController?.getAudioContextState?.() || 'closed') || diagnostics.fallbackModeActive,
+      analyserNotFlatWhenUsed: !diagnostics.analyserConnected || diagnostics.fallbackModeActive || diagnostics.analyserVariance > 0 || diagnostics.analyserAverage > 0,
+      eventListenersFiring: lastAudioEvent !== startedAtEvent || ['play', 'playing', 'timeupdate'].includes(lastAudioEvent)
+    };
+    const failures = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
+    let likelyFailureCategory = 'other';
+    if (!checks.visualizerPlayingClass) likelyFailureCategory = diagnostics.visualizerEnabled ? 'CSS class not applied' : 'CSS class not applied';
+    else if ((!checks.firstBarHasActiveCssAnimation || !checks.animationPlayStateRunning) && !checks.transformOrHeightChanging) likelyFailureCategory = 'CSS animation disabled';
+    else if (!checks.reducedMotionNotDisabling) likelyFailureCategory = 'prefers-reduced-motion issue';
+    else if (!checks.containerHasSize) likelyFailureCategory = 'zero-height container';
+    else if (blockers.some((blocker) => /display|visibility|opacity/.test(blocker))) likelyFailureCategory = 'display/visibility issue';
+    else if (blockers.some((blocker) => /overflow|clip-path/.test(blocker))) likelyFailureCategory = 'overflow/clipping issue';
+    else if (!checks.requestAnimationFrameRunning) likelyFailureCategory = 'requestAnimationFrame not running';
+    else if (!checks.audioContextUsable) likelyFailureCategory = 'AudioContext suspended';
+    else if (!checks.analyserNotFlatWhenUsed) likelyFailureCategory = 'analyser returning flat/zero data';
+    else if (!checks.eventListenersFiring) likelyFailureCategory = 'event listeners not firing';
+    return { timestamp: new Date().toISOString(), checks, failures, likelyFailureCategory, diagnostics, blockers, beforeTransform, afterTransform, beforeHeight, afterHeight };
+  };
+
+  const runVisualizerSelfChecksAfterPlay = (audio) => {
+    if (!isVisualizerDebugEnabled() || !audio || !visualizerController) return;
+    const startedAtTime = audio.currentTime || 0;
+    const startedAtFrame = visualizerController.frameCount || 0;
+    const startedAtEvent = lastAudioEvent;
+    [800, 1600, 3000].forEach((delay) => {
+      window.setTimeout(async () => {
+        const report = await collectVisualizerSelfCheck(audio, startedAtTime, startedAtFrame, startedAtEvent);
+        if (report.failures.length) {
+          window.console?.groupCollapsed?.(`[music visualizer self-check] ${delay}ms failure ${report.timestamp}`);
+          window.console?.error?.('Failing conditions:', report.failures);
+          window.console?.error?.('Likely failure category:', report.likelyFailureCategory);
+          window.console?.info?.(report);
+          window.console?.groupEnd?.();
+        } else {
+          window.console?.groupCollapsed?.(`[music visualizer self-check] ${delay}ms passed ${report.timestamp}`);
+          window.console?.info?.(report);
+          window.console?.groupEnd?.();
+        }
+      }, delay);
+    });
+  };
+
+  setupVisualizerDebugPanel();
   setupVisualizationStyleSelector();
   let visualizerResizeTimer = 0;
   const scheduleVisualizerResize = (delay = 80) => {
@@ -4937,6 +5168,12 @@ if (musicPlayers.length) {
     const status = musicPlayer.querySelector('[data-audio-status]');
 
     if (audio && musicPlayer.dataset.audioSrc) {
+      ['loadstart', 'loadedmetadata', 'durationchange', 'canplay', 'loadeddata', 'waiting', 'timeupdate', 'seeking', 'seeked', 'play', 'playing', 'pause', 'ended', 'error'].forEach((eventName) => {
+        audio.addEventListener(eventName, () => {
+          lastAudioEvent = eventName;
+        }, { passive: true });
+      });
+
       audio.addEventListener('loadstart', () => {
         if (status) {
           status.textContent = '';
@@ -5000,6 +5237,7 @@ if (musicPlayers.length) {
         if (visualizerEnabled) {
           startVisualizer(audio);
         }
+        runVisualizerSelfChecksAfterPlay(audio);
         updateMediaSessionMetadata(musicPlayer);
         persistPlayerState();
 

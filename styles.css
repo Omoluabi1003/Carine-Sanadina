@@ -5277,3 +5277,48 @@ html.splash-ready body > :not(.cinematic-splash) {
   .contact-paths { justify-content: flex-start; }
   .contact-paths span { width: 100%; text-align: center; }
 }
+
+.visualizer-debug-panel {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 10000;
+  width: min(360px, calc(100vw - 24px));
+  max-height: min(72vh, 620px);
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid rgba(147, 197, 253, 0.42);
+  border-radius: 14px;
+  background: rgba(4, 18, 43, 0.92);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+  color: #eaf2ff;
+  font: 11px/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  pointer-events: none;
+}
+
+.visualizer-debug-panel strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #bfdbfe;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.visualizer-debug-panel div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 8px;
+  padding: 3px 0;
+  border-top: 1px solid rgba(234, 242, 255, 0.08);
+}
+
+.visualizer-debug-panel span {
+  color: rgba(234, 242, 255, 0.72);
+}
+
+.visualizer-debug-panel b {
+  overflow-wrap: anywhere;
+  color: #ffffff;
+  font-weight: 700;
+}
