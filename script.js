@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-02-plain-lyrics';
+const APP_VERSION = 'carine-site-2026-06-02-ios-splash-wave-bars';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -2151,7 +2151,7 @@ const CARINE_SPLASH_MIN_VISIBLE_MS = 8000;
 const CARINE_SPLASH_FIRST_VISIT_MS = 12000;
 const CARINE_SPLASH_RETURN_VISIT_MS = 8000;
 const CARINE_SPLASH_MAX_VISIBLE_MS = 30000;
-const CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS = 5000;
+const CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS = 8000;
 const CARINE_SPLASH_SKIP_REVEAL_MS = 5000;
 
 const readSplashStorage = (key) => {
@@ -2192,6 +2192,25 @@ const waitForSplashDOMReady = () => {
     document.addEventListener('DOMContentLoaded', () => resolve('dom-ready'), { once: true });
   });
 };
+
+const waitForSplashPaint = (splash) => new Promise((resolve) => {
+  if (!splash || splash.dataset.completed === 'true') {
+    resolve('splash-unavailable');
+    return;
+  }
+
+  let settled = false;
+  const finish = () => {
+    if (settled) return;
+    settled = true;
+    splash.classList.add('splash-ready');
+    resolve('splash-painted');
+  };
+
+  const raf = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 16));
+  raf(() => raf(finish));
+  window.setTimeout(finish, 180);
+});
 
 const waitForDocumentFonts = () => {
   if (!document.fonts?.ready) {
@@ -2285,6 +2304,7 @@ const initializeCinematicSplash = () => {
   }
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const animationReady = waitForSplashPaint(splash);
   const returningVisitor = hasSuccessfulSplashLoad();
   const maximumVisibleMs = reducedMotion ? CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS : CARINE_SPLASH_MAX_VISIBLE_MS;
   const cinematicVisibleMs = returningVisitor ? CARINE_SPLASH_RETURN_VISIT_MS : CARINE_SPLASH_FIRST_VISIT_MS;
@@ -2294,6 +2314,7 @@ const initializeCinematicSplash = () => {
   const elapsed = performance.now() - CARINE_SPLASH_STARTED_AT;
   const minimumDelay = waitForSplashDelay(minimumVisibleMs - elapsed);
   const criticalResources = Promise.all([
+    animationReady,
     waitForSplashDOMReady(),
     waitForDocumentFonts(),
     waitForHeroAndLogoImages(),
