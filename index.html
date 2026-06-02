@@ -37,6 +37,7 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/CS%20logo.png" />
     <link rel="apple-touch-icon" href="CS%20logo.png" />
     <link rel="manifest" href="manifest.json" />
+    <link rel="preload" as="image" href="CS%20logo.png" />
     <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -44,6 +45,10 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script>
+      document.documentElement.classList.add('splash-booting');
+      window.__carineSplashBootAt = performance.now();
+    </script>
     <link rel="stylesheet" href="styles.css" />
 
     <script type="application/ld+json">
@@ -222,6 +227,35 @@
     </script>
   </head>
   <body>
+    <div class="cinematic-splash" data-cinematic-splash role="status" aria-live="polite" aria-label="Carine Sanadina app is opening">
+      <div class="splash-ambient splash-ambient-one" aria-hidden="true"></div>
+      <div class="splash-ambient splash-ambient-two" aria-hidden="true"></div>
+      <div class="splash-card">
+        <div class="splash-logo-ring" aria-hidden="true"></div>
+        <img
+          class="splash-logo"
+          src="CS%20logo.png"
+          alt="Carine Sanadina logo"
+          width="256"
+          height="256"
+          decoding="async"
+          fetchpriority="high"
+        />
+        <p class="splash-kicker">Healing • Grace • Restoration</p>
+        <div class="splash-quotes" aria-hidden="true">
+          <span>Healing lives here.</span>
+          <span>Grace still speaks.</span>
+          <span>Your story is not over.</span>
+          <span>Radiate your light every day.</span>
+        </div>
+        <p class="sr-only">Opening the Carine Sanadina experience.</p>
+        <div class="music-visualizer splash-wave-bars is-idle" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
     <a class="skip-link" href="#main"> <span data-i18n="a11y.skip">Skip to main content</span></a>
 
     <header class="site-header" aria-label="Primary navigation" data-i18n-aria-label="a11y.primaryNav">
