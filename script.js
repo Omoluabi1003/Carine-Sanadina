@@ -3720,6 +3720,8 @@ if (musicPlayers.length) {
   const expandedCurrent = document.querySelector('[data-expanded-current]');
   const expandedDuration = document.querySelector('[data-expanded-duration]');
   const expandedVisualizer = document.querySelector('[data-expanded-visualizer]');
+  const expandedVinylStage = document.querySelector('[data-vinyl-stage]');
+  const expandedVinylDisc = document.querySelector('[data-vinyl-disc]');
   const expandedPlayerCard = document.querySelector('.expanded-player-card');
   const lyricsPanel = document.querySelector('[data-lyrics-panel]');
   const lyricsScroll = document.querySelector('[data-lyrics-scroll]');
@@ -3733,6 +3735,11 @@ if (musicPlayers.length) {
   let activeLyricIndex = -1;
   let currentLyricsPlayer = null;
   let isExpandedSeekingWithPointer = false;
+  let vinylRotation = 0;
+  let vinylVelocity = 0;
+  let vinylAnimationFrame = null;
+  let vinylLastTimestamp = 0;
+  let isVinylPlaying = false;
   const lyricsCache = new Map();
   const isAudioDebugEnabled = ['localhost', '127.0.0.1', ''].includes(window.location.hostname)
     || new URLSearchParams(window.location.search).has('debugAudio');
@@ -5247,6 +5254,55 @@ if (musicPlayers.length) {
     }
   };
 
+  const renderVinylRotation = () => {
+    if (!expandedVinylDisc) return;
+    expandedVinylDisc.style.setProperty('--vinyl-rotation', `${vinylRotation.toFixed(3)}deg`);
+  };
+
+  const stopVinylAnimationIfSettled = () => {
+    if (isVinylPlaying || Math.abs(vinylVelocity) > 0.08) return false;
+    vinylVelocity = 0;
+    vinylAnimationFrame = null;
+    vinylLastTimestamp = 0;
+    renderVinylRotation();
+    return true;
+  };
+
+  const tickVinylRotation = (timestamp = window.performance.now()) => {
+    if (!expandedVinylDisc || reduceMotion) {
+      vinylAnimationFrame = null;
+      vinylLastTimestamp = 0;
+      return;
+    }
+
+    const deltaSeconds = vinylLastTimestamp ? Math.min((timestamp - vinylLastTimestamp) / 1000, 0.05) : 0;
+    vinylLastTimestamp = timestamp;
+    const targetVelocity = isVinylPlaying ? 24 : 0;
+    const easing = isVinylPlaying ? 0.085 : 0.045;
+    vinylVelocity += (targetVelocity - vinylVelocity) * easing;
+    vinylRotation = (vinylRotation + vinylVelocity * deltaSeconds) % 360;
+    renderVinylRotation();
+
+    if (stopVinylAnimationIfSettled()) return;
+    vinylAnimationFrame = window.requestAnimationFrame(tickVinylRotation);
+  };
+
+  const syncVinylExperience = (isPlaying) => {
+    isVinylPlaying = Boolean(isPlaying && !reduceMotion);
+    expandedVinylStage?.classList.toggle('is-playing', Boolean(isPlaying));
+    expandedPlayerCard?.classList.toggle('is-playing', Boolean(isPlaying));
+
+    if (reduceMotion || !expandedVinylDisc) {
+      vinylVelocity = 0;
+      renderVinylRotation();
+      return;
+    }
+
+    if (!vinylAnimationFrame) {
+      vinylAnimationFrame = window.requestAnimationFrame(tickVinylRotation);
+    }
+  };
+
   updateVisualizerToggleUI();
 
   const setTransportButtonState = (button, isPlaying) => {
@@ -5282,6 +5338,7 @@ if (musicPlayers.length) {
 
     if (miniPlayer) miniPlayer.classList.toggle('is-playing', activeIsPlaying);
     expandedVisualizer?.classList.toggle('is-playing', activeIsPlaying);
+    syncVinylExperience(activeIsPlaying);
     setTransportButtonState(mini?.toggle, activeIsPlaying);
     setTransportButtonState(mobileToggle, activeIsPlaying);
   };
@@ -5391,6 +5448,7 @@ if (musicPlayers.length) {
     }
 
     miniPlayer.classList.remove('is-playing', 'is-visible');
+    syncVinylExperience(false);
     miniPlayer.setAttribute('aria-hidden', 'true');
     updateMiniPlayerBodyState();
     mini.cover.removeAttribute('src');
