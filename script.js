@@ -1975,7 +1975,7 @@ const CARINE_MUSIC_PLAYLIST = [
     lyricsLrc: '/lyrics/la-gentillesse.lrc',
     sunoSource: 'https://suno.com/s/ujHS0FT3b8BGh3u1',
     about: 'A faith-filled meditation on kindness as strength: compassion that protects dignity, restores atmosphere, and makes room for grace.',
-    credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
+    credits: 'Written by Paul Iyogun (Omoluabi).\nProduced by Paul Iyogun (Omoluabi).\nMastered by Paul Iyogun (Omoluabi).\nPerformed by Carine Sanadina.\nPresented by Omoluabi Productions.',
     lyricsTimed: [],
     translationKey: 'tracks.gentillesse'
   },
@@ -2011,7 +2011,7 @@ const CARINE_MUSIC_PLAYLIST = [
     lyricsLrc: '/lyrics/womanifesto.lrc',
     sunoSource: 'https://suno.com/s/xitTjO4yEApxiSv5',
     about: 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, victory, identity, and restoration through faith.',
-    credits: 'Performed by Carine Sanadina. Style: Soukous • Rumba • Makossa Gospel. Music and lyrics rights remain with their respective owners.',
+    credits: 'Written by Paul Iyogun (Omoluabi).\nProduced by Paul Iyogun (Omoluabi).\nMastered by Paul Iyogun (Omoluabi).\nPerformed by Carine Sanadina.\nPresented by Omoluabi Productions.',
     lyricsTimed: [],
     translationKey: 'tracks.womanifesto'
   }
@@ -3130,9 +3130,10 @@ if (musicPlayers.length) {
   const renderTrackInfo = (player) => {
     if (!lyricsInfoPanel || !player) return;
     const content = activeLyricsTab === 'credits' ? player.dataset.trackCredits : player.dataset.trackAbout;
+    const formattedContent = escapePlaylistText(content || 'More details coming soon.').replace(/\n/g, '<br>');
     lyricsInfoPanel.innerHTML = `
       <p class="track-info-kicker">${activeLyricsTab === 'credits' ? 'Credits' : 'About this song'}</p>
-      <p>${escapePlaylistText(content || 'More details coming soon.')}</p>
+      <p>${formattedContent}</p>
     `;
   };
 
