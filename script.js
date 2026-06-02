@@ -1011,6 +1011,8 @@ const premiumExperienceTranslations = {
     'music.nextTrack': 'Next track',
     'mini.expand': 'Expand',
     'mini.close': 'Close player',
+    'lyrics.expand': 'Expand Lyrics',
+    'lyrics.collapse': 'Collapse Lyrics',
     'press.kicker': 'Press Kit',
     'press.heading': 'A refined media hub for conversations about healing, authorship, faith, and restoration.',
     'press.body': 'Carine Sanadina is available for thoughtful media conversations, community features, and healing-centered storytelling opportunities aligned with her books, music, survivor advocacy, and healthcare-rooted compassion.',
@@ -1060,6 +1062,8 @@ const premiumExperienceTranslations = {
     'music.repeatOff': 'Répétition désactivée',
     'music.nextTrack': 'Titre suivant',
     'mini.expand': 'Agrandir',
+    'lyrics.expand': 'Agrandir les paroles',
+    'lyrics.collapse': 'Réduire les paroles',
     'mini.close': 'Fermer le lecteur',
     'press.kicker': 'Dossier de presse',
     'press.heading': 'Un espace média raffiné pour parler de guérison, d’écriture, de foi et de restauration.',
@@ -1349,6 +1353,8 @@ const completeTranslationOverrides = {
     'music.nextTrack': 'Siguiente pista',
     'mini.expand': 'Expandir',
     'mini.close': 'Cerrar reproductor',
+    'lyrics.expand': 'Expandir letra',
+    'lyrics.collapse': 'Contraer letra',
     'mini.volumeShort': 'Vol.',
     'reflections.kicker': 'Reflexiones',
     'reflections.heading': 'Notas de sanación inspiradas en los libros, la música y los temas de restauración de Carine.',
@@ -1545,6 +1551,8 @@ Object.values(translations).forEach((dictionary) => {
     'music.visualizerStyleAria': 'Choose visualization style',
     'music.visualizerHelperTap': 'Tap Visualizer, then press Play.',
     'music.visualizerHelperIphone': 'Tap Play to activate visuals on iPhone.',
+    'lyrics.expand': 'Expand Lyrics',
+    'lyrics.collapse': 'Collapse Lyrics',
     'guide.widgetLabel': 'Carine’s conversational guide',
     'guide.launcher': 'Ask Carine’s Guide',
     'guide.eyebrow': 'Healing-centered guide',
@@ -2881,7 +2889,9 @@ if (musicPlayers.length) {
   const lyricsScroll = document.querySelector('[data-lyrics-scroll]');
   const lyricsInfoPanel = document.querySelector('[data-track-info-panel]');
   const lyricsTabs = Array.from(document.querySelectorAll('[data-lyrics-tab]'));
+  const lyricsExpandToggle = document.querySelector('[data-lyrics-expand]');
   let activeLyricsTab = 'lyrics';
+  let isLyricsExpanded = false;
   let lyricEntries = [];
   let lyricTiming = [];
   let activeLyricIndex = -1;
@@ -3142,11 +3152,28 @@ if (musicPlayers.length) {
     `;
   };
 
-  const syncLyricsFocusMode = () => {
-    const isLyricsFocus = activeLyricsTab === 'lyrics';
-    mobilePlayer?.classList.toggle('is-lyrics-focus', isLyricsFocus);
-    expandedPlayerCard?.classList.toggle('is-lyrics-focus', isLyricsFocus);
-    lyricsPanel?.classList.toggle('is-lyrics-focus', isLyricsFocus);
+  const syncLyricsExpandMode = () => {
+    const canExpandLyrics = activeLyricsTab === 'lyrics';
+    const isPlayerOpen = mobilePlayer?.classList.contains('is-open') ?? true;
+    const isExpanded = canExpandLyrics && isLyricsExpanded && isPlayerOpen;
+    mobilePlayer?.classList.toggle('is-lyrics-expanded', isExpanded);
+    expandedPlayerCard?.classList.toggle('is-lyrics-expanded', isExpanded);
+    lyricsPanel?.classList.toggle('is-lyrics-expanded', isExpanded);
+    document.body.classList.toggle('lyrics-expanded-open', isExpanded);
+
+    if (lyricsExpandToggle) {
+      lyricsExpandToggle.hidden = !canExpandLyrics;
+      lyricsExpandToggle.setAttribute('aria-expanded', String(isExpanded));
+      lyricsExpandToggle.textContent = translate(isExpanded ? 'lyrics.collapse' : 'lyrics.expand');
+    }
+  };
+
+  const setLyricsExpanded = (expanded) => {
+    isLyricsExpanded = Boolean(expanded);
+    syncLyricsExpandMode();
+    if (isLyricsExpanded && activeLyricsTab === 'lyrics') {
+      requestAnimationFrame(() => lyricsScroll?.scrollTo({ top: lyricsScroll.scrollTop, behavior: reduceMotion ? 'auto' : 'smooth' }));
+    }
   };
 
   const setLyricsTab = (tabName) => {
@@ -3158,7 +3185,7 @@ if (musicPlayers.length) {
     });
     if (lyricsScroll) lyricsScroll.hidden = activeLyricsTab !== 'lyrics';
     if (lyricsInfoPanel) lyricsInfoPanel.hidden = activeLyricsTab === 'lyrics';
-    syncLyricsFocusMode();
+    syncLyricsExpandMode();
     if (activePlayer && activeLyricsTab !== 'lyrics') renderTrackInfo(activePlayer);
     if (activePlayer && activeLyricsTab === 'lyrics') updateActiveLyric(getAudio(activePlayer));
   };
@@ -4686,6 +4713,7 @@ if (musicPlayers.length) {
     mini.progress.addEventListener('change', () => seekMiniProgress({ commit: true }));
 
     window.addEventListener('carine:languagechange', () => {
+      syncLyricsExpandMode();
       if (!activePlayer) {
         mini.title.dataset.hasTrack = 'false';
         mini.title.textContent = translate('mini.noTrack');
@@ -4772,6 +4800,7 @@ if (musicPlayers.length) {
   lyricsTabs.forEach((tab) => {
     tab.addEventListener('click', () => setLyricsTab(tab.dataset.lyricsTab));
   });
+  lyricsExpandToggle?.addEventListener('click', () => setLyricsExpanded(!isLyricsExpanded));
   setLyricsTab('lyrics');
 
   const toggleShuffle = () => {
@@ -4838,6 +4867,7 @@ if (musicPlayers.length) {
     document.body.classList.toggle('expanded-player-open', isOpen);
     mobilePlayer.setAttribute('aria-hidden', String(!isOpen));
     miniExpand?.setAttribute('aria-expanded', String(isOpen));
+    syncLyricsExpandMode();
     if (isOpen && activePlayer) {
       const audio = getAudio(activePlayer);
       syncExpandedProgress(audio);
