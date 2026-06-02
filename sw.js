@@ -1,4 +1,4 @@
-const APP_VERSION = 'carine-site-2026-06-01-ios-webkit-visualizer-audio';
+const APP_VERSION = 'carine-site-2026-06-02-lrc-lyrics-sync';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v7-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
