@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-02-nav-seo-reflections';
+const APP_VERSION = 'carine-site-2026-06-02-visualizer-controller';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3305,12 +3305,13 @@ if (musicPlayers.length) {
     audioPaused: audio?.paused ?? true,
     audioEnded: audio?.ended ?? false,
     audioCurrentTime: Number.isFinite(audio?.currentTime) ? Math.round(audio.currentTime * 1000) / 1000 : 0,
-    analyserFlatFrames: silentAnalyzerFrames,
-    visualizerWidth: visualizerCssWidth,
-    visualizerHeight: visualizerCssHeight,
+    analyserFlatFrames: visualizerController?.flatFrames ?? 0,
+    visualizerWidth: visualizerController?.cssWidth ?? 0,
+    visualizerHeight: visualizerController?.cssHeight ?? 0,
     activeVisualizationMode: selectedVisualizationStyle,
     renderedVisualizationMode: selectedVisualizationStyle,
-    fallbackActive: analyserFallbackActive
+    analyserFlat: visualizerController?.analyserFlat ?? true,
+    fallbackActive: visualizerController?.fallbackActive ?? false
   });
 
   const logAudioDiagnostics = (event, details = {}) => {
@@ -3785,51 +3786,16 @@ if (musicPlayers.length) {
   const WAVEFORM_UNIT_COUNT = 64;
   const WAVEFORM_SAMPLE_COUNT = 128;
   const frequencyBinCount = 128;
-  const ANALYSER_FLAT_FRAME_LIMIT = 32;
-  const ANALYSER_ACTIVE_FRAME_LIMIT = 6;
-  const visualizerUnits = [];
-  let visualizerSurface = null;
-  let visualizerSurfaceContext = null;
-  let visualizerCssWidth = 360;
-  let visualizerCssHeight = 210;
-  let visualizerLastThemeKey = '';
-  let visualizerLastDrawTime = 0;
-  let lastAnalyserAudioTime = 0;
-  const spectrumBands = new Float32Array(WAVEFORM_UNIT_COUNT);
-  const waveformData = new Uint8Array(WAVEFORM_SAMPLE_COUNT);
-  const waveformPoints = new Float32Array(WAVEFORM_UNIT_COUNT);
-  const analyserProbeFrequencyData = new Uint8Array(frequencyBinCount);
-  const analyserProbeTimeData = new Uint8Array(frequencyBinCount);
-  const previousAnalyserProbeData = new Uint8Array(frequencyBinCount);
-  const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
-  const mediaSourceNodes = new WeakMap();
-  let sourceConnectionState = new WeakMap();
-  const frequencyData = new Uint8Array(frequencyBinCount);
-  let sharedAudioContext = null;
-  let sharedAnalyser = null;
-  let analyserConnectedToDestination = false;
-  let visualizerFrameId = 0;
-  let visualizerStartToken = 0;
-  let visualizerMode = 'idle';
-  let silentAnalyzerFrames = 0;
-  let activeAnalyzerFrames = 0;
-  let analyserFallbackActive = false;
-  let canvasSizeWarned = false;
-  let corsFallbackWarned = false;
+  const VISUALIZER_DEBUG_STORAGE_KEY = 'carineVisualizerDebug';
+  const VISUALIZER_FORCE_MODE_STORAGE_KEY = 'carineVisualizerForceMode';
 
   const setVisualizerHelper = (message = '') => {
-    if (!visualizerHelper) {
-      return;
-    }
-
+    if (!visualizerHelper) return;
     visualizerHelper.textContent = message;
   };
 
   const setupVisualizationStyleSelector = () => {
-    if (!visualizerStyleSelect) {
-      return;
-    }
-
+    if (!visualizerStyleSelect) return;
     visualizerStyleSelect.innerHTML = VISUALIZATION_STYLES.map((style) => (
       `<option value="${style.id}">${style.label}</option>`
     )).join('');
@@ -3861,81 +3827,53 @@ if (musicPlayers.length) {
     }
   };
 
-  const setVisualizerFallback = (isUnavailable = false) => {
-    if (!visualizerFallback) {
-      return;
+  class VisualizerController {
+    constructor({ container, note }) {
+      this.container = container;
+      this.note = note;
+      this.units = [];
+      this.surface = null;
+      this.surfaceContext = null;
+      this.cssWidth = 360;
+      this.cssHeight = 210;
+      this.frameId = 0;
+      this.frameCount = 0;
+      this.mode = 'idle';
+      this.activeAudio = null;
+      this.activeTrackTitle = '';
+      this.enabled = false;
+      this.fallbackActive = false;
+      this.analyserFlat = true;
+      this.analyserActive = false;
+      this.sourceConnected = false;
+      this.sourceReused = false;
+      this.lastThemeKey = '';
+      this.lastDrawTime = 0;
+      this.lastDiagnosticsTime = 0;
+      this.lastAnalyserAudioTime = 0;
+      this.flatFrames = 0;
+      this.activeFrames = 0;
+      this.canvasSizeWarned = false;
+      this.fallbackWarned = false;
+      this.frequencyData = new Uint8Array(frequencyBinCount);
+      this.timeData = new Uint8Array(frequencyBinCount);
+      this.probeFrequencyData = new Uint8Array(frequencyBinCount);
+      this.probeTimeData = new Uint8Array(frequencyBinCount);
+      this.previousProbeData = new Uint8Array(frequencyBinCount);
+      this.spectrumBands = new Float32Array(WAVEFORM_UNIT_COUNT);
+      this.waveformData = new Uint8Array(WAVEFORM_SAMPLE_COUNT);
+      this.waveformPoints = new Float32Array(WAVEFORM_UNIT_COUNT);
+      this.audioContextConstructor = window.AudioContext || window.webkitAudioContext;
+      this.audioContext = null;
+      this.analyser = null;
+      this.analyserConnectedToDestination = false;
+      this.mediaSourceNodes = new WeakMap();
+      this.sourceConnectionState = new WeakMap();
     }
 
-    visualizerFallback.hidden = !isUnavailable;
-    visualizerFallback.textContent = translate(isUnavailable ? 'music.visualizerFallback' : 'music.visualizerAvailable');
-  };
-
-
-  const warnAudioContextState = (state) => {
-    if (!isAudioDebugEnabled || !window.console || typeof window.console.warn !== 'function') {
-      return;
-    }
-
-    window.console.warn('[music audio] AudioContext state', state);
-  };
-
-  const warnAnalyzerFallback = (reason) => {
-    if (corsFallbackWarned || !isAudioDebugEnabled || !window.console || typeof window.console.warn !== 'function') {
-      return;
-    }
-
-    corsFallbackWarned = true;
-    window.console.warn('[music audio] analyser unavailable; using beat-simulated visualizer fallback', reason);
-  };
-
-  const warnCanvasSize = (details) => {
-    if (canvasSizeWarned || !isAudioDebugEnabled || !window.console || typeof window.console.warn !== 'function') {
-      return;
-    }
-
-    canvasSizeWarned = true;
-    window.console.warn('[music audio] visualizer surface has an unsafe size', details);
-  };
-
-  const resizeVisualizerSurface = () => {
-    if (!visualizerCanvas || !visualizerSurface) {
-      return;
-    }
-
-    const rect = visualizerCanvas.getBoundingClientRect();
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-    const cssWidth = Math.max(1, Math.round(rect.width || visualizerCanvas.clientWidth || 360));
-    const cssHeight = Math.max(1, Math.round(rect.height || visualizerCanvas.clientHeight || 210));
-    const width = Math.max(1, Math.round(cssWidth * pixelRatio));
-    const height = Math.max(1, Math.round(cssHeight * pixelRatio));
-
-    visualizerCssWidth = Math.max(260, cssWidth);
-    visualizerCssHeight = Math.max(160, cssHeight);
-
-    if (visualizerSurface.width !== width || visualizerSurface.height !== height) {
-      visualizerSurface.width = width;
-      visualizerSurface.height = height;
-    }
-
-    visualizerSurface.style.width = `${cssWidth}px`;
-    visualizerSurface.style.height = `${cssHeight}px`;
-
-    if (visualizerSurfaceContext) {
-      visualizerSurfaceContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    }
-
-    if ((cssWidth < 2 || cssHeight < 2) && !document.hidden) {
-      warnCanvasSize({ width: cssWidth, height: cssHeight, pixelRatio });
-    }
-  };
-
-  const createVisualizerUnits = () => {
-    if (!visualizerCanvas) {
-      return;
-    }
-
-    if (!visualizerSurface) {
-      visualizerCanvas.replaceChildren();
+    init() {
+      if (!this.container) return;
+      this.container.replaceChildren();
       const unitLayer = document.createElement('div');
       unitLayer.className = 'visualizer-units';
       unitLayer.setAttribute('aria-hidden', 'true');
@@ -3947,632 +3885,616 @@ if (musicPlayers.length) {
         unit.style.setProperty('--unit-delay', `${-(index % 12) * 0.08}s`);
         unit.style.setProperty('--unit-seed', String(((index * 37) % 101) / 100));
         unitLayer.appendChild(unit);
-        visualizerUnits.push(unit);
+        this.units.push(unit);
       }
 
-      visualizerSurface = document.createElement('canvas');
-      visualizerSurface.className = 'visualizer-surface';
-      visualizerSurface.setAttribute('aria-hidden', 'true');
-      visualizerSurfaceContext = visualizerSurface.getContext('2d', { alpha: true });
-      visualizerCanvas.append(unitLayer, visualizerSurface);
+      this.surface = document.createElement('canvas');
+      this.surface.className = 'visualizer-surface';
+      this.surface.setAttribute('aria-hidden', 'true');
+      this.surfaceContext = this.surface.getContext('2d', { alpha: true });
+      this.container.append(unitLayer, this.surface);
+      this.resize();
+      this.setFallbackNote(false);
+      this.idle('idle');
+      this.logDiagnostics('init');
     }
 
-    resizeVisualizerSurface();
-  };
-
-  const averageRange = (array, start, end) => {
-    let total = 0;
-    for (let index = start; index < end; index += 1) {
-      total += array[index] || 0;
-    }
-    return total / Math.max(1, end - start);
-  };
-
-  const sampleAudioBands = (time = 0, useIdle = false, useBeatFallback = false) => {
-    if (sharedAnalyser && !useIdle && !useBeatFallback) {
+    getForceMode() {
       try {
-        sharedAnalyser.getByteFrequencyData(frequencyData);
-        if (typeof sharedAnalyser.getByteTimeDomainData === 'function') {
-          sharedAnalyser.getByteTimeDomainData(waveformData);
-        }
+        const mode = window.localStorage.getItem(VISUALIZER_FORCE_MODE_STORAGE_KEY);
+        return ['fallback', 'analyser', 'idle'].includes(mode) ? mode : '';
       } catch (error) {
-        analyserFallbackActive = true;
-        warnAnalyzerFallback(error?.message || error);
-        return sampleAudioBands(time, useIdle, true);
+        return '';
       }
-    } else {
+    }
+
+    isDebugEnabled() {
+      try {
+        return window.localStorage.getItem(VISUALIZER_DEBUG_STORAGE_KEY) === 'true';
+      } catch (error) {
+        return false;
+      }
+    }
+
+    getAudioContextState() {
+      return this.audioContext?.state || 'closed';
+    }
+
+    setEnabled(isEnabled) {
+      this.enabled = Boolean(isEnabled);
+      this.applyTheme(this.mode);
+    }
+
+    setFallbackNote(isUnavailable = false) {
+      if (!this.note) return;
+      this.note.hidden = !isUnavailable;
+      this.note.textContent = translate(isUnavailable ? 'music.visualizerFallback' : 'music.visualizerAvailable');
+    }
+
+    warnFallback(reason) {
+      if (this.fallbackWarned || (!this.isDebugEnabled() && !isAudioDebugEnabled) || !window.console?.warn) return;
+      this.fallbackWarned = true;
+      window.console.warn('[music visualizer] analyser unavailable; fallback animation remains active', reason);
+    }
+
+    resize() {
+      if (!this.container || !this.surface) return;
+      const rect = this.container.getBoundingClientRect();
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      const cssWidth = Math.max(1, Math.round(rect.width || this.container.clientWidth || 360));
+      const cssHeight = Math.max(1, Math.round(rect.height || this.container.clientHeight || 210));
+      this.cssWidth = Math.max(260, cssWidth);
+      this.cssHeight = Math.max(160, cssHeight);
+      const width = Math.max(1, Math.round(cssWidth * pixelRatio));
+      const height = Math.max(1, Math.round(cssHeight * pixelRatio));
+      if (this.surface.width !== width || this.surface.height !== height) {
+        this.surface.width = width;
+        this.surface.height = height;
+      }
+      this.surface.style.width = `${cssWidth}px`;
+      this.surface.style.height = `${cssHeight}px`;
+      this.surfaceContext?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      if ((cssWidth < 2 || cssHeight < 2) && !document.hidden && !this.canvasSizeWarned && (this.isDebugEnabled() || isAudioDebugEnabled)) {
+        this.canvasSizeWarned = true;
+        window.console?.warn?.('[music visualizer] unsafe visualizer size', { width: cssWidth, height: cssHeight, pixelRatio });
+      }
+    }
+
+    async ensureAnalyser({ allowCreate = true, allowResume = true } = {}) {
+      if (!this.audioContextConstructor) {
+        this.warnFallback('Web Audio API is not supported.');
+        return null;
+      }
+
+      if (!this.audioContext || this.audioContext.state === 'closed') {
+        if (!allowCreate) {
+          this.warnFallback('AudioContext unavailable outside a user gesture.');
+          return null;
+        }
+        this.audioContext = new this.audioContextConstructor();
+        this.analyser = null;
+        this.analyserConnectedToDestination = false;
+        this.sourceConnectionState = new WeakMap();
+        this.logDiagnostics('audio-context-created', true);
+      }
+
+      if (['suspended', 'interrupted'].includes(this.audioContext.state) && typeof this.audioContext.resume === 'function') {
+        if (!allowResume) {
+          this.warnFallback(`AudioContext was ${this.audioContext.state} outside a user gesture.`);
+          return null;
+        }
+        await this.audioContext.resume();
+        this.logDiagnostics('audio-context-resumed', true);
+      }
+
+      if (!this.analyser) {
+        this.analyser = this.audioContext.createAnalyser();
+        this.analyser.fftSize = 256;
+        this.analyser.smoothingTimeConstant = 0.84;
+        this.analyser.minDecibels = -90;
+        this.analyser.maxDecibels = -10;
+      }
+
+      if (!this.analyserConnectedToDestination) {
+        this.analyser.connect(this.audioContext.destination);
+        this.analyserConnectedToDestination = true;
+      }
+
+      return this.audioContext;
+    }
+
+    connectAnalyser(audio) {
+      if (!audio || !this.audioContext || !this.analyser) {
+        this.sourceConnected = false;
+        this.sourceReused = false;
+        return false;
+      }
+
+      let nodeRecord = this.mediaSourceNodes.get(audio);
+      this.sourceReused = Boolean(nodeRecord);
+      if (nodeRecord && nodeRecord.context !== this.audioContext) {
+        this.warnFallback('MediaElementAudioSourceNode belongs to another AudioContext.');
+        this.sourceConnected = false;
+        return false;
+      }
+
+      if (!nodeRecord) {
+        try {
+          nodeRecord = { context: this.audioContext, source: this.audioContext.createMediaElementSource(audio) };
+          this.mediaSourceNodes.set(audio, nodeRecord);
+          this.sourceConnectionState.set(audio, false);
+        } catch (error) {
+          this.warnFallback(error?.message || error);
+          this.sourceConnected = false;
+          return false;
+        }
+      }
+
+      if (!this.sourceConnectionState.get(audio)) {
+        try {
+          nodeRecord.source.connect(this.analyser);
+          this.sourceConnectionState.set(audio, true);
+        } catch (error) {
+          this.warnFallback(error?.message || error);
+          this.sourceConnected = false;
+          return false;
+        }
+      }
+
+      this.sourceConnected = true;
+      return true;
+    }
+
+    switchTrack(audio, title = '') {
+      this.activeAudio = audio || null;
+      this.activeTrackTitle = title || (activePlayer ? getTrackTitle(activePlayer) : '');
+      this.flatFrames = 0;
+      this.activeFrames = 0;
+      this.previousProbeData.fill(0);
+      if (this.enabled && audio && !audio.paused && !audio.ended) this.start(audio);
+      else this.idle(audio && !audio.ended ? 'paused' : 'idle');
+    }
+
+    switchMode(styleId) {
+      selectedVisualizationStyle = normalizeVisualizationStyle(styleId);
+      this.resize();
+      this.applyTheme(this.mode);
+      if (this.enabled && this.activeAudio && !this.activeAudio.paused && !this.activeAudio.ended) this.start(this.activeAudio);
+      else this.idle(this.activeAudio && !this.activeAudio.ended ? 'paused' : 'idle');
+    }
+
+    start(audio) {
+      if (!this.container) return;
+      this.activeAudio = audio || this.activeAudio;
+      this.activeTrackTitle = activePlayer ? getTrackTitle(activePlayer) : this.activeTrackTitle;
+      this.cancelFrame();
+
+      if (!this.enabled || reduceMotion || this.getForceMode() === 'idle') {
+        this.renderStatic(audio && !audio.paused && !audio.ended ? 'paused' : 'idle');
+        return;
+      }
+
+      this.mode = 'playing';
+      this.fallbackActive = true;
+      this.analyserFlat = true;
+      this.lastDrawTime = 0;
+      this.lastAnalyserAudioTime = Math.max(0, this.activeAudio?.currentTime || 0);
+      this.flatFrames = 0;
+      this.activeFrames = 0;
+      this.previousProbeData.fill(0);
+      this.resize();
+      this.applyTheme('playing');
+      setVisualizerHelper('');
+      this.setFallbackNote(false);
+      this.logDiagnostics(isIosSafari ? 'start-ios-fallback-first' : 'start', true);
+
+      const tick = (time = window.performance.now()) => {
+        const currentAudio = this.activeAudio;
+        if (!currentAudio || currentAudio.paused || currentAudio.ended) {
+          this.idle(currentAudio && !currentAudio.ended ? 'paused' : 'idle');
+          return;
+        }
+
+        const mobileFrameInterval = (isCoarsePointerDevice() || isIosWebKit) ? 33 : 0;
+        if (!document.hidden && (!mobileFrameInterval || !this.lastDrawTime || time - this.lastDrawTime >= mobileFrameInterval)) {
+          this.lastDrawTime = time;
+          this.inspectAnalyser(currentAudio);
+          const forceMode = this.getForceMode();
+          const useAnalyser = forceMode === 'analyser' ? true : forceMode === 'fallback' ? false : (!isIosWebKit && this.analyser && !this.analyserFlat);
+          const fallbackTime = Math.max(0, currentAudio.currentTime || 0) * 1000;
+          const drawTime = useAnalyser ? time : fallbackTime;
+          const bands = this.sampleBands(drawTime, false, !useAnalyser);
+          this.fallbackActive = !useAnalyser;
+          this.applyTheme('playing');
+          this.renderFrame(bands, drawTime, 'playing');
+          this.frameCount += 1;
+          this.logDiagnostics('tick');
+        }
+        this.frameId = window.requestAnimationFrame(tick);
+      };
+
+      tick();
+    }
+
+    stop(mode = 'idle') {
+      this.idle(mode);
+    }
+
+    idle(mode = 'idle') {
+      if (!this.container) return;
+      if (!this.enabled || reduceMotion || this.getForceMode() === 'idle') {
+        this.renderStatic(mode);
+        return;
+      }
+      this.cancelFrame();
+      this.mode = mode;
+      this.fallbackActive = false;
+      this.resize();
+      this.applyTheme(mode);
+      const tick = (time = window.performance.now()) => {
+        const mobileFrameInterval = (isCoarsePointerDevice() || isIosWebKit) ? 33 : 0;
+        if (!mobileFrameInterval || !this.lastDrawTime || time - this.lastDrawTime >= mobileFrameInterval) {
+          this.lastDrawTime = time;
+          this.renderFrame(this.sampleBands(time, true, true), time, mode);
+          this.frameCount += 1;
+        }
+        this.frameId = window.requestAnimationFrame(tick);
+      };
+      tick();
+    }
+
+    renderStatic(mode = 'idle') {
+      this.cancelFrame();
+      this.mode = mode;
+      this.fallbackActive = false;
+      this.resize();
+      this.applyTheme(mode);
+      this.renderFrame(this.sampleBands(window.performance.now(), true, true), window.performance.now(), mode);
+    }
+
+    destroy() {
+      this.cancelFrame();
+      this.units = [];
+      this.surfaceContext = null;
+      this.surface = null;
+      this.container?.replaceChildren();
+      if (this.audioContext && this.audioContext.state !== 'closed') this.audioContext.close().catch(() => {});
+      this.audioContext = null;
+      this.analyser = null;
+    }
+
+    cancelFrame() {
+      if (this.frameId) {
+        window.cancelAnimationFrame(this.frameId);
+        this.frameId = 0;
+      }
+    }
+
+    averageRange(array, start, end) {
+      let total = 0;
+      for (let index = start; index < end; index += 1) total += array[index] || 0;
+      return total / Math.max(1, end - start);
+    }
+
+    seededNoise(index, salt = 0) {
+      const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
+      return value - Math.floor(value);
+    }
+
+    sampleBands(time = 0, useIdle = false, forceFallback = false) {
+      if (this.analyser && !useIdle && !forceFallback) {
+        try {
+          this.analyser.getByteFrequencyData(this.frequencyData);
+          if (typeof this.analyser.getByteTimeDomainData === 'function') this.analyser.getByteTimeDomainData(this.waveformData);
+        } catch (error) {
+          this.analyserFlat = true;
+          this.warnFallback(error?.message || error);
+          return this.sampleBands(time, useIdle, true);
+        }
+      } else {
+        const seconds = time / 1000;
+        const trackIndex = Math.max(0, activePlayer ? musicPlayers.indexOf(activePlayer) : 0);
+        const styleSeed = Math.max(1, VISUALIZATION_STYLES.findIndex((style) => style.id === selectedVisualizationStyle) + 1);
+        const beat = forceFallback ? Math.pow((Math.sin((seconds * (2.05 + trackIndex * 0.06)) + styleSeed) + 1) / 2, 2.35) : 0;
+        const pulse = forceFallback ? Math.pow((Math.sin((seconds * 4.15) + trackIndex * 0.7) + 1) / 2, 3.2) : 0;
+        const breath = forceFallback ? 34 + beat * 112 + pulse * 46 : 18;
+        const movement = forceFallback ? 0.18 + styleSeed * 0.01 : 0.42;
+        for (let index = 0; index < this.frequencyData.length; index += 1) {
+          const seed = this.seededNoise(index, trackIndex + styleSeed * 0.13);
+          const wave = Math.sin((time / (forceFallback ? 210 : 680)) + index * movement + seed * 0.6);
+          const harmonic = Math.sin((time / (340 + trackIndex * 23)) + index * (0.11 + styleSeed * 0.005)) * (forceFallback ? 24 : 10);
+          const stagger = Math.sin(seconds * (1.3 + seed * 1.7) + index * 0.17) * 18;
+          const taper = 1 - (index / this.frequencyData.length) * 0.54;
+          this.frequencyData[index] = Math.round(Math.min(255, Math.max(0, (breath + ((wave + 1) * 26) + harmonic + stagger) * taper)));
+          this.waveformData[index] = Math.round(128 + Math.sin((time / (forceFallback ? 145 : 520)) + index * 0.24 + seed) * (forceFallback ? 46 : 18));
+        }
+      }
+
+      const step = Math.max(1, Math.floor(this.frequencyData.length / this.spectrumBands.length));
+      for (let index = 0; index < this.spectrumBands.length; index += 1) {
+        const value = (this.frequencyData[index * step] || 0) / 255;
+        this.spectrumBands[index] += (value - this.spectrumBands[index]) * (useIdle ? 0.08 : 0.42);
+      }
+      const bass = this.averageRange(this.spectrumBands, 0, Math.round(WAVEFORM_UNIT_COUNT * 0.16));
+      const mid = this.averageRange(this.spectrumBands, Math.round(WAVEFORM_UNIT_COUNT * 0.16), Math.round(WAVEFORM_UNIT_COUNT * 0.5));
+      const high = this.averageRange(this.spectrumBands, Math.round(WAVEFORM_UNIT_COUNT * 0.5), WAVEFORM_UNIT_COUNT);
+      return { bass, mid, high, energy: Math.min(Math.max((bass + mid + high) / 3, 0), 1), spectrum: this.spectrumBands, waveform: this.waveformData };
+    }
+
+    inspectAnalyser(audio) {
+      if (!this.analyser || !audio || audio.paused || audio.ended || this.getForceMode() === 'fallback') {
+        this.analyserFlat = true;
+        this.analyserActive = false;
+        return false;
+      }
+      try {
+        this.analyser.getByteFrequencyData(this.probeFrequencyData);
+        if (typeof this.analyser.getByteTimeDomainData === 'function') this.analyser.getByteTimeDomainData(this.probeTimeData);
+      } catch (error) {
+        this.analyserFlat = true;
+        this.analyserActive = false;
+        this.warnFallback(error?.message || error);
+        return false;
+      }
+      let totalDelta = 0;
+      let waveformDeviation = 0;
+      let minFrequency = 255;
+      let maxFrequency = 0;
+      for (let index = 0; index < this.probeFrequencyData.length; index += 1) {
+        const value = this.probeFrequencyData[index];
+        totalDelta += Math.abs(value - (this.previousProbeData[index] || 0));
+        waveformDeviation += Math.abs((this.probeTimeData[index] || 128) - 128);
+        minFrequency = Math.min(minFrequency, value);
+        maxFrequency = Math.max(maxFrequency, value);
+        this.previousProbeData[index] = value;
+      }
+      const averageDelta = totalDelta / this.probeFrequencyData.length;
+      const averageWaveformDeviation = waveformDeviation / this.probeFrequencyData.length;
+      const audioAdvanced = Math.abs((audio.currentTime || 0) - this.lastAnalyserAudioTime) > 0.01;
+      this.lastAnalyserAudioTime = audio.currentTime || 0;
+      const variance = maxFrequency - minFrequency;
+      const analyserLooksActive = maxFrequency > 4 && (variance > 3 || averageDelta > 0.65 || averageWaveformDeviation > 0.8);
+      if (audioAdvanced && !analyserLooksActive) {
+        this.flatFrames = Math.min(40, this.flatFrames + 1);
+        this.activeFrames = 0;
+      } else if (analyserLooksActive) {
+        this.activeFrames = Math.min(40, this.activeFrames + 1);
+        this.flatFrames = 0;
+      }
+      if (this.flatFrames >= 20) this.analyserFlat = true;
+      if (this.activeFrames >= 6) this.analyserFlat = false;
+      this.analyserActive = !this.analyserFlat && analyserLooksActive;
+      return this.analyserActive;
+    }
+
+    applyTheme(state = this.mode) {
+      if (!this.container) return;
+      this.mode = state;
+      selectedVisualizationStyle = normalizeVisualizationStyle(selectedVisualizationStyle);
+      const themeKey = [selectedVisualizationStyle, this.fallbackActive, this.analyserFlat, state, this.enabled, reduceMotion].join('|');
+      if (themeKey === this.lastThemeKey) return;
+      this.lastThemeKey = themeKey;
+      this.container.dataset.visualizationStyle = selectedVisualizationStyle;
+      this.container.classList.toggle('is-analyser-fallback', this.fallbackActive);
+      this.container.classList.toggle('visualizer-ready', this.enabled && !reduceMotion);
+      this.container.classList.toggle('visualizer-playing', state === 'playing' && this.enabled && !reduceMotion);
+      this.container.classList.toggle('visualizer-fallback', this.fallbackActive && state === 'playing');
+      this.container.classList.toggle('visualizer-idle', state !== 'playing' || !this.enabled || reduceMotion);
+      this.container.classList.toggle('is-playing', state === 'playing');
+      this.container.classList.toggle('is-paused', state === 'paused');
+      this.container.classList.toggle('is-idle', state !== 'playing');
+      this.container.classList.toggle('is-off', !this.enabled || reduceMotion);
+    }
+
+    updateUnits(bands, time = 0, state = 'playing') {
+      if (!this.units.length) return;
+      const isQuiet = state !== 'playing' || !this.enabled || reduceMotion;
       const seconds = time / 1000;
+      const styleIndex = Math.max(0, VISUALIZATION_STYLES.findIndex((style) => style.id === selectedVisualizationStyle));
       const trackIndex = Math.max(0, activePlayer ? musicPlayers.indexOf(activePlayer) : 0);
-      const styleSeed = Math.max(1, VISUALIZATION_STYLES.findIndex((style) => style.id === selectedVisualizationStyle) + 1);
-      const beat = useBeatFallback ? Math.pow((Math.sin((seconds * (2.05 + trackIndex * 0.06)) + styleSeed) + 1) / 2, 2.35) : 0;
-      const pulse = useBeatFallback ? Math.pow((Math.sin((seconds * 4.15) + trackIndex * 0.7) + 1) / 2, 3.2) : 0;
-      const breath = useBeatFallback ? 34 + beat * 112 + pulse * 46 : 18;
-      const movement = useBeatFallback ? 0.18 + styleSeed * 0.01 : 0.42;
-      for (let index = 0; index < frequencyData.length; index += 1) {
-        const wave = Math.sin((time / (useBeatFallback ? 210 : 680)) + index * movement);
-        const harmonic = Math.sin((time / (340 + trackIndex * 23)) + index * (0.11 + styleSeed * 0.005)) * (useBeatFallback ? 24 : 10);
-        const taper = 1 - (index / frequencyData.length) * 0.54;
-        frequencyData[index] = Math.round(Math.min(255, Math.max(0, (breath + ((wave + 1) * 26) + harmonic) * taper)));
-        waveformData[index] = Math.round(128 + Math.sin((time / (useBeatFallback ? 145 : 520)) + index * 0.24) * (useBeatFallback ? 46 : 18));
-      }
-    }
-
-    const step = Math.max(1, Math.floor(frequencyData.length / spectrumBands.length));
-    for (let index = 0; index < spectrumBands.length; index += 1) {
-      const value = (frequencyData[index * step] || 0) / 255;
-      spectrumBands[index] += (value - spectrumBands[index]) * (useIdle ? 0.08 : 0.42);
-    }
-
-    const bass = averageRange(spectrumBands, 0, Math.round(WAVEFORM_UNIT_COUNT * 0.16));
-    const mid = averageRange(spectrumBands, Math.round(WAVEFORM_UNIT_COUNT * 0.16), Math.round(WAVEFORM_UNIT_COUNT * 0.5));
-    const high = averageRange(spectrumBands, Math.round(WAVEFORM_UNIT_COUNT * 0.5), WAVEFORM_UNIT_COUNT);
-    return {
-      bass,
-      mid,
-      high,
-      energy: Math.min(Math.max((bass + mid + high) / 3, 0), 1),
-      spectrum: spectrumBands,
-      waveform: waveformData
-    };
-  };
-
-  const seededVisualizerNoise = (index, salt = 0) => {
-    const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
-    return value - Math.floor(value);
-  };
-
-  const updateFallbackVisualizerUnits = (bands, time = 0, state = 'playing') => {
-    if (!visualizerUnits.length) {
-      return;
-    }
-
-    const isQuiet = state !== 'playing' || !visualizerEnabled || reduceMotion;
-    const seconds = time / 1000;
-    const styleIndex = Math.max(0, VISUALIZATION_STYLES.findIndex((style) => style.id === selectedVisualizationStyle));
-    const trackIndex = Math.max(0, activePlayer ? musicPlayers.indexOf(activePlayer) : 0);
-    const energy = Math.max(0.08, bands.energy || 0);
-    const center = (WAVEFORM_UNIT_COUNT - 1) / 2;
-
-    visualizerUnits.forEach((unit, index) => {
-      const normalized = index / Math.max(WAVEFORM_UNIT_COUNT - 1, 1);
-      const seed = seededVisualizerNoise(index, styleIndex + trackIndex * 0.37);
-      const beat = Math.pow((Math.sin(seconds * (2.1 + seed * 0.8) + seed * 6.28) + 1) / 2, 2.1);
-      const shimmer = (Math.sin(seconds * (4.2 + seed * 2.4) + index * 0.31) + 1) / 2;
-      const wave = Math.sin(seconds * (1.5 + styleIndex * 0.07) + index * 0.22 + trackIndex * 0.6);
-      const scale = isQuiet
-        ? 0.16 + seed * 0.2
-        : Math.min(1.2, 0.18 + energy * 0.5 + beat * 0.42 + shimmer * 0.18);
-      const opacity = isQuiet
-        ? 0.26 + seed * 0.18
-        : Math.min(0.96, 0.38 + energy * 0.24 + beat * 0.22 + shimmer * 0.12);
-      const hue = 208 + normalized * 30 + bands.high * 24;
-      let unitX = 0;
-      let unitY = 0;
-      let rotate = 0;
-      let scaleX = 1;
-      let scaleY = scale;
-
-      switch (selectedVisualizationStyle) {
-        case 'waveform':
-          unitX = (normalized - 0.5) * visualizerCssWidth * 0.84;
-          unitY = (wave * visualizerCssHeight * 0.18) + (Math.sin(seconds * 2.8 + index * 0.41) * 10);
-          rotate = Math.atan2(Math.cos(seconds * 1.8 + index * 0.22), 5) * 36;
-          scaleX = 0.72 + beat * 0.45;
-          scaleY = 0.8 + Math.abs(wave) * 2.1 + energy * 1.3;
-          break;
-        case 'orb':
-        case 'particle-field': {
-          const angle = normalized * Math.PI * 2 + seconds * (0.5 + seed * 0.14);
-          const radius = Math.min(visualizerCssWidth, visualizerCssHeight) * (0.13 + seed * 0.23 + beat * 0.08);
-          unitX = Math.cos(angle) * radius;
-          unitY = Math.sin(angle) * radius * 0.74;
-          scaleX = scaleY = 0.7 + beat * 1.8 + energy * 0.8;
-          break;
+      const energy = Math.max(0.08, bands.energy || 0);
+      const center = (WAVEFORM_UNIT_COUNT - 1) / 2;
+      this.units.forEach((unit, index) => {
+        const normalized = index / Math.max(WAVEFORM_UNIT_COUNT - 1, 1);
+        const seed = this.seededNoise(index, styleIndex + trackIndex * 0.37);
+        const beat = Math.pow((Math.sin(seconds * (2.1 + seed * 0.8) + seed * 6.28) + 1) / 2, 2.1);
+        const shimmer = (Math.sin(seconds * (4.2 + seed * 2.4) + index * 0.31) + 1) / 2;
+        const wave = Math.sin(seconds * (1.5 + styleIndex * 0.07) + index * 0.22 + trackIndex * 0.6);
+        const scale = isQuiet ? 0.16 + seed * 0.2 : Math.min(1.2, 0.18 + energy * 0.5 + beat * 0.42 + shimmer * 0.18);
+        const opacity = isQuiet ? 0.26 + seed * 0.18 : Math.min(0.96, 0.38 + energy * 0.24 + beat * 0.22 + shimmer * 0.12);
+        const hue = 208 + normalized * 30 + bands.high * 24;
+        let unitX = 0;
+        let unitY = 0;
+        let rotate = 0;
+        let scaleX = 1;
+        let scaleY = scale;
+        switch (selectedVisualizationStyle) {
+          case 'waveform':
+            unitX = (normalized - 0.5) * this.cssWidth * 0.84;
+            unitY = (wave * this.cssHeight * 0.18) + (Math.sin(seconds * 2.8 + index * 0.41) * 10);
+            rotate = Math.atan2(Math.cos(seconds * 1.8 + index * 0.22), 5) * 36;
+            scaleX = 0.72 + beat * 0.45;
+            scaleY = 0.8 + Math.abs(wave) * 2.1 + energy * 1.3;
+            break;
+          case 'orb':
+          case 'particle-field': {
+            const angle = normalized * Math.PI * 2 + seconds * (0.5 + seed * 0.14);
+            const radius = Math.min(this.cssWidth, this.cssHeight) * (0.13 + seed * 0.23 + beat * 0.08);
+            unitX = Math.cos(angle) * radius;
+            unitY = Math.sin(angle) * radius * 0.74;
+            scaleX = scaleY = 0.7 + beat * 1.8 + energy * 0.8;
+            break;
+          }
+          case 'wireframe-lattice':
+            unitX = (index - center) * Math.min(7, this.cssWidth / 82);
+            unitY = Math.sin(index * 0.52 + seconds * 1.4) * this.cssHeight * 0.14;
+            rotate = (index % 2 ? 58 : -58) + wave * 12;
+            scaleY = 0.5 + beat * 1.5 + energy;
+            break;
+          case 'waveform-tunnel':
+          case 'holographic-rings': {
+            const angle = normalized * Math.PI * 2 + seconds * 0.34;
+            const radius = Math.min(this.cssWidth, this.cssHeight) * (0.12 + (index % 16) / 75 + beat * 0.08);
+            unitX = Math.cos(angle) * radius;
+            unitY = Math.sin(angle) * radius * 0.46;
+            rotate = angle * (180 / Math.PI) + 90;
+            scaleX = 0.7 + beat * 1.2;
+            scaleY = 0.62 + energy * 1.4;
+            break;
+          }
+          default:
+            unitX = (normalized - 0.5) * this.cssWidth * 0.82;
+            scaleY = scale;
+            break;
         }
-        case 'wireframe-lattice':
-          unitX = (index - center) * Math.min(7, visualizerCssWidth / 82);
-          unitY = Math.sin(index * 0.52 + seconds * 1.4) * visualizerCssHeight * 0.14;
-          rotate = (index % 2 ? 58 : -58) + wave * 12;
-          scaleY = 0.5 + beat * 1.5 + energy;
-          break;
-        case 'waveform-tunnel':
-        case 'holographic-rings': {
-          const angle = normalized * Math.PI * 2 + seconds * 0.34;
-          const radius = Math.min(visualizerCssWidth, visualizerCssHeight) * (0.12 + (index % 16) / 75 + beat * 0.08);
-          unitX = Math.cos(angle) * radius;
-          unitY = Math.sin(angle) * radius * 0.46;
-          rotate = angle * (180 / Math.PI) + 90;
-          scaleX = 0.7 + beat * 1.2;
-          scaleY = 0.62 + energy * 1.4;
-          break;
-        }
-        default:
-          unitX = (normalized - 0.5) * visualizerCssWidth * 0.82;
-          scaleY = scale;
-          break;
-      }
-
-      unit.style.setProperty('--unit-x', `${unitX.toFixed(2)}px`);
-      unit.style.setProperty('--unit-y', `${unitY.toFixed(2)}px`);
-      unit.style.setProperty('--unit-rotate', `${rotate.toFixed(2)}deg`);
-      unit.style.setProperty('--unit-scale-x', scaleX.toFixed(3));
-      unit.style.setProperty('--unit-scale-y', scaleY.toFixed(3));
-      unit.style.setProperty('--bar-height', scaleY.toFixed(3));
-      unit.style.setProperty('--bar-opacity', opacity.toFixed(3));
-      unit.style.setProperty('--unit-hue', `${hue.toFixed(1)}deg`);
-    });
-  };
-
-  const inspectAnalyserMovement = (audio) => {
-    if (!sharedAnalyser || !audio || audio.paused || audio.ended) {
-      silentAnalyzerFrames = 0;
-      activeAnalyzerFrames = 0;
-      return false;
+        unit.style.setProperty('--unit-x', `${unitX.toFixed(2)}px`);
+        unit.style.setProperty('--unit-y', `${unitY.toFixed(2)}px`);
+        unit.style.setProperty('--unit-rotate', `${rotate.toFixed(2)}deg`);
+        unit.style.setProperty('--unit-scale-x', scaleX.toFixed(3));
+        unit.style.setProperty('--unit-scale-y', Math.max(0.04, scaleY).toFixed(3));
+        unit.style.setProperty('--bar-height', Math.max(0.04, scaleY).toFixed(3));
+        unit.style.setProperty('--bar-opacity', opacity.toFixed(3));
+        unit.style.setProperty('--unit-hue', `${hue.toFixed(1)}deg`);
+      });
     }
 
-    try {
-      sharedAnalyser.getByteFrequencyData(analyserProbeFrequencyData);
-      if (typeof sharedAnalyser.getByteTimeDomainData === 'function') {
-        sharedAnalyser.getByteTimeDomainData(analyserProbeTimeData);
-      }
-    } catch (error) {
-      analyserFallbackActive = true;
-      warnAnalyzerFallback(error?.message || error);
-      return false;
+    roundedRect(context, x, y, width, height, radius) {
+      const safeRadius = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + safeRadius, y);
+      context.lineTo(x + width - safeRadius, y);
+      context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+      context.lineTo(x + width, y + height - safeRadius);
+      context.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+      context.lineTo(x + safeRadius, y + height);
+      context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+      context.lineTo(x, y + safeRadius);
+      context.quadraticCurveTo(x, y, x + safeRadius, y);
+      context.closePath();
     }
 
-    let maxFrequency = 0;
-    let minFrequency = 255;
-    let totalDelta = 0;
-    let waveformDeviation = 0;
-
-    for (let index = 0; index < analyserProbeFrequencyData.length; index += 1) {
-      const value = analyserProbeFrequencyData[index];
-      if (value > maxFrequency) maxFrequency = value;
-      if (value < minFrequency) minFrequency = value;
-      totalDelta += Math.abs(value - previousAnalyserProbeData[index]);
-      previousAnalyserProbeData[index] = value;
-      waveformDeviation += Math.abs((analyserProbeTimeData[index] || 128) - 128);
-    }
-
-    const averageDelta = totalDelta / analyserProbeFrequencyData.length;
-    const averageWaveformDeviation = waveformDeviation / analyserProbeFrequencyData.length;
-    const audioTime = Math.max(0, audio.currentTime || 0);
-    const audioAdvanced = audioTime - lastAnalyserAudioTime > 0.012;
-    lastAnalyserAudioTime = audioTime;
-    const analyserLooksActive = maxFrequency > 4 && (maxFrequency - minFrequency > 3 || averageDelta > 0.65 || averageWaveformDeviation > 0.8);
-
-    if (audioAdvanced && !analyserLooksActive) {
-      silentAnalyzerFrames += 1;
-      activeAnalyzerFrames = 0;
-    } else if (analyserLooksActive) {
-      activeAnalyzerFrames += 1;
-      silentAnalyzerFrames = 0;
-    }
-
-    if (!analyserFallbackActive && silentAnalyzerFrames >= ANALYSER_FLAT_FRAME_LIMIT) {
-      analyserFallbackActive = true;
-      warnAnalyzerFallback('Analyser data stayed flat while audio was playing.');
-      setVisualizerFallback(false);
-      setVisualizerTheme('playing');
-    } else if (analyserFallbackActive && activeAnalyzerFrames >= ANALYSER_ACTIVE_FRAME_LIMIT) {
-      analyserFallbackActive = false;
-      if (audio.dataset.analyserBlocked === 'true') {
-        delete audio.dataset.analyserBlocked;
-      }
-      setVisualizerFallback(false);
-      setVisualizerTheme('playing');
-    }
-
-    return analyserLooksActive;
-  };
-
-  const roundedRect = (context, x, y, width, height, radius) => {
-    const safeRadius = Math.min(radius, Math.abs(width) / 2, Math.abs(height) / 2);
-    context.beginPath();
-    context.moveTo(x + safeRadius, y);
-    context.lineTo(x + width - safeRadius, y);
-    context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
-    context.lineTo(x + width, y + height - safeRadius);
-    context.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
-    context.lineTo(x + safeRadius, y + height);
-    context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
-    context.lineTo(x, y + safeRadius);
-    context.quadraticCurveTo(x, y, x + safeRadius, y);
-    context.closePath();
-  };
-
-  const setVisualizerTheme = (state = visualizerMode) => {
-    if (!visualizerCanvas) {
-      return;
-    }
-
-    visualizerMode = state;
-    selectedVisualizationStyle = normalizeVisualizationStyle(selectedVisualizationStyle);
-    const safeStyle = selectedVisualizationStyle;
-    const nextThemeKey = [safeStyle, analyserFallbackActive, state, visualizerEnabled, reduceMotion].join('|');
-
-    if (nextThemeKey === visualizerLastThemeKey) {
-      return;
-    }
-
-    visualizerLastThemeKey = nextThemeKey;
-    visualizerCanvas.dataset.visualizationStyle = safeStyle;
-    visualizerCanvas.classList.toggle('is-analyser-fallback', analyserFallbackActive);
-    visualizerCanvas.classList.toggle('visualizer-ready', visualizerEnabled && !reduceMotion);
-    visualizerCanvas.classList.toggle('visualizer-playing', state === 'playing' && visualizerEnabled && !reduceMotion);
-    visualizerCanvas.classList.toggle('visualizer-fallback', analyserFallbackActive && state === 'playing');
-    visualizerCanvas.classList.toggle('visualizer-idle', state !== 'playing' || !visualizerEnabled || reduceMotion);
-    visualizerCanvas.classList.toggle('is-playing', state === 'playing');
-    visualizerCanvas.classList.toggle('is-paused', state === 'paused');
-    visualizerCanvas.classList.toggle('is-idle', state !== 'playing');
-    visualizerCanvas.classList.toggle('is-off', !visualizerEnabled || reduceMotion);
-  };
-
-  const renderVisualizationFrame = (bands, time = 0, state = 'playing') => {
-    if (!visualizerSurfaceContext || !visualizerSurface) {
-      return;
-    }
-
-    updateFallbackVisualizerUnits(bands, time, state);
-
-    const context = visualizerSurfaceContext;
-    const isQuiet = state !== 'playing' || !visualizerEnabled || reduceMotion;
-    const quietScale = isQuiet ? 0.38 : 1;
-    const width = visualizerCssWidth;
-    const height = visualizerCssHeight;
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const timeSeconds = time / 1000;
-    const currentStyle = selectedVisualizationStyle;
-    const barCount = WAVEFORM_UNIT_COUNT;
-    const gap = Math.max(3, width / 190);
-    const barWidth = Math.max(3, Math.min(12, (width * 0.86) / barCount - gap));
-    const startX = (width - (barCount * barWidth + (barCount - 1) * gap)) / 2;
-    const waveformAmplitude = height * (isQuiet ? 0.16 : 0.34);
-    const waveformMinimumMotion = isQuiet ? 0.035 : Math.min(0.16, 0.08 + bands.energy * 0.12);
-    const waveformResponse = isQuiet ? 0.12 : 0.34;
-
-    context.clearRect(0, 0, width, height);
-    context.save();
-    context.globalCompositeOperation = 'source-over';
-
-    const glowGradient = context.createRadialGradient(centerX, centerY, 4, centerX, centerY, Math.max(width, height) * 0.55);
-    glowGradient.addColorStop(0, `rgba(96, 165, 250, ${0.08 + bands.energy * 0.14 * quietScale})`);
-    glowGradient.addColorStop(1, 'rgba(96, 165, 250, 0)');
-    context.fillStyle = glowGradient;
-    context.fillRect(0, 0, width, height);
-
-    for (let index = 0; index < barCount; index += 1) {
-      const normalized = index / Math.max(barCount - 1, 1);
-      const centered = index - (barCount - 1) / 2;
-      const value = bands.spectrum[index] || 0;
-      const sampleIndex = Math.min(bands.waveform.length - 1, Math.round(normalized * (bands.waveform.length - 1)));
-      const rawWave = ((bands.waveform[sampleIndex] || 128) - 128) / 128;
-      const fallbackWave = Math.sin((time / 360) + sampleIndex * 0.41) * waveformMinimumMotion;
-      const shapedWave = Math.min(0.9, Math.max(-0.9, rawWave || fallbackWave));
-      waveformPoints[index] += (shapedWave - waveformPoints[index]) * waveformResponse;
-
-      const pulse = Math.max(0.06, value * quietScale);
-      const hue = 205 + normalized * 36 + (bands.high * 24);
-      const alpha = Math.min(0.95, isQuiet ? 0.34 + pulse * 0.36 : 0.5 + pulse * 0.45);
-      let x = startX + index * (barWidth + gap);
-      let y = centerY;
-      let drawWidth = barWidth;
-      let drawHeight = 10 + pulse * height * 0.46;
-      let rotation = 0;
-
-      switch (currentStyle) {
-        case 'orb': {
-          const angle = normalized * Math.PI * 2 + timeSeconds * 0.42;
-          const radius = Math.min(width, height) * (0.14 + bands.bass * 0.1 * quietScale);
-          x = centerX + Math.cos(angle) * radius;
-          y = centerY + Math.sin(angle) * radius * 0.72;
-          drawWidth = Math.max(4, barWidth * 0.78);
-          drawHeight = 8 + pulse * height * 0.22;
-          rotation = angle + Math.PI / 2;
-          break;
-        }
-        case 'particle-field': {
-          const angle = normalized * Math.PI * 6 + timeSeconds * 0.22;
-          const radius = Math.min(width, height) * (0.08 + ((index % 9) / 16) + bands.energy * 0.08 * quietScale);
-          x = centerX + Math.cos(angle) * radius;
-          y = centerY + Math.sin(angle * 0.74) * radius * 0.72;
-          drawWidth = Math.max(3, barWidth * 0.7);
-          drawHeight = Math.max(drawWidth, 5 + pulse * 22);
-          break;
-        }
-        case 'wireframe-lattice':
-          x = centerX + centered * Math.min(7, width / 82);
-          y = centerY + Math.sin(index * 0.52 + timeSeconds * 1.3) * height * 0.12;
-          drawWidth = Math.max(2, barWidth * 0.38);
-          drawHeight = 18 + pulse * height * 0.38;
-          rotation = (index % 2 ? Math.PI / 3 : -Math.PI / 3) + bands.high * 0.35;
-          break;
-        case 'waveform-tunnel':
-        case 'holographic-rings': {
-          const angle = normalized * Math.PI * 2 + timeSeconds * 0.24;
-          const radius = Math.min(width, height) * (0.1 + (index % 16) / 80 + bands.mid * 0.12 * quietScale);
-          x = centerX + Math.cos(angle) * radius;
-          y = centerY + Math.sin(angle) * radius * 0.45;
-          drawWidth = Math.max(9, barWidth * 1.4);
-          drawHeight = 4 + pulse * height * 0.1;
-          rotation = angle + Math.PI / 2;
-          break;
-        }
-        case 'waveform':
-        default:
-          y = centerY + Math.min(height * 0.38, Math.max(height * -0.38, waveformPoints[index] * waveformAmplitude * quietScale));
-          drawHeight = 10 + Math.abs(waveformPoints[index]) * height * 0.32 + bands.energy * height * 0.12 * quietScale;
-          rotation = Math.atan2(waveformPoints[Math.min(waveformPoints.length - 1, index + 1)] - waveformPoints[index], 0.08);
-          break;
-      }
-
+    renderFrame(bands, time = 0, state = 'playing') {
+      this.updateUnits(bands, time, state);
+      if (!this.surfaceContext || !this.surface) return;
+      const context = this.surfaceContext;
+      const isQuiet = state !== 'playing' || !this.enabled || reduceMotion;
+      const quietScale = isQuiet ? 0.38 : 1;
+      const width = this.cssWidth;
+      const height = this.cssHeight;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const timeSeconds = time / 1000;
+      context.clearRect(0, 0, width, height);
       context.save();
-      context.translate(x + drawWidth / 2, y);
-      context.rotate(rotation);
-      const gradient = context.createLinearGradient(0, -drawHeight / 2, 0, drawHeight / 2);
-      gradient.addColorStop(0, 'rgba(248, 250, 252, 0.96)');
-      gradient.addColorStop(0.45, `hsla(${hue}, 90%, 68%, ${alpha})`);
-      gradient.addColorStop(1, `hsla(${hue + 18}, 88%, 56%, ${alpha})`);
-      context.fillStyle = gradient;
-      context.shadowColor = `hsla(${hue}, 90%, 66%, ${isQuiet ? 0.12 : 0.22})`;
-      context.shadowBlur = isQuiet ? 6 : 10;
-      roundedRect(context, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight, Math.max(3, drawWidth));
-      context.fill();
+      const glowGradient = context.createRadialGradient(centerX, centerY, 4, centerX, centerY, Math.max(width, height) * 0.55);
+      glowGradient.addColorStop(0, `rgba(96, 165, 250, ${0.06 + bands.energy * 0.12 * quietScale})`);
+      glowGradient.addColorStop(1, 'rgba(96, 165, 250, 0)');
+      context.fillStyle = glowGradient;
+      context.fillRect(0, 0, width, height);
+      const barCount = WAVEFORM_UNIT_COUNT;
+      const gap = Math.max(3, width / 190);
+      const barWidth = Math.max(3, Math.min(12, (width * 0.86) / barCount - gap));
+      const startX = (width - (barCount * barWidth + (barCount - 1) * gap)) / 2;
+      const waveformAmplitude = height * (isQuiet ? 0.16 : 0.34);
+      for (let index = 0; index < barCount; index += 1) {
+        const normalized = index / Math.max(barCount - 1, 1);
+        const value = bands.spectrum[index] || 0;
+        const sampleIndex = Math.min(bands.waveform.length - 1, Math.round(normalized * (bands.waveform.length - 1)));
+        const rawWave = ((bands.waveform[sampleIndex] || 128) - 128) / 128;
+        const fallbackWave = Math.sin((time / 360) + sampleIndex * 0.41) * (isQuiet ? 0.035 : 0.12);
+        const shapedWave = Math.min(0.9, Math.max(-0.9, rawWave || fallbackWave));
+        this.waveformPoints[index] += (shapedWave - this.waveformPoints[index]) * (isQuiet ? 0.12 : 0.34);
+        const pulse = Math.max(0.06, value * quietScale);
+        const hue = 205 + normalized * 36 + (bands.high * 24);
+        const alpha = Math.min(0.82, isQuiet ? 0.24 + pulse * 0.28 : 0.38 + pulse * 0.36);
+        let x = startX + index * (barWidth + gap);
+        let y = centerY + this.waveformPoints[index] * waveformAmplitude * quietScale;
+        let drawWidth = barWidth;
+        let drawHeight = 10 + Math.abs(this.waveformPoints[index]) * height * 0.24 + bands.energy * height * 0.1 * quietScale;
+        let rotation = Math.atan2(this.waveformPoints[Math.min(this.waveformPoints.length - 1, index + 1)] - this.waveformPoints[index], 0.08);
+        if (selectedVisualizationStyle !== 'waveform') {
+          const angle = normalized * Math.PI * 2 + timeSeconds * 0.24;
+          const radius = Math.min(width, height) * (0.1 + (index % 16) / 90 + bands.mid * 0.1 * quietScale);
+          x = centerX + Math.cos(angle) * radius;
+          y = centerY + Math.sin(angle) * radius * 0.5;
+          rotation = angle + Math.PI / 2;
+          drawHeight = 5 + pulse * height * 0.14;
+          drawWidth = Math.max(5, barWidth * 0.9);
+        }
+        context.save();
+        context.translate(x + drawWidth / 2, y);
+        context.rotate(rotation);
+        const gradient = context.createLinearGradient(0, -drawHeight / 2, 0, drawHeight / 2);
+        gradient.addColorStop(0, 'rgba(248, 250, 252, 0.88)');
+        gradient.addColorStop(0.55, `hsla(${hue}, 90%, 68%, ${alpha})`);
+        gradient.addColorStop(1, `hsla(${hue + 18}, 88%, 56%, ${alpha})`);
+        context.fillStyle = gradient;
+        context.shadowColor = `hsla(${hue}, 90%, 66%, ${isQuiet ? 0.08 : 0.16})`;
+        context.shadowBlur = isQuiet ? 5 : 8;
+        this.roundedRect(context, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight, Math.max(3, drawWidth));
+        context.fill();
+        context.restore();
+      }
       context.restore();
     }
 
-    context.restore();
-  };
-
-  const cancelVisualizerFrame = () => {
-    visualizerStartToken += 1;
-    if (visualizerFrameId) {
-      window.cancelAnimationFrame(visualizerFrameId);
-      visualizerFrameId = 0;
-    }
-  };
-
-  const setVisualizerStatic = (mode = 'idle') => {
-    if (!visualizerCanvas) {
-      return;
-    }
-
-    cancelVisualizerFrame();
-    analyserFallbackActive = false;
-    visualizerLastDrawTime = 0;
-    resizeVisualizerSurface();
-    setVisualizerTheme(mode);
-    renderVisualizationFrame(sampleAudioBands(window.performance.now(), true), window.performance.now(), mode);
-  };
-
-  const runIdleVisualizer = (mode = 'idle') => {
-    if (!visualizerCanvas) {
-      return;
-    }
-
-    if (!visualizerEnabled || reduceMotion) {
-      setVisualizerStatic(mode);
-      return;
+    collectDiagnostics(audio = this.activeAudio) {
+      return {
+        userAgent,
+        platform,
+        maxTouchPoints: window.navigator.maxTouchPoints || 0,
+        isAppleTouchDevice,
+        isIosWebKit,
+        isIosSafari,
+        visualizerEnabled: this.enabled,
+        mode: this.mode,
+        selectedVisualizationStyle,
+        forceMode: this.getForceMode() || 'none',
+        currentTrackTitle: this.activeTrackTitle || (activePlayer ? getTrackTitle(activePlayer) : ''),
+        audioPaused: audio?.paused ?? true,
+        audioEnded: audio?.ended ?? false,
+        audioCurrentTime: Number.isFinite(audio?.currentTime) ? Math.round(audio.currentTime * 1000) / 1000 : 0,
+        audioContextState: this.getAudioContextState(),
+        sourceNode: this.sourceConnected ? (this.sourceReused ? 'reused' : 'connected') : 'not-connected',
+        analyserActive: this.analyserActive,
+        analyserFlat: this.analyserFlat,
+        flatFrames: this.flatFrames,
+        activeFrames: this.activeFrames,
+        fallbackActive: this.fallbackActive,
+        animationFrameCount: this.frameCount,
+        barCount: this.units.length,
+        width: this.cssWidth,
+        height: this.cssHeight
+      };
     }
 
-    analyserFallbackActive = false;
-    visualizerLastDrawTime = 0;
-    resizeVisualizerSurface();
-    setVisualizerTheme(mode);
-
-    const tick = (time = 0) => {
-      const mobileFrameInterval = (isCoarsePointerDevice() || isIosWebKit) ? 33 : 0;
-      if (!mobileFrameInterval || !visualizerLastDrawTime || time - visualizerLastDrawTime >= mobileFrameInterval) {
-        visualizerLastDrawTime = time;
-        renderVisualizationFrame(sampleAudioBands(time, true), time, mode);
-      }
-      visualizerFrameId = window.requestAnimationFrame(tick);
-    };
-
-    cancelVisualizerFrame();
-    tick();
-  };
-
-  const getAudioContextState = () => sharedAudioContext?.state || 'closed';
-
-  const resetClosedAudioGraph = () => {
-    if (sharedAudioContext && sharedAudioContext.state !== 'closed') {
-      return;
+    logDiagnostics(event = 'state', immediate = false) {
+      if (!this.isDebugEnabled() || !window.console?.groupCollapsed) return;
+      const now = window.performance.now();
+      if (!immediate && now - this.lastDiagnosticsTime < 2000) return;
+      this.lastDiagnosticsTime = now;
+      window.console.groupCollapsed(`[music visualizer] ${event}`);
+      window.console.info(this.collectDiagnostics());
+      window.console.groupEnd();
     }
+  }
 
-    sharedAudioContext = null;
-    sharedAnalyser = null;
-    analyserConnectedToDestination = false;
-    sourceConnectionState = new WeakMap();
-  };
+  let visualizerController = null;
+  const getAudioContextState = () => visualizerController?.getAudioContextState() || 'closed';
+  const resizeVisualizerSurface = () => visualizerController?.resize();
+  const ensureAudioContextForGesture = (options) => visualizerController?.ensureAnalyser(options) || Promise.resolve(null);
+  const connectAudioToAnalyser = (audio) => visualizerController?.connectAnalyser(audio) || false;
+  const warnAnalyzerFallback = (reason) => visualizerController?.warnFallback(reason);
+  const setVisualizerFallback = (isUnavailable = false) => visualizerController?.setFallbackNote(isUnavailable);
+  const startVisualizer = (audio) => visualizerController?.start(audio);
+  const stopVisualizer = (mode = 'idle') => visualizerController?.stop(mode);
+  const runIdleVisualizer = (mode = 'idle') => visualizerController?.idle(mode);
+  const setVisualizerStatic = (mode = 'idle') => visualizerController?.renderStatic(mode);
 
-  const ensureAudioContextForGesture = async ({ allowCreate = true, allowResume = true } = {}) => {
-    if (!AudioContextConstructor) {
-      setVisualizerFallback(false);
-      warnAnalyzerFallback('Web Audio API is not supported.');
-      return null;
-    }
-
-    if (!sharedAudioContext || sharedAudioContext.state === 'closed') {
-      if (!allowCreate) {
-        warnAnalyzerFallback('AudioContext was unavailable outside a user gesture.');
-        return null;
-      }
-
-      sharedAudioContext = new AudioContextConstructor();
-      sharedAnalyser = null;
-      analyserConnectedToDestination = false;
-      logAudioDiagnostics('audio-context-created', { state: sharedAudioContext.state });
-    }
-
-    if (['suspended', 'interrupted'].includes(sharedAudioContext.state) && typeof sharedAudioContext.resume === 'function') {
-      if (!allowResume) {
-        warnAnalyzerFallback(`AudioContext was ${sharedAudioContext.state} outside a user gesture.`);
-        return null;
-      }
-
-      warnAudioContextState(sharedAudioContext.state);
-      await sharedAudioContext.resume();
-      logAudioDiagnostics('audio-context-resumed', { state: sharedAudioContext.state });
-    }
-
-    if (sharedAudioContext.state === 'closed') {
-      resetClosedAudioGraph();
-      return ensureAudioContextForGesture({ allowCreate, allowResume });
-    }
-
-    if (!sharedAnalyser) {
-      sharedAnalyser = sharedAudioContext.createAnalyser();
-      sharedAnalyser.fftSize = 256;
-      sharedAnalyser.smoothingTimeConstant = 0.84;
-      sharedAnalyser.minDecibels = -90;
-      sharedAnalyser.maxDecibels = -10;
-    }
-
-    if (!analyserConnectedToDestination) {
-      sharedAnalyser.connect(sharedAudioContext.destination);
-      analyserConnectedToDestination = true;
-    }
-
-    return sharedAudioContext;
-  };
-
-  const connectAudioToAnalyser = (audio) => {
-    if (!audio || !sharedAudioContext || !sharedAnalyser) {
-      return false;
-    }
-
-    let nodeRecord = mediaSourceNodes.get(audio);
-
-    if (nodeRecord && nodeRecord.context !== sharedAudioContext) {
-      warnAnalyzerFallback('Audio element already has a media source for another audio context.');
-      return false;
-    }
-
-    if (!nodeRecord) {
-      try {
-        nodeRecord = {
-          context: sharedAudioContext,
-          source: sharedAudioContext.createMediaElementSource(audio)
-        };
-        mediaSourceNodes.set(audio, nodeRecord);
-        sourceConnectionState.set(audio, false);
-      } catch (error) {
-        warnAnalyzerFallback(error?.message || error);
-        return false;
-      }
-    }
-
-    if (!sourceConnectionState.get(audio)) {
-      try {
-        nodeRecord.source.connect(sharedAnalyser);
-        sourceConnectionState.set(audio, true);
-      } catch (error) {
-        warnAnalyzerFallback(error?.message || error);
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const startVisualizerLoop = (audio) => {
-    if (!visualizerCanvas) {
-      return;
-    }
-
-    cancelVisualizerFrame();
-    resizeVisualizerSurface();
-    visualizerLastDrawTime = 0;
-    lastAnalyserAudioTime = Math.max(0, audio?.currentTime || 0);
-    silentAnalyzerFrames = 0;
-    activeAnalyzerFrames = 0;
-    previousAnalyserProbeData.fill(0);
-    analyserFallbackActive = !sharedAnalyser;
-    if (analyserFallbackActive) {
-      warnAnalyzerFallback('Analyser is not ready while audio is playing.');
-    }
-    setVisualizerTheme('playing');
-    setVisualizerHelper('');
-    setVisualizerFallback(false);
-
-    const tick = (time = 0) => {
-      if (!audio || audio.paused || audio.ended) {
-        analyserFallbackActive = false;
-        runIdleVisualizer(audio && !audio.ended ? 'paused' : 'idle');
-        return;
-      }
-
-      const fallbackTime = Math.max(0, audio.currentTime || 0) * 1000;
-      const drawTime = analyserFallbackActive ? fallbackTime : time;
-      const mobileFrameInterval = (isCoarsePointerDevice() || isIosWebKit) ? 33 : 0;
-
-      if (document.hidden) {
-        visualizerFrameId = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      if (mobileFrameInterval && visualizerLastDrawTime && time - visualizerLastDrawTime < mobileFrameInterval) {
-        visualizerFrameId = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      visualizerLastDrawTime = time;
-      inspectAnalyserMovement(audio);
-      const bands = sampleAudioBands(drawTime, false, analyserFallbackActive);
-
-      try {
-        renderVisualizationFrame(bands, drawTime, 'playing');
-      } catch (error) {
-        analyserFallbackActive = true;
-        warnAnalyzerFallback(error?.message || error);
-        setVisualizerTheme('playing');
-        renderVisualizationFrame(sampleAudioBands(fallbackTime, false, true), fallbackTime, 'playing');
-      }
-      visualizerFrameId = window.requestAnimationFrame(tick);
-    };
-
-    tick();
-  };
-
-  const startVisualizer = (audio) => {
-    if (!visualizerCanvas) {
-      return;
-    }
-
-    visualizerStartToken += 1;
-    const startToken = visualizerStartToken;
-
-    if (!visualizerEnabled || reduceMotion) {
-      setVisualizerStatic(audio && !audio.paused && !audio.ended ? 'paused' : 'idle');
-      return;
-    }
-
-    setVisualizerTheme('playing');
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        if (startToken !== visualizerStartToken) {
-          return;
-        }
-        startVisualizerLoop(audio);
-      });
-    });
-  };
-
-  const stopVisualizer = (mode = 'idle') => {
-    if (!visualizerCanvas) {
-      return;
-    }
-
-    runIdleVisualizer(mode);
-  };
-
-  createVisualizerUnits();
+  visualizerController = new VisualizerController({ container: visualizerCanvas, note: visualizerFallback });
+  visualizerController.setEnabled(visualizerEnabled);
+  visualizerController.init();
   setupVisualizationStyleSelector();
-  setVisualizerFallback();
-  runIdleVisualizer('idle');
   let visualizerResizeTimer = 0;
   const scheduleVisualizerResize = (delay = 80) => {
     window.clearTimeout(visualizerResizeTimer);
@@ -4683,6 +4605,7 @@ if (musicPlayers.length) {
 
   const enableVisualizerFromGesture = async () => {
     visualizerEnabled = true;
+    visualizerController?.setEnabled(true);
     writeVisualizerPreference(true);
     updateVisualizerToggleUI();
 
@@ -4712,6 +4635,7 @@ if (musicPlayers.length) {
 
   const disableVisualizer = () => {
     visualizerEnabled = false;
+    visualizerController?.setEnabled(false);
     writeVisualizerPreference(false);
     setVisualizerFallback(false);
     setVisualizerStatic('idle');
@@ -4895,8 +4819,7 @@ if (musicPlayers.length) {
         const context = await ensureAudioContextForGesture({ allowCreate: !isAutoAdvance, allowResume: !isAutoAdvance });
         analyserReady = context ? connectAudioToAnalyser(audio) : false;
         if (!analyserReady) {
-          analyserFallbackActive = true;
-          setVisualizerTheme('playing');
+          setVisualizerFallback(false);
         }
       } else {
         stopVisualizer('idle');
@@ -5074,6 +4997,9 @@ if (musicPlayers.length) {
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
         updateVisualizerToggleUI();
+        if (visualizerEnabled) {
+          startVisualizer(audio);
+        }
         updateMediaSessionMetadata(musicPlayer);
         persistPlayerState();
 
@@ -5392,7 +5318,7 @@ if (musicPlayers.length) {
     const nextStyle = normalizeVisualizationStyle(visualizerStyleSelect.value);
     selectedVisualizationStyle = nextStyle;
     writeVisualizerStylePreference(nextStyle);
-    resizeVisualizerSurface();
+    visualizerController?.switchMode(nextStyle);
     updateVisualizerToggleUI();
 
     const audio = activePlayer ? getAudio(activePlayer) : null;
