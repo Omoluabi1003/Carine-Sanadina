@@ -2868,6 +2868,8 @@ if (musicPlayers.length) {
   const mobileToggle = document.querySelector('[data-mobile-toggle]');
   const mobileShuffle = document.querySelector('[data-mobile-shuffle]');
   const mobileRepeat = document.querySelector('[data-mobile-repeat]');
+  const miniShuffle = document.querySelector('[data-mini-shuffle]');
+  const miniRepeat = document.querySelector('[data-mini-repeat]');
   const miniExpand = document.querySelector('[data-mini-expand]');
   const mobileClose = document.querySelector('[data-mobile-close]');
   const expandedProgress = document.querySelector('[data-expanded-progress]');
@@ -2999,7 +3001,7 @@ if (musicPlayers.length) {
 
     const repeatLabelKey = repeatMode === 'one' ? 'music.repeatOne' : repeatMode === 'all' ? 'music.repeatAll' : 'music.repeatOff';
     const repeatLabel = translate(repeatLabelKey);
-    [repeatButton, mobileRepeat].forEach((button) => {
+    [repeatButton, mobileRepeat, miniRepeat].forEach((button) => {
       if (!button) return;
       button.dataset.repeatMode = repeatMode;
       button.setAttribute('aria-pressed', String(repeatMode !== 'off'));
@@ -3010,11 +3012,12 @@ if (musicPlayers.length) {
       button.classList.toggle('is-repeat-one', repeatMode === 'one');
     });
 
-    if (mobileShuffle) {
-      mobileShuffle.setAttribute('aria-pressed', String(shuffleEnabled));
-      mobileShuffle.textContent = translate(shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle');
-      mobileShuffle.classList.toggle('is-active', shuffleEnabled);
-    }
+    [mobileShuffle, miniShuffle].forEach((button) => {
+      if (!button) return;
+      button.setAttribute('aria-pressed', String(shuffleEnabled));
+      button.textContent = translate(shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle');
+      button.classList.toggle('is-active', shuffleEnabled);
+    });
   };
 
   const resolveSiteAssetPath = (assetPath) => {
@@ -4814,8 +4817,10 @@ if (musicPlayers.length) {
 
   shuffleButton?.addEventListener('click', toggleShuffle);
   mobileShuffle?.addEventListener('click', toggleShuffle);
+  miniShuffle?.addEventListener('click', toggleShuffle);
   repeatButton?.addEventListener('click', cycleRepeat);
   mobileRepeat?.addEventListener('click', cycleRepeat);
+  miniRepeat?.addEventListener('click', cycleRepeat);
   nextButton?.addEventListener('click', () => playNextTrack(activePlayer || musicPlayers[0]));
   mobileToggle?.addEventListener('click', () => {
     if (!activePlayer) return;
