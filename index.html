@@ -526,8 +526,19 @@
           </div>
 
           <div class="streaming-stage reveal" aria-label="Premium now playing experience" data-i18n-aria-label="music.stageLabel">
-            <div class="stage-artwork" aria-hidden="true">
-              <img src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Consolation%20Cover.png" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-stage-cover />
+            <div class="stage-artwork stage-vinyl-wrap expanded-vinyl-wrap" data-vinyl-stage aria-hidden="true">
+              <div class="stage-artwork-glow expanded-vinyl-glow" aria-hidden="true"></div>
+              <div class="stage-vinyl-disc expanded-vinyl-disc" data-vinyl-disc>
+                <div class="expanded-vinyl-sheen"></div>
+                <div class="stage-vinyl-label expanded-vinyl-label">
+                  <img src="https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Consolation%20Cover.png" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-stage-cover />
+                </div>
+              </div>
+              <div class="stage-tonearm expanded-tonearm" aria-hidden="true">
+                <span class="expanded-tonearm-pivot"></span>
+                <span class="expanded-tonearm-bar"></span>
+                <span class="expanded-tonearm-head"></span>
+              </div>
               <div class="stage-fallback">CS</div>
             </div>
             <div class="stage-copy">
@@ -590,7 +601,12 @@
       <aside class="mini-player" data-mini-player aria-label="Current track mini player" aria-hidden="true" data-i18n-aria-label="mini.label">
         <div class="mini-player-shell">
           <div class="mini-player-row mini-player-track-row">
-            <img class="mini-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mini-cover />
+            <div class="mini-vinyl" aria-hidden="true" data-mini-vinyl-stage>
+              <span class="mini-vinyl-disc" data-vinyl-disc>
+                <img class="mini-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mini-cover />
+              </span>
+              <span class="mini-tonearm"></span>
+            </div>
             <div class="mini-player-meta">
               <span class="mini-player-kicker" data-i18n="music.nowPlaying">Now playing</span>
               <p data-mini-title data-i18n="mini.noTrack">No track selected</p>
@@ -696,6 +712,13 @@
                 <button class="control-chip" type="button" data-mobile-shuffle data-i18n="music.shuffle">Shuffle</button>
                 <button class="track-play-toggle expanded-play-toggle" type="button" data-mobile-toggle aria-label="Play or pause current track" data-i18n-aria-label="mini.toggleLabel"><span class="play-icon" aria-hidden="true">▶</span></button>
                 <button class="control-chip" type="button" data-mobile-repeat data-i18n="music.repeatOff">Repeat Off</button>
+              </div>
+              <div class="expanded-track-picker" aria-label="Choose a track in expanded player" data-i18n-aria-label="music.playlistLabel">
+                <div class="expanded-track-picker__header">
+                  <span data-i18n="music.playlist">Playlist</span>
+                  <span data-i18n="music.time">Time</span>
+                </div>
+                <div class="expanded-track-list" data-expanded-playlist-tracks></div>
               </div>
               <div class="expanded-visualizer" aria-hidden="true" data-expanded-visualizer>
                 <span></span><span></span><span></span><span></span><span></span><span></span>

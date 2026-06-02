@@ -2496,12 +2496,14 @@ const assertRequiredPlaylistTracks = () => REQUIRED_MUSIC_TRACK_IDS.every((requi
 
 const renderCarinePlaylist = () => {
   const playlistMount = document.querySelector('[data-playlist-tracks]');
+  const expandedPlaylistMount = document.querySelector('[data-expanded-playlist-tracks]');
 
   if (!playlistMount) {
     return;
   }
 
   playlistMount.dataset.playlistVersion = PLAYLIST_VERSION;
+  if (expandedPlaylistMount) expandedPlaylistMount.dataset.playlistVersion = PLAYLIST_VERSION;
   document.documentElement.dataset.playlistVersion = PLAYLIST_VERSION;
 
   const safePlaylist = CARINE_MUSIC_PLAYLIST.filter((track) => track && track.id && track.title && track.audioUrl && track.coverUrl);
@@ -2598,6 +2600,44 @@ const renderCarinePlaylist = () => {
       </article>
     `;
   }).join('');
+
+  if (expandedPlaylistMount) {
+    expandedPlaylistMount.innerHTML = safePlaylist.map((track, index) => {
+      const trackKey = escapePlaylistAttribute(track.translationKey);
+      const durationLabel = formatTrackDuration(Number(track.duration));
+      const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
+      return `
+        <button
+          class="expanded-track-option"
+          type="button"
+          data-expanded-track-option
+          data-track-id="${escapePlaylistAttribute(track.id)}"
+          aria-label="Play ${escapePlaylistAttribute(track.title)}"
+          data-i18n-aria-label="${trackKey}.playLabel"
+        >
+          <span class="expanded-track-option__thumb">
+            <img
+              src="${escapePlaylistAttribute(track.coverUrl)}"
+              alt=""
+              width="96"
+              height="96"
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer"
+              data-artwork-fit="${artworkFit}"
+            />
+          </span>
+          <span class="expanded-track-option__meta">
+            <span class="expanded-track-option__number" data-i18n="${trackKey}.number">Track ${String(index + 1).padStart(2, '0')}</span>
+            <strong data-i18n="${trackKey}.title">${escapePlaylistText(track.title)}</strong>
+            <span>${escapePlaylistText(track.artist)}</span>
+          </span>
+          <span class="expanded-track-option__duration">${durationLabel}</span>
+          <span class="expanded-track-option__indicator equalizer" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        </button>
+      `;
+    }).join('');
+  }
 };
 
 renderCarinePlaylist();
@@ -3720,8 +3760,11 @@ if (musicPlayers.length) {
   const expandedCurrent = document.querySelector('[data-expanded-current]');
   const expandedDuration = document.querySelector('[data-expanded-duration]');
   const expandedVisualizer = document.querySelector('[data-expanded-visualizer]');
+  const vinylStages = Array.from(document.querySelectorAll('[data-vinyl-stage], [data-mini-vinyl-stage]'));
+  const vinylDiscs = Array.from(document.querySelectorAll('[data-vinyl-disc]'));
   const expandedVinylStage = document.querySelector('[data-vinyl-stage]');
   const expandedVinylDisc = document.querySelector('[data-vinyl-disc]');
+  const expandedTrackOptions = Array.from(document.querySelectorAll('[data-expanded-track-option]'));
   const expandedPlayerCard = document.querySelector('.expanded-player-card');
   const lyricsPanel = document.querySelector('[data-lyrics-panel]');
   const lyricsScroll = document.querySelector('[data-lyrics-scroll]');
@@ -4167,6 +4210,11 @@ if (musicPlayers.length) {
 
   const setActiveTrack = (player) => {
     musicPlayers.forEach((track) => track.classList.toggle('is-active', track === player));
+    expandedTrackOptions.forEach((option) => {
+      const isActive = Boolean(player && option.dataset.trackId === player.dataset.trackId);
+      option.classList.toggle('is-active', isActive);
+      option.setAttribute('aria-current', isActive ? 'true' : 'false');
+    });
     syncStage(player);
     window.dispatchEvent(new CustomEvent('carine:trackchange', { detail: { trackId: player?.dataset.trackId || '' } }));
   };
@@ -5255,8 +5303,8 @@ if (musicPlayers.length) {
   };
 
   const renderVinylRotation = () => {
-    if (!expandedVinylDisc) return;
-    expandedVinylDisc.style.setProperty('--vinyl-rotation', `${vinylRotation.toFixed(3)}deg`);
+    if (!vinylDiscs.length) return;
+    vinylDiscs.forEach((disc) => disc.style.setProperty('--vinyl-rotation', `${vinylRotation.toFixed(3)}deg`));
   };
 
   const stopVinylAnimationIfSettled = () => {
@@ -5269,7 +5317,7 @@ if (musicPlayers.length) {
   };
 
   const tickVinylRotation = (timestamp = window.performance.now()) => {
-    if (!expandedVinylDisc || reduceMotion) {
+    if (!vinylDiscs.length || reduceMotion) {
       vinylAnimationFrame = null;
       vinylLastTimestamp = 0;
       return;
@@ -5289,10 +5337,10 @@ if (musicPlayers.length) {
 
   const syncVinylExperience = (isPlaying) => {
     isVinylPlaying = Boolean(isPlaying && !reduceMotion);
-    expandedVinylStage?.classList.toggle('is-playing', Boolean(isPlaying));
+    vinylStages.forEach((stage) => stage.classList.toggle('is-playing', Boolean(isPlaying)));
     expandedPlayerCard?.classList.toggle('is-playing', Boolean(isPlaying));
 
-    if (reduceMotion || !expandedVinylDisc) {
+    if (reduceMotion || !vinylDiscs.length) {
       vinylVelocity = 0;
       renderVinylRotation();
       return;
@@ -5334,6 +5382,13 @@ if (musicPlayers.length) {
       const isPlaying = Boolean(audio && !audio.paused && !audio.ended && !forceIdle);
       player.classList.toggle('is-playing', isPlaying);
       setTransportButtonState(getPlayToggle(player), isPlaying);
+    });
+
+    expandedTrackOptions.forEach((option) => {
+      const matchingPlayer = musicPlayers.find((player) => player.dataset.trackId === option.dataset.trackId);
+      const matchingAudio = matchingPlayer ? getAudio(matchingPlayer) : null;
+      const isPlaying = Boolean(matchingAudio && !matchingAudio.paused && !matchingAudio.ended && !forceIdle);
+      option.classList.toggle('is-playing', isPlaying);
     });
 
     if (miniPlayer) miniPlayer.classList.toggle('is-playing', activeIsPlaying);
@@ -6129,6 +6184,13 @@ if (musicPlayers.length) {
   mobileRepeat?.addEventListener('click', cycleRepeat);
   miniRepeat?.addEventListener('click', cycleRepeat);
   nextButton?.addEventListener('click', () => playNextTrack(activePlayer || musicPlayers[0]));
+
+  expandedTrackOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      const selectedPlayer = musicPlayers.find((player) => player.dataset.trackId === option.dataset.trackId);
+      if (selectedPlayer) playAudio(selectedPlayer);
+    });
+  });
   mobileToggle?.addEventListener('click', () => {
     if (!activePlayer) return;
     const audio = getAudio(activePlayer);
