@@ -1,10 +1,11 @@
-const APP_VERSION = 'carine-site-2026-06-02-ios-splash-text';
+const APP_VERSION = 'carine-site-2026-06-02-nav-seo-reflections';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v9-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
   './styles.css',
+  './content-reflections.js',
   './script.js',
   './manifest.json'
 ];

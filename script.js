@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-02-ios-splash-text';
+const APP_VERSION = 'carine-site-2026-06-02-nav-seo-reflections';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -8,11 +8,11 @@ const translations = {};
 
 translations.en = {
   'html.lang': 'en',
-  'meta.title': 'Carine Sanadina | Jacksonville Healthcare Professional, Author, Artist & Survivor Advocate',
-  'meta.description': 'Carine Sanadina is a Jacksonville, Florida healthcare professional, author, artist, survivor advocate, and emotional wellness voice focused on domestic violence awareness, faith, and restoration.',
-  'meta.ogTitle': 'Carine Sanadina | Author, Artist & Survivor Advocate in Jacksonville, Florida',
-  'meta.ogDescription': 'Discover Carine Sanadina’s books, music, advocacy, and healing-centered voice for domestic violence awareness, emotional wellness, faith, and restoration.',
-  'meta.twitterDescription': 'Jacksonville healthcare professional, author, artist, survivor advocate, and emotional wellness voice turning pain into healing and restoration.',
+  'meta.title': 'Carine Sanadina | Author, Survivor Advocate & Healing Voice | Jacksonville, FL',
+  'meta.description': 'Carine Sanadina is a Jacksonville-based author, healing voice, survivor advocate, and artist whose work centers on faith, emotional restoration, resilience, women’s empowerment, and healing after adversity.',
+  'meta.ogTitle': 'Carine Sanadina | Author, Survivor Advocate & Healing Voice | Jacksonville, FL',
+  'meta.ogDescription': 'Discover Carine Sanadina’s healing-centered books, music, reflections, advocacy, and media voice rooted in faith, resilience, and emotional restoration.',
+  'meta.twitterDescription': 'Jacksonville-based author, healing voice, survivor advocate, and artist creating books, music, and reflections for faith, restoration, and resilience.',
   'language.label': 'Language',
   'language.selectorLabel': 'Choose website language',
   'a11y.skip': 'Skip to main content',
@@ -22,7 +22,10 @@ translations.en = {
   'a11y.toggleNav': 'Toggle navigation',
   'a11y.primaryCta': 'Primary calls to action',
   'nav.about': 'About',
-  'nav.works': 'Featured Works',
+  'nav.works': 'Books',
+  'nav.home': 'Home',
+  'nav.books': 'Books',
+  'nav.press': 'Press Kit',
   'nav.music': 'Music',
   'nav.reflections': 'Reflections',
   'nav.focus': 'Focus Areas',
@@ -31,7 +34,7 @@ translations.en = {
   'hero.location': 'Jacksonville, Florida',
   'hero.subtitle': 'Healthcare Professional | Author | Survivor Advocate | Emotional Wellness Voice',
   'hero.heading': 'Turning pain into healing, survival into purpose, and stories into restoration.',
-  'hero.viewWorks': 'View Featured Works',
+  'hero.viewWorks': 'View Books',
   'hero.listenMusic': 'Listen to Music',
   'hero.readReflections': 'Read Reflections',
   'hero.contactCarine': 'Contact Carine',
@@ -44,7 +47,7 @@ translations.en = {
   'about.body1': 'Carine Sanadina is a Congolese-born, Jacksonville-based healthcare professional, author, artist, and survivor advocate whose work transforms lived pain into healing-centered literature and inspiration.',
   'about.body2': 'Her work explores domestic violence survival, toxic relationships, emotional wounds, faith, resilience, motherhood, immigrant experience, and the journey from brokenness to restoration.',
   'about.keyFacts': 'Key facts: Carine Sanadina serves from Jacksonville, Florida as a healthcare professional, author, artist, survivor advocate, and emotional wellness voice for domestic violence awareness, faith and restoration.',
-  'works.kicker': 'Featured Works',
+  'works.kicker': 'Books',
   'works.heading': 'Books that turn testimony into light.',
   'works.intro': 'Elegant, intimate, and brave reflections for readers seeking language for survival, recovery, faith, and renewed self-worth.',
   'buttons.buyAmazon': 'Buy on Amazon',
@@ -139,7 +142,12 @@ translations.en = {
   'quote.text': '“Pain may shape the story, but it does not get to own the ending.”',
   'cta.kicker': 'Begin the conversation',
   'cta.heading': 'Invite the voice. Share the story. Build a healing-centered moment.',
-  'cta.body': 'Choose a premium inquiry path for speaking invitations, interviews, creative collaborations, or intimate conversations shaped by resilience, faith, and restoration.',
+  'cta.body': 'Choose the gentlest path for your invitation—speaking, advocacy collaboration, media conversation, music partnership, or a book-centered gathering shaped by resilience, faith, and restoration.',
+  'cta.pathsLabel': 'Inquiry types',
+  'cta.path.speaking': 'Speaking inquiries',
+  'cta.path.advocacy': 'Advocacy collaborations',
+  'cta.path.media': 'Media & interview requests',
+  'cta.path.music': 'Music collaborations',
   'cta.disclaimer': 'This website does not establish agency, management, publishing, partnership, employment, or legal representation. Collaboration or booking discussions require separate written agreement.',
   'cta.optionsLabel': 'Contact options',
   'cta.invite': 'Invite Carine to Speak',
@@ -1024,6 +1032,13 @@ const premiumExperienceTranslations = {
     'press.body': 'Carine Sanadina is available for thoughtful media conversations, community features, and healing-centered storytelling opportunities aligned with her books, music, survivor advocacy, and healthcare-rooted compassion.',
     'bio.title': 'Media Bio',
     'bio.body': 'Congolese-born and Jacksonville-based, Carine Sanadina brings together healthcare service, inspirational writing, music, and survivor advocacy to speak with tenderness about pain, courage, faith, and emotional restoration.',
+    'press.headshots.title': 'Headshots & Portraits',
+    'press.headshots.body': 'Approved portraits and downloadable media assets can be attached here when final files are available. No binary assets are bundled automatically.',
+    'press.assetsPlaceholder': 'Downloadable assets placeholder',
+    'press.books.title': 'Book List',
+    'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, and After The Storm.',
+    'press.music.title': 'Music List',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, and Womanifesto are presented as a tender listening window into Carine’s healing-centered artistry.',
     'speaking.title': 'Speaking Topics',
     'speaking.topic1': 'Domestic violence awareness and hidden survival',
     'speaking.topic2': 'Faith, resilience, and rebuilding self-worth',
@@ -1033,7 +1048,9 @@ const premiumExperienceTranslations = {
     'inquiry.cta': 'Start an inquiry',
     'reflections.kicker': 'Reflections',
     'reflections.heading': 'Healing notes inspired by Carine’s books, music, and restoration-centered themes.',
-    'reflections.intro': 'A static editorial library for readers exploring survival, toxic relationship awareness, faith, kindness, and emotional restoration.',
+    'reflections.intro': 'A quiet, CMS-ready reflection library for readers exploring healing, faith, restoration, advocacy, resilience, womanhood, and emotional growth.',
+    'reflections.architectureNote': 'Each reflection is modeled with a title, excerpt, date, category, cover image, slug, and rich-content path so new writing can be added without changing the visual rhythm of this page.',
+    'reflections.allLoaded': 'All reflections are visible',
     'reflections.toolbarLabel': 'Filter reflections',
     'reflections.searchLabel': 'Search reflections',
     'reflections.searchPlaceholder': 'Search by theme or title',
@@ -1150,6 +1167,10 @@ const fullSiteTranslationAdditions = {
     'reflections.explore': 'Explore related work',
     'reflections.exploreAria': 'Explore related section for {title}',
     'reflection.category.survival': 'Survival',
+    'reflection.category.advocacy': 'Advocacy',
+    'reflection.category.resilience': 'Resilience',
+    'reflection.category.womanhood': 'Womanhood',
+    'reflection.category.emotionalGrowth': 'Emotional Growth',
     'reflection.category.toxic': 'Toxic Relationship Awareness',
     'reflection.category.faith': 'Faith & Hope',
     'reflection.category.restoration': 'Restoration',
@@ -1184,7 +1205,12 @@ const fullSiteTranslationAdditions = {
     'reflection.consolation.excerpt': 'A music-inspired reflection on receiving comfort without shame, especially when healing feels slow, private, or unfinished.',
     'reflection.consolation.readTime': '3 min',
     'reflection.consolation.quote': 'Comfort gives courage somewhere safe to begin again.',
-    'reflection.consolation.prompt': 'What form of consolation would help you keep going today?'
+    'reflection.consolation.prompt': 'What form of consolation would help you keep going today?',
+    'reflection.advocacy.title': 'Advocacy can be tender and still tell the truth',
+    'reflection.advocacy.excerpt': 'A quiet note on speaking for survivors without turning pain into spectacle, choosing dignity, safety, faith, and restoration as the center of every conversation.',
+    'reflection.advocacy.readTime': '4 min',
+    'reflection.advocacy.quote': 'Truth can be firm without losing tenderness.',
+    'reflection.advocacy.prompt': 'Where can your voice protect dignity this week?'
   },
   fr: {
     'cta.call': 'Appeler Carine',
@@ -1196,6 +1222,10 @@ const fullSiteTranslationAdditions = {
     'reflections.explore': 'Explorer l’œuvre liée',
     'reflections.exploreAria': 'Explorer la section liée à {title}',
     'reflection.category.survival': 'Survie',
+    'reflection.category.advocacy': 'Plaidoyer',
+    'reflection.category.resilience': 'Résilience',
+    'reflection.category.womanhood': 'Féminité',
+    'reflection.category.emotionalGrowth': 'Croissance émotionnelle',
     'reflection.category.toxic': 'Sensibilisation aux relations toxiques',
     'reflection.category.faith': 'Foi et espoir',
     'reflection.category.restoration': 'Restauration',
@@ -1230,7 +1260,12 @@ const fullSiteTranslationAdditions = {
     'reflection.consolation.excerpt': 'Une réflexion inspirée par la musique sur l’accueil du réconfort sans honte, surtout lorsque la guérison semble lente, privée ou inachevée.',
     'reflection.consolation.readTime': '3 min',
     'reflection.consolation.quote': 'Le réconfort donne au courage un lieu sûr pour recommencer.',
-    'reflection.consolation.prompt': 'Quelle forme de consolation vous aiderait à continuer aujourd’hui?'
+    'reflection.consolation.prompt': 'Quelle forme de consolation vous aiderait à continuer aujourd’hui?',
+    'reflection.advocacy.title': 'Le plaidoyer peut rester tendre tout en disant la vérité',
+    'reflection.advocacy.excerpt': 'Une note calme sur la manière de parler pour les survivantes sans transformer la douleur en spectacle, en gardant dignité, sécurité, foi et restauration au centre.',
+    'reflection.advocacy.readTime': '4 min',
+    'reflection.advocacy.quote': 'La vérité peut être ferme sans perdre sa tendresse.',
+    'reflection.advocacy.prompt': 'Où votre voix peut-elle protéger la dignité cette semaine?'
   },
   es: {
     'cta.call': 'Llamar a Carine',
@@ -2414,22 +2449,81 @@ const initializeCinematicSplash = () => {
 
 const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
+const siteHeader = document.querySelector('.site-header');
+const navAnchorLinks = [...document.querySelectorAll('[data-nav-link]')];
+
+const closeMobileNavigation = () => {
+  navToggle?.setAttribute('aria-expanded', 'false');
+  navLinks?.classList.remove('is-open');
+  document.body.classList.remove('nav-open');
+};
+
+const getHeaderOffset = () => Math.ceil((siteHeader?.getBoundingClientRect().height || 76) + 26);
+
+const scrollToSection = (hash) => {
+  const target = document.querySelector(hash);
+  if (!target) return;
+  const top = target.getBoundingClientRect().top + window.scrollY - getHeaderOffset();
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  history.pushState(null, '', hash);
+};
 
 if (navToggle && navLinks) {
   navToggle.addEventListener('click', () => {
     const isOpen = navToggle.getAttribute('aria-expanded') === 'true';
     navToggle.setAttribute('aria-expanded', String(!isOpen));
-    navLinks.classList.toggle('is-open');
-    document.body.classList.toggle('nav-open');
+    navLinks.classList.toggle('is-open', !isOpen);
+    document.body.classList.toggle('nav-open', !isOpen);
   });
 
   navLinks.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      navToggle.setAttribute('aria-expanded', 'false');
-      navLinks.classList.remove('is-open');
-      document.body.classList.remove('nav-open');
+    link.addEventListener('click', (event) => {
+      const hash = link.getAttribute('href');
+      closeMobileNavigation();
+      if (hash?.startsWith('#')) {
+        event.preventDefault();
+        scrollToSection(hash);
+      }
     });
   });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeMobileNavigation();
+  });
+}
+
+const setActiveNavLink = (sectionId) => {
+  navAnchorLinks.forEach((link) => {
+    const isActive = link.dataset.section === sectionId;
+    link.classList.toggle('is-active', isActive);
+    if (isActive) {
+      link.setAttribute('aria-current', 'true');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
+};
+
+const observedSections = navAnchorLinks
+  .map((link) => document.getElementById(link.dataset.section))
+  .filter(Boolean);
+
+if ('IntersectionObserver' in window && observedSections.length) {
+  const navObserver = new IntersectionObserver((entries) => {
+    const visibleEntry = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visibleEntry?.target?.id) setActiveNavLink(visibleEntry.target.id);
+  }, { rootMargin: `-${getHeaderOffset()}px 0px -58% 0px`, threshold: [0.12, 0.28, 0.5] });
+  observedSections.forEach((section) => navObserver.observe(section));
+} else if (observedSections.length) {
+  const updateActiveSection = () => {
+    const offset = getHeaderOffset() + 20;
+    const active = observedSections.findLast((section) => section.offsetTop <= window.scrollY + offset) || observedSections[0];
+    setActiveNavLink(active.id);
+  };
+  window.addEventListener('scroll', updateActiveSection, { passive: true });
+  updateActiveSection();
 }
 
 const revealElements = document.querySelectorAll('.reveal');
@@ -2588,14 +2682,7 @@ remoteImages.forEach((image) => {
 });
 
 
-const reflectionArticles = [
-  { id: 'hidden-pain-visible-language', key: 'reflection.hidden', categoryKey: 'reflection.category.survival', link: '#works' },
-  { id: 'red-flags-peace', key: 'reflection.red', categoryKey: 'reflection.category.toxic', link: '#works' },
-  { id: 'road-to-sunshine-faith', key: 'reflection.sunshine', categoryKey: 'reflection.category.faith', link: '#works' },
-  { id: 'after-the-storm-restoration', key: 'reflection.storm', categoryKey: 'reflection.category.restoration', link: '#focus' },
-  { id: 'kindness-as-practice', key: 'reflection.kindness', categoryKey: 'reflection.category.kindness', link: '#music' },
-  { id: 'consolation-and-courage', key: 'reflection.consolation', categoryKey: 'reflection.category.healing', link: '#music' }
-];
+const fallbackReflectionArticles = window.reflectionArticles || [];
 
 const initializeReflections = () => {
   const section = document.querySelector('[data-reflection-grid]');
@@ -2613,7 +2700,7 @@ const initializeReflections = () => {
   let activeCategory = 'all';
   let visibleCount = pageSize;
 
-  const categories = [{ id: 'all', labelKey: 'reflections.all' }, ...[...new Set(reflectionArticles.map((article) => article.categoryKey))].map((categoryKey) => ({ id: categoryKey, labelKey: categoryKey }))];
+  const categories = [{ id: 'all', labelKey: 'reflections.all' }, ...[...new Set(fallbackReflectionArticles.map((article) => article.categoryKey))].map((categoryKey) => ({ id: categoryKey, labelKey: categoryKey }))];
 
   const createTagButton = (category) => {
     const button = document.createElement('button');
@@ -2630,7 +2717,18 @@ const initializeReflections = () => {
     return button;
   };
 
-  const getReflectionText = (article, field) => translate(`${article.key}.${field}`);
+  const getReflectionText = (article, field) => {
+    const explicitKey = article[`${field}Key`];
+    const legacyKey = article.key ? `${article.key}.${field}` : '';
+    return translate(explicitKey || legacyKey);
+  };
+
+  const formatReflectionDate = (dateValue) => {
+    if (!dateValue) return '';
+    const parsedDate = new Date(`${dateValue}T12:00:00Z`);
+    if (Number.isNaN(parsedDate.getTime())) return dateValue;
+    return new Intl.DateTimeFormat(currentLanguage === 'en' ? 'en-US' : currentLanguage, { month: 'short', day: 'numeric', year: 'numeric' }).format(parsedDate);
+  };
 
   const articleMatches = (article) => {
     const query = search.value.trim().toLowerCase();
@@ -2639,7 +2737,9 @@ const initializeReflections = () => {
       getReflectionText(article, 'excerpt'),
       translate(article.categoryKey),
       getReflectionText(article, 'quote'),
-      getReflectionText(article, 'prompt')
+      getReflectionText(article, 'prompt'),
+      article.slug,
+      article.date
     ].join(' ').toLowerCase();
     const matchesCategory = activeCategory === 'all' || article.categoryKey === activeCategory;
     return matchesCategory && (!query || searchable.includes(query));
@@ -2651,7 +2751,9 @@ const initializeReflections = () => {
     const quote = getReflectionText(article, 'quote');
     const prompt = getReflectionText(article, 'prompt');
     card.className = isFeatured ? 'reflection-card reflection-card-featured' : 'reflection-card reveal is-visible';
-    card.id = `reflection-${article.id}`;
+    card.id = `reflection-${article.slug || article.id}`;
+    card.dataset.slug = article.slug || article.id;
+    card.dataset.contentPath = article.contentPath || '';
 
     const meta = document.createElement('div');
     meta.className = 'reflection-card__meta';
@@ -2662,13 +2764,27 @@ const initializeReflections = () => {
 
     const readTime = document.createElement('span');
     readTime.textContent = `${getReflectionText(article, 'readTime')} ${translate('reflections.readTime')}`;
-    meta.append(tag, readTime);
+    const date = document.createElement('time');
+    date.dateTime = article.date || '';
+    date.textContent = formatReflectionDate(article.date);
+    meta.append(tag, date, readTime);
 
     const heading = document.createElement('h3');
     heading.textContent = title;
 
     const excerpt = document.createElement('p');
     excerpt.textContent = getReflectionText(article, 'excerpt');
+
+    if (article.coverImage) {
+      const cover = document.createElement('img');
+      cover.className = 'reflection-card__cover';
+      cover.src = article.coverImage;
+      cover.alt = '';
+      cover.loading = 'lazy';
+      cover.decoding = 'async';
+      cover.referrerPolicy = 'no-referrer';
+      card.append(cover);
+    }
 
     card.append(meta, heading, excerpt);
 
@@ -2702,7 +2818,7 @@ const initializeReflections = () => {
   };
 
   const renderReflections = () => {
-    const matchingArticles = reflectionArticles.filter(articleMatches);
+    const matchingArticles = fallbackReflectionArticles.filter(articleMatches);
     const [featuredArticle, ...restArticles] = matchingArticles;
     featured.innerHTML = '';
 
@@ -2717,6 +2833,7 @@ const initializeReflections = () => {
     section.replaceChildren(...visibleArticles.map((article) => createArticleCard(article)));
     empty.hidden = matchingArticles.length > 0;
     loadMore.hidden = visibleCount >= restArticles.length;
+    loadMore.textContent = visibleCount >= restArticles.length ? translate('reflections.allLoaded') : translate('reflections.loadMore');
     renderFilters();
   };
 

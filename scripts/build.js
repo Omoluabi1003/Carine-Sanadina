@@ -27,7 +27,7 @@ const replaceAppShellAssetReferences = (contents, assetMap) => Object.entries(as
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(dist, { recursive: true });
 
-const appShellAssets = ['styles.css', 'script.js'];
+const appShellAssets = ['styles.css', 'content-reflections.js', 'script.js'];
 const assetMap = {};
 
 for (const file of appShellAssets) {
