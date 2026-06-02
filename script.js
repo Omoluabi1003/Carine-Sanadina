@@ -2138,6 +2138,154 @@ renderCarinePlaylist();
 
 applyLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
 
+const CARINE_SPLASH_SEEN_KEY = 'carineSplashSeen';
+const CARINE_SPLASH_SUCCESS_KEY = 'carineSplashSuccessfulLoad';
+const CARINE_SPLASH_STARTED_AT = window.__carineSplashBootAt || performance.now();
+const CARINE_SPLASH_MAX_VISIBLE_MS = 3000;
+const CARINE_SPLASH_FIRST_VISIT_MS = 1900;
+const CARINE_SPLASH_RETURN_VISIT_MS = 850;
+
+const readSplashStorage = (key) => {
+  try {
+    return window.localStorage.getItem(key) || window.sessionStorage.getItem(key);
+  } catch (error) {
+    return null;
+  }
+};
+
+const writeSplashStorage = (key, value) => {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch (error) {
+    // localStorage can be unavailable in private or restricted browsing contexts.
+  }
+
+  try {
+    window.sessionStorage.setItem(key, value);
+  } catch (error) {
+    // sessionStorage can be unavailable in private or restricted browsing contexts.
+  }
+};
+
+const hasSuccessfulSplashLoad = () => readSplashStorage(CARINE_SPLASH_SUCCESS_KEY) === 'true'
+  || readSplashStorage(CARINE_SPLASH_SEEN_KEY) === 'true';
+
+const waitForSplashDelay = (milliseconds) => new Promise((resolve) => {
+  window.setTimeout(resolve, Math.max(0, milliseconds));
+});
+
+const waitForDocumentFonts = () => {
+  if (!document.fonts?.ready) {
+    return Promise.resolve('fonts-unsupported');
+  }
+
+  return document.fonts.ready.then(() => 'fonts-ready').catch(() => 'fonts-fallback');
+};
+
+const waitForImageElement = (image, timeout = 1050) => new Promise((resolve) => {
+  if (!image || image.complete) {
+    resolve(true);
+    return;
+  }
+
+  let settled = false;
+  const finish = (isReady) => {
+    if (settled) return;
+    settled = true;
+    image.removeEventListener('load', onLoad);
+    image.removeEventListener('error', onError);
+    resolve(isReady);
+  };
+  const onLoad = () => finish(true);
+  const onError = () => finish(false);
+
+  image.addEventListener('load', onLoad, { once: true });
+  image.addEventListener('error', onError, { once: true });
+  window.setTimeout(() => finish(false), timeout);
+});
+
+const waitForHeroImages = () => Promise.all([
+  ...document.querySelectorAll('.brand-mark img, .portrait-image[fetchpriority="high"], .splash-logo')
+].map((image) => waitForImageElement(image))).then(() => 'hero-images-ready');
+
+const getCriticalShellReadiness = () => {
+  const playlistMount = document.querySelector('[data-playlist-tracks]');
+  const hasPlaylistMetadata = Boolean(playlistMount?.dataset.playlistVersion)
+    && document.querySelectorAll('[data-audio-player]').length >= REQUIRED_MUSIC_TRACK_IDS.length;
+
+  return {
+    translations: Boolean(currentLanguage && translations[currentLanguage]),
+    playlistMetadata: hasPlaylistMetadata,
+    chatbotShell: Boolean(document.querySelector('[data-guide-widget] [data-guide-panel]')),
+    stickyMiniPlayerShell: Boolean(document.querySelector('[data-mini-player] [data-mini-title]'))
+  };
+};
+
+const waitForCriticalShells = () => new Promise((resolve) => {
+  const startedAt = performance.now();
+  const tick = () => {
+    const readiness = getCriticalShellReadiness();
+    const ready = Object.values(readiness).every(Boolean);
+
+    if (ready || performance.now() - startedAt > 1200) {
+      resolve(readiness);
+      return;
+    }
+
+    window.requestAnimationFrame(tick);
+  };
+
+  tick();
+});
+
+const completeCinematicSplash = () => {
+  const splash = document.querySelector('[data-cinematic-splash]');
+
+  if (!splash || splash.dataset.completed === 'true') {
+    return;
+  }
+
+  splash.dataset.completed = 'true';
+  document.documentElement.classList.add('splash-ready');
+  document.documentElement.classList.remove('splash-booting');
+  splash.classList.add('is-hiding');
+  splash.setAttribute('aria-hidden', 'true');
+  writeSplashStorage(CARINE_SPLASH_SEEN_KEY, 'true');
+  writeSplashStorage(CARINE_SPLASH_SUCCESS_KEY, 'true');
+
+  window.setTimeout(() => {
+    splash.remove();
+    document.documentElement.classList.remove('splash-ready');
+  }, 920);
+};
+
+const initializeCinematicSplash = () => {
+  const splash = document.querySelector('[data-cinematic-splash]');
+
+  if (!splash) {
+    document.documentElement.classList.remove('splash-booting');
+    return;
+  }
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const returningVisitor = hasSuccessfulSplashLoad();
+  const minimumVisibleMs = reducedMotion ? 650 : (returningVisitor ? CARINE_SPLASH_RETURN_VISIT_MS : CARINE_SPLASH_FIRST_VISIT_MS);
+  const elapsed = performance.now() - CARINE_SPLASH_STARTED_AT;
+  const minimumDelay = waitForSplashDelay(minimumVisibleMs - elapsed);
+  const criticalResources = Promise.all([
+    waitForDocumentFonts(),
+    waitForHeroImages(),
+    waitForCriticalShells()
+  ]);
+  const hardStop = waitForSplashDelay(CARINE_SPLASH_MAX_VISIBLE_MS - elapsed);
+
+  Promise.race([
+    Promise.all([minimumDelay, criticalResources]),
+    hardStop
+  ]).then(() => completeCinematicSplash());
+};
+
+
 const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
 
@@ -2787,6 +2935,7 @@ const initializeGuideAssistant = () => {
   });
 };
 initializeReflections();
+initializeCinematicSplash();
 initializePwaExperience();
 initializeGuideAssistant();
 
