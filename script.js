@@ -1576,51 +1576,23 @@ Object.entries(completeTranslationOverrides).forEach(([language, dictionary]) =>
   }
 });
 
-Object.values(translations).forEach((dictionary) => {
-  Object.assign(dictionary, {
+Object.entries(translations).forEach(([language, dictionary]) => {
+  const sharedDefaults = {
     'language.name.en': 'English',
-    'language.name.fr': 'French',
+    'language.name.fr': 'Français',
     'language.name.ln': 'Lingala',
-    'language.name.es': 'Spanish',
+    'language.name.es': 'Español',
     'language.name.sw': 'Swahili',
-    'language.name.yo': 'Yoruba',
-    'music.visualizerToggleLabel': 'Visualizer',
-    'music.visualizerToggleAria': 'Toggle audio visualizer',
-    'music.visualizerOn': 'Visualizer on',
-    'music.visualizerOff': 'Visualizer off',
-    'music.visualizerStyleLabel': 'Visualization Style',
-    'music.visualizerStyleAria': 'Choose visualization style',
-    'music.visualizerHelperTap': 'Tap Visualizer, then press Play.',
-    'music.visualizerHelperIphone': 'Tap Play to activate visuals on iPhone.',
-    'lyrics.expand': 'Expand Lyrics',
-    'lyrics.collapse': 'Collapse Lyrics',
-    'guide.widgetLabel': 'Carine’s conversational guide',
-    'guide.launcher': 'Ask Carine’s Guide',
-    'guide.eyebrow': 'Healing-centered guide',
-    'guide.title': 'Ask Carine’s Guide',
-    'guide.close': 'Close',
-    'guide.startersLabel': 'Suggested questions',
-    'guide.startersTitle': 'Suggested questions',
-    'guide.starter.story': 'What is Carine’s story?',
-    'guide.starter.book': 'Which book should I start with?',
-    'guide.starter.womanifesto': 'What is Womanifesto about?',
-    'guide.starter.advocacy': 'What does Carine advocate for?',
-    'guide.starter.speak': 'How can I invite Carine to speak?',
-    'guide.starter.music': 'Show me her music.',
-    'guide.inputLabel': 'Ask a question about Carine’s books, music, or advocacy',
-    'guide.placeholder': 'Type your question',
-    'guide.send': 'Send',
-    'guide.notice': 'This guide shares general information about Carine’s work and cannot replace professional, legal, medical, or crisis support.',
-    'pwa.fallbackHint': 'Installation steps are available for this browser.',
-    'pwa.instructionsEyebrow': 'Install Carine Sanadina',
-    'pwa.instructionsTitle': 'Add the app to your device',
-    'pwa.safariInstructions': 'To install this app in Safari: open the Share menu, then choose Add to Dock or Add to Home Screen when available.',
-    'pwa.closeInstructions': 'Close install instructions',
-    'music.visualizerFallback': dictionary['music.visualizerFallback'] || 'Visualizer is resting. Audio playback will continue normally.',
+    'language.name.yo': 'Yorùbá',
+    'music.visualizerFallback': 'Visualizer is resting. Audio playback will continue normally.',
     'tracks.consolation.title': 'Consolation',
     'tracks.gentillesse.title': 'La Gentillesse',
     'tracks.wonderful.title': 'Wonderful',
     'tracks.womanifesto.title': 'Womanifesto'
+  };
+
+  Object.entries(sharedDefaults).forEach(([key, value]) => {
+    if (!dictionary[key]) dictionary[key] = value;
   });
 });
 
@@ -1695,6 +1667,458 @@ const localizedGuideLabels = {
 
 Object.entries(localizedGuideLabels).forEach(([language, labels]) => {
   if (translations[language]) Object.assign(translations[language], labels);
+});
+
+
+const finalTranslationAuditOverrides = {
+  en: {
+    'splash.kicker': 'Healing • Grace • Restoration',
+    'splash.affirmation': 'Healing lives here.',
+    'splash.opening': 'Opening the Carine Sanadina experience.',
+    'splash.status': 'Preparing music experience...',
+    'splash.ariaLabel': 'Carine Sanadina app is opening',
+    'splash.phrase.grace': 'Grace still speaks.',
+    'splash.phrase.story': 'Your story is not over.',
+    'splash.phrase.music': 'Preparing music experience...',
+    'splash.phrase.healing': 'Loading stories of healing...',
+    'splash.phrase.sound': 'Tuning the sound of restoration...',
+    'splash.phrase.ready': 'Almost ready...',
+    'lyrics.tabsLabel': 'Track details',
+    'lyrics.scrollLabel': 'Synchronized lyrics',
+    'lyrics.tab.lyrics': 'Lyrics',
+    'lyrics.tab.about': 'About',
+    'lyrics.tab.credits': 'Credits',
+    'lyrics.selectTrack': 'Select a track to view lyrics.',
+    'lyrics.unavailable': 'Lyrics unavailable for this track.',
+    'lyrics.moreDetails': 'More details coming soon.',
+    'lyrics.aboutSong': 'About this song',
+    'lyrics.credits': 'Credits',
+    'music.visualizerToggleLabel': 'Visualizer',
+    'music.visualizerToggleAria': 'Toggle audio visualizer',
+    'music.visualizerOn': 'Visualizer on',
+    'music.visualizerOff': 'Visualizer off',
+    'music.visualizerStyleLabel': 'Visualization Style',
+    'music.visualizerStyleAria': 'Choose visualization style',
+    'music.visualizerDiagnostics': 'Visualizer diagnostics',
+    'music.visualizerHelperTap': 'Tap Visualizer, then press Play.',
+    'music.visualizerHelperIphone': 'Tap Play to activate visuals on iPhone.',
+    'guide.widgetLabel': 'Carine’s conversational guide',
+    'guide.launcher': 'Ask Carine’s Guide',
+    'guide.eyebrow': 'Healing-centered guide',
+    'guide.title': 'Ask Carine’s Guide',
+    'guide.close': 'Close',
+    'guide.startersLabel': 'Suggested questions',
+    'guide.startersTitle': 'Suggested questions',
+    'guide.starter.story': 'What is Carine’s story?',
+    'guide.starter.book': 'Which book should I start with?',
+    'guide.starter.womanifesto': 'What is Womanifesto about?',
+    'guide.starter.advocacy': 'What does Carine advocate for?',
+    'guide.starter.speak': 'How can I invite Carine to speak?',
+    'guide.starter.music': 'Show me her music.',
+    'guide.inputLabel': 'Ask a question about Carine’s books, music, or advocacy',
+    'guide.placeholder': 'Type your question',
+    'guide.send': 'Send',
+    'guide.notice': 'This guide shares general information about Carine’s work and cannot replace professional, legal, medical, or crisis support.',
+    'pwa.fallbackHint': 'Installation steps are available for this browser.',
+    'pwa.instructionsEyebrow': 'Install Carine Sanadina',
+    'pwa.instructionsTitle': 'Add the app to your device',
+    'pwa.safariInstructions': 'To install this app in Safari: open the Share menu, then choose Add to Dock or Add to Home Screen when available.',
+    'pwa.closeInstructions': 'Close install instructions',
+    'tracks.genericCredits': 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.'
+  },
+  fr: {
+    'language.name.fr': 'Français',
+    'language.name.es': 'Español',
+    'language.name.yo': 'Yorùbá',
+    'nav.home': 'Accueil',
+    'nav.books': 'Livres',
+    'nav.press': 'Dossier de presse',
+    'nav.contact': 'Contact',
+    'hero.location': 'Jacksonville, Floride',
+    'books.toxic.kicker': 'Guide',
+    'audio.pause': 'Pause',
+    'cta.pathsLabel': 'Types de demandes',
+    'cta.path.speaking': 'Demandes de prise de parole',
+    'cta.path.advocacy': 'Collaborations de plaidoyer',
+    'cta.path.media': 'Demandes médias et interviews',
+    'cta.path.music': 'Collaborations musicales',
+    'lyrics.expand': 'Développer les paroles',
+    'lyrics.collapse': 'Réduire les paroles',
+    'lyrics.tabsLabel': 'Détails du morceau',
+    'lyrics.scrollLabel': 'Paroles synchronisées',
+    'lyrics.tab.lyrics': 'Paroles',
+    'lyrics.tab.about': 'À propos',
+    'lyrics.tab.credits': 'Crédits',
+    'lyrics.selectTrack': 'Sélectionnez un morceau pour voir les paroles.',
+    'lyrics.unavailable': 'Les paroles ne sont pas disponibles pour ce morceau.',
+    'lyrics.moreDetails': 'Plus de détails bientôt disponibles.',
+    'lyrics.aboutSong': 'À propos de ce chant',
+    'lyrics.credits': 'Crédits',
+    'music.visualizerToggleLabel': 'Visualiseur',
+    'music.visualizerToggleAria': 'Activer ou désactiver le visualiseur audio',
+    'music.visualizerOn': 'Visualiseur activé',
+    'music.visualizerOff': 'Visualiseur désactivé',
+    'music.visualizerStyleLabel': 'Style de visualisation',
+    'music.visualizerStyleAria': 'Choisir le style de visualisation',
+    'music.visualizerDiagnostics': 'Diagnostics du visualiseur',
+    'music.visualizerHelperTap': 'Touchez Visualiseur, puis appuyez sur Lecture.',
+    'music.visualizerHelperIphone': 'Appuyez sur Lecture pour activer les visuels sur iPhone.',
+    'pwa.fallbackHint': 'Les étapes d’installation sont disponibles pour ce navigateur.',
+    'pwa.instructionsEyebrow': 'Installer Carine Sanadina',
+    'pwa.instructionsTitle': 'Ajouter l’application à votre appareil',
+    'pwa.safariInstructions': 'Dans Safari, ouvrez le menu Partager, puis choisissez Ajouter au Dock ou Ajouter à l’écran d’accueil si disponible.',
+    'pwa.closeInstructions': 'Fermer les instructions d’installation',
+    'press.headshots.title': 'Portraits et photos presse',
+    'press.headshots.body': 'Les portraits approuvés et les ressources média téléchargeables pourront être ajoutés ici lorsque les fichiers finaux seront disponibles. Aucun fichier binaire n’est ajouté automatiquement.',
+    'press.assetsPlaceholder': 'Emplacement pour ressources téléchargeables',
+    'press.books.title': 'Liste des livres',
+    'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine et After The Storm.',
+    'press.music.title': 'Liste musicale',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful et Womanifesto sont présentés comme une écoute tendre de l’art de Carine centré sur la guérison.',
+    'reflections.architectureNote': 'Chaque réflexion est structurée avec un titre, un extrait, une date, une catégorie, une image, un identifiant et un chemin de contenu riche afin d’ajouter de nouveaux textes sans modifier le rythme visuel de cette page.',
+    'reflections.allLoaded': 'Toutes les réflexions sont visibles',
+    'splash.kicker': 'Guérison • Grâce • Restauration',
+    'splash.affirmation': 'La guérison habite ici.',
+    'splash.opening': 'Ouverture de l’expérience Carine Sanadina.',
+    'splash.status': 'Préparation de l’expérience musicale...',
+    'splash.ariaLabel': 'L’application Carine Sanadina s’ouvre',
+    'splash.phrase.grace': 'La grâce parle encore.',
+    'splash.phrase.story': 'Votre histoire n’est pas terminée.',
+    'splash.phrase.music': 'Préparation de l’expérience musicale...',
+    'splash.phrase.healing': 'Chargement des récits de guérison...',
+    'splash.phrase.sound': 'Réglage du son de la restauration...',
+    'splash.phrase.ready': 'Presque prêt...',
+    'tracks.genericCredits': 'Interprété par Carine Sanadina. Les droits musicaux et les paroles restent à leurs détenteurs respectifs.'
+  },
+  es: {
+    'language.name.fr': 'Français',
+    'language.name.es': 'Español',
+    'language.name.yo': 'Yorùbá',
+    'nav.home': 'Inicio',
+    'nav.books': 'Libros',
+    'nav.press': 'Kit de prensa',
+    'hero.location': 'Jacksonville, Florida',
+    'cta.pathsLabel': 'Tipos de consulta',
+    'cta.path.speaking': 'Consultas para conferencias',
+    'cta.path.advocacy': 'Colaboraciones de defensa',
+    'cta.path.media': 'Solicitudes de medios y entrevistas',
+    'cta.path.music': 'Colaboraciones musicales',
+    'lyrics.expand': 'Expandir letras',
+    'lyrics.collapse': 'Contraer letras',
+    'lyrics.tabsLabel': 'Detalles de la canción',
+    'lyrics.scrollLabel': 'Letras sincronizadas',
+    'lyrics.tab.lyrics': 'Letras',
+    'lyrics.tab.about': 'Acerca de',
+    'lyrics.tab.credits': 'Créditos',
+    'lyrics.selectTrack': 'Selecciona una canción para ver la letra.',
+    'lyrics.unavailable': 'La letra no está disponible para esta canción.',
+    'lyrics.moreDetails': 'Pronto habrá más detalles.',
+    'lyrics.aboutSong': 'Acerca de esta canción',
+    'lyrics.credits': 'Créditos',
+    'music.visualizerToggleLabel': 'Visualizador',
+    'music.visualizerToggleAria': 'Activar o desactivar el visualizador de audio',
+    'music.visualizerOn': 'Visualizador activado',
+    'music.visualizerOff': 'Visualizador desactivado',
+    'music.visualizerStyleLabel': 'Estilo de visualización',
+    'music.visualizerStyleAria': 'Elegir estilo de visualización',
+    'music.visualizerDiagnostics': 'Diagnóstico del visualizador',
+    'music.visualizerHelperTap': 'Toca Visualizador y luego Reproducir.',
+    'music.visualizerHelperIphone': 'Toca Reproducir para activar los visuales en iPhone.',
+    'press.headshots.title': 'Retratos y fotos de prensa',
+    'press.headshots.body': 'Los retratos aprobados y recursos multimedia descargables podrán adjuntarse aquí cuando estén disponibles los archivos finales. No se incluyen archivos binarios automáticamente.',
+    'press.assetsPlaceholder': 'Espacio para recursos descargables',
+    'press.books.title': 'Lista de libros',
+    'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine y After The Storm.',
+    'press.music.title': 'Lista musical',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful y Womanifesto se presentan como una ventana sensible a la artistry sanadora de Carine.',
+    'reflections.architectureNote': 'Cada reflexión se modela con título, extracto, fecha, categoría, imagen, slug y ruta de contenido enriquecido para añadir nuevos textos sin cambiar el ritmo visual de esta página.',
+    'reflections.allLoaded': 'Todas las reflexiones están visibles',
+    'pwa.fallbackHint': 'Los pasos de instalación están disponibles para este navegador.',
+    'pwa.instructionsEyebrow': 'Instalar Carine Sanadina',
+    'pwa.instructionsTitle': 'Añade la app a tu dispositivo',
+    'pwa.safariInstructions': 'En Safari, abre el menú Compartir y elige Añadir al Dock o Añadir a pantalla de inicio cuando esté disponible.',
+    'pwa.closeInstructions': 'Cerrar instrucciones de instalación',
+    'splash.kicker': 'Sanación • Gracia • Restauración',
+    'splash.affirmation': 'La sanación vive aquí.',
+    'splash.opening': 'Abriendo la experiencia de Carine Sanadina.',
+    'splash.status': 'Preparando la experiencia musical...',
+    'splash.ariaLabel': 'La app de Carine Sanadina se está abriendo',
+    'splash.phrase.grace': 'La gracia sigue hablando.',
+    'splash.phrase.story': 'Tu historia no ha terminado.',
+    'splash.phrase.music': 'Preparando la experiencia musical...',
+    'splash.phrase.healing': 'Cargando historias de sanación...',
+    'splash.phrase.sound': 'Afinando el sonido de la restauración...',
+    'splash.phrase.ready': 'Casi listo...',
+    'tracks.genericCredits': 'Interpretado por Carine Sanadina. Los derechos de música y letra pertenecen a sus respectivos titulares.'
+  },
+  ln: {
+    'language.name.fr': 'Français',
+    'language.name.es': 'Español',
+    'language.name.yo': 'Yorùbá',
+    'nav.home': 'Ebandeli',
+    'nav.books': 'Mikanda',
+    'nav.press': 'Kit ya presse',
+    'cta.pathsLabel': 'Lolenge ya mituna',
+    'cta.path.speaking': 'Mituna mpo na koloba',
+    'cta.path.advocacy': 'Misala ya kosunga bato',
+    'cta.path.media': 'Mituna ya media mpe interview',
+    'cta.path.music': 'Misala ya miziki elongo',
+    'lyrics.expand': 'Fungola maloba ya loyembo',
+    'lyrics.collapse': 'Kanga maloba ya loyembo',
+    'lyrics.tabsLabel': 'Makambo ya loyembo',
+    'lyrics.scrollLabel': 'Maloba ya loyembo oyo elandi audio',
+    'lyrics.tab.lyrics': 'Maloba',
+    'lyrics.tab.about': 'Maye etali yango',
+    'lyrics.tab.credits': 'Ba crédits',
+    'lyrics.selectTrack': 'Pona loyembo mpo na komona maloba.',
+    'lyrics.unavailable': 'Maloba ya loyembo oyo ezali te.',
+    'lyrics.moreDetails': 'Makambo mosusu ekoya kala mingi te.',
+    'lyrics.aboutSong': 'Maye etali loyembo oyo',
+    'lyrics.credits': 'Ba crédits',
+    'music.visualizerToggleLabel': 'Visualiseur',
+    'music.visualizerToggleAria': 'Fungola to kanga visualiseur ya audio',
+    'music.visualizerOn': 'Visualiseur efungwami',
+    'music.visualizerOff': 'Visualiseur ekangami',
+    'music.visualizerStyleLabel': 'Lolenge ya komonisa',
+    'music.visualizerStyleAria': 'Pona lolenge ya komonisa',
+    'music.visualizerDiagnostics': 'Diagnostic ya visualiseur',
+    'music.visualizerHelperTap': 'Finá Visualiseur, sima finá Kobeta.',
+    'music.visualizerHelperIphone': 'Finá Kobeta mpo bililingi ebanda na iPhone.',
+    'guide.widgetLabel': 'Guide ya lisolo ya Carine',
+    'guide.eyebrow': 'Guide oyo etali kobika',
+    'guide.starter.story': 'Lisolo ya Carine ezali nini?',
+    'guide.starter.book': 'Nabanda na buku nini?',
+    'guide.starter.womanifesto': 'Womanifesto elobeli nini?',
+    'guide.starter.advocacy': 'Carine asungaka makambo nini?',
+    'guide.starter.speak': 'Ndenge nini nakoki kobengisa Carine aloba?',
+    'guide.starter.music': 'Lakisa ngai miziki na ye.',
+    'guide.inputLabel': 'Tuna motuna na ntina ya mikanda, miziki to mosala ya kosunga ya Carine',
+    'guide.notice': 'Guide oyo epesaka sango ya monene na ntina ya mosala ya Carine mpe ekoki te kozwa esika ya lisungi ya professionnel, mibeko, monganga to crise.',
+    'press.headshots.title': 'Bililingi mpe ba portraits',
+    'press.headshots.body': 'Ba portraits endimami mpe biloko ya media ya ko télécharger ekoki kobakisama awa tango ba fichiers ya suka ekozala. Ba fichiers binaires ebakisami yango moko te.',
+    'press.assetsPlaceholder': 'Esika ya biloko ya ko télécharger',
+    'press.books.title': 'Liste ya mikanda',
+    'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, mpe After The Storm.',
+    'press.music.title': 'Liste ya miziki',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, mpe Womanifesto emonisami lokola esika ya koyoka na boboto mayele ya Carine oyo etali kobika.',
+    'reflections.architectureNote': 'Réflexion mokomoko ezali na titre, extrait, date, catégorie, elilingi, slug, mpe nzela ya contenu mpo makomi ya sika ebakisama kozanga kobongola kitoko ya lokasa oyo.',
+    'reflections.allLoaded': 'Ba réflexions nyonso emonani',
+    'pwa.fallbackHint': 'Matambe ya installation ezali mpo na navigateur oyo.',
+    'pwa.instructionsEyebrow': 'Installer Carine Sanadina',
+    'pwa.instructionsTitle': 'Bakisa app na appareil na yo',
+    'pwa.safariInstructions': 'Na Safari, fungola menu Partager, sima pona Ajouter au Dock to Ajouter à l’écran d’accueil soki ezali.',
+    'pwa.closeInstructions': 'Kanga malako ya installation',
+    'splash.kicker': 'Kobika • Ngolu • Kozongisama',
+    'splash.affirmation': 'Kobika ezali awa.',
+    'splash.opening': 'Kofungola expérience ya Carine Sanadina.',
+    'splash.status': 'Kobongisa expérience ya miziki...',
+    'splash.ariaLabel': 'App ya Carine Sanadina ezali kofungwama',
+    'splash.phrase.grace': 'Ngolu elobaka kaka.',
+    'splash.phrase.story': 'Lisolo na yo esili te.',
+    'splash.phrase.music': 'Kobongisa expérience ya miziki...',
+    'splash.phrase.healing': 'Kokɔtisa masolo ya kobika...',
+    'splash.phrase.sound': 'Kobongisa mongongo ya kozongisama...',
+    'splash.phrase.ready': 'Etikali moke...',
+    'tracks.genericCredits': 'Eyembami na Carine Sanadina. Makoki ya miziki mpe maloba etikali ya bankolo na yango.'
+  },
+  sw: {
+    'language.name.fr': 'Français',
+    'language.name.es': 'Español',
+    'language.name.yo': 'Yorùbá',
+    'nav.home': 'Mwanzo',
+    'nav.books': 'Vitabu',
+    'nav.press': 'Kifurushi cha Habari',
+    'cta.pathsLabel': 'Aina za maombi',
+    'cta.path.speaking': 'Maombi ya kuzungumza',
+    'cta.path.advocacy': 'Ushirikiano wa utetezi',
+    'cta.path.media': 'Maombi ya vyombo vya habari na mahojiano',
+    'cta.path.music': 'Ushirikiano wa muziki',
+    'lyrics.expand': 'Panua Mashairi',
+    'lyrics.collapse': 'Funga Mashairi',
+    'lyrics.tabsLabel': 'Maelezo ya wimbo',
+    'lyrics.scrollLabel': 'Mashairi yanayosawazishwa',
+    'lyrics.tab.lyrics': 'Mashairi',
+    'lyrics.tab.about': 'Kuhusu',
+    'lyrics.tab.credits': 'Sifa',
+    'lyrics.selectTrack': 'Chagua wimbo ili kuona mashairi.',
+    'lyrics.unavailable': 'Mashairi hayapatikani kwa wimbo huu.',
+    'lyrics.moreDetails': 'Maelezo zaidi yanakuja hivi karibuni.',
+    'lyrics.aboutSong': 'Kuhusu wimbo huu',
+    'lyrics.credits': 'Sifa',
+    'music.visualizerToggleLabel': 'Kionyeshi',
+    'music.visualizerToggleAria': 'Washa au zima kionyeshi cha sauti',
+    'music.visualizerOn': 'Kionyeshi kimewashwa',
+    'music.visualizerOff': 'Kionyeshi kimezimwa',
+    'music.visualizerStyleLabel': 'Mtindo wa uonyeshaji',
+    'music.visualizerStyleAria': 'Chagua mtindo wa uonyeshaji',
+    'music.visualizerDiagnostics': 'Uchunguzi wa kionyeshi',
+    'music.visualizerHelperTap': 'Gusa Kionyeshi, kisha bonyeza Cheza.',
+    'music.visualizerHelperIphone': 'Bonyeza Cheza ili kuanzisha mionekano kwenye iPhone.',
+    'guide.widgetLabel': 'Mwongozo wa mazungumzo wa Carine',
+    'guide.eyebrow': 'Mwongozo unaolenga uponyaji',
+    'guide.starter.story': 'Hadithi ya Carine ni ipi?',
+    'guide.starter.book': 'Nianze na kitabu gani?',
+    'guide.starter.womanifesto': 'Womanifesto inahusu nini?',
+    'guide.starter.advocacy': 'Carine anatetea nini?',
+    'guide.starter.speak': 'Ninawezaje kumwalika Carine azungumze?',
+    'guide.starter.music': 'Nionyeshe muziki wake.',
+    'guide.inputLabel': 'Uliza swali kuhusu vitabu, muziki au utetezi wa Carine',
+    'guide.notice': 'Mwongozo huu unashiriki taarifa za jumla kuhusu kazi ya Carine na hauchukui nafasi ya msaada wa kitaalamu, kisheria, kitabibu au wa dharura.',
+    'press.headshots.title': 'Picha rasmi na portreti',
+    'press.headshots.body': 'Portreti zilizoidhinishwa na mali za media zinazopakuliwa zinaweza kuambatishwa hapa faili za mwisho zitakapopatikana. Hakuna faili za binary zinazojumuishwa moja kwa moja.',
+    'press.assetsPlaceholder': 'Mahali pa mali zinazopakuliwa',
+    'press.books.title': 'Orodha ya vitabu',
+    'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, na After The Storm.',
+    'press.music.title': 'Orodha ya muziki',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, na Womanifesto vinawasilishwa kama dirisha la kusikiliza kwa upole sanaa ya Carine inayolenga uponyaji.',
+    'reflections.architectureNote': 'Kila tafakari imeundwa kwa kichwa, dondoo, tarehe, kategoria, picha, slug na njia ya maudhui tajiri ili maandishi mapya yaongezwe bila kubadilisha mpangilio wa ukurasa huu.',
+    'reflections.allLoaded': 'Tafakari zote zinaonekana',
+    'pwa.fallbackHint': 'Hatua za usakinishaji zinapatikana kwa kivinjari hiki.',
+    'pwa.instructionsEyebrow': 'Sakinisha Carine Sanadina',
+    'pwa.instructionsTitle': 'Ongeza programu kwenye kifaa chako',
+    'pwa.safariInstructions': 'Katika Safari, fungua menyu ya Kushiriki, kisha chagua Add to Dock au Add to Home Screen inapopatikana.',
+    'pwa.closeInstructions': 'Funga maelekezo ya usakinishaji',
+    'splash.kicker': 'Uponyaji • Neema • Urejesho',
+    'splash.affirmation': 'Uponyaji unaishi hapa.',
+    'splash.opening': 'Kufungua uzoefu wa Carine Sanadina.',
+    'splash.status': 'Kuandaa uzoefu wa muziki...',
+    'splash.ariaLabel': 'Programu ya Carine Sanadina inafunguka',
+    'splash.phrase.grace': 'Neema bado inazungumza.',
+    'splash.phrase.story': 'Hadithi yako haijaisha.',
+    'splash.phrase.music': 'Kuandaa uzoefu wa muziki...',
+    'splash.phrase.healing': 'Kupakia hadithi za uponyaji...',
+    'splash.phrase.sound': 'Kuweka sauti ya urejesho...',
+    'splash.phrase.ready': 'Karibu tayari...',
+    'tracks.genericCredits': 'Imeimbwa na Carine Sanadina. Haki za muziki na mashairi zinabaki kwa wamiliki wake husika.'
+  },
+  yo: {
+    'language.name.fr': 'Français',
+    'language.name.es': 'Español',
+    'language.name.yo': 'Yorùbá',
+    'books.pain.kicker': 'Ìrántí',
+    'tracks.womanifesto.playLabel': 'Mu Womanifesto ṣiṣẹ́',
+    'lyrics.expand': 'Fa àwọn orin ọrọ̀ síi',
+    'lyrics.collapse': 'Dín àwọn orin ọrọ̀ kù',
+    'lyrics.tabsLabel': 'Àlàyé orin',
+    'lyrics.scrollLabel': 'Ọ̀rọ̀ orin tó ń bá ohun lọ',
+    'lyrics.tab.lyrics': 'Ọ̀rọ̀ orin',
+    'lyrics.tab.about': 'Nípa rẹ̀',
+    'lyrics.tab.credits': 'Kírẹ́dítì',
+    'lyrics.selectTrack': 'Yan orin kan láti wo ọ̀rọ̀ orin.',
+    'lyrics.unavailable': 'Ọ̀rọ̀ orin kò sí fún orin yìí.',
+    'lyrics.moreDetails': 'Àlàyé míì ń bọ̀ láìpẹ́.',
+    'lyrics.aboutSong': 'Nípa orin yìí',
+    'lyrics.credits': 'Kírẹ́dítì',
+    'music.visualizerToggleLabel': 'Olùfihàn',
+    'music.visualizerToggleAria': 'Tan tàbí pa olùfihàn ohun',
+    'music.visualizerOn': 'Olùfihàn ti tan',
+    'music.visualizerOff': 'Olùfihàn ti pa',
+    'music.visualizerStyleLabel': 'Àra ìfihàn',
+    'music.visualizerStyleAria': 'Yan àra ìfihàn',
+    'music.visualizerDiagnostics': 'Ìtọ́pinpin olùfihàn',
+    'music.visualizerHelperTap': 'Tẹ Olùfihàn, lẹ́yìn náà tẹ Mu ṣiṣẹ́.',
+    'music.visualizerHelperIphone': 'Tẹ Mu ṣiṣẹ́ láti jẹ́ kí ìfihàn ṣiṣẹ́ lori iPhone.',
+    'guide.widgetLabel': 'Olùtọ́nisọ́nà ìjíròrò Carine',
+    'guide.eyebrow': 'Olùtọ́nisọ́nà tó dá lórí ìwòsàn',
+    'guide.starter.story': 'Kí ni ìtàn Carine?',
+    'guide.starter.book': 'Ìwé wo ni kí n bẹ̀rẹ̀ pẹ̀lú?',
+    'guide.starter.womanifesto': 'Kí ni Womanifesto sọ nípa rẹ̀?',
+    'guide.starter.advocacy': 'Kí ni Carine ń dáàbò bò?',
+    'guide.starter.speak': 'Báwo ni mo ṣe lè pè Carine láti sọ̀rọ̀?',
+    'guide.starter.music': 'Fi orin rẹ̀ hàn mí.',
+    'guide.inputLabel': 'Béèrè ìbéèrè nípa àwọn ìwé, orin, tàbí ìdáàbò bo ti Carine',
+    'guide.notice': 'Olùtọ́nisọ́nà yìí ń pín ìwífún gbogbogbò nípa iṣẹ́ Carine, kò sì rọ́pò ìrànlọ́wọ́ amọ̀ja, òfin, ìlera tàbí pajawiri.',
+    'press.headshots.title': 'Àwọn fọ́tò orí àti aworan',
+    'press.headshots.body': 'Àwọn aworan tí a fọwọ́ sí àti ohun èlò media tó ṣeé gbasilẹ lè wa níbí nígbà tí àwọn fáìlì ikẹhin bá wà. Kò sí fáìlì binary tí a fi kun laifọwọyi.',
+    'press.assetsPlaceholder': 'Ààyè fún ohun èlò tó ṣeé gbasilẹ',
+    'press.books.title': 'Àtòkọ ìwé',
+    'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, àti After The Storm.',
+    'press.music.title': 'Àtòkọ orin',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, àti Womanifesto ni a fi hàn gẹ́gẹ́ bí ferese ìgbọ́ràn pẹ̀lẹ́ sí iṣẹ́ ọnà ìwòsàn Carine.',
+    'reflections.architectureNote': 'Ìrònú kọọkan ni akọlé, àyọkà, ọjọ́, ẹ̀ka, aworan, slug, àti ọ̀nà akoonu ọlọ́rọ̀ kí a lè ṣàfikún kikọ tuntun láì yí ìtòlẹ́sẹẹsẹ ojúewé yìí padà.',
+    'reflections.allLoaded': 'Gbogbo ìrònú ti han',
+    'pwa.fallbackHint': 'Àwọn ìgbésẹ̀ fifi sori ẹrọ wà fún aṣàwákiri yìí.',
+    'pwa.instructionsEyebrow': 'Fi Carine Sanadina sori ẹrọ',
+    'pwa.instructionsTitle': 'Fi app kun ẹrọ rẹ',
+    'pwa.safariInstructions': 'Nínú Safari, ṣí akojọ Share, lẹ́yìn náà yan Add to Dock tàbí Add to Home Screen tí ó bá wà.',
+    'pwa.closeInstructions': 'Pa ìtọ́nisọ́nà fifi sori ẹrọ',
+    'splash.kicker': 'Ìwòsàn • Oore-ọfẹ́ • Ìmúpadàbọ̀',
+    'splash.affirmation': 'Ìwòsàn ń gbé níbí.',
+    'splash.opening': 'Ṣí iriri Carine Sanadina.',
+    'splash.status': 'Ń pèsè iriri orin...',
+    'splash.ariaLabel': 'App Carine Sanadina ń ṣí',
+    'splash.phrase.grace': 'Oore-ọfẹ́ ṣì ń sọ̀rọ̀.',
+    'splash.phrase.story': 'Ìtàn rẹ kò tíì parí.',
+    'splash.phrase.music': 'Ń pèsè iriri orin...',
+    'splash.phrase.healing': 'Ń kojọpọ̀ àwọn ìtàn ìwòsàn...',
+    'splash.phrase.sound': 'Ń tún ohun ìmúpadàbọ̀ ṣe...',
+    'splash.phrase.ready': 'Ó fẹ́ ṣetán...',
+    'tracks.genericCredits': 'Carine Sanadina ló kọrin rẹ. Ẹ̀tọ́ orin àti ọ̀rọ̀ orin wà lọ́wọ́ àwọn oní rẹ̀.'
+  }
+};
+
+Object.entries(finalTranslationAuditOverrides).forEach(([language, dictionary]) => {
+  if (translations[language]) Object.assign(translations[language], dictionary);
+});
+
+
+const reflectionAdvocacyAuditTranslations = {
+  es: {
+    'reflection.category.advocacy': 'Defensa',
+    'reflection.category.resilience': 'Resiliencia',
+    'reflection.category.womanhood': 'Mujer y dignidad',
+    'reflection.category.emotionalGrowth': 'Crecimiento emocional',
+    'reflection.advocacy.title': 'Defender la sanación también es una forma de cuidado',
+    'reflection.advocacy.excerpt': 'Una reflexión sobre hablar con ternura, proteger la dignidad de las sobrevivientes y crear espacios donde la restauración pueda respirar.',
+    'reflection.advocacy.readTime': '4 min',
+    'reflection.advocacy.quote': 'La defensa comienza cuando la dignidad de alguien vuelve a ser escuchada.',
+    'reflection.advocacy.prompt': '¿Dónde puede tu voz crear más seguridad esta semana?'
+  },
+  ln: {
+    'reflection.category.advocacy': 'Kosunga mpe kolobela bato',
+    'reflection.category.resilience': 'Mpiko ya kotelema lisusu',
+    'reflection.category.womanhood': 'Bomwasi',
+    'reflection.category.emotionalGrowth': 'Bokoli ya motema',
+    'reflection.advocacy.title': 'Kolobela kobika ezali mpe lolenge ya kobatela',
+    'reflection.advocacy.excerpt': 'Réflexion moko na ntina ya koloba na boboto, kobatela lokumu ya ba survivantes, mpe kosala bisika oyo kozongisama ekoki kopema.',
+    'reflection.advocacy.readTime': '4 min',
+    'reflection.advocacy.quote': 'Advocacy ebandaka tango lokumu ya moto eyokami lisusu.',
+    'reflection.advocacy.prompt': 'Wapi mongongo na yo ekoki kopesa kimia mingi na poso oyo?'
+  },
+  sw: {
+    'reflection.category.advocacy': 'Utetezi',
+    'reflection.category.resilience': 'Ustahimilivu',
+    'reflection.category.womanhood': 'Uanawake',
+    'reflection.category.emotionalGrowth': 'Ukuaji wa kihisia',
+    'reflection.advocacy.title': 'Kutetea uponyaji pia ni aina ya utunzaji',
+    'reflection.advocacy.excerpt': 'Tafakari kuhusu kuzungumza kwa upole, kulinda heshima ya walionusurika, na kuunda nafasi ambapo urejesho unaweza kupumua.',
+    'reflection.advocacy.readTime': 'dakika 4',
+    'reflection.advocacy.quote': 'Utetezi huanza wakati heshima ya mtu inasikilizwa tena.',
+    'reflection.advocacy.prompt': 'Sauti yako inaweza kuleta usalama zaidi wapi wiki hii?'
+  },
+  yo: {
+    'nav.home': 'Ilé',
+    'nav.books': 'Àwọn ìwé',
+    'nav.press': 'Ohun elo atẹjade',
+    'cta.pathsLabel': 'Àwọn irú ìbéèrè',
+    'cta.path.speaking': 'Ìbéèrè fún sisọ̀rọ̀',
+    'cta.path.advocacy': 'Ìfọwọ́sowọ́pọ̀ ìdáàbò bo',
+    'cta.path.media': 'Ìbéèrè media àti ìfọ̀rọ̀wánilẹ́nuwò',
+    'cta.path.music': 'Ìfọwọ́sowọ́pọ̀ orin',
+    'reflection.category.advocacy': 'Ìdáàbò bo',
+    'reflection.category.resilience': 'Ìfaradà',
+    'reflection.category.womanhood': 'Ìyì obìnrin',
+    'reflection.category.emotionalGrowth': 'Ìdàgbàsókè ẹ̀dá ọkàn',
+    'reflection.advocacy.title': 'Ìdáàbò bo ìwòsàn tún jẹ́ ìtọju',
+    'reflection.advocacy.excerpt': 'Ìrònú nípa sísọ̀rọ̀ pẹ̀lẹ́, dídáàbò bo ìyì àwọn tó yè bọ́, àti ṣíṣe ààyè tí ìmúpadàbọ̀ lè mí.',
+    'reflection.advocacy.readTime': 'ìṣẹ́jú 4',
+    'reflection.advocacy.quote': 'Ìdáàbò bo bẹ̀rẹ̀ nígbà tí a tún gbọ́ ìyì ẹnìkan.',
+    'reflection.advocacy.prompt': 'Níbo ni ohùn rẹ lè dá ààbò síi lọ́sẹ̀ yìí?'
+  }
+};
+
+Object.entries(reflectionAdvocacyAuditTranslations).forEach(([language, dictionary]) => {
+  if (translations[language]) Object.assign(translations[language], dictionary);
 });
 
 const supportedLanguages = Object.keys(translations);
@@ -2106,7 +2530,7 @@ const renderCarinePlaylist = () => {
     const lyricsLrcPath = escapePlaylistAttribute(track.lyricsLrc || '');
     const sunoSource = escapePlaylistAttribute(track.sunoSource || '');
     const about = escapePlaylistAttribute(track.about || track.description || '');
-    const credits = escapePlaylistAttribute(track.credits || 'Credits unavailable.');
+    const credits = escapePlaylistAttribute(track.credits || translate('tracks.genericCredits'));
     const lyricsTimed = escapePlaylistAttribute(JSON.stringify(Array.isArray(track.lyricsTimed) ? track.lyricsTimed : []));
 
     return `
@@ -2115,6 +2539,7 @@ const renderCarinePlaylist = () => {
         aria-labelledby="${titleId}"
         data-audio-player
         data-track-id="${trackId}"
+        data-track-translation-key="${trackKey}"
         data-audio-src="${audioUrl}"
         data-track-title="${escapePlaylistAttribute(track.title)}"
         data-track-artist="${escapePlaylistAttribute(track.artist)}"
@@ -2190,14 +2615,14 @@ const CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS = 8000;
 const CARINE_SPLASH_SKIP_REVEAL_MS = 5000;
 const CARINE_SPLASH_ROTATOR_INTERVAL_MS = 2400;
 const CARINE_SPLASH_ROTATOR_FADE_MS = 260;
-const CARINE_SPLASH_AFFIRMATIONS = [
-  'Healing lives here.',
-  'Grace still speaks.',
-  'Your story is not over.',
-  'Preparing music experience...',
-  'Loading stories of healing...',
-  'Tuning the sound of restoration...',
-  'Almost ready...'
+const CARINE_SPLASH_AFFIRMATION_KEYS = [
+  'splash.affirmation',
+  'splash.phrase.grace',
+  'splash.phrase.story',
+  'splash.phrase.music',
+  'splash.phrase.healing',
+  'splash.phrase.sound',
+  'splash.phrase.ready'
 ];
 
 const readSplashStorage = (key) => {
@@ -2281,11 +2706,11 @@ const startSplashTextRotator = (splash, reducedMotion = false) => {
       return;
     }
 
-    phraseIndex = (phraseIndex + 1) % CARINE_SPLASH_AFFIRMATIONS.length;
+    phraseIndex = (phraseIndex + 1) % CARINE_SPLASH_AFFIRMATION_KEYS.length;
     rotatorTarget.classList.add('is-changing');
 
     const fadeTimerId = window.setTimeout(() => {
-      rotatorTarget.textContent = CARINE_SPLASH_AFFIRMATIONS[phraseIndex];
+      rotatorTarget.textContent = translate(CARINE_SPLASH_AFFIRMATION_KEYS[phraseIndex]);
       rotatorTarget.classList.remove('is-changing');
     }, CARINE_SPLASH_ROTATOR_FADE_MS);
 
@@ -3540,7 +3965,7 @@ if (musicPlayers.length) {
   const renderLyrics = () => {
     if (!lyricsScroll) return;
     if (!lyricEntries.length) {
-      setLyricsMessage('Lyrics unavailable for this track.');
+      setLyricsMessage(translate('lyrics.unavailable'));
       return;
     }
 
@@ -3556,10 +3981,15 @@ if (musicPlayers.length) {
 
   const renderTrackInfo = (player) => {
     if (!lyricsInfoPanel || !player) return;
-    const content = activeLyricsTab === 'credits' ? player.dataset.trackCredits : player.dataset.trackAbout;
-    const formattedContent = escapePlaylistText(content || 'More details coming soon.').replace(/\n/g, '<br>');
+    const trackKey = player.dataset.trackTranslationKey || '';
+    const localizedAbout = trackKey ? translate(`${trackKey}.description`) : '';
+    const localizedCredits = translate('tracks.genericCredits');
+    const content = activeLyricsTab === 'credits'
+      ? localizedCredits
+      : (localizedAbout || player.dataset.trackAbout || translate('lyrics.moreDetails'));
+    const formattedContent = escapePlaylistText(content || translate('lyrics.moreDetails')).replace(/\n/g, '<br>');
     lyricsInfoPanel.innerHTML = `
-      <p class="track-info-kicker">${activeLyricsTab === 'credits' ? 'Credits' : 'About this song'}</p>
+      <p class="track-info-kicker">${escapePlaylistText(translate(activeLyricsTab === 'credits' ? 'lyrics.credits' : 'lyrics.aboutSong'))}</p>
       <p>${formattedContent}</p>
     `;
   };
@@ -3655,7 +4085,7 @@ if (musicPlayers.length) {
     if (!resolveSiteAssetPath(lyricsPath)) {
       lyricEntries = [];
       lyricTiming = [];
-      setLyricsMessage('Lyrics unavailable for this track.');
+      setLyricsMessage(translate('lyrics.unavailable'));
       return;
     }
 
@@ -3667,7 +4097,7 @@ if (musicPlayers.length) {
       if (currentLyricsPlayer !== player) return;
       lyricEntries = [];
       lyricTiming = [];
-      setLyricsMessage('Lyrics unavailable for this track.');
+      setLyricsMessage(translate('lyrics.unavailable'));
     }
   };
 
@@ -4617,7 +5047,7 @@ if (musicPlayers.length) {
     const panel = document.createElement('aside');
     panel.className = 'visualizer-debug-panel';
     panel.setAttribute('aria-live', 'polite');
-    panel.setAttribute('aria-label', 'Visualizer diagnostics');
+    panel.setAttribute('aria-label', translate('music.visualizerDiagnostics'));
     document.body.appendChild(panel);
 
     const render = () => {
@@ -4649,7 +5079,7 @@ if (musicPlayers.length) {
         ['document.visibilityState', diagnostics.documentVisibilityState],
         ['GPU hints detected', diagnostics.gpuHints]
       ];
-      panel.innerHTML = `<strong>Visualizer diagnostics</strong>${rows.map(([label, value]) => `<div><span>${escapeDiagnosticHtml(label)}</span><b>${escapeDiagnosticHtml(value)}</b></div>`).join('')}`;
+      panel.innerHTML = `<strong>${escapeDiagnosticHtml(translate('music.visualizerDiagnostics'))}</strong>${rows.map(([label, value]) => `<div><span>${escapeDiagnosticHtml(label)}</span><b>${escapeDiagnosticHtml(value)}</b></div>`).join('')}`;
     };
 
     render();
@@ -5647,6 +6077,7 @@ if (musicPlayers.length) {
     updateCommandButtons();
     if (activePlayer) {
       syncStage(activePlayer);
+      renderTrackInfo(activePlayer);
     } else {
       if (mobileTitle) mobileTitle.textContent = translate('mini.noTrack');
       updateToggle(mobileToggle, null, translate('mini.noTrack'));
