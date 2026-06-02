@@ -215,7 +215,7 @@
     </script>
   </head>
   <body>
-    <div class="cinematic-splash" data-cinematic-splash role="status" aria-live="polite" aria-label="Carine Sanadina app is opening">
+    <div class="cinematic-splash" data-cinematic-splash role="status" aria-live="polite" aria-label="Carine Sanadina app is opening" data-i18n-aria-label="splash.ariaLabel">
       <div class="splash-ambient splash-ambient-one" aria-hidden="true"></div>
       <div class="splash-ambient splash-ambient-two" aria-hidden="true"></div>
       <div class="splash-card">
@@ -231,10 +231,10 @@
         />
         <div class="splash-copy" data-splash-copy>
           <p class="splash-brand">Carine Sanadina</p>
-          <p class="splash-kicker">Healing • Grace • Restoration</p>
-          <p class="splash-affirmation" data-splash-affirmation aria-live="polite">Healing lives here.</p>
+          <p class="splash-kicker" data-i18n="splash.kicker">Healing • Grace • Restoration</p>
+          <p class="splash-affirmation" data-splash-affirmation aria-live="polite" data-i18n="splash.affirmation">Healing lives here.</p>
         </div>
-        <p class="sr-only">Opening the Carine Sanadina experience.</p>
+        <p class="sr-only" data-i18n="splash.opening">Opening the Carine Sanadina experience.</p>
         <div class="splash-wave-bars" aria-hidden="true" data-splash-wave-bars>
           <span style="--splash-bar-start: 0.28; --splash-bar-duration: 1.16s; --splash-bar-delay: -0.08s;"></span>
           <span style="--splash-bar-start: 0.52; --splash-bar-duration: 1.34s; --splash-bar-delay: -0.42s;"></span>
@@ -261,7 +261,7 @@
           <span style="--splash-bar-start: 0.6; --splash-bar-duration: 1.18s; --splash-bar-delay: -5.96s;"></span>
           <span style="--splash-bar-start: 0.36; --splash-bar-duration: 1.32s; --splash-bar-delay: -6.22s;"></span>
         </div>
-        <p class="splash-status" data-splash-status aria-live="polite">Preparing music experience...</p>
+        <p class="splash-status" data-splash-status aria-live="polite" data-i18n="splash.status">Preparing music experience...</p>
         <button class="splash-enter-button" type="button" data-splash-skip data-i18n="splash.enterApp" disabled aria-disabled="true" aria-hidden="true">Enter App</button>
       </div>
     </div>
@@ -296,11 +296,11 @@
           </button>
           <div class="language-switcher__menu" id="language-menu" role="menu" data-language-menu hidden>
             <button class="language-option is-active" type="button" role="menuitemradio" data-language-option="en" aria-checked="true" data-i18n="language.name.en">English</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="fr" aria-checked="false" data-i18n="language.name.fr">French</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="fr" aria-checked="false" data-i18n="language.name.fr">Français</button>
             <button class="language-option" type="button" role="menuitemradio" data-language-option="ln" aria-checked="false" data-i18n="language.name.ln">Lingala</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="es" aria-checked="false" data-i18n="language.name.es">Spanish</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="es" aria-checked="false" data-i18n="language.name.es">Español</button>
             <button class="language-option" type="button" role="menuitemradio" data-language-option="sw" aria-checked="false" data-i18n="language.name.sw">Swahili</button>
-            <button class="language-option" type="button" role="menuitemradio" data-language-option="yo" aria-checked="false" data-i18n="language.name.yo">Yoruba</button>
+            <button class="language-option" type="button" role="menuitemradio" data-language-option="yo" aria-checked="false" data-i18n="language.name.yo">Yorùbá</button>
           </div>
         </div>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
@@ -694,15 +694,15 @@
             </div>
             <div class="lyrics-panel" data-lyrics-panel>
               <div class="lyrics-panel-toolbar">
-                <div class="lyrics-tabs" role="tablist" aria-label="Track details">
-                  <button class="lyrics-tab is-active" type="button" role="tab" aria-selected="true" data-lyrics-tab="lyrics">Lyrics</button>
-                  <button class="lyrics-tab" type="button" role="tab" aria-selected="false" data-lyrics-tab="about">About</button>
-                  <button class="lyrics-tab" type="button" role="tab" aria-selected="false" data-lyrics-tab="credits">Credits</button>
+                <div class="lyrics-tabs" role="tablist" aria-label="Track details" data-i18n-aria-label="lyrics.tabsLabel">
+                  <button class="lyrics-tab is-active" type="button" role="tab" aria-selected="true" data-lyrics-tab="lyrics" data-i18n="lyrics.tab.lyrics">Lyrics</button>
+                  <button class="lyrics-tab" type="button" role="tab" aria-selected="false" data-lyrics-tab="about" data-i18n="lyrics.tab.about">About</button>
+                  <button class="lyrics-tab" type="button" role="tab" aria-selected="false" data-lyrics-tab="credits" data-i18n="lyrics.tab.credits">Credits</button>
                 </div>
                 <button class="lyrics-expand-toggle" type="button" data-lyrics-expand aria-expanded="false" data-i18n="lyrics.expand">Expand Lyrics</button>
               </div>
-              <div class="lyrics-scroll" data-lyrics-scroll role="region" aria-live="polite" aria-label="Synchronized lyrics">
-                <p class="lyrics-empty">Select a track to view lyrics.</p>
+              <div class="lyrics-scroll" data-lyrics-scroll role="region" aria-live="polite" aria-label="Synchronized lyrics" data-i18n-aria-label="lyrics.scrollLabel">
+                <p class="lyrics-empty" data-i18n="lyrics.selectTrack">Select a track to view lyrics.</p>
               </div>
               <div class="track-info-panel" data-track-info-panel hidden></div>
             </div>
