@@ -3494,6 +3494,185 @@ body.mini-player-active .guide-panel {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
+/* Boutique hybrid vinyl lounge for the expanded now-playing view only. */
+.expanded-artwork-wrap {
+  --vinyl-size: min(100%, 360px);
+  --vinyl-label-size: clamp(82px, 34%, 128px);
+  --vinyl-glow-opacity: 0.62;
+  --vinyl-arm-angle: 18deg;
+  --vinyl-arm-x: 2%;
+  --vinyl-arm-y: -2%;
+}
+
+.expanded-vinyl-deck {
+  position: relative;
+  width: var(--vinyl-size);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  isolation: isolate;
+  contain: layout paint;
+}
+
+.expanded-vinyl-glow {
+  position: absolute;
+  inset: -8%;
+  z-index: -2;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 20%, rgba(234, 211, 162, 0.38), transparent 18%),
+    radial-gradient(circle at 72% 70%, rgba(96, 165, 250, 0.34), transparent 28%),
+    radial-gradient(circle, rgba(17, 36, 72, 0.84), transparent 66%);
+  filter: blur(24px);
+  opacity: var(--vinyl-glow-opacity);
+  transform: translateZ(0) scale(1.02);
+  transition: opacity 0.42s ease, transform 0.42s ease, filter 0.42s ease;
+  pointer-events: none;
+}
+
+.expanded-vinyl-disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 15%, rgba(255, 248, 238, 0.08) 15.5%, transparent 16.5%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.055) 0 1px, rgba(255, 255, 255, 0.012) 1px 3px, rgba(0, 0, 0, 0.16) 3px 5px),
+    conic-gradient(from 18deg, rgba(255, 255, 255, 0.11), transparent 12%, rgba(96, 165, 250, 0.11) 24%, transparent 38%, rgba(234, 211, 162, 0.13) 52%, transparent 66%, rgba(255, 255, 255, 0.08) 82%, transparent),
+    radial-gradient(circle at 50% 50%, #182238 0 18%, #050914 19% 62%, #121b2c 72%, #030711 100%);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.58),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 0 0 14px rgba(255, 255, 255, 0.018),
+    inset 0 0 42px rgba(0, 0, 0, 0.72);
+  transform: translateZ(0) rotate(0deg);
+  transform-origin: 50% 50%;
+  will-change: transform;
+  overflow: hidden;
+}
+
+.expanded-vinyl-disc::before,
+.expanded-vinyl-disc::after,
+.expanded-vinyl-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.expanded-vinyl-disc::before {
+  background:
+    linear-gradient(118deg, transparent 8%, rgba(255, 248, 238, 0.13) 17%, transparent 30%),
+    linear-gradient(300deg, transparent 48%, rgba(96, 165, 250, 0.12) 58%, transparent 72%);
+  mix-blend-mode: screen;
+  opacity: 0.68;
+}
+
+.expanded-vinyl-disc::after {
+  inset: 8%;
+  border: 1px solid rgba(234, 211, 162, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.08);
+}
+
+.expanded-vinyl-sheen {
+  background: conic-gradient(from 204deg, transparent 0 34%, rgba(255, 255, 255, 0.16) 42%, transparent 51%, transparent 75%, rgba(234, 211, 162, 0.1) 81%, transparent 88%);
+  opacity: 0.42;
+}
+
+.expanded-player-card .expanded-vinyl-label {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: var(--vinyl-label-size);
+  max-width: none;
+  aspect-ratio: 1;
+  margin: 0;
+  border: 4px solid rgba(255, 248, 238, 0.18);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgba(3, 8, 18, 0.48),
+    0 10px 28px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  object-fit: cover;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.expanded-vinyl-spindle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(10px, 4.6%, 16px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff8ee, #ead3a2 48%, #6f5832 100%);
+  box-shadow: 0 0 18px rgba(234, 211, 162, 0.38);
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.expanded-tonearm {
+  position: absolute;
+  top: 3%;
+  right: -5%;
+  width: 44%;
+  height: 42%;
+  z-index: 3;
+  transform: translate3d(var(--vinyl-arm-x), var(--vinyl-arm-y), 0) rotate(var(--vinyl-arm-angle));
+  transform-origin: 82% 14%;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+  opacity: 0.88;
+  pointer-events: none;
+}
+
+.expanded-tonearm-pivot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff8ee, #b9c8dc 38%, #1e2d45 78%);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.expanded-tonearm-wand {
+  position: absolute;
+  top: 22%;
+  right: 18%;
+  width: 78%;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(234, 211, 162, 0.95), rgba(226, 238, 255, 0.88), rgba(96, 165, 250, 0.42));
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: rotate(29deg);
+  transform-origin: 100% 50%;
+}
+
+.expanded-tonearm-head {
+  position: absolute;
+  left: 2%;
+  bottom: 10%;
+  width: 18%;
+  height: 11%;
+  border-radius: 6px 9px 9px 6px;
+  background: linear-gradient(135deg, rgba(255, 248, 238, 0.92), rgba(96, 165, 250, 0.58));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.34);
+  transform: rotate(29deg);
+}
+
+.expanded-player-card.is-vinyl-playing .expanded-artwork-wrap {
+  --vinyl-glow-opacity: 0.9;
+  --vinyl-arm-angle: 13deg;
+  --vinyl-arm-x: -1%;
+  --vinyl-arm-y: 1%;
+}
+
+.expanded-player-card.is-vinyl-playing .expanded-vinyl-glow {
+  animation: expanded-vinyl-glow-pulse 3.4s ease-in-out infinite;
+}
+
+@keyframes expanded-vinyl-glow-pulse {
+  0%, 100% { opacity: 0.74; transform: translateZ(0) scale(1.01); filter: blur(24px); }
+  48% { opacity: 1; transform: translateZ(0) scale(1.08); filter: blur(30px); }
+}
+
 .expanded-player-hero {
   display: flex;
   flex-direction: column;
@@ -3527,6 +3706,16 @@ body.mini-player-active .guide-panel {
   margin: 0 auto;
   border-radius: 30px;
   box-shadow: 0 24px 90px rgba(0, 0, 0, 0.58), 0 0 60px rgba(96, 165, 250, 0.22);
+}
+
+.expanded-player-card .mobile-player-cover.expanded-vinyl-label {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: var(--vinyl-label-size);
+  max-width: none;
+  margin: 0;
+  border-radius: 50%;
+  transform: translate3d(-50%, -50%, 0);
 }
 
 .expanded-player-copy h3 {
@@ -3792,8 +3981,9 @@ body.mini-player-active .guide-panel {
   .expanded-player-grabber { display: block; }
   .expanded-player-layout { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); gap: 12px; min-height: 0; }
   .expanded-player-hero { padding: 12px; border-radius: 24px; }
-  .expanded-artwork-wrap { width: min(48vw, 220px); margin-bottom: 10px; }
-  .expanded-player-card .mobile-player-cover { border-radius: 22px; }
+  .expanded-artwork-wrap { width: min(48vw, 220px); margin-bottom: 10px; --vinyl-size: min(48vw, 220px); --vinyl-label-size: clamp(58px, 34%, 86px); }
+  .expanded-tonearm { right: -7%; width: 45%; }
+  .expanded-player-card .expanded-vinyl-label { border-radius: 50%; }
   .expanded-player-copy h3 { font-size: clamp(1.55rem, 8vw, 2.4rem); }
   .expanded-player-progress { margin-top: 0; }
   .expanded-player-actions { margin-top: 0; }
@@ -3820,9 +4010,15 @@ body.mini-player-active .guide-panel {
   .lyric-line,
   .lyric-section,
   .expanded-visualizer span,
+  .expanded-vinyl-glow,
+  .expanded-tonearm,
   .mini-visualizer span {
     transition: none;
     animation: none;
+  }
+
+  .expanded-vinyl-disc {
+    will-change: auto;
   }
 }
 
@@ -3886,19 +4082,29 @@ body.mini-player-active .guide-panel {
     grid-area: art;
     width: clamp(72px, 18vw, 92px);
     margin: 0;
+    --vinyl-size: clamp(72px, 18vw, 92px);
+    --vinyl-label-size: clamp(26px, 38%, 38px);
   }
 
-  .mobile-player-sheet.is-lyrics-expanded .expanded-artwork-glow {
-    inset: 12%;
-    filter: blur(14px);
+  .mobile-player-sheet.is-lyrics-expanded .expanded-vinyl-glow {
+    inset: -4%;
+    filter: blur(12px);
+    opacity: 0.62;
+  }
+
+  .mobile-player-sheet.is-lyrics-expanded .expanded-tonearm {
+    top: 0;
+    right: -10%;
+    width: 48%;
     opacity: 0.72;
   }
 
-  .mobile-player-sheet.is-lyrics-expanded .mobile-player-cover {
-    width: 100%;
-    max-width: 92px;
-    border-radius: 16px;
-    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.42), 0 0 28px rgba(96, 165, 250, 0.16);
+  .mobile-player-sheet.is-lyrics-expanded .expanded-tonearm-wand { height: 4px; }
+
+  .mobile-player-sheet.is-lyrics-expanded .expanded-player-card .expanded-vinyl-label {
+    border-width: 2px;
+    border-radius: 50%;
+    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.38);
   }
 
   .mobile-player-sheet.is-lyrics-expanded .expanded-player-copy {
@@ -4095,9 +4301,9 @@ body.mini-player-active .guide-panel {
     grid-template-columns: 72px minmax(0, 1fr);
   }
 
-  .mobile-player-sheet.is-lyrics-expanded .expanded-artwork-wrap,
-  .mobile-player-sheet.is-lyrics-expanded .mobile-player-cover {
+  .mobile-player-sheet.is-lyrics-expanded .expanded-artwork-wrap {
     max-width: 76px;
+    --vinyl-size: min(76px, 100%);
   }
 
   .mobile-player-sheet.is-lyrics-expanded .lyrics-scroll {
@@ -4164,6 +4370,8 @@ body.lyrics-expanded-open .mini-player.is-visible {
   grid-area: art;
   width: 58px;
   margin: 0;
+  --vinyl-size: 58px;
+  --vinyl-label-size: 24px;
 }
 
 .expanded-player-card.is-lyrics-expanded .expanded-artwork-glow {
@@ -4177,6 +4385,13 @@ body.lyrics-expanded-open .mini-player.is-visible {
   max-width: 58px;
   border-radius: 14px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.36);
+}
+
+.expanded-player-card.is-lyrics-expanded .mobile-player-cover.expanded-vinyl-label {
+  width: var(--vinyl-label-size);
+  max-width: none;
+  border-width: 2px;
+  border-radius: 50%;
 }
 
 .expanded-player-card.is-lyrics-expanded .expanded-player-copy {

@@ -3720,6 +3720,7 @@ if (musicPlayers.length) {
   const expandedCurrent = document.querySelector('[data-expanded-current]');
   const expandedDuration = document.querySelector('[data-expanded-duration]');
   const expandedVisualizer = document.querySelector('[data-expanded-visualizer]');
+  const expandedVinylDisc = document.querySelector('[data-vinyl-disc]');
   const expandedPlayerCard = document.querySelector('.expanded-player-card');
   const lyricsPanel = document.querySelector('[data-lyrics-panel]');
   const lyricsScroll = document.querySelector('[data-lyrics-scroll]');
@@ -5270,6 +5271,79 @@ if (musicPlayers.length) {
     setTransportButtonState(button, isPlaying);
   };
 
+  const expandedVinylController = (() => {
+    const disc = expandedVinylDisc;
+    const card = expandedPlayerCard;
+    let angle = 0;
+    let velocity = 0;
+    let animationFrame = 0;
+    let lastTimestamp = 0;
+    let decelerationStartedAt = 0;
+    const targetVelocity = 360 / 18000;
+    const decelerationDuration = 950;
+
+    const render = () => {
+      if (!disc) return;
+      disc.style.transform = `translateZ(0) rotate(${angle.toFixed(3)}deg)`;
+    };
+
+    const stopFrame = () => {
+      if (!animationFrame) return;
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+    };
+
+    const step = (timestamp) => {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const delta = Math.min(timestamp - lastTimestamp, 48);
+      lastTimestamp = timestamp;
+
+      if (card?.classList.contains('is-vinyl-playing')) {
+        velocity += (targetVelocity - velocity) * Math.min(1, delta / 260);
+      } else if (velocity > 0.0001) {
+        if (!decelerationStartedAt) decelerationStartedAt = timestamp;
+        const progress = Math.min((timestamp - decelerationStartedAt) / decelerationDuration, 1);
+        velocity = targetVelocity * Math.pow(1 - progress, 2.2);
+      } else {
+        velocity = 0;
+      }
+
+      angle = (angle + velocity * delta) % 360;
+      render();
+
+      if (card?.classList.contains('is-vinyl-playing') || velocity > 0) {
+        animationFrame = window.requestAnimationFrame(step);
+      } else {
+        stopFrame();
+        lastTimestamp = 0;
+        decelerationStartedAt = 0;
+      }
+    };
+
+    const setPlaying = (isPlaying) => {
+      card?.classList.toggle('is-vinyl-playing', Boolean(isPlaying && !reduceMotion));
+      card?.classList.toggle('is-vinyl-paused', Boolean(!isPlaying && !reduceMotion));
+
+      if (!disc || reduceMotion) {
+        stopFrame();
+        return;
+      }
+
+      if (isPlaying) {
+        decelerationStartedAt = 0;
+      } else if (!decelerationStartedAt) {
+        decelerationStartedAt = 0;
+      }
+
+      if (!animationFrame) {
+        lastTimestamp = 0;
+        animationFrame = window.requestAnimationFrame(step);
+      }
+    };
+
+    return { setPlaying };
+  })();
+
   const syncTransportButtons = (activeAudio = activePlayer ? getAudio(activePlayer) : null, { forceIdle = false } = {}) => {
     const activeIsPlaying = Boolean(activeAudio && !activeAudio.paused && !activeAudio.ended && !forceIdle);
 
@@ -5282,6 +5356,7 @@ if (musicPlayers.length) {
 
     if (miniPlayer) miniPlayer.classList.toggle('is-playing', activeIsPlaying);
     expandedVisualizer?.classList.toggle('is-playing', activeIsPlaying);
+    expandedVinylController.setPlaying(activeIsPlaying);
     setTransportButtonState(mini?.toggle, activeIsPlaying);
     setTransportButtonState(mobileToggle, activeIsPlaying);
   };
