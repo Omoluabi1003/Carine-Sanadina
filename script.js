@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-02-ios-splash-wave-bars';
+const APP_VERSION = 'carine-site-2026-06-02-ios-splash-text';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -2153,6 +2153,17 @@ const CARINE_SPLASH_RETURN_VISIT_MS = 8000;
 const CARINE_SPLASH_MAX_VISIBLE_MS = 30000;
 const CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS = 8000;
 const CARINE_SPLASH_SKIP_REVEAL_MS = 5000;
+const CARINE_SPLASH_ROTATOR_INTERVAL_MS = 2400;
+const CARINE_SPLASH_ROTATOR_FADE_MS = 260;
+const CARINE_SPLASH_AFFIRMATIONS = [
+  'Healing lives here.',
+  'Grace still speaks.',
+  'Your story is not over.',
+  'Preparing music experience...',
+  'Loading stories of healing...',
+  'Tuning the sound of restoration...',
+  'Almost ready...'
+];
 
 const readSplashStorage = (key) => {
   try {
@@ -2193,6 +2204,63 @@ const waitForSplashDOMReady = () => {
   });
 };
 
+
+const stopSplashTextRotator = (splash) => {
+  const timerId = Number(splash?.dataset.splashTextTimer || 0);
+  const fadeTimerId = Number(splash?.dataset.splashTextFadeTimer || 0);
+
+  if (timerId) {
+    window.clearInterval(timerId);
+  }
+
+  if (fadeTimerId) {
+    window.clearTimeout(fadeTimerId);
+  }
+
+  if (splash) {
+    delete splash.dataset.splashTextTimer;
+    delete splash.dataset.splashTextFadeTimer;
+  }
+};
+
+const startSplashTextRotator = (splash, reducedMotion = false) => {
+  if (!splash || splash.dataset.completed === 'true' || splash.dataset.splashTextStarted === 'true') {
+    return;
+  }
+
+  const affirmation = splash.querySelector('[data-splash-affirmation]');
+  const status = splash.querySelector('[data-splash-status]');
+  const rotatorTarget = affirmation || status;
+
+  splash.dataset.splashTextStarted = 'true';
+  splash.classList.add('splash-text-ready');
+
+  if (!rotatorTarget || reducedMotion) {
+    return;
+  }
+
+  let phraseIndex = 0;
+  const rotatePhrase = () => {
+    if (splash.dataset.completed === 'true') {
+      stopSplashTextRotator(splash);
+      return;
+    }
+
+    phraseIndex = (phraseIndex + 1) % CARINE_SPLASH_AFFIRMATIONS.length;
+    rotatorTarget.classList.add('is-changing');
+
+    const fadeTimerId = window.setTimeout(() => {
+      rotatorTarget.textContent = CARINE_SPLASH_AFFIRMATIONS[phraseIndex];
+      rotatorTarget.classList.remove('is-changing');
+    }, CARINE_SPLASH_ROTATOR_FADE_MS);
+
+    splash.dataset.splashTextFadeTimer = String(fadeTimerId);
+  };
+
+  const timerId = window.setInterval(rotatePhrase, CARINE_SPLASH_ROTATOR_INTERVAL_MS);
+  splash.dataset.splashTextTimer = String(timerId);
+};
+
 const waitForSplashPaint = (splash) => new Promise((resolve) => {
   if (!splash || splash.dataset.completed === 'true') {
     resolve('splash-unavailable');
@@ -2204,6 +2272,7 @@ const waitForSplashPaint = (splash) => new Promise((resolve) => {
     if (settled) return;
     settled = true;
     splash.classList.add('splash-ready');
+    startSplashTextRotator(splash, window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     resolve('splash-painted');
   };
 
@@ -2282,6 +2351,7 @@ const completeCinematicSplash = () => {
   }
 
   splash.dataset.completed = 'true';
+  stopSplashTextRotator(splash);
   document.documentElement.classList.add('splash-ready');
   document.documentElement.classList.remove('splash-booting');
   splash.classList.add('is-hiding');
@@ -2327,7 +2397,10 @@ const initializeCinematicSplash = () => {
     skipButton.addEventListener('click', completeCinematicSplash, { once: true });
     window.setTimeout(() => {
       if (splash.dataset.completed === 'true') return;
-      skipButton.hidden = false;
+      skipButton.disabled = false;
+      skipButton.setAttribute('aria-disabled', 'false');
+      skipButton.setAttribute('aria-hidden', 'false');
+      skipButton.classList.add('is-visible');
       skipButton.setAttribute('aria-label', skipButton.textContent.trim() || 'Enter App');
     }, Math.max(0, CARINE_SPLASH_SKIP_REVEAL_MS - elapsed));
   }

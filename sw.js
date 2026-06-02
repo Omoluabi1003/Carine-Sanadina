@@ -1,6 +1,6 @@
-const APP_VERSION = 'carine-site-2026-06-02-ios-splash-wave-bars';
+const APP_VERSION = 'carine-site-2026-06-02-ios-splash-text';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v8-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v9-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
