@@ -1,6 +1,6 @@
-const APP_VERSION = 'carine-site-2026-06-01-chatbot-position';
+const APP_VERSION = 'carine-site-2026-06-01-ios-webkit-visualizer-audio';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v6-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v7-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',

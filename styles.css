@@ -1727,9 +1727,6 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   height: clamp(168px, 24vw, 260px);
   contain: layout paint size;
   isolation: isolate;
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   margin-top: 18px;
@@ -1753,7 +1750,6 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   opacity: 1;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  will-change: transform, opacity;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -1773,7 +1769,6 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   transform: scaleY(var(--bar-height));
   transform-origin: bottom;
   transition: opacity 0.22s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform, opacity;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
