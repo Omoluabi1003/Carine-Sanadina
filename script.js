@@ -2147,10 +2147,12 @@ applyLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
 const CARINE_SPLASH_SEEN_KEY = 'carineSplashSeen';
 const CARINE_SPLASH_SUCCESS_KEY = 'carineSplashSuccessfulLoad';
 const CARINE_SPLASH_STARTED_AT = window.__carineSplashBootAt || performance.now();
-const CARINE_SPLASH_MAX_VISIBLE_MS = 3000;
+const CARINE_SPLASH_MIN_VISIBLE_MS = 8000;
+const CARINE_SPLASH_FIRST_VISIT_MS = 12000;
+const CARINE_SPLASH_RETURN_VISIT_MS = 8000;
+const CARINE_SPLASH_MAX_VISIBLE_MS = 30000;
 const CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS = 5000;
-const CARINE_SPLASH_FIRST_VISIT_MS = 1900;
-const CARINE_SPLASH_RETURN_VISIT_MS = 850;
+const CARINE_SPLASH_SKIP_REVEAL_MS = 5000;
 
 const readSplashStorage = (key) => {
   try {
@@ -2180,6 +2182,16 @@ const hasSuccessfulSplashLoad = () => readSplashStorage(CARINE_SPLASH_SUCCESS_KE
 const waitForSplashDelay = (milliseconds) => new Promise((resolve) => {
   window.setTimeout(resolve, Math.max(0, milliseconds));
 });
+
+const waitForSplashDOMReady = () => {
+  if (document.readyState !== 'loading') {
+    return Promise.resolve('dom-ready');
+  }
+
+  return new Promise((resolve) => {
+    document.addEventListener('DOMContentLoaded', () => resolve('dom-ready'), { once: true });
+  });
+};
 
 const waitForDocumentFonts = () => {
   if (!document.fonts?.ready) {
@@ -2211,9 +2223,9 @@ const waitForImageElement = (image, timeout = 1050) => new Promise((resolve) => 
   window.setTimeout(() => finish(false), timeout);
 });
 
-const waitForHeroImages = () => Promise.all([
-  ...document.querySelectorAll('.brand-mark img, .portrait-image[fetchpriority="high"], .splash-logo')
-].map((image) => waitForImageElement(image))).then(() => 'hero-images-ready');
+const waitForHeroAndLogoImages = () => Promise.all([
+  ...document.querySelectorAll('.portrait-image[fetchpriority="high"], .brand-mark img, .splash-logo')
+].map((image) => waitForImageElement(image))).then(() => 'hero-and-logo-ready');
 
 const getCriticalShellReadiness = () => {
   const playlistMount = document.querySelector('[data-playlist-tracks]');
@@ -2229,12 +2241,10 @@ const getCriticalShellReadiness = () => {
 };
 
 const waitForCriticalShells = () => new Promise((resolve) => {
-  const startedAt = performance.now();
   const tick = () => {
     const readiness = getCriticalShellReadiness();
-    const ready = Object.values(readiness).every(Boolean);
 
-    if (ready || performance.now() - startedAt > 1200) {
+    if (Object.values(readiness).every(Boolean)) {
       resolve(readiness);
       return;
     }
@@ -2277,19 +2287,29 @@ const initializeCinematicSplash = () => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const returningVisitor = hasSuccessfulSplashLoad();
   const maximumVisibleMs = reducedMotion ? CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS : CARINE_SPLASH_MAX_VISIBLE_MS;
+  const cinematicVisibleMs = returningVisitor ? CARINE_SPLASH_RETURN_VISIT_MS : CARINE_SPLASH_FIRST_VISIT_MS;
   const minimumVisibleMs = reducedMotion
     ? CARINE_SPLASH_REDUCED_MOTION_MAX_VISIBLE_MS
-    : (returningVisitor ? CARINE_SPLASH_RETURN_VISIT_MS : CARINE_SPLASH_FIRST_VISIT_MS);
+    : Math.max(CARINE_SPLASH_MIN_VISIBLE_MS, cinematicVisibleMs);
   const elapsed = performance.now() - CARINE_SPLASH_STARTED_AT;
   const minimumDelay = waitForSplashDelay(minimumVisibleMs - elapsed);
   const criticalResources = Promise.all([
+    waitForSplashDOMReady(),
     waitForDocumentFonts(),
-    waitForHeroImages(),
+    waitForHeroAndLogoImages(),
     waitForCriticalShells()
   ]);
   const hardStop = waitForSplashDelay(maximumVisibleMs - elapsed);
+  const skipButton = splash.querySelector('[data-splash-skip]');
 
-  splash.querySelector('[data-splash-skip]')?.addEventListener('click', completeCinematicSplash, { once: true });
+  if (skipButton) {
+    skipButton.addEventListener('click', completeCinematicSplash, { once: true });
+    window.setTimeout(() => {
+      if (splash.dataset.completed === 'true') return;
+      skipButton.hidden = false;
+      skipButton.setAttribute('aria-label', skipButton.textContent.trim() || 'Enter App');
+    }, Math.max(0, CARINE_SPLASH_SKIP_REVEAL_MS - elapsed));
+  }
 
   Promise.race([
     Promise.all([minimumDelay, criticalResources]),
