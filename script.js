@@ -5277,9 +5277,9 @@ if (musicPlayers.length) {
     expandedSheetTouchStartY = event.touches[0]?.clientY || 0;
     expandedSheetTouchDeltaY = 0;
     const target = event.target instanceof Element ? event.target : null;
-    const touchedLyrics = target?.closest('[data-lyrics-scroll]');
-    expandedSheetTouchStartedInLyrics = Boolean(touchedLyrics);
-    expandedSheetLyricsStartTop = touchedLyrics ? touchedLyrics.scrollTop : 0;
+    const touchedScrollablePanel = target?.closest('[data-lyrics-scroll], [data-track-info-panel]');
+    expandedSheetTouchStartedInLyrics = Boolean(touchedScrollablePanel);
+    expandedSheetLyricsStartTop = touchedScrollablePanel ? touchedScrollablePanel.scrollTop : 0;
   }, { passive: true });
   mobilePlayer?.addEventListener('touchmove', (event) => {
     const currentY = event.touches[0]?.clientY || expandedSheetTouchStartY;
