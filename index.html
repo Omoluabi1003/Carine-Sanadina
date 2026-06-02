@@ -591,16 +591,59 @@
       </aside>
 
       <div class="mobile-player-sheet" id="mobile-player-sheet" data-mobile-player aria-hidden="true">
-        <div class="mobile-player-card" role="dialog" aria-modal="false" aria-labelledby="mobile-player-title">
+        <div class="mobile-player-card expanded-player-card" role="dialog" aria-modal="true" aria-labelledby="mobile-player-title">
           <button class="mobile-player-close" type="button" data-mobile-close aria-label="Close player" data-i18n-aria-label="mini.close">×</button>
-          <img class="mobile-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mobile-cover />
-          <p class="eyebrow" data-i18n="music.nowPlaying">Now playing</p>
-          <h3 id="mobile-player-title" data-mobile-title data-i18n="mini.noTrack">No track selected</h3>
-          <p data-mobile-artist>Carine Sanadina</p>
-          <div class="mobile-player-actions">
-            <button class="control-chip" type="button" data-mobile-shuffle data-i18n="music.shuffle">Shuffle</button>
-            <button class="track-play-toggle" type="button" data-mobile-toggle aria-label="Play or pause current track" data-i18n-aria-label="mini.toggleLabel"><span class="play-icon" aria-hidden="true"></span></button>
-            <button class="control-chip" type="button" data-mobile-repeat data-i18n="music.repeatOff">Repeat Off</button>
+          <div class="expanded-player-grabber" aria-hidden="true"></div>
+          <div class="expanded-player-layout">
+            <div class="expanded-player-hero">
+              <div class="expanded-artwork-wrap">
+                <img class="mobile-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mobile-cover />
+                <div class="expanded-artwork-glow" aria-hidden="true"></div>
+              </div>
+              <div class="expanded-player-copy">
+                <p class="eyebrow" data-i18n="music.nowPlaying">Now playing</p>
+                <h3 id="mobile-player-title" data-mobile-title data-i18n="mini.noTrack">No track selected</h3>
+                <p data-mobile-artist>Carine Sanadina</p>
+              </div>
+              <div class="expanded-player-progress" aria-live="off">
+                <span data-expanded-current>0:00</span>
+                <label class="sr-only" for="expanded-player-progress" data-i18n="mini.progress">Current track progress</label>
+                <input
+                  id="expanded-player-progress"
+                  class="player-range progress-range expanded-progress-range"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="0"
+                  step="0.1"
+                  data-expanded-progress
+                  disabled
+                  aria-disabled="true"
+                  aria-label="Current track progress" data-i18n-aria-label="mini.progress"
+                />
+                <span data-expanded-duration>0:00</span>
+              </div>
+              <div class="mobile-player-actions expanded-player-actions">
+                <button class="control-chip" type="button" data-mobile-shuffle data-i18n="music.shuffle">Shuffle</button>
+                <button class="track-play-toggle expanded-play-toggle" type="button" data-mobile-toggle aria-label="Play or pause current track" data-i18n-aria-label="mini.toggleLabel"><span class="play-icon" aria-hidden="true"></span></button>
+                <button class="control-chip" type="button" data-mobile-repeat data-i18n="music.repeatOff">Repeat Off</button>
+              </div>
+              <div class="expanded-visualizer" aria-hidden="true" data-expanded-visualizer>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+            <div class="lyrics-panel" data-lyrics-panel>
+              <div class="lyrics-tabs" role="tablist" aria-label="Track details">
+                <button class="lyrics-tab is-active" type="button" role="tab" aria-selected="true" data-lyrics-tab="lyrics">Lyrics</button>
+                <button class="lyrics-tab" type="button" role="tab" aria-selected="false" data-lyrics-tab="about">About</button>
+                <button class="lyrics-tab" type="button" role="tab" aria-selected="false" data-lyrics-tab="credits">Credits</button>
+              </div>
+              <div class="lyrics-scroll" data-lyrics-scroll role="region" aria-live="polite" aria-label="Synchronized lyrics">
+                <p class="lyrics-empty">Select a track to view lyrics.</p>
+              </div>
+              <div class="track-info-panel" data-track-info-panel hidden></div>
+            </div>
           </div>
         </div>
       </div>

@@ -1954,6 +1954,10 @@ const CARINE_MUSIC_PLAYLIST = [
     mood: 'Healing comfort',
     description: 'Healing-centered comfort and hope',
     duration: 242.712,
+    lyrics: '/lyrics/consolation.txt',
+    about: 'A tender song of comfort, reassurance, faith, and emotional restoration for hearts that need courage after hardship.',
+    credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
+    lyricsTimed: [],
     translationKey: 'tracks.consolation'
   },
   {
@@ -1965,6 +1969,10 @@ const CARINE_MUSIC_PLAYLIST = [
     mood: 'Faith-filled kindness',
     description: 'Faith-filled kindness anthem',
     duration: 218.064,
+    lyrics: '/lyrics/la-gentillesse.txt',
+    about: 'A faith-filled meditation on kindness as strength: compassion that protects dignity, restores atmosphere, and makes room for grace.',
+    credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
+    lyricsTimed: [],
     translationKey: 'tracks.gentillesse'
   },
   {
@@ -1976,6 +1984,10 @@ const CARINE_MUSIC_PLAYLIST = [
     mood: 'Joyful gratitude',
     description: 'Joyful praise and gratitude',
     duration: 230.28,
+    lyrics: '/lyrics/wonderful.txt',
+    about: 'A praise-filled expression of gratitude, joy, and wonder at God’s goodness through every season.',
+    credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
+    lyricsTimed: [],
     translationKey: 'tracks.wonderful'
   },
   {
@@ -1989,6 +2001,10 @@ const CARINE_MUSIC_PLAYLIST = [
     coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/4B4AE259-EC5A-46A2-BB9A-355667A3C23C.png',
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Womanifesto%20(1).mp3',
     artworkFit: 'contain',
+    lyrics: '/lyrics/womanifesto.txt',
+    about: 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, victory, identity, and restoration through faith.',
+    credits: 'Performed by Carine Sanadina. Style: Soukous • Rumba • Makossa Gospel. Music and lyrics rights remain with their respective owners.',
+    lyricsTimed: [],
     translationKey: 'tracks.womanifesto'
   }
 ];
@@ -2029,6 +2045,10 @@ const renderCarinePlaylist = () => {
     const audioUrl = escapePlaylistAttribute(track.audioUrl);
     const durationValue = Number.isFinite(Number(track.duration)) && Number(track.duration) > 0 ? String(Number(track.duration)) : '';
     const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
+    const lyricsPath = escapePlaylistAttribute(track.lyrics || '');
+    const about = escapePlaylistAttribute(track.about || track.description || '');
+    const credits = escapePlaylistAttribute(track.credits || 'Credits unavailable.');
+    const lyricsTimed = escapePlaylistAttribute(JSON.stringify(Array.isArray(track.lyricsTimed) ? track.lyricsTimed : []));
 
     return `
       <article
@@ -2044,6 +2064,10 @@ const renderCarinePlaylist = () => {
         data-track-mood="${trackMood}"
         data-track-description="${escapePlaylistAttribute(track.description)}"
         data-track-artwork-fit="${artworkFit}"
+        data-track-lyrics="${lyricsPath}"
+        data-track-about="${about}"
+        data-track-credits="${credits}"
+        data-track-lyrics-timed="${lyricsTimed}"
       >
         <audio aria-label="${escapePlaylistAttribute(`${track.title} by ${track.artist}`)}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
         <div class="track-cover-wrap">
@@ -2834,6 +2858,20 @@ if (musicPlayers.length) {
   const mobileRepeat = document.querySelector('[data-mobile-repeat]');
   const miniExpand = document.querySelector('[data-mini-expand]');
   const mobileClose = document.querySelector('[data-mobile-close]');
+  const expandedProgress = document.querySelector('[data-expanded-progress]');
+  const expandedCurrent = document.querySelector('[data-expanded-current]');
+  const expandedDuration = document.querySelector('[data-expanded-duration]');
+  const expandedVisualizer = document.querySelector('[data-expanded-visualizer]');
+  const lyricsScroll = document.querySelector('[data-lyrics-scroll]');
+  const lyricsInfoPanel = document.querySelector('[data-track-info-panel]');
+  const lyricsTabs = Array.from(document.querySelectorAll('[data-lyrics-tab]'));
+  let activeLyricsTab = 'lyrics';
+  let lyricEntries = [];
+  let lyricTiming = [];
+  let activeLyricIndex = -1;
+  let currentLyricsPlayer = null;
+  let isExpandedSeekingWithPointer = false;
+  const lyricsCache = new Map();
   const isAudioDebugEnabled = ['localhost', '127.0.0.1', ''].includes(window.location.hostname)
     || new URLSearchParams(window.location.search).has('debugAudio');
 
@@ -2965,6 +3003,184 @@ if (musicPlayers.length) {
     }
   };
 
+  const resolveSiteAssetPath = (assetPath) => {
+    const normalizedPath = String(assetPath || '').trim();
+    if (!normalizedPath) return '';
+    if (/^(https?:)?\/\//i.test(normalizedPath) || normalizedPath.startsWith('data:')) return normalizedPath;
+
+    const withoutLeadingSlash = normalizedPath.replace(/^\/+/, '');
+    if (normalizedPath.startsWith('/lyrics/') && window.location.pathname.includes('/Carine-Sanadina/')) {
+      return `/Carine-Sanadina/${withoutLeadingSlash}`;
+    }
+
+    return normalizedPath;
+  };
+
+  const parseTimedLyricsDataset = (player) => {
+    try {
+      const parsed = JSON.parse(player?.dataset.trackLyricsTimed || '[]');
+      return Array.isArray(parsed)
+        ? parsed.filter((entry) => Number.isFinite(Number(entry.time)) && String(entry.text || '').trim())
+          .map((entry) => ({ time: Number(entry.time), text: String(entry.text).trim(), type: entry.type || 'line' }))
+        : [];
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const parseLyricText = (text) => String(text || '')
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const sectionMatch = line.match(/^\[(.+)]$/);
+      return sectionMatch
+        ? { type: 'section', text: sectionMatch[1].trim(), raw: line }
+        : { type: 'line', text: line, raw: line };
+    });
+
+  const estimateLyricTiming = (entries, duration) => {
+    const singableIndexes = entries
+      .map((entry, index) => entry.type === 'line' ? index : -1)
+      .filter((index) => index >= 0);
+    const safeDuration = Number.isFinite(duration) && duration > 0 ? duration : Math.max(90, singableIndexes.length * 5.2);
+    const introPadding = Math.min(Math.max(safeDuration * 0.045, 3), 12);
+    const outroPadding = Math.min(Math.max(safeDuration * 0.035, 4), 14);
+    const usableDuration = Math.max(safeDuration - introPadding - outroPadding, singableIndexes.length * 2.8);
+    const weights = singableIndexes.map((entryIndex) => {
+      const text = entries[entryIndex].text;
+      const previousSection = entries.slice(0, entryIndex).reverse().find((entry) => entry.type === 'section')?.text?.toLowerCase() || '';
+      const wordWeight = Math.min(Math.max(text.split(/\s+/).length / 7, 0.8), 1.75);
+      const sectionWeight = /chorus|refrain|hook/.test(previousSection) ? 1.12 : /bridge|outro/.test(previousSection) ? 1.22 : /intro/.test(previousSection) ? 0.82 : 1;
+      return wordWeight * sectionWeight;
+    });
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0) || 1;
+    let cursor = introPadding;
+
+    return singableIndexes.map((entryIndex, timingIndex) => {
+      const time = cursor;
+      cursor += usableDuration * (weights[timingIndex] / totalWeight);
+      return { index: entryIndex, time };
+    });
+  };
+
+  const setLyricsMessage = (message) => {
+    if (!lyricsScroll) return;
+    lyricsScroll.innerHTML = `<p class="lyrics-empty">${escapePlaylistText(message)}</p>`;
+  };
+
+  const renderLyrics = () => {
+    if (!lyricsScroll) return;
+    if (!lyricEntries.length) {
+      setLyricsMessage('Lyrics unavailable for this track.');
+      return;
+    }
+
+    lyricsScroll.innerHTML = lyricEntries.map((entry, index) => {
+      if (entry.type === 'section') {
+        return `<p class="lyric-section" data-lyric-index="${index}">${escapePlaylistText(entry.text)}</p>`;
+      }
+      return `<p class="lyric-line" data-lyric-index="${index}">${escapePlaylistText(entry.text)}</p>`;
+    }).join('');
+    activeLyricIndex = -1;
+  };
+
+  const renderTrackInfo = (player) => {
+    if (!lyricsInfoPanel || !player) return;
+    const content = activeLyricsTab === 'credits' ? player.dataset.trackCredits : player.dataset.trackAbout;
+    lyricsInfoPanel.innerHTML = `
+      <p class="track-info-kicker">${activeLyricsTab === 'credits' ? 'Credits' : 'About this song'}</p>
+      <p>${escapePlaylistText(content || 'More details coming soon.')}</p>
+    `;
+  };
+
+  const setLyricsTab = (tabName) => {
+    activeLyricsTab = ['lyrics', 'about', 'credits'].includes(tabName) ? tabName : 'lyrics';
+    lyricsTabs.forEach((tab) => {
+      const isActive = tab.dataset.lyricsTab === activeLyricsTab;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+    });
+    if (lyricsScroll) lyricsScroll.hidden = activeLyricsTab !== 'lyrics';
+    if (lyricsInfoPanel) lyricsInfoPanel.hidden = activeLyricsTab === 'lyrics';
+    if (activePlayer && activeLyricsTab !== 'lyrics') renderTrackInfo(activePlayer);
+  };
+
+  const loadLyricsForPlayer = async (player) => {
+    if (!player || !lyricsScroll) return;
+    currentLyricsPlayer = player;
+    const timedLyrics = parseTimedLyricsDataset(player);
+    if (timedLyrics.length) {
+      lyricEntries = timedLyrics.map((entry) => ({ type: entry.type || 'line', text: entry.text }));
+      lyricTiming = timedLyrics.map((entry, index) => ({ index, time: entry.time }));
+      renderLyrics();
+      return;
+    }
+
+    const lyricsPath = player.dataset.trackLyrics || '';
+    const resolvedLyricsPath = resolveSiteAssetPath(lyricsPath);
+    if (!resolvedLyricsPath) {
+      lyricEntries = [];
+      lyricTiming = [];
+      setLyricsMessage('Lyrics unavailable for this track.');
+      return;
+    }
+
+    try {
+      if (!lyricsCache.has(resolvedLyricsPath)) {
+        const response = await fetch(resolvedLyricsPath, { cache: 'force-cache' });
+        if (!response.ok) throw new Error(`Lyrics request failed: ${response.status}`);
+        lyricsCache.set(resolvedLyricsPath, await response.text());
+      }
+      if (currentLyricsPlayer !== player) return;
+      lyricEntries = parseLyricText(lyricsCache.get(resolvedLyricsPath));
+      const audio = getAudio(player);
+      lyricTiming = estimateLyricTiming(lyricEntries, getSafeDuration(audio, getFallbackDuration(player)));
+      renderLyrics();
+    } catch (error) {
+      if (currentLyricsPlayer !== player) return;
+      lyricEntries = [];
+      lyricTiming = [];
+      setLyricsMessage('Lyrics unavailable for this track.');
+    }
+  };
+
+  const updateActiveLyric = (audio) => {
+    if (!lyricsScroll || activeLyricsTab !== 'lyrics' || !lyricTiming.length || !audio) return;
+    const currentTime = Number(audio.currentTime) || 0;
+    let nextIndex = lyricTiming[0].index;
+    for (const timing of lyricTiming) {
+      if (currentTime + 0.35 >= timing.time) nextIndex = timing.index;
+      else break;
+    }
+    if (nextIndex === activeLyricIndex) return;
+    activeLyricIndex = nextIndex;
+    lyricsScroll.querySelectorAll('[data-lyric-index]').forEach((line) => {
+      const isActive = Number(line.dataset.lyricIndex) === activeLyricIndex;
+      line.classList.toggle('is-active', isActive);
+      line.classList.toggle('is-past', Number(line.dataset.lyricIndex) < activeLyricIndex);
+      if (isActive && !reduceMotion) {
+        line.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      }
+    });
+  };
+
+  const syncExpandedProgress = (audio) => {
+    if (!expandedProgress || !audio) return;
+    const fallbackDuration = activePlayer ? getFallbackDuration(activePlayer) : 0;
+    const safeDuration = getSafeDuration(audio, fallbackDuration);
+    const seekDuration = getSafeDuration(audio, 0);
+    const max = safeDuration > 0 ? safeDuration : 100;
+    if (expandedCurrent) expandedCurrent.textContent = formatTime(audio.currentTime);
+    if (expandedDuration) expandedDuration.textContent = safeDuration > 0 ? formatTime(safeDuration) : '0:00';
+    expandedProgress.max = String(max);
+    expandedProgress.value = String(Math.min(audio.currentTime, max));
+    expandedProgress.disabled = seekDuration <= 0;
+    expandedProgress.setAttribute('aria-disabled', String(seekDuration <= 0));
+    setRangeFill(expandedProgress, expandedProgress.value, expandedProgress.max);
+  };
+
   const syncStage = (player) => {
     if (!player) return;
     const title = getTrackTitle(player);
@@ -2981,6 +3197,8 @@ if (musicPlayers.length) {
     }
     if (mobileTitle) mobileTitle.textContent = title;
     if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
+    if (activeLyricsTab !== 'lyrics') renderTrackInfo(player);
+    loadLyricsForPlayer(player);
     resizeVisualizerSurface();
   };
 
@@ -3840,6 +4058,8 @@ if (musicPlayers.length) {
     mini.progress.disabled = seekDuration <= 0;
     mini.progress.setAttribute('aria-disabled', String(seekDuration <= 0));
     setRangeFill(mini.progress, mini.progress.value, mini.progress.max);
+    syncExpandedProgress(audio);
+    updateActiveLyric(audio);
   };
 
   const showMiniPlayer = (player) => {
@@ -3882,6 +4102,7 @@ if (musicPlayers.length) {
     miniPlayer.setAttribute('aria-hidden', 'true');
     updateMiniPlayerBodyState();
     mini.cover.removeAttribute('src');
+    if (mobilePlayer) setMobilePlayerOpen(false);
     mini.cover.alt = '';
     mini.title.dataset.hasTrack = 'false';
     mini.title.textContent = translate('mini.noTrack');
@@ -4129,6 +4350,10 @@ if (musicPlayers.length) {
           duration: Number.isFinite(audio.duration) ? Math.round(audio.duration * 100) / 100 : 'unknown'
         });
         syncDuration(musicPlayer);
+        if (activePlayer === musicPlayer && lyricEntries.length && !parseTimedLyricsDataset(musicPlayer).length) {
+          lyricTiming = estimateLyricTiming(lyricEntries, getSafeDuration(audio, getFallbackDuration(musicPlayer)));
+          updateActiveLyric(audio);
+        }
         setPlayerReadyState(musicPlayer, true);
       });
 
@@ -4154,6 +4379,8 @@ if (musicPlayers.length) {
       audio.addEventListener('timeupdate', () => {
         if (activePlayer === musicPlayer) {
           syncMiniProgress(audio);
+          syncExpandedProgress(audio);
+          updateActiveLyric(audio);
           updateMediaSessionPosition(audio);
         }
       });
@@ -4169,6 +4396,7 @@ if (musicPlayers.length) {
 
         if (miniPlayer) {
           miniPlayer.classList.add('is-playing');
+          expandedVisualizer?.classList.add('is-playing');
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
 
@@ -4193,6 +4421,7 @@ if (musicPlayers.length) {
 
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
+          expandedVisualizer?.classList.remove('is-playing');
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
 
@@ -4208,6 +4437,7 @@ if (musicPlayers.length) {
 
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
+          expandedVisualizer?.classList.remove('is-playing');
           syncMiniProgress(audio);
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
@@ -4248,6 +4478,7 @@ if (musicPlayers.length) {
 
         if (activePlayer === musicPlayer && miniPlayer) {
           miniPlayer.classList.remove('is-playing');
+          expandedVisualizer?.classList.remove('is-playing');
           updateToggle(mini.toggle, audio, getTrackTitle(musicPlayer));
         }
 
@@ -4390,6 +4621,67 @@ if (musicPlayers.length) {
     });
   }
 
+  if (expandedProgress) {
+    const canSeekExpandedAudio = () => {
+      const audio = activePlayer ? getAudio(activePlayer) : null;
+      return Boolean(audio && getSafeDuration(audio, 0) > 0);
+    };
+
+    const seekExpandedProgress = ({ commit = false } = {}) => {
+      if (!activePlayer || !canSeekExpandedAudio()) return;
+      const audio = getAudio(activePlayer);
+      const safeDuration = getSafeDuration(audio, 0);
+      const nextTime = Math.min(Math.max(Number(expandedProgress.value) || 0, 0), safeDuration);
+      expandedProgress.disabled = false;
+      expandedProgress.setAttribute('aria-disabled', 'false');
+      if (expandedCurrent) expandedCurrent.textContent = formatTime(nextTime);
+      setRangeFill(expandedProgress, nextTime, safeDuration);
+
+      if (commit || !isExpandedSeekingWithPointer) {
+        audio.currentTime = nextTime;
+        syncMiniProgress(audio);
+        updateActiveLyric(audio);
+        persistPlayerState();
+      }
+    };
+
+    const beginExpandedSeek = (event) => {
+      if (!canSeekExpandedAudio()) return;
+      isExpandedSeekingWithPointer = true;
+      expandedProgress.classList.add('is-seeking');
+      if (event.pointerId !== undefined && typeof expandedProgress.setPointerCapture === 'function') {
+        expandedProgress.setPointerCapture(event.pointerId);
+      }
+    };
+
+    const endExpandedSeek = (event) => {
+      if (!isExpandedSeekingWithPointer) return;
+      isExpandedSeekingWithPointer = false;
+      expandedProgress.classList.remove('is-seeking');
+      if (event?.pointerId !== undefined && typeof expandedProgress.releasePointerCapture === 'function') {
+        try { expandedProgress.releasePointerCapture(event.pointerId); } catch (error) { /* Pointer capture may already be released. */ }
+      }
+      seekExpandedProgress({ commit: true });
+    };
+
+    expandedProgress.addEventListener('pointerdown', beginExpandedSeek);
+    expandedProgress.addEventListener('pointermove', () => {
+      if (isExpandedSeekingWithPointer) seekExpandedProgress();
+    });
+    expandedProgress.addEventListener('pointerup', endExpandedSeek);
+    expandedProgress.addEventListener('pointercancel', endExpandedSeek);
+    expandedProgress.addEventListener('touchstart', beginExpandedSeek, { passive: true });
+    expandedProgress.addEventListener('touchmove', () => seekExpandedProgress(), { passive: true });
+    expandedProgress.addEventListener('touchend', endExpandedSeek);
+    expandedProgress.addEventListener('input', () => seekExpandedProgress());
+    expandedProgress.addEventListener('change', () => seekExpandedProgress({ commit: true }));
+  }
+
+  lyricsTabs.forEach((tab) => {
+    tab.addEventListener('click', () => setLyricsTab(tab.dataset.lyricsTab));
+  });
+  setLyricsTab('lyrics');
+
   const toggleShuffle = () => {
     shuffleEnabled = !shuffleEnabled;
     updateCommandButtons();
@@ -4449,9 +4741,38 @@ if (musicPlayers.length) {
   const setMobilePlayerOpen = (isOpen) => {
     if (!mobilePlayer) return;
     mobilePlayer.classList.toggle('is-open', isOpen);
+    document.body.classList.toggle('expanded-player-open', isOpen);
     mobilePlayer.setAttribute('aria-hidden', String(!isOpen));
     miniExpand?.setAttribute('aria-expanded', String(isOpen));
+    if (isOpen && activePlayer) {
+      const audio = getAudio(activePlayer);
+      syncExpandedProgress(audio);
+      updateActiveLyric(audio);
+      if (activeLyricsTab !== 'lyrics') renderTrackInfo(activePlayer);
+    }
   };
+
+  let expandedSheetTouchStartY = 0;
+  let expandedSheetTouchDeltaY = 0;
+  mobilePlayer?.addEventListener('touchstart', (event) => {
+    expandedSheetTouchStartY = event.touches[0]?.clientY || 0;
+    expandedSheetTouchDeltaY = 0;
+  }, { passive: true });
+  mobilePlayer?.addEventListener('touchmove', (event) => {
+    const currentY = event.touches[0]?.clientY || expandedSheetTouchStartY;
+    expandedSheetTouchDeltaY = Math.max(0, currentY - expandedSheetTouchStartY);
+    const card = mobilePlayer.querySelector('.mobile-player-card');
+    if (card && expandedSheetTouchDeltaY > 8 && window.innerWidth <= 760) {
+      card.style.transform = `translateY(${Math.min(expandedSheetTouchDeltaY, 120)}px)`;
+    }
+  }, { passive: true });
+  mobilePlayer?.addEventListener('touchend', () => {
+    const card = mobilePlayer.querySelector('.mobile-player-card');
+    if (card) card.style.transform = '';
+    if (expandedSheetTouchDeltaY > 90 && window.innerWidth <= 760) {
+      setMobilePlayerOpen(false);
+    }
+  });
 
   miniExpand?.addEventListener('click', () => setMobilePlayerOpen(!mobilePlayer?.classList.contains('is-open')));
   mobileClose?.addEventListener('click', () => setMobilePlayerOpen(false));
