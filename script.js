@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-02-visualizer-diagnostics';
+const APP_VERSION = 'carine-site-2026-06-02-vinyl-diagnostics';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3778,14 +3778,21 @@ if (musicPlayers.length) {
   let activeLyricIndex = -1;
   let currentLyricsPlayer = null;
   let isExpandedSeekingWithPointer = false;
-  let vinylRotation = 0;
-  let vinylVelocity = 0;
-  let vinylAnimationFrame = null;
-  let vinylLastTimestamp = 0;
   let isVinylPlaying = false;
   const lyricsCache = new Map();
   const isAudioDebugEnabled = ['localhost', '127.0.0.1', ''].includes(window.location.hostname)
     || new URLSearchParams(window.location.search).has('debugAudio');
+  const VINYL_DEBUG_STORAGE_KEY = 'carineVinylDebug';
+  const VINYL_DEBUG_QUERY_KEY = 'vinylDebug';
+  const isVinylDebugEnabled = () => {
+    try {
+      if (new URLSearchParams(window.location.search).get(VINYL_DEBUG_QUERY_KEY) === 'true') return true;
+      return window.localStorage.getItem(VINYL_DEBUG_STORAGE_KEY) === 'true';
+    } catch (error) {
+      return false;
+    }
+  };
+
 
   const collectAudioDiagnostics = (audio = activePlayer ? getAudio(activePlayer) : null) => ({
     platform,
@@ -5302,55 +5309,206 @@ if (musicPlayers.length) {
     }
   };
 
-  const renderVinylRotation = () => {
-    if (!vinylDiscs.length) return;
-    vinylDiscs.forEach((disc) => disc.style.setProperty('--vinyl-rotation', `${vinylRotation.toFixed(3)}deg`));
+
+  const getVinylPrimaryStage = () => vinylStages.find((stage) => stage.offsetParent !== null) || expandedVinylStage || vinylStages[0] || null;
+  const getVinylPrimaryDisc = () => {
+    const stage = getVinylPrimaryStage();
+    return stage?.querySelector('[data-vinyl-disc]') || expandedVinylDisc || vinylDiscs[0] || null;
   };
 
-  const stopVinylAnimationIfSettled = () => {
-    if (isVinylPlaying || Math.abs(vinylVelocity) > 0.08) return false;
-    vinylVelocity = 0;
-    vinylAnimationFrame = null;
-    vinylLastTimestamp = 0;
-    renderVinylRotation();
-    return true;
+  const getParentRenderSnapshot = (element) => {
+    const parent = element?.parentElement || null;
+    if (!parent) return { found: false };
+    const styles = window.getComputedStyle(parent);
+    return {
+      found: true,
+      tag: parent.tagName.toLowerCase(),
+      className: parent.className || '',
+      display: styles.display,
+      visibility: styles.visibility,
+      opacity: styles.opacity,
+      overflow: `${styles.overflow}/${styles.overflowX}/${styles.overflowY}`,
+      clipPath: styles.clipPath || styles.webkitClipPath || 'none'
+    };
   };
 
-  const tickVinylRotation = (timestamp = window.performance.now()) => {
-    if (!vinylDiscs.length || reduceMotion) {
-      vinylAnimationFrame = null;
-      vinylLastTimestamp = 0;
-      return;
+  const getVinylBlockers = (element) => getBlockingRenderStyles(element).concat(getBlockingRenderStyles(element?.parentElement));
+
+  const getLoadedAssetVersions = async () => {
+    const scripts = Array.from(document.scripts).map((item) => item.src || '').filter(Boolean);
+    const stylesheets = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map((item) => item.href || '').filter(Boolean);
+    const resourceNames = performance?.getEntriesByType?.('resource')?.map((entry) => entry.name) || [];
+    let cacheKeys = [];
+    try {
+      if ('caches' in window) cacheKeys = await window.caches.keys();
+    } catch (error) {
+      cacheKeys = [`cache-inspection-error: ${error?.message || error}`];
     }
+    return {
+      expectedAppVersion: APP_VERSION,
+      serviceWorkerController: navigator.serviceWorker?.controller?.scriptURL || 'none',
+      scriptAssets: scripts,
+      cssAssets: stylesheets,
+      matchingResourceAssets: resourceNames.filter((name) => /script\.js|styles\.css|sw\.js/i.test(name)),
+      cacheKeys,
+      possibleStaleCache: cacheKeys.some((key) => /carine-static/i.test(key) && !key.includes(APP_VERSION))
+    };
+  };
 
-    const deltaSeconds = vinylLastTimestamp ? Math.min((timestamp - vinylLastTimestamp) / 1000, 0.05) : 0;
-    vinylLastTimestamp = timestamp;
-    const targetVelocity = isVinylPlaying ? 24 : 0;
-    const easing = isVinylPlaying ? 0.085 : 0.045;
-    vinylVelocity += (targetVelocity - vinylVelocity) * easing;
-    vinylRotation = (vinylRotation + vinylVelocity * deltaSeconds) % 360;
-    renderVinylRotation();
+  const collectVinylDiagnostics = async (audio = activePlayer ? getAudio(activePlayer) : null, { sampleTransform = false } = {}) => {
+    const root = getVinylPrimaryStage();
+    const disc = getVinylPrimaryDisc();
+    const rootStyles = root ? window.getComputedStyle(root) : null;
+    const discStyles = disc ? window.getComputedStyle(disc) : null;
+    const rect = disc?.getBoundingClientRect?.() || { width: 0, height: 0 };
+    const transformA = discStyles?.transform || discStyles?.webkitTransform || 'unavailable';
+    let transformB = transformA;
+    if (sampleTransform && disc) {
+      await new Promise((resolve) => window.setTimeout(resolve, 1000));
+      const nextStyles = window.getComputedStyle(disc);
+      transformB = nextStyles.transform || nextStyles.webkitTransform || 'unavailable';
+    }
+    const isPlaying = Boolean(audio && !audio.paused && !audio.ended);
+    const playingClassApplied = Boolean(root?.classList.contains('is-playing') || disc?.classList.contains('is-playing') || miniPlayer?.classList.contains('is-playing') || expandedPlayerCard?.classList.contains('is-playing'));
+    const animationName = discStyles?.animationName || 'unavailable';
+    const animationDuration = discStyles?.animationDuration || 'unavailable';
+    const animationPlayState = discStyles?.animationPlayState || 'unavailable';
+    const transformChanges = transformA !== transformB;
+    const blockers = getVinylBlockers(disc || root);
+    const assetVersions = await getLoadedAssetVersions();
+    const cssAnimationDisabled = animationName === 'none' || animationDuration === '0s' || animationDuration === '0ms' || animationPlayState !== 'running';
+    const wrongElementTargeted = Boolean(root && disc && root.classList.contains('is-playing') && !playingClassApplied);
+    return {
+      timestamp: new Date().toISOString(),
+      browserPlatform: `${browserName} / ${platform || 'unknown platform'}`,
+      userAgent,
+      iosDetected: /iP(hone|od|ad)/i.test(userAgent) || (platform === 'MacIntel' && window.navigator.maxTouchPoints > 1),
+      ipadOsDetected: platform === 'MacIntel' && window.navigator.maxTouchPoints > 1,
+      safariDetected: /Safari/i.test(userAgent) && !/CriOS|FxiOS|EdgiOS|Chrome|Chromium|Android/i.test(userAgent),
+      safariVersion,
+      iosVersion,
+      prefersReducedMotion: reduceMotionQuery.matches,
+      activeTrackTitle: activePlayer ? getTrackTitle(activePlayer) : '',
+      audioPaused: audio?.paused ?? true,
+      audioEnded: audio?.ended ?? false,
+      audioCurrentTime: Number.isFinite(audio?.currentTime) ? Math.round(audio.currentTime * 1000) / 1000 : 0,
+      audioActuallyPlaying: isPlaying,
+      lastAudioEvent,
+      vinylRootFound: Boolean(root),
+      vinylDiscFound: Boolean(disc),
+      vinylPlayingClassApplied: playingClassApplied,
+      computedAnimationName: animationName,
+      computedAnimationDuration: animationDuration,
+      computedAnimationPlayState: animationPlayState,
+      computedTransformAtTimeA: transformA,
+      computedTransformAtTimeB: transformB,
+      transformChangesAcrossOneSecondWhileAudioPlays: Boolean(isPlaying && transformChanges),
+      vinylElementSize: `${Math.round(rect.width)} × ${Math.round(rect.height)}`,
+      parentContainer: getParentRenderSnapshot(disc || root),
+      renderBlockers: blockers,
+      overflowOrClippingIssue: blockers.some((blocker) => /overflow|clip-path/i.test(blocker)),
+      cssMediaQueryDisablesAnimationOnIos: Boolean((/iP(hone|od|ad)/i.test(userAgent) || (platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)) && cssAnimationDisabled && !reduceMotionQuery.matches),
+      reducedMotionLogicDisablesAppleDevices: Boolean(isAppleTouchDevice && cssAnimationDisabled && !reduceMotionQuery.matches),
+      javascriptTogglingWrongClassOrElement: wrongElementTargeted,
+      serviceWorkerCacheStatus: assetVersions,
+      correctCssFileVersionLoaded: !assetVersions.possibleStaleCache,
+      checks: {
+        audioActuallyPlaying: isPlaying,
+        vinylElementVisible: Boolean(rect.width > 0 && rect.height > 0 && rootStyles?.display !== 'none' && rootStyles?.visibility !== 'hidden' && Number(rootStyles?.opacity ?? 1) > 0),
+        playingClassApplied,
+        cssAnimationRunning: Boolean(animationName !== 'none' && animationPlayState === 'running' && !reduceMotionQuery.matches),
+        transformChanging: Boolean(isPlaying && transformChanges),
+        reducedMotionNotDisabling: !reduceMotionQuery.matches,
+        correctCssFileVersionLoaded: !assetVersions.possibleStaleCache
+      }
+    };
+  };
 
-    if (stopVinylAnimationIfSettled()) return;
-    vinylAnimationFrame = window.requestAnimationFrame(tickVinylRotation);
+  const categorizeVinylFailure = (diagnostics) => {
+    const checks = diagnostics.checks || {};
+    if (!checks.playingClassApplied) return 'Playing class not applied';
+    if (diagnostics.javascriptTogglingWrongClassOrElement) return 'Wrong element targeted';
+    if (!checks.vinylElementVisible || diagnostics.vinylElementSize === '0 × 0') return 'Element hidden or zero-sized';
+    if (diagnostics.overflowOrClippingIssue) return 'Parent overflow/clipping';
+    if (diagnostics.serviceWorkerCacheStatus?.possibleStaleCache) return 'Stale service worker cache';
+    if (!checks.reducedMotionNotDisabling) return 'Reduced motion logic issue';
+    if (!checks.cssAnimationRunning) return 'CSS animation disabled';
+    if (diagnostics.iosDetected && checks.cssAnimationRunning && !checks.transformChanging) return 'iOS Safari transform/animation issue';
+    if (!checks.correctCssFileVersionLoaded) return 'Wrong deployed file';
+    return 'Other';
+  };
+
+  const logVinylDiagnostics = async (event = 'state', audio = activePlayer ? getAudio(activePlayer) : null, options = {}) => {
+    if (!isVinylDebugEnabled()) return null;
+    const diagnostics = await collectVinylDiagnostics(audio, options);
+    const failures = Object.entries(diagnostics.checks || {}).filter(([, passed]) => !passed).map(([name]) => name);
+    const category = failures.length ? categorizeVinylFailure(diagnostics) : 'none';
+    const report = { event, failures, category, ...diagnostics };
+    window.console?.groupCollapsed?.(`[vinyl diagnostics] ${event} ${diagnostics.timestamp}`);
+    if (failures.length) {
+      window.console?.error?.('Failing conditions:', failures);
+      window.console?.error?.('Failure category:', category);
+    }
+    window.console?.info?.(report);
+    window.console?.groupEnd?.();
+    return report;
+  };
+
+  const runVinylSelfChecksAfterPlay = (audio) => {
+    if (!isVinylDebugEnabled() || !audio) return;
+    [800, 1600, 3000].forEach((delay) => {
+      window.setTimeout(() => {
+        logVinylDiagnostics(`${delay}ms self-check after play`, audio, { sampleTransform: true });
+      }, delay);
+    });
+  };
+
+  const setupVinylDebugPanel = () => {
+    if (!isVinylDebugEnabled()) return;
+    const panel = document.createElement('aside');
+    panel.className = 'vinyl-debug-panel';
+    panel.setAttribute('aria-live', 'polite');
+    panel.setAttribute('aria-label', 'Vinyl diagnostics');
+    document.body.appendChild(panel);
+    const render = async () => {
+      const diagnostics = await collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, { sampleTransform: false });
+      const rows = [
+        ['Browser/platform detected', diagnostics.browserPlatform],
+        ['iOS detected', diagnostics.iosDetected],
+        ['iPadOS detected', diagnostics.ipadOsDetected],
+        ['Safari detected', diagnostics.safariDetected],
+        ['prefers-reduced-motion detected', diagnostics.prefersReducedMotion],
+        ['Active track title', diagnostics.activeTrackTitle],
+        ['audio.paused / audio.ended', `${diagnostics.audioPaused} / ${diagnostics.audioEnded}`],
+        ['audio currentTime', diagnostics.audioCurrentTime],
+        ['Last audio event', diagnostics.lastAudioEvent],
+        ['Vinyl root / disc found', `${diagnostics.vinylRootFound} / ${diagnostics.vinylDiscFound}`],
+        ['Playing class applied', diagnostics.vinylPlayingClassApplied],
+        ['animation name / duration', `${diagnostics.computedAnimationName} / ${diagnostics.computedAnimationDuration}`],
+        ['animation play state', diagnostics.computedAnimationPlayState],
+        ['transform', diagnostics.computedTransformAtTimeA],
+        ['vinyl width × height', diagnostics.vinylElementSize],
+        ['parent display/visibility/opacity', `${diagnostics.parentContainer.display} / ${diagnostics.parentContainer.visibility} / ${diagnostics.parentContainer.opacity}`],
+        ['overflow/clipping issue', diagnostics.overflowOrClippingIssue],
+        ['iOS media disables animation', diagnostics.cssMediaQueryDisablesAnimationOnIos],
+        ['reduced-motion Apple issue', diagnostics.reducedMotionLogicDisablesAppleDevices],
+        ['wrong class/element', diagnostics.javascriptTogglingWrongClassOrElement],
+        ['stale cache', diagnostics.serviceWorkerCacheStatus.possibleStaleCache],
+        ['APP_VERSION', APP_VERSION]
+      ];
+      panel.innerHTML = `<strong>Vinyl diagnostics</strong>${rows.map(([label, value]) => `<div><span>${escapeDiagnosticHtml(label)}</span><b>${escapeDiagnosticHtml(value)}</b></div>`).join('')}`;
+    };
+    render();
+    window.setInterval(render, 1000);
   };
 
   const syncVinylExperience = (isPlaying) => {
     isVinylPlaying = Boolean(isPlaying && !reduceMotion);
     vinylStages.forEach((stage) => stage.classList.toggle('is-playing', Boolean(isPlaying)));
     expandedPlayerCard?.classList.toggle('is-playing', Boolean(isPlaying));
-
-    if (reduceMotion || !vinylDiscs.length) {
-      vinylVelocity = 0;
-      renderVinylRotation();
-      return;
-    }
-
-    if (!vinylAnimationFrame) {
-      vinylAnimationFrame = window.requestAnimationFrame(tickVinylRotation);
-    }
   };
 
+  setupVinylDebugPanel();
   updateVisualizerToggleUI();
 
   const setTransportButtonState = (button, isPlaying) => {
@@ -5824,6 +5982,7 @@ if (musicPlayers.length) {
           startVisualizer(audio);
         }
         runVisualizerSelfChecksAfterPlay(audio);
+        runVinylSelfChecksAfterPlay(audio);
         updateMediaSessionMetadata(musicPlayer);
         persistPlayerState();
 
