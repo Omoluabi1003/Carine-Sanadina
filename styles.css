@@ -376,6 +376,8 @@ h1, h2, h3, blockquote {
 }
 .portrait-frame {
   position: relative;
+  display: grid;
+  place-items: center;
   aspect-ratio: 3 / 4;
   min-height: clamp(420px, 48vw, 570px);
   border-radius: 32px;
@@ -399,11 +401,13 @@ h1, h2, h3, blockquote {
   display: block;
   width: 100%;
   height: 100%;
-  min-height: inherit;
-  object-fit: cover;
-  object-position: center 35%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center center;
   filter: none;
   opacity: 0;
+  transform: none;
   transition: opacity 1.2s ease-in-out;
 }
 .portrait-image.is-active { opacity: 1; }
