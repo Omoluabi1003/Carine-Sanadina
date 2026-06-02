@@ -250,10 +250,26 @@
         </div>
         <p class="sr-only">Opening the Carine Sanadina experience.</p>
         <div class="music-visualizer splash-wave-bars is-idle" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span style="--splash-bar: 0.32; --splash-bar-peak: 0.74; --splash-delay: -0.12s;"></span>
+          <span style="--splash-bar: 0.54; --splash-bar-peak: 0.96; --splash-delay: -0.58s;"></span>
+          <span style="--splash-bar: 0.42; --splash-bar-peak: 0.82; --splash-delay: -0.96s;"></span>
+          <span style="--splash-bar: 0.68; --splash-bar-peak: 1.08; --splash-delay: -1.34s;"></span>
+          <span style="--splash-bar: 0.48; --splash-bar-peak: 0.88; --splash-delay: -1.72s;"></span>
+          <span style="--splash-bar: 0.76; --splash-bar-peak: 1.16; --splash-delay: -2.08s;"></span>
+          <span style="--splash-bar: 0.58; --splash-bar-peak: 1.02; --splash-delay: -2.44s;"></span>
+          <span style="--splash-bar: 0.36; --splash-bar-peak: 0.78; --splash-delay: -2.82s;"></span>
+          <span style="--splash-bar: 0.62; --splash-bar-peak: 1.1; --splash-delay: -3.16s;"></span>
+          <span style="--splash-bar: 0.44; --splash-bar-peak: 0.86; --splash-delay: -3.52s;"></span>
+          <span style="--splash-bar: 0.7; --splash-bar-peak: 1.14; --splash-delay: -3.88s;"></span>
+          <span style="--splash-bar: 0.38; --splash-bar-peak: 0.8; --splash-delay: -4.2s;"></span>
         </div>
-        <button class="splash-enter-button" type="button" data-splash-skip data-i18n="splash.enterApp">Enter App</button>
+        <div class="splash-status" data-splash-status aria-live="polite">
+          <span>Preparing music experience...</span>
+          <span>Loading stories of healing...</span>
+          <span>Tuning the sound of restoration...</span>
+          <span>Almost ready...</span>
+        </div>
+        <button class="splash-enter-button" type="button" data-splash-skip data-i18n="splash.enterApp" hidden>Enter App</button>
       </div>
     </div>
 

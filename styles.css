@@ -4312,6 +4312,7 @@ html.splash-booting body {
 
 html.splash-booting body > :not(.cinematic-splash) {
   opacity: 0;
+  pointer-events: none;
 }
 
 html.splash-ready body > :not(.cinematic-splash) {
@@ -4499,20 +4500,79 @@ html.splash-ready body > :not(.cinematic-splash) {
   margin-top: clamp(18px, 4vw, 26px);
   padding: 16px 18px;
   gap: 7px;
+  border: 1px solid rgba(234, 211, 162, 0.14);
   border-radius: 999px;
   background:
-    radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.24), transparent 56%),
-    linear-gradient(180deg, rgba(8, 17, 32, 0.72), rgba(16, 35, 71, 0.58));
+    linear-gradient(180deg, rgba(255, 248, 238, 0.08), transparent 18%, rgba(96, 165, 250, 0.08) 100%),
+    repeating-linear-gradient(90deg, rgba(234, 211, 162, 0.07) 0 1px, transparent 1px 22px),
+    radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.28), transparent 56%),
+    linear-gradient(180deg, rgba(8, 17, 32, 0.84), rgba(16, 35, 71, 0.66));
   box-shadow:
     inset 0 0 0 1px rgba(234, 242, 255, 0.14),
-    0 18px 44px rgba(0, 8, 24, 0.22);
+    inset 0 18px 34px rgba(96, 165, 250, 0.08),
+    0 18px 44px rgba(0, 8, 24, 0.22),
+    0 0 42px rgba(74, 140, 255, 0.14);
+}
+
+.splash-wave-bars.music-visualizer::before {
+  opacity: 1;
+  inset: 50% 9% auto;
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(234, 211, 162, 0.42), rgba(255, 248, 238, 0.72), rgba(96, 165, 250, 0.48), transparent);
+  box-shadow: 0 0 18px rgba(96, 165, 250, 0.24), 0 0 12px rgba(234, 211, 162, 0.16);
+}
+
+.splash-wave-bars.music-visualizer::after {
+  opacity: 0.62;
+  inset: auto 12% 9%;
+  height: 26%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 0%, rgba(96, 165, 250, 0.26), rgba(234, 211, 162, 0.1) 42%, transparent 72%);
+  filter: blur(9px);
 }
 
 .splash-wave-bars.music-visualizer span {
   width: clamp(5px, 1.5vw, 9px);
-  --bar-opacity: 0.72;
-  --bar-glow: 10px;
+  --bar-opacity: 0.82;
+  --bar-glow: 14px;
+  background: linear-gradient(180deg, rgba(255, 248, 238, 0.98), #60A5FA 42%, #4A8CFF 74%, rgba(234, 211, 162, 0.9) 100%);
+  box-shadow:
+    0 0 var(--bar-glow) rgba(96, 165, 250, 0.52),
+    0 0 calc(var(--bar-glow) * 1.55) rgba(74, 140, 255, 0.24),
+    0 0 calc(var(--bar-glow) * 0.72) rgba(234, 211, 162, 0.28);
 }
+
+.splash-wave-bars.music-visualizer.is-idle span {
+  animation: splashBarDance 2.85s cubic-bezier(0.42, 0, 0.2, 1) var(--splash-delay, 0s) infinite;
+  opacity: var(--bar-opacity);
+  transform: scaleY(var(--splash-bar, 0.5));
+}
+
+.splash-status {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(360px, 100%);
+  min-height: 1.6em;
+  margin-top: 14px;
+  color: rgba(234, 242, 255, 0.78);
+  font-size: clamp(0.78rem, 2vw, 0.92rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.splash-status span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translate3d(0, 6px, 0);
+  animation: splashStatusCycle 12s ease-in-out infinite;
+}
+
+.splash-status span:nth-child(2) { animation-delay: 3s; }
+.splash-status span:nth-child(3) { animation-delay: 6s; }
+.splash-status span:nth-child(4) { animation-delay: 9s; }
 
 .splash-enter-button {
   position: relative;
@@ -4535,11 +4595,22 @@ html.splash-ready body > :not(.cinematic-splash) {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
+  opacity: 1;
+  transform: translateY(0);
   transition:
     border-color 220ms ease,
     background-color 220ms ease,
     box-shadow 220ms ease,
+    opacity 260ms ease,
     transform 220ms ease;
+}
+
+.splash-enter-button[hidden] {
+  display: inline-flex;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
 }
 
 .splash-enter-button:hover,
@@ -4584,6 +4655,20 @@ html.splash-ready body > :not(.cinematic-splash) {
   0%, 8% { opacity: 0; transform: translate3d(0, 12px, 0); filter: blur(5px); }
   12%, 24% { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
   31%, 100% { opacity: 0; transform: translate3d(0, -10px, 0); filter: blur(5px); }
+}
+
+@keyframes splashBarDance {
+  0%, 100% { opacity: 0.62; transform: scaleY(calc(var(--splash-bar, 0.5) * 0.78)); filter: saturate(0.96); }
+  18% { opacity: 0.92; transform: scaleY(var(--splash-bar-peak, 1)); filter: saturate(1.18); }
+  38% { opacity: 0.76; transform: scaleY(calc(var(--splash-bar, 0.5) * 1.08)); filter: saturate(1.04); }
+  58% { opacity: 1; transform: scaleY(calc(var(--splash-bar-peak, 1) * 0.86)); filter: saturate(1.22); }
+  78% { opacity: 0.72; transform: scaleY(calc(var(--splash-bar, 0.5) * 0.92)); filter: saturate(1); }
+}
+
+@keyframes splashStatusCycle {
+  0%, 7% { opacity: 0; transform: translate3d(0, 6px, 0); filter: blur(4px); }
+  11%, 28% { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+  34%, 100% { opacity: 0; transform: translate3d(0, -6px, 0); filter: blur(4px); }
 }
 
 @media (max-width: 640px) {
@@ -4672,6 +4757,14 @@ html.splash-ready body > :not(.cinematic-splash) {
 
   .splash-quotes span { display: none; }
 
+  .splash-status span {
+    animation: none !important;
+    opacity: 0;
+    transform: none;
+  }
+
+  .splash-status span:first-child { opacity: 1; }
+
   .splash-wave-bars.music-visualizer {
     opacity: 0;
     background:
@@ -4685,6 +4778,11 @@ html.splash-ready body > :not(.cinematic-splash) {
     opacity: 0.34;
     transform: scaleY(0.36);
     box-shadow: none;
+  }
+
+  .splash-wave-bars.music-visualizer.is-idle span {
+    animation: none !important;
+    transform: scaleY(0.36);
   }
 
   .splash-enter-button {
