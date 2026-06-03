@@ -3834,6 +3834,7 @@ body.mini-player-active .guide-panel {
   padding: clamp(22px, 4vw, 38px) clamp(12px, 2.4vw, 24px) var(--lyrics-safe-bottom);
   border-radius: 22px;
   scroll-behavior: smooth;
+  scroll-padding-top: clamp(56px, 12vh, 110px);
   scroll-padding-bottom: var(--lyrics-safe-bottom);
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -3852,7 +3853,7 @@ body.mini-player-active .guide-panel {
 .lyric-section,
 .lyrics-empty {
   margin: 0 0 12px;
-  transition: opacity 0.24s ease, color 0.24s ease, text-shadow 0.24s ease;
+  transition: opacity 0.28s ease, color 0.28s ease, text-shadow 0.28s ease, transform 0.28s ease, filter 0.28s ease;
 }
 
 .lyric-line {
@@ -3861,16 +3862,29 @@ body.mini-player-active .guide-panel {
   font-weight: 800;
   line-height: 1.42;
   letter-spacing: -0.015em;
+  transform-origin: center left;
 }
 
-.lyric-line.is-past { opacity: 0.46; }
+.lyric-line.is-past {
+  color: rgba(210, 226, 255, 0.46);
+  opacity: 0.44;
+  filter: saturate(0.82);
+}
+
+.lyric-line.is-upcoming {
+  color: rgba(255, 248, 238, 0.62);
+  opacity: 0.72;
+}
 
 .lyric-line.is-active {
-  color: #fffaf1;
+  color: #fff8e7;
   opacity: 1;
-  transform: none;
-  font-size: clamp(1rem, 2.8vw, 1.18rem);
-  text-shadow: 0 0 14px rgba(234, 211, 162, 0.22);
+  transform: scale(1.035);
+  font-size: clamp(1.08rem, 2.9vw, 1.28rem);
+  text-shadow:
+    0 0 16px rgba(234, 211, 162, 0.36),
+    0 0 34px rgba(96, 165, 250, 0.18);
+  filter: drop-shadow(0 0 10px rgba(234, 211, 162, 0.18));
 }
 
 .lyric-section {
