@@ -3339,7 +3339,7 @@ body.chat-open.mini-player-active {
 }
 
 
-/* Womanifesto artwork uses a safe contain frame so the full cover remains visible. */
+/* Artwork marked for containment uses a safe frame so full covers remain visible. */
 .playlist-track[data-track-id="womanifesto"] .track-cover,
 .track-cover[data-artwork-fit="contain"],
 .mini-player-cover[data-artwork-fit="contain"],
