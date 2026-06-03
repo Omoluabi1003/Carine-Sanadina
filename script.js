@@ -1027,6 +1027,11 @@ const premiumExperienceTranslations = {
     'mini.close': 'Close player',
     'lyrics.expand': 'Expand Lyrics',
     'lyrics.collapse': 'Collapse Lyrics',
+    'lyrics.return': 'Back to Player',
+    'lyrics.focusKicker': 'Lyrics Focus Mode',
+    'lyrics.moreMenu': '⋯ More',
+    'lyrics.moreMenuLabel': 'Lyrics focus menu',
+    'lyrics.moreClose': 'Close lyrics menu',
     'press.kicker': 'Press Kit',
     'press.heading': 'A refined media hub for conversations about healing, authorship, faith, and restoration.',
     'press.body': 'Carine Sanadina is available for thoughtful media conversations, community features, and healing-centered storytelling opportunities aligned with her books, music, survivor advocacy, and healthcare-rooted compassion.',
@@ -1087,6 +1092,11 @@ const premiumExperienceTranslations = {
     'mini.expand': 'Agrandir',
     'lyrics.expand': 'Agrandir les paroles',
     'lyrics.collapse': 'Réduire les paroles',
+    'lyrics.return': 'Retour au lecteur',
+    'lyrics.focusKicker': 'Mode Focus Paroles',
+    'lyrics.moreMenu': '⋯ Plus',
+    'lyrics.moreMenuLabel': 'Menu focus des paroles',
+    'lyrics.moreClose': 'Fermer le menu des paroles',
     'mini.close': 'Fermer le lecteur',
     'press.kicker': 'Dossier de presse',
     'press.heading': 'Un espace média raffiné pour parler de guérison, d’écriture, de foi et de restauration.',
@@ -1744,6 +1754,11 @@ const finalTranslationAuditOverrides = {
     'cta.path.music': 'Collaborations musicales',
     'lyrics.expand': 'Développer les paroles',
     'lyrics.collapse': 'Réduire les paroles',
+    'lyrics.return': 'Retour au lecteur',
+    'lyrics.focusKicker': 'Mode Focus Paroles',
+    'lyrics.moreMenu': '⋯ Plus',
+    'lyrics.moreMenuLabel': 'Menu focus des paroles',
+    'lyrics.moreClose': 'Fermer le menu des paroles',
     'lyrics.tabsLabel': 'Détails du morceau',
     'lyrics.scrollLabel': 'Paroles synchronisées',
     'lyrics.tab.lyrics': 'Paroles',
@@ -2497,6 +2512,7 @@ const assertRequiredPlaylistTracks = () => REQUIRED_MUSIC_TRACK_IDS.every((requi
 const renderCarinePlaylist = () => {
   const playlistMount = document.querySelector('[data-playlist-tracks]');
   const expandedPlaylistMount = document.querySelector('[data-expanded-playlist-tracks]');
+  const expandedFocusPlaylistMount = document.querySelector('[data-expanded-focus-playlist-tracks]');
 
   if (!playlistMount) {
     return;
@@ -2504,6 +2520,7 @@ const renderCarinePlaylist = () => {
 
   playlistMount.dataset.playlistVersion = PLAYLIST_VERSION;
   if (expandedPlaylistMount) expandedPlaylistMount.dataset.playlistVersion = PLAYLIST_VERSION;
+  if (expandedFocusPlaylistMount) expandedFocusPlaylistMount.dataset.playlistVersion = PLAYLIST_VERSION;
   document.documentElement.dataset.playlistVersion = PLAYLIST_VERSION;
 
   const safePlaylist = CARINE_MUSIC_PLAYLIST.filter((track) => track && track.id && track.title && track.audioUrl && track.coverUrl);
@@ -2600,8 +2617,7 @@ const renderCarinePlaylist = () => {
     `;
   }).join('');
 
-  if (expandedPlaylistMount) {
-    expandedPlaylistMount.innerHTML = safePlaylist.map((track) => {
+  const expandedPlaylistMarkup = safePlaylist.map((track) => {
       const trackKey = escapePlaylistAttribute(track.translationKey);
       const durationLabel = formatTrackDuration(Number(track.duration));
       const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
@@ -2635,7 +2651,9 @@ const renderCarinePlaylist = () => {
         </button>
       `;
     }).join('');
-  }
+
+  if (expandedPlaylistMount) expandedPlaylistMount.innerHTML = expandedPlaylistMarkup;
+  if (expandedFocusPlaylistMount) expandedFocusPlaylistMount.innerHTML = expandedPlaylistMarkup;
 };
 
 renderCarinePlaylist();
@@ -3762,15 +3780,24 @@ if (musicPlayers.length) {
   const vinylDiscs = Array.from(document.querySelectorAll('[data-vinyl-disc]'));
   const expandedVinylStage = document.querySelector('[data-vinyl-stage]');
   const expandedVinylDisc = document.querySelector('[data-vinyl-disc]');
-  const expandedTrackOptions = Array.from(document.querySelectorAll('[data-expanded-track-option]'));
+  let expandedTrackOptions = Array.from(document.querySelectorAll('[data-expanded-track-option]'));
   const expandedPlayerCard = document.querySelector('.expanded-player-card');
   const lyricsPanel = document.querySelector('[data-lyrics-panel]');
   const lyricsScroll = document.querySelector('[data-lyrics-scroll]');
   const lyricsInfoPanel = document.querySelector('[data-track-info-panel]');
+  const lyricsFocusBar = document.querySelector('[data-lyrics-focus-bar]');
+  const lyricsFocusTitle = document.querySelector('[data-lyrics-focus-title]');
+  const lyricsReturnButton = document.querySelector('[data-lyrics-return]');
+  const lyricsMoreToggle = document.querySelector('[data-lyrics-more-toggle]');
+  const lyricsMoreDrawer = document.querySelector('[data-lyrics-more-drawer]');
+  const lyricsMoreClose = document.querySelector('[data-lyrics-more-close]');
+  const lyricsMoreAbout = document.querySelector('[data-lyrics-more-about]');
+  const lyricsMoreCredits = document.querySelector('[data-lyrics-more-credits]');
   const lyricsTabs = Array.from(document.querySelectorAll('[data-lyrics-tab]'));
   const lyricsExpandToggle = document.querySelector('[data-lyrics-expand]');
   let activeLyricsTab = 'lyrics';
   let isLyricsExpanded = false;
+  let isLyricsMoreOpen = false;
   let lyricEntries = [];
   let lyricTiming = [];
   let activeLyricIndex = -1;
@@ -4034,41 +4061,78 @@ if (musicPlayers.length) {
     activeLyricIndex = -1;
   };
 
-  const renderTrackInfo = (player) => {
-    if (!lyricsInfoPanel || !player) return;
+  const getTrackAboutContent = (player) => {
+    if (!player) return translate('lyrics.moreDetails');
     const trackKey = player.dataset.trackTranslationKey || '';
     const localizedAbout = trackKey ? translate(`${trackKey}.description`) : '';
-    const localizedCredits = translate('tracks.genericCredits');
-    const content = activeLyricsTab === 'credits'
-      ? localizedCredits
-      : (localizedAbout || player.dataset.trackAbout || translate('lyrics.moreDetails'));
+    return localizedAbout || player.dataset.trackAbout || translate('lyrics.moreDetails');
+  };
+
+  const getTrackCreditsContent = (player) => player?.dataset.trackCredits || translate('tracks.genericCredits');
+
+  const renderLyricsMoreDetails = (player = activePlayer) => {
+    if (!player) return;
+    const about = escapePlaylistText(getTrackAboutContent(player)).replace(/\n/g, '<br>');
+    const credits = escapePlaylistText(getTrackCreditsContent(player)).replace(/\n/g, '<br>');
+    if (lyricsMoreAbout) {
+      lyricsMoreAbout.innerHTML = `
+        <p class="track-info-kicker">${escapePlaylistText(translate('lyrics.aboutSong'))}</p>
+        <p>${about}</p>
+      `;
+    }
+    if (lyricsMoreCredits) {
+      lyricsMoreCredits.innerHTML = `
+        <p class="track-info-kicker">${escapePlaylistText(translate('lyrics.credits'))}</p>
+        <p>${credits}</p>
+      `;
+    }
+  };
+
+  const renderTrackInfo = (player) => {
+    if (!lyricsInfoPanel || !player) return;
+    const content = activeLyricsTab === 'credits' ? getTrackCreditsContent(player) : getTrackAboutContent(player);
     const formattedContent = escapePlaylistText(content || translate('lyrics.moreDetails')).replace(/\n/g, '<br>');
     lyricsInfoPanel.innerHTML = `
       <p class="track-info-kicker">${escapePlaylistText(translate(activeLyricsTab === 'credits' ? 'lyrics.credits' : 'lyrics.aboutSong'))}</p>
       <p>${formattedContent}</p>
     `;
+    renderLyricsMoreDetails(player);
+  };
+
+  const setLyricsMoreOpen = (isOpen) => {
+    isLyricsMoreOpen = Boolean(isOpen) && Boolean(isLyricsExpanded);
+    lyricsMoreDrawer?.toggleAttribute('hidden', !isLyricsMoreOpen);
+    lyricsMoreDrawer?.classList.toggle('is-open', isLyricsMoreOpen);
+    lyricsPanel?.classList.toggle('is-more-open', isLyricsMoreOpen);
+    lyricsMoreToggle?.setAttribute('aria-expanded', String(isLyricsMoreOpen));
+    if (isLyricsMoreOpen && activePlayer) renderLyricsMoreDetails(activePlayer);
   };
 
   const syncLyricsExpandMode = () => {
     const canExpandLyrics = activeLyricsTab === 'lyrics';
     const isPlayerOpen = mobilePlayer?.classList.contains('is-open') ?? true;
     const isExpanded = canExpandLyrics && isLyricsExpanded && isPlayerOpen;
+    if (!isExpanded && isLyricsMoreOpen) setLyricsMoreOpen(false);
     mobilePlayer?.classList.toggle('is-lyrics-expanded', isExpanded);
     expandedPlayerCard?.classList.toggle('is-lyrics-expanded', isExpanded);
     lyricsPanel?.classList.toggle('is-lyrics-expanded', isExpanded);
     document.body.classList.toggle('lyrics-expanded-open', isExpanded);
     document.body.classList.toggle('lyrics-expanded', isExpanded);
 
+    if (lyricsFocusBar) lyricsFocusBar.hidden = !isExpanded;
+    if (lyricsFocusTitle && activePlayer) lyricsFocusTitle.textContent = getTrackTitle(activePlayer);
     if (lyricsExpandToggle) {
-      lyricsExpandToggle.hidden = !canExpandLyrics;
+      lyricsExpandToggle.hidden = !canExpandLyrics || isExpanded;
       lyricsExpandToggle.setAttribute('aria-expanded', String(isExpanded));
-      lyricsExpandToggle.textContent = translate(isExpanded ? 'lyrics.collapse' : 'lyrics.expand');
+      lyricsExpandToggle.textContent = translate(isExpanded ? 'lyrics.return' : 'lyrics.expand');
     }
+    lyricsMoreToggle?.setAttribute('aria-expanded', String(isLyricsMoreOpen && isExpanded));
   };
 
   const setLyricsExpanded = (expanded) => {
     isLyricsExpanded = Boolean(expanded);
     syncLyricsExpandMode();
+    if (!isLyricsExpanded) setLyricsMoreOpen(false);
     if (isLyricsExpanded && activeLyricsTab === 'lyrics') {
       requestAnimationFrame(() => lyricsScroll?.scrollTo({ top: lyricsScroll.scrollTop, behavior: reduceMotion ? 'auto' : 'smooth' }));
     }
@@ -4206,8 +4270,10 @@ if (musicPlayers.length) {
       syncArtworkFit(mobileCover, player);
     }
     if (mobileTitle) mobileTitle.textContent = title;
+    if (lyricsFocusTitle) lyricsFocusTitle.textContent = title;
     if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
     if (activeLyricsTab !== 'lyrics') renderTrackInfo(player);
+    renderLyricsMoreDetails(player);
     loadLyricsForPlayer(player);
     syncTransportButtons(getAudio(player));
     resizeVisualizerSurface();
@@ -6291,6 +6357,12 @@ if (musicPlayers.length) {
     tab.addEventListener('click', () => setLyricsTab(tab.dataset.lyricsTab));
   });
   lyricsExpandToggle?.addEventListener('click', () => setLyricsExpanded(!isLyricsExpanded));
+  lyricsReturnButton?.addEventListener('click', () => setLyricsExpanded(false));
+  lyricsMoreToggle?.addEventListener('click', () => setLyricsMoreOpen(!isLyricsMoreOpen));
+  lyricsMoreClose?.addEventListener('click', () => setLyricsMoreOpen(false));
+  lyricsMoreDrawer?.addEventListener('click', (event) => {
+    if (event.target === lyricsMoreDrawer) setLyricsMoreOpen(false);
+  });
   setLyricsTab('lyrics');
 
   const toggleShuffle = () => {
@@ -6345,7 +6417,10 @@ if (musicPlayers.length) {
   expandedTrackOptions.forEach((option) => {
     option.addEventListener('click', () => {
       const selectedPlayer = musicPlayers.find((player) => player.dataset.trackId === option.dataset.trackId);
-      if (selectedPlayer) playAudio(selectedPlayer);
+      if (selectedPlayer) {
+        playAudio(selectedPlayer);
+        if (isLyricsExpanded) setLyricsMoreOpen(false);
+      }
     });
   });
   mobileToggle?.addEventListener('click', () => {

@@ -715,6 +715,14 @@
               <div class="expanded-track-list" data-expanded-playlist-tracks></div>
             </div>
             <div class="lyrics-panel" data-lyrics-panel>
+              <div class="lyrics-focus-bar" data-lyrics-focus-bar hidden>
+                <button class="lyrics-return-button" type="button" data-lyrics-return data-i18n="lyrics.return">Back to Player</button>
+                <div class="lyrics-focus-heading">
+                  <span data-i18n="lyrics.focusKicker">Lyrics Focus Mode</span>
+                  <strong data-lyrics-focus-title>Consolation</strong>
+                </div>
+                <button class="lyrics-more-toggle" type="button" data-lyrics-more-toggle aria-expanded="false" aria-controls="lyrics-more-drawer" data-i18n="lyrics.moreMenu">⋯ More</button>
+              </div>
               <div class="lyrics-panel-toolbar">
                 <div class="lyrics-tabs" role="tablist" aria-label="Track details" data-i18n-aria-label="lyrics.tabsLabel">
                   <button class="lyrics-tab is-active" type="button" role="tab" aria-selected="true" data-lyrics-tab="lyrics" data-i18n="lyrics.tab.lyrics">Lyrics</button>
@@ -727,6 +735,25 @@
                 <p class="lyrics-empty" data-i18n="lyrics.selectTrack">Select a track to view lyrics.</p>
               </div>
               <div class="track-info-panel" data-track-info-panel hidden></div>
+              <div class="lyrics-more-drawer" id="lyrics-more-drawer" data-lyrics-more-drawer hidden>
+                <div class="lyrics-more-card" role="dialog" aria-label="Lyrics focus menu" data-i18n-aria-label="lyrics.moreMenuLabel">
+                  <div class="lyrics-more-header">
+                    <span data-i18n="lyrics.moreMenu">⋯ More</span>
+                    <button class="lyrics-more-close" type="button" data-lyrics-more-close aria-label="Close lyrics menu" data-i18n-aria-label="lyrics.moreClose">×</button>
+                  </div>
+                  <div class="lyrics-more-section lyrics-more-section--playlist">
+                    <div class="expanded-track-picker" aria-label="Choose a track in expanded player" data-i18n-aria-label="music.playlistLabel">
+                      <div class="expanded-track-picker__header">
+                        <span data-i18n="music.playlist">Playlist</span>
+                        <span data-i18n="music.time">Time</span>
+                      </div>
+                      <div class="expanded-track-list" data-expanded-focus-playlist-tracks></div>
+                    </div>
+                  </div>
+                  <div class="lyrics-more-section" data-lyrics-more-about></div>
+                  <div class="lyrics-more-section" data-lyrics-more-credits></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
