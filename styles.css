@@ -5487,7 +5487,8 @@ html.splash-ready body > :not(.cinematic-splash) {
 }
 
 .visualizer-debug-panel,
-.vinyl-debug-panel {
+.vinyl-debug-panel,
+.lyrics-debug-panel {
   position: fixed;
   top: 12px;
   right: 12px;
@@ -5506,7 +5507,8 @@ html.splash-ready body > :not(.cinematic-splash) {
 }
 
 .visualizer-debug-panel strong,
-.vinyl-debug-panel strong {
+.vinyl-debug-panel strong,
+.lyrics-debug-panel strong {
   display: block;
   margin-bottom: 8px;
   color: #bfdbfe;
@@ -5516,7 +5518,8 @@ html.splash-ready body > :not(.cinematic-splash) {
 }
 
 .visualizer-debug-panel div,
-.vinyl-debug-panel div {
+.vinyl-debug-panel div,
+.lyrics-debug-panel [data-lyrics-debug-body] div {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   gap: 8px;
@@ -5525,15 +5528,54 @@ html.splash-ready body > :not(.cinematic-splash) {
 }
 
 .visualizer-debug-panel span,
-.vinyl-debug-panel span {
+.vinyl-debug-panel span,
+.lyrics-debug-panel [data-lyrics-debug-body] span {
   color: rgba(234, 242, 255, 0.72);
 }
 
 .visualizer-debug-panel b,
-.vinyl-debug-panel b {
+.vinyl-debug-panel b,
+.lyrics-debug-panel [data-lyrics-debug-body] b {
   overflow-wrap: anywhere;
   color: #ffffff;
   font-weight: 700;
+}
+
+
+.lyrics-debug-panel {
+  top: auto;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  width: min(340px, calc(100vw - 24px));
+  max-height: min(48vh, 420px);
+  pointer-events: auto;
+}
+
+.lyrics-debug-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.lyrics-debug-panel header strong { margin-bottom: 0; }
+
+.lyrics-debug-panel button {
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(234, 242, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(234, 242, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.lyrics-debug-panel button:hover,
+.lyrics-debug-panel button:focus-visible {
+  background: rgba(234, 242, 255, 0.18);
+  outline: 2px solid rgba(191, 219, 254, 0.45);
 }
 
 /* Hybrid boutique vinyl player upgrade */

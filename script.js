@@ -3825,7 +3825,10 @@ if (musicPlayers.length) {
     womanifesto: '/lyrics/womanifesto.lrc'
   };
   let lyricsAnimationFrame = 0;
-  let lastLyricsDebugSecond = -1;
+  let lastLyricsDiagnosticsTime = 0;
+  let lyricsDebugPanel = null;
+  let lyricsDebugPanelTimer = 0;
+  let lastLyricsScrollRequest = { triggered: false, scrolled: false, targetTop: 0 };
   const LYRICS_DEBUG_STORAGE_KEY = 'carineLyricsDebug';
   const LYRICS_DEBUG_QUERY_KEY = 'lyricsDebug';
   const isAudioDebugEnabled = ['localhost', '127.0.0.1', ''].includes(window.location.hostname)
@@ -4018,10 +4021,39 @@ if (musicPlayers.length) {
     }
   };
 
-  const logLyricsDiagnostics = (event, details = {}) => {
+  const roundLyricsTime = (value, precision = 1000) => (Number.isFinite(Number(value))
+    ? Math.round(Number(value) * precision) / precision
+    : 0);
+
+  const formatLyricsOffset = (offset) => `${offset >= 0 ? '+' : ''}${roundLyricsTime(offset, 100).toFixed(2)}s`;
+
+  const logLyricsDiagnostics = (event, details = {}, { force = false } = {}) => {
     if (!isLyricsDebugEnabled() || !window.console || typeof window.console.info !== 'function') return;
-    window.console.info('[lyrics sync]', { event, ...details });
+    const now = window.performance?.now?.() || Date.now();
+    if (!force && now - lastLyricsDiagnosticsTime < 500) return;
+    lastLyricsDiagnosticsTime = now;
+
+    const payload = { event, timestamp: new Date().toISOString(), ...details };
+    if (typeof window.console.groupCollapsed === 'function') {
+      window.console.groupCollapsed(`[lyrics sync] ${event} · ${payload.activeTrackId || 'no-track'} · ${payload.audioCurrentTime ?? '0'}s`);
+      window.console.info(payload);
+      window.console.groupEnd();
+      return;
+    }
+
+    window.console.info('[lyrics sync]', payload);
   };
+
+  /**
+   * Precision lyrics calibration workflow (developer-only):
+   * 1. Play the song in expanded lyrics mode.
+   * 2. Watch the highlighted lyric line against the performed vocal onset.
+   * 3. If one line feels early or late, adjust that individual .lrc timestamp by ear.
+   * 4. Use lyricsOffsets only for tiny whole-track drift correction.
+   * 5. Re-check emotional phrasing, breaths, pickups, and rhythmic emphasis, not just math.
+   * 6. Validate tuned .lrc files on iPhone Safari, Android Chrome, and desktop Chrome.
+   * 7. Never auto-rewrite or guess corrected timestamps from this debug tooling.
+   */
 
   const parseLrcTimestamp = (minutes, seconds, fraction = '') => {
     const parsedMinutes = Number(minutes);
@@ -4224,6 +4256,110 @@ if (musicPlayers.length) {
     renderLyrics();
   };
 
+  const getActiveLyricEntry = () => lyricEntries[activeLyricIndex] || null;
+  const getTimingForLyricIndex = (index) => lyricTiming.find((entry) => entry.index === index) || null;
+  const getAdjacentLyricText = (index, direction) => {
+    const currentTimingIndex = lyricTiming.findIndex((entry) => entry.index === index);
+    const adjacentTiming = lyricTiming[currentTimingIndex + direction];
+    return adjacentTiming ? lyricEntries[adjacentTiming.index]?.text || adjacentTiming.text || '' : '';
+  };
+
+  const collectLyricsDiagnostics = (audio = activePlayer ? getAudio(activePlayer) : null, details = {}) => {
+    const player = currentLyricsPlayer || activePlayer;
+    const currentTime = Number(audio?.currentTime) || 0;
+    const offsetValue = getLyricsOffset(player);
+    const effectiveTime = currentTime + offsetValue;
+    const activeEntry = getActiveLyricEntry();
+    const activeTiming = getTimingForLyricIndex(activeLyricIndex);
+    const nextTimingIndex = lyricTiming.findIndex((entry) => entry.index === activeLyricIndex) + 1;
+    const nextTiming = nextTimingIndex > 0 ? lyricTiming[nextTimingIndex] : null;
+
+    return {
+      activeTrackId: player?.dataset.trackId || '',
+      activeTrackTitle: player ? getTrackTitle(player) : '',
+      audioCurrentTime: roundLyricsTime(currentTime),
+      effectiveTime: roundLyricsTime(effectiveTime),
+      activeLyricIndex,
+      activeLyricText: activeEntry?.text || '',
+      previousLyricText: getAdjacentLyricText(activeLyricIndex, -1),
+      nextLyricText: getAdjacentLyricText(activeLyricIndex, 1),
+      loadedLrcFile: currentLyricsLrcPath || player?.dataset.trackLyricsLrc || '',
+      offsetValue: roundLyricsTime(offsetValue),
+      totalParsedLines: lyricTiming.length,
+      lineStartTime: activeTiming ? roundLyricsTime(activeTiming.time) : null,
+      nextLineStartTime: nextTiming ? roundLyricsTime(nextTiming.time) : null,
+      playbackState: !audio ? 'no-audio' : audio.ended ? 'ended' : audio.paused ? 'paused' : 'playing',
+      syncEngineRunning: Boolean(lyricsAnimationFrame),
+      autoScrollTriggered: Boolean(details.autoScrollTriggered),
+      activeLineChanged: Boolean(details.activeLineChanged),
+      lyricsContainerScrolled: Boolean(details.lyricsContainerScrolled),
+      ...details
+    };
+  };
+
+  const renderLyricsDebugPanel = () => {
+    if (!lyricsDebugPanel || !isLyricsDebugEnabled()) return;
+    const diagnostics = collectLyricsDiagnostics(activePlayer ? getAudio(activePlayer) : null);
+    const rows = [
+      ['currentTime', `${diagnostics.audioCurrentTime}s`],
+      ['effectiveTime', `${diagnostics.effectiveTime}s`],
+      ['active index', diagnostics.activeLyricIndex],
+      ['active lyric', diagnostics.activeLyricText || '—'],
+      ['global offset', formatLyricsOffset(diagnostics.offsetValue)],
+      ['line start', diagnostics.lineStartTime ?? '—'],
+      ['next start', diagnostics.nextLineStartTime ?? '—'],
+      ['playback', diagnostics.playbackState]
+    ];
+
+    lyricsDebugPanel.querySelector('[data-lyrics-debug-body]').innerHTML = rows.map(([label, value]) => `
+      <div><span>${escapePlaylistText(label)}</span><b>${escapePlaylistText(value)}</b></div>
+    `).join('');
+  };
+
+  const setupLyricsDebugPanel = () => {
+    if (!isLyricsDebugEnabled() || lyricsDebugPanel) return;
+    lyricsDebugPanel = document.createElement('aside');
+    lyricsDebugPanel.className = 'lyrics-debug-panel';
+    lyricsDebugPanel.setAttribute('aria-live', 'polite');
+    lyricsDebugPanel.setAttribute('aria-label', 'Lyrics calibration diagnostics');
+    lyricsDebugPanel.innerHTML = `
+      <header>
+        <strong>Lyrics calibration</strong>
+        <button type="button" data-lyrics-debug-close aria-label="Close lyrics diagnostics">×</button>
+      </header>
+      <div data-lyrics-debug-body></div>
+    `;
+    document.body.appendChild(lyricsDebugPanel);
+    lyricsDebugPanel.querySelector('[data-lyrics-debug-close]')?.addEventListener('click', () => {
+      window.clearInterval(lyricsDebugPanelTimer);
+      lyricsDebugPanelTimer = 0;
+      lyricsDebugPanel.remove();
+      lyricsDebugPanel = null;
+    });
+    renderLyricsDebugPanel();
+    lyricsDebugPanelTimer = window.setInterval(renderLyricsDebugPanel, 250);
+  };
+
+  const logActiveLyricChangeDiagnostics = ({ previousIndex, nextIndex, audio, currentTime, effectiveTime }) => {
+    if (!isLyricsDebugEnabled()) return;
+    const previousTiming = getTimingForLyricIndex(previousIndex);
+    const currentTiming = getTimingForLyricIndex(nextIndex);
+    const deltaFromPlaybackTime = currentTiming ? currentTime - currentTiming.time : 0;
+    const activationTiming = Math.abs(deltaFromPlaybackTime) <= 0.05
+      ? 'on-time'
+      : deltaFromPlaybackTime < 0 ? 'early' : 'late';
+
+    logLyricsDiagnostics('active-line-changed', collectLyricsDiagnostics(audio, {
+      previousLineTimestamp: previousTiming ? roundLyricsTime(previousTiming.time) : null,
+      currentLineTimestamp: currentTiming ? roundLyricsTime(currentTiming.time) : null,
+      deltaFromActualPlaybackTime: roundLyricsTime(deltaFromPlaybackTime),
+      activationTiming,
+      audioCurrentTime: roundLyricsTime(currentTime),
+      effectiveTime: roundLyricsTime(effectiveTime),
+      activeLineChanged: true
+    }), { force: true });
+  };
+
   const loadLyricsForPlayer = async (player) => {
     if (!player || !lyricsScroll) return;
     currentLyricsPlayer = player;
@@ -4275,22 +4411,34 @@ if (musicPlayers.length) {
   };
 
   const scrollActiveLyricIntoFocus = (line, { forceScroll = false } = {}) => {
+    lastLyricsScrollRequest = { triggered: false, scrolled: false, targetTop: lyricsScroll?.scrollTop || 0 };
     if (!lyricsScroll || !line) return false;
 
     const scrollRect = lyricsScroll.getBoundingClientRect();
     const lineRect = line.getBoundingClientRect();
-    const comfortableTop = scrollRect.top + (scrollRect.height * 0.38);
-    const comfortableBottom = scrollRect.top + (scrollRect.height * 0.62);
+    const comfortableTop = scrollRect.top + (scrollRect.height * 0.34);
+    const comfortableBottom = scrollRect.top + (scrollRect.height * 0.66);
     const isComfortable = lineRect.top >= comfortableTop && lineRect.bottom <= comfortableBottom;
 
     if (!forceScroll && isComfortable) return false;
 
     const targetTop = lyricsScroll.scrollTop
       + (lineRect.top - scrollRect.top)
-      - ((scrollRect.height - lineRect.height) * 0.46);
+      - ((scrollRect.height - lineRect.height) * 0.48);
     const maxTop = Math.max(0, lyricsScroll.scrollHeight - lyricsScroll.clientHeight);
+    const boundedTop = Math.min(Math.max(targetTop, 0), maxTop);
+    const shouldMove = Math.abs(boundedTop - lyricsScroll.scrollTop) > 2;
+
+    lastLyricsScrollRequest = {
+      triggered: true,
+      scrolled: shouldMove,
+      targetTop: roundLyricsTime(boundedTop)
+    };
+
+    if (!shouldMove) return false;
+
     lyricsScroll.scrollTo({
-      top: Math.min(Math.max(targetTop, 0), maxTop),
+      top: boundedTop,
       behavior: reduceMotion ? 'auto' : 'smooth'
     });
     return true;
@@ -4298,6 +4446,8 @@ if (musicPlayers.length) {
 
   const updateActiveLyric = (audio, { forceScroll = false, event = 'sync' } = {}) => {
     if (!lyricsScroll || activeLyricsTab !== 'lyrics' || !lyricTiming.length || !audio) return;
+    setupLyricsDebugPanel();
+
     const currentTime = Number(audio.currentTime) || 0;
     const offsetValue = getLyricsOffset(currentLyricsPlayer || activePlayer);
     const effectiveTime = currentTime + offsetValue;
@@ -4313,8 +4463,10 @@ if (musicPlayers.length) {
       }
     }
 
+    const previousIndex = activeLyricIndex;
     const shouldUpdateClasses = nextIndex !== activeLyricIndex;
     let autoScrollFired = false;
+    lastLyricsScrollRequest = { triggered: false, scrolled: false, targetTop: lyricsScroll.scrollTop };
 
     if (shouldUpdateClasses) {
       activeLyricIndex = nextIndex;
@@ -4328,28 +4480,21 @@ if (musicPlayers.length) {
           autoScrollFired = scrollActiveLyricIntoFocus(line, { forceScroll });
         }
       });
+      logActiveLyricChangeDiagnostics({ previousIndex, nextIndex, audio, currentTime, effectiveTime });
     } else if (forceScroll && activeLyricIndex >= 0) {
       const activeLine = lyricsScroll.querySelector(`[data-lyric-index="${activeLyricIndex}"]`);
       autoScrollFired = scrollActiveLyricIntoFocus(activeLine, { forceScroll });
     }
 
-    const roundedSecond = Math.floor(effectiveTime * 2) / 2;
-    if (shouldUpdateClasses || forceScroll || roundedSecond !== lastLyricsDebugSecond) {
-      lastLyricsDebugSecond = roundedSecond;
-      const activeEntry = lyricEntries[activeLyricIndex];
-      logLyricsDiagnostics(event, {
-        activeTrackId: (currentLyricsPlayer || activePlayer)?.dataset.trackId || '',
-        activeTrackTitle: currentLyricsPlayer ? getTrackTitle(currentLyricsPlayer) : (activePlayer ? getTrackTitle(activePlayer) : ''),
-        loadedLrcFile: currentLyricsLrcPath || (currentLyricsPlayer || activePlayer)?.dataset.trackLyricsLrc || '',
-        audioCurrentTime: Math.round(currentTime * 1000) / 1000,
-        effectiveTime: Math.round(effectiveTime * 1000) / 1000,
-        activeLyricIndex,
-        activeLyricText: activeEntry?.text || '',
-        offsetValue,
-        totalParsedLines: lyricTiming.length,
-        autoScrollFired
-      });
-    }
+    logLyricsDiagnostics(event, collectLyricsDiagnostics(audio, {
+      audioCurrentTime: roundLyricsTime(currentTime),
+      effectiveTime: roundLyricsTime(effectiveTime),
+      offsetValue: roundLyricsTime(offsetValue),
+      autoScrollTriggered: autoScrollFired || lastLyricsScrollRequest.triggered,
+      activeLineChanged: shouldUpdateClasses,
+      lyricsContainerScrolled: autoScrollFired || lastLyricsScrollRequest.scrolled
+    }));
+    renderLyricsDebugPanel();
   };
 
   function stopLyricsAnimationLoop() {
@@ -4370,6 +4515,47 @@ if (musicPlayers.length) {
 
     lyricsAnimationFrame = requestAnimationFrame(tick);
   }
+
+  const updateLyricsOffset = (delta) => {
+    if (!isLyricsDebugEnabled()) return;
+    const player = currentLyricsPlayer || activePlayer;
+    const offsetKey = getLyricsTrackKey(player);
+    if (!offsetKey) return;
+    lyricsOffsets[offsetKey] = roundLyricsTime((lyricsOffsets[offsetKey] || 0) + delta, 100);
+    const audio = player ? getAudio(player) : null;
+    if (audio) updateActiveLyric(audio, { forceScroll: true, event: 'offset-adjusted' });
+    window.console?.info?.(`Updated offset for ${player?.dataset.trackId || offsetKey}: ${formatLyricsOffset(lyricsOffsets[offsetKey])}`);
+    renderLyricsDebugPanel();
+  };
+
+  const handleLyricsCalibrationKeys = (event) => {
+    if (!isLyricsDebugEnabled() || event.defaultPrevented) return;
+    if (!['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+    const target = event.target;
+    if (target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+
+    event.preventDefault();
+    const step = event.shiftKey ? 0.10 : 0.05;
+    updateLyricsOffset(event.key === 'ArrowUp' ? step : -step);
+  };
+
+  window.debugLyricsSync = () => {
+    const diagnostics = collectLyricsDiagnostics(activePlayer ? getAudio(activePlayer) : null);
+    const report = {
+      currentTrack: diagnostics.activeTrackId,
+      currentOffset: diagnostics.offsetValue,
+      activeLine: diagnostics.activeLyricText,
+      parsedLyricCount: diagnostics.totalParsedLines,
+      syncEngineRunning: diagnostics.syncEngineRunning
+    };
+    window.console?.groupCollapsed?.('[lyrics sync] manual debugLyricsSync()');
+    window.console?.info?.(report);
+    window.console?.groupEnd?.();
+    return report;
+  };
+
+  document.addEventListener('keydown', handleLyricsCalibrationKeys);
+  setupLyricsDebugPanel();
 
   const syncExpandedProgress = (audio) => {
     if (!expandedProgress || !audio) return;
