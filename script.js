@@ -1,6 +1,6 @@
 const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-02-vinyl-diagnostics';
+const APP_VERSION = 'carine-site-2026-06-03-paranoia-persecutive';
 const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -108,6 +108,14 @@ translations.en = {
   'tracks.womanifesto.shortDescription': 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, and victory through faith.',
   'tracks.womanifesto.description': 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, and victory through faith.',
   'tracks.womanifesto.playLabel': 'Play Womanifesto',
+  'tracks.paranoia.title': 'Paranoïa Persécutive',
+  'tracks.paranoia.audioLabel': 'Paranoïa Persécutive by Carine Sanadina',
+  'tracks.paranoia.coverAlt': 'Paranoïa Persécutive cover art',
+  'tracks.paranoia.fallback': 'Paranoïa Persécutive cover art is temporarily unavailable.',
+  'tracks.paranoia.number': 'Track 05',
+  'tracks.paranoia.shortDescription': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
+  'tracks.paranoia.description': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
+  'tracks.paranoia.playLabel': 'Play Paranoïa Persécutive',
   'mini.label': 'Current track mini player',
   'mini.noTrack': 'No track selected',
   'mini.toggleLabel': 'Play or pause current track',
@@ -272,6 +280,14 @@ translations.fr = {
   'tracks.womanifesto.shortDescription': 'Un hymne gospel africain plein d’âme qui célèbre la résilience féminine, la guérison, la grâce et la victoire par la foi.',
   'tracks.womanifesto.description': 'Un hymne gospel africain plein d’âme qui célèbre la résilience féminine, la guérison, la grâce et la victoire par la foi.',
   'tracks.womanifesto.playLabel': 'Lire Womanifesto',
+  'tracks.paranoia.title': 'Paranoïa Persécutive',
+  'tracks.paranoia.audioLabel': 'Paranoïa Persécutive de Carine Sanadina',
+  'tracks.paranoia.coverAlt': 'Pochette de Paranoïa Persécutive',
+  'tracks.paranoia.fallback': 'La pochette de Paranoïa Persécutive est temporairement indisponible.',
+  'tracks.paranoia.number': 'Titre 05',
+  'tracks.paranoia.shortDescription': 'Un morceau français cinématographique sur l’intuition, la protection et la conscience de survie, où la vigilance devient à la fois avertissement et sagesse.',
+  'tracks.paranoia.description': 'Un morceau français cinématographique sur l’intuition, la protection et la conscience de survie, où la vigilance devient à la fois avertissement et sagesse.',
+  'tracks.paranoia.playLabel': 'Lire Paranoïa Persécutive',
   'mini.label': 'Mini lecteur du titre en cours',
   'mini.noTrack': 'Aucun titre sélectionné',
   'mini.toggleLabel': 'Lire ou mettre en pause le titre en cours',
@@ -430,6 +446,14 @@ translations.es = {
   'tracks.womanifesto.shortDescription': 'Un himno gospel africano con alma que celebra la resiliencia femenina, la sanación, la gracia y la victoria por la fe.',
   'tracks.womanifesto.description': 'Un himno gospel africano con alma que celebra la resiliencia femenina, la sanación, la gracia y la victoria por la fe.',
   'tracks.womanifesto.playLabel': 'Reproducir Womanifesto',
+  'tracks.paranoia.title': 'Paranoïa Persécutive',
+  'tracks.paranoia.audioLabel': 'Paranoïa Persécutive de Carine Sanadina',
+  'tracks.paranoia.coverAlt': 'Portada de Paranoïa Persécutive',
+  'tracks.paranoia.fallback': 'La portada de Paranoïa Persécutive no está disponible temporalmente.',
+  'tracks.paranoia.number': 'Pista 05',
+  'tracks.paranoia.shortDescription': 'Una pista francesa cinematográfica sobre intuición, protección y conciencia de supervivencia, donde la vigilancia se vuelve advertencia y sabiduría.',
+  'tracks.paranoia.description': 'Una pista francesa cinematográfica sobre intuición, protección y conciencia de supervivencia, donde la vigilancia se vuelve advertencia y sabiduría.',
+  'tracks.paranoia.playLabel': 'Reproducir Paranoïa Persécutive',
   'mini.label': 'Minirreproductor de la pista actual',
   'mini.noTrack': 'No hay pista seleccionada',
   'mini.toggleLabel': 'Reproducir o pausar la pista actual',
@@ -598,6 +622,14 @@ translations.ln = {
   'tracks.womanifesto.shortDescription': 'Loyembo ya gospel ya Afrika ya mozindo oyo ekumisaka mpiko ya basi, kobika, ngolu, mpe elonga na nzela ya kondima.',
   'tracks.womanifesto.description': 'Loyembo ya gospel ya Afrika ya mozindo oyo ekumisaka mpiko ya basi, kobika, ngolu, mpe elonga na nzela ya kondima.',
   'tracks.womanifesto.playLabel': 'Beta Womanifesto',
+  'tracks.paranoia.title': 'Paranoïa Persécutive',
+  'tracks.paranoia.audioLabel': 'Paranoïa Persécutive ya Carine Sanadina',
+  'tracks.paranoia.coverAlt': 'Elilingi ya ezipeli ya Paranoïa Persécutive',
+  'tracks.paranoia.fallback': 'Elilingi ya ezipeli ya Paranoïa Persécutive ezali te mpo na mwa ntango.',
+  'tracks.paranoia.number': 'Loyembo 05',
+  'tracks.paranoia.shortDescription': 'Loyembo ya Lifalanse ya sinema oyo etaleli intuition, bobateli, mpe ekɛngɛ mpo na kobika, epai vigilance ekómaka likebisi mpe bwanya.',
+  'tracks.paranoia.description': 'Loyembo ya Lifalanse ya sinema oyo etaleli intuition, bobateli, mpe ekɛngɛ mpo na kobika, epai vigilance ekómaka likebisi mpe bwanya.',
+  'tracks.paranoia.playLabel': 'Beta Paranoïa Persécutive',
   'mini.label': 'Mwa ebɛtelo ya loyembo oyo ezali koyokana',
   'mini.noTrack': 'Loyembo eponami naino te',
   'mini.toggleLabel': 'Beta to pemisa loyembo oyo ezali koyokana',
@@ -767,6 +799,14 @@ translations.sw = {
   "tracks.womanifesto.shortDescription": "Wimbo wa injili ya Kiafrika wenye hisia unaosherehekea uthabiti wa wanawake, uponyaji, neema, na ushindi kupitia imani.",
   "tracks.womanifesto.description": "Wimbo wa injili ya Kiafrika wenye hisia unaosherehekea uthabiti wa wanawake, uponyaji, neema, na ushindi kupitia imani.",
   "tracks.womanifesto.playLabel": "Cheza Womanifesto",
+  "tracks.paranoia.title": "Paranoïa Persécutive",
+  "tracks.paranoia.audioLabel": "Paranoïa Persécutive na Carine Sanadina",
+  "tracks.paranoia.coverAlt": "Sanaa ya jalada la Paranoïa Persécutive",
+  "tracks.paranoia.fallback": "Sanaa ya jalada la Paranoïa Persécutive haipatikani kwa muda.",
+  "tracks.paranoia.number": "Wimbo 05",
+  "tracks.paranoia.shortDescription": "Wimbo wa Kifaransa wa sinema kuhusu hisia za ndani, ulinzi, na umakini wa kuishi, ambapo uangalifu huwa onyo na hekima.",
+  "tracks.paranoia.description": "Wimbo wa Kifaransa wa sinema kuhusu hisia za ndani, ulinzi, na umakini wa kuishi, ambapo uangalifu huwa onyo na hekima.",
+  "tracks.paranoia.playLabel": "Cheza Paranoïa Persécutive",
   "mini.label": "Mchezaji mdogo wa wimbo wa sasa",
   "mini.noTrack": "Hakuna wimbo uliochaguliwa",
   "mini.toggleLabel": "Cheza au sitisha wimbo wa sasa",
@@ -936,6 +976,14 @@ translations.yo = {
   "tracks.womanifesto.shortDescription": "Orin gospel Áfíríkà alárinrin tí ń ṣe ayẹyẹ ìfaradà obìnrin, ìwòsàn, oore-ọfẹ́, àti ìṣẹ́gun nípasẹ̀ ìgbàgbọ́.",
   "tracks.womanifesto.description": "Orin gospel Áfíríkà alárinrin tí ń ṣe ayẹyẹ ìfaradà obìnrin, ìwòsàn, oore-ọfẹ́, àti ìṣẹ́gun nípasẹ̀ ìgbàgbọ́.",
   "tracks.womanifesto.playLabel": "Play Womanifesto",
+  "tracks.paranoia.title": "Paranoïa Persécutive",
+  "tracks.paranoia.audioLabel": "Paranoïa Persécutive nipasẹ Carine Sanadina",
+  "tracks.paranoia.coverAlt": "Aworan ideri Paranoïa Persécutive",
+  "tracks.paranoia.fallback": "Iṣẹ ọna ideri Paranoïa Persécutive ko si fun igba diẹ.",
+  "tracks.paranoia.number": "Orin 05",
+  "tracks.paranoia.shortDescription": "Orin Faransé sinimátíkì nipa ìmọ̀lára inú, aabo, ati ìṣọ́ra ìwalaaye, nibiti ìṣọ́ra di ìkìlọ̀ ati ọgbọn.",
+  "tracks.paranoia.description": "Orin Faransé sinimátíkì nipa ìmọ̀lára inú, aabo, ati ìṣọ́ra ìwalaaye, nibiti ìṣọ́ra di ìkìlọ̀ ati ọgbọn.",
+  "tracks.paranoia.playLabel": "Play Paranoïa Persécutive",
   "mini.label": "Ẹrọ orin mini lọwọlọwọ",
   "mini.noTrack": "Ko si orin ti o yan",
   "mini.toggleLabel": "Ṣiṣẹ tabi da duro orin lọwọlọwọ",
@@ -1043,7 +1091,7 @@ const premiumExperienceTranslations = {
     'press.books.title': 'Book List',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, and After The Storm.',
     'press.music.title': 'Music List',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, and Womanifesto are presented as a tender listening window into Carine’s healing-centered artistry.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, and Paranoïa Persécutive are presented as a tender listening window into Carine’s healing-centered artistry.',
     'speaking.title': 'Speaking Topics',
     'speaking.topic1': 'Domestic violence awareness and hidden survival',
     'speaking.topic2': 'Faith, resilience, and rebuilding self-worth',
@@ -1598,7 +1646,8 @@ Object.entries(translations).forEach(([language, dictionary]) => {
     'tracks.consolation.title': 'Consolation',
     'tracks.gentillesse.title': 'La Gentillesse',
     'tracks.wonderful.title': 'Wonderful',
-    'tracks.womanifesto.title': 'Womanifesto'
+    'tracks.womanifesto.title': 'Womanifesto',
+    'tracks.paranoia.title': 'Paranoïa Persécutive'
   };
 
   Object.entries(sharedDefaults).forEach(([key, value]) => {
@@ -1789,7 +1838,7 @@ const finalTranslationAuditOverrides = {
     'press.books.title': 'Liste des livres',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine et After The Storm.',
     'press.music.title': 'Liste musicale',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful et Womanifesto sont présentés comme une écoute tendre de l’art de Carine centré sur la guérison.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto et Paranoïa Persécutive sont présentés comme une écoute tendre de l’art de Carine centré sur la guérison.',
     'reflections.architectureNote': 'Chaque réflexion est structurée avec un titre, un extrait, une date, une catégorie, une image, un identifiant et un chemin de contenu riche afin d’ajouter de nouveaux textes sans modifier le rythme visuel de cette page.',
     'reflections.allLoaded': 'Toutes les réflexions sont visibles',
     'splash.kicker': 'Guérison • Grâce • Restauration',
@@ -1845,7 +1894,7 @@ const finalTranslationAuditOverrides = {
     'press.books.title': 'Lista de libros',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine y After The Storm.',
     'press.music.title': 'Lista musical',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful y Womanifesto se presentan como una ventana sensible a la artistry sanadora de Carine.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto y Paranoïa Persécutive se presentan como una ventana sensible al arte sanador de Carine.',
     'reflections.architectureNote': 'Cada reflexión se modela con título, extracto, fecha, categoría, imagen, slug y ruta de contenido enriquecido para añadir nuevos textos sin cambiar el ritmo visual de esta página.',
     'reflections.allLoaded': 'Todas las reflexiones están visibles',
     'pwa.fallbackHint': 'Los pasos de instalación están disponibles para este navegador.',
@@ -1915,7 +1964,7 @@ const finalTranslationAuditOverrides = {
     'press.books.title': 'Liste ya mikanda',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, mpe After The Storm.',
     'press.music.title': 'Liste ya miziki',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, mpe Womanifesto emonisami lokola esika ya koyoka na boboto mayele ya Carine oyo etali kobika.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, mpe Paranoïa Persécutive emonisami lokola esika ya koyoka na boboto mayele ya Carine oyo etali kobika.',
     'reflections.architectureNote': 'Réflexion mokomoko ezali na titre, extrait, date, catégorie, elilingi, slug, mpe nzela ya contenu mpo makomi ya sika ebakisama kozanga kobongola kitoko ya lokasa oyo.',
     'reflections.allLoaded': 'Ba réflexions nyonso emonani',
     'pwa.fallbackHint': 'Matambe ya installation ezali mpo na navigateur oyo.',
@@ -1985,7 +2034,7 @@ const finalTranslationAuditOverrides = {
     'press.books.title': 'Orodha ya vitabu',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, na After The Storm.',
     'press.music.title': 'Orodha ya muziki',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, na Womanifesto vinawasilishwa kama dirisha la kusikiliza kwa upole sanaa ya Carine inayolenga uponyaji.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, na Paranoïa Persécutive vinawasilishwa kama dirisha la kusikiliza kwa upole sanaa ya Carine inayolenga uponyaji.',
     'reflections.architectureNote': 'Kila tafakari imeundwa kwa kichwa, dondoo, tarehe, kategoria, picha, slug na njia ya maudhui tajiri ili maandishi mapya yaongezwe bila kubadilisha mpangilio wa ukurasa huu.',
     'reflections.allLoaded': 'Tafakari zote zinaonekana',
     'pwa.fallbackHint': 'Hatua za usakinishaji zinapatikana kwa kivinjari hiki.',
@@ -2049,7 +2098,7 @@ const finalTranslationAuditOverrides = {
     'press.books.title': 'Àtòkọ ìwé',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, àti After The Storm.',
     'press.music.title': 'Àtòkọ orin',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, àti Womanifesto ni a fi hàn gẹ́gẹ́ bí ferese ìgbọ́ràn pẹ̀lẹ́ sí iṣẹ́ ọnà ìwòsàn Carine.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, àti Paranoïa Persécutive ni a fi hàn gẹ́gẹ́ bí ferese ìgbọ́ràn pẹ̀lẹ́ sí iṣẹ́ ọnà ìwòsàn Carine.',
     'reflections.architectureNote': 'Ìrònú kọọkan ni akọlé, àyọkà, ọjọ́, ẹ̀ka, aworan, slug, àti ọ̀nà akoonu ọlọ́rọ̀ kí a lè ṣàfikún kikọ tuntun láì yí ìtòlẹ́sẹẹsẹ ojúewé yìí padà.',
     'reflections.allLoaded': 'Gbogbo ìrònú ti han',
     'pwa.fallbackHint': 'Àwọn ìgbésẹ̀ fifi sori ẹrọ wà fún aṣàwákiri yìí.',
@@ -2398,7 +2447,7 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
-const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto'];
+const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive'];
 const PLAYLIST_STORAGE_KEYS = ['carine-sanadina-player-state'];
 const CACHE_SENSITIVE_STORAGE_KEYS = [
   ...PLAYLIST_STORAGE_KEYS,
@@ -2502,6 +2551,23 @@ const CARINE_MUSIC_PLAYLIST = [
     credits: 'Written by Paul Iyogun (Omoluabi).\nProduced by Paul Iyogun (Omoluabi).\nMastered by Paul Iyogun (Omoluabi).\nPerformed by Carine Sanadina.\nPresented by Omoluabi Productions.',
     lyricsTimed: [],
     translationKey: 'tracks.womanifesto'
+  },
+  {
+    id: 'paranoia-persecutive',
+    title: 'Paranoïa Persécutive',
+    artist: 'Carine Sanadina',
+    mood: 'Dark intuition • Protection • Street vigilance • Spiritual discernment',
+    shortDescription: 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
+    description: 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
+    coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/00243680-B36E-4587-8623-9AEFD1896D1A.png',
+    audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Paranoi%CC%88a%20Perse%CC%81cutive.mp3',
+    artworkFit: 'contain',
+    lyricsPath: '/lyrics/paranoia-persecutive.lrc',
+    lyricsLrc: '/lyrics/paranoia-persecutive.lrc',
+    about: 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
+    credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
+    lyricsTimed: [],
+    translationKey: 'tracks.paranoia'
   }
 ];
 
@@ -2546,7 +2612,7 @@ const renderCarinePlaylist = () => {
     const durationValue = Number.isFinite(Number(track.duration)) && Number(track.duration) > 0 ? String(Number(track.duration)) : '';
     const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
     const lyricsPath = escapePlaylistAttribute(track.lyrics || '');
-    const lyricsLrcPath = escapePlaylistAttribute(track.lyricsLrc || '');
+    const lyricsLrcPath = escapePlaylistAttribute(track.lyricsLrc || track.lyricsPath || '');
     const sunoSource = escapePlaylistAttribute(track.sunoSource || '');
     const about = escapePlaylistAttribute(track.about || track.description || '');
     const credits = escapePlaylistAttribute(track.credits || translate('tracks.genericCredits'));
