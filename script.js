@@ -2578,7 +2578,6 @@ const renderCarinePlaylist = () => {
         </div>
 
         <div class="track-meta">
-          <p class="music-label" data-i18n="${trackKey}.number">Track ${String(index + 1).padStart(2, '0')}</p>
           <h3 id="${titleId}" data-i18n="${trackKey}.title">${trackTitle}</h3>
           <p class="artist-name">${trackArtist}</p>
           <p class="track-description" data-i18n="${trackKey}.description">${trackDescription}</p>
@@ -2602,7 +2601,7 @@ const renderCarinePlaylist = () => {
   }).join('');
 
   if (expandedPlaylistMount) {
-    expandedPlaylistMount.innerHTML = safePlaylist.map((track, index) => {
+    expandedPlaylistMount.innerHTML = safePlaylist.map((track) => {
       const trackKey = escapePlaylistAttribute(track.translationKey);
       const durationLabel = formatTrackDuration(Number(track.duration));
       const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
@@ -2628,7 +2627,6 @@ const renderCarinePlaylist = () => {
             />
           </span>
           <span class="expanded-track-option__meta">
-            <span class="expanded-track-option__number" data-i18n="${trackKey}.number">Track ${String(index + 1).padStart(2, '0')}</span>
             <strong data-i18n="${trackKey}.title">${escapePlaylistText(track.title)}</strong>
             <span>${escapePlaylistText(track.artist)}</span>
           </span>
