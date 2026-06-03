@@ -6726,3 +6726,28 @@ body.lyrics-expanded .mini-player.is-visible,
 body.lyrics-expanded-open .mini-player.is-visible {
   display: none;
 }
+
+/* Concise localized synopses for the regular music player. */
+.track-synopsis {
+  display: -webkit-box;
+  max-width: min(100%, 62ch);
+  margin-top: 6px;
+  overflow: hidden;
+  color: rgba(255, 248, 238, 0.58);
+  font-size: clamp(0.76rem, 1.35vw, 0.86rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.005em;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 640px) {
+  .track-synopsis {
+    max-width: 100%;
+    margin-top: 4px;
+    font-size: 0.72rem;
+    line-height: 1.28;
+  }
+}

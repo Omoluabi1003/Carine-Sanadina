@@ -85,6 +85,7 @@ translations.en = {
   'tracks.consolation.fallback': 'Consolation cover art is temporarily unavailable.',
   'tracks.consolation.number': 'Track 01',
   'tracks.consolation.description': 'Healing-centered comfort and hope',
+  'consolationSynopsis': 'A worship anthem declaring Christ as comfort, refuge, and King.',
   'tracks.consolation.playLabel': 'Play Consolation',
   'tracks.gentillesse.title': 'La Gentillesse',
   'tracks.gentillesse.audioLabel': 'La Gentillesse by Carine Sanadina',
@@ -92,6 +93,7 @@ translations.en = {
   'tracks.gentillesse.fallback': 'La Gentillesse cover art is temporarily unavailable.',
   'tracks.gentillesse.number': 'Track 02',
   'tracks.gentillesse.description': 'Faith-filled kindness anthem',
+  'laGentillesseSynopsis': 'A celebration of kindness, compassion, and the power of grace.',
   'tracks.gentillesse.playLabel': 'Play La Gentillesse',
   'tracks.wonderful.title': 'Wonderful',
   'tracks.wonderful.audioLabel': 'Wonderful by Carine Sanadina',
@@ -99,6 +101,7 @@ translations.en = {
   'tracks.wonderful.fallback': 'Wonderful cover art is temporarily unavailable.',
   'tracks.wonderful.number': 'Track 03',
   'tracks.wonderful.description': 'Joyful praise and gratitude',
+  'wonderfulSynopsis': 'A joyful testimony of God’s goodness, faithfulness, and love.',
   'tracks.wonderful.playLabel': 'Play Wonderful',
   'tracks.womanifesto.title': 'Womanifesto',
   'tracks.womanifesto.audioLabel': 'Womanifesto by Carine Sanadina',
@@ -107,6 +110,7 @@ translations.en = {
   'tracks.womanifesto.number': 'Track 04',
   'tracks.womanifesto.shortDescription': 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, and victory through faith.',
   'tracks.womanifesto.description': 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, and victory through faith.',
+  'womanifestoSynopsis': 'A declaration of healing, resilience, and grace for women rising stronger.',
   'tracks.womanifesto.playLabel': 'Play Womanifesto',
   'tracks.paranoia.title': 'Paranoïa Persécutive',
   'tracks.paranoia.audioLabel': 'Paranoïa Persécutive by Carine Sanadina',
@@ -115,6 +119,7 @@ translations.en = {
   'tracks.paranoia.number': 'Track 05',
   'tracks.paranoia.shortDescription': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
   'tracks.paranoia.description': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
+  'paranoiaPersecutiveSynopsis': 'A cinematic reflection on intuition, vigilance, and spiritual discernment.',
   'tracks.paranoia.playLabel': 'Play Paranoïa Persécutive',
   'mini.label': 'Current track mini player',
   'mini.noTrack': 'No track selected',
@@ -262,16 +267,19 @@ translations.fr = {
   'tracks.consolation.fallback': 'La pochette de Consolation est temporairement indisponible.',
   'tracks.consolation.number': 'Titre 01',
   'tracks.consolation.description': 'Réconfort et espoir centrés sur la guérison',
+  'consolationSynopsis': 'Un chant d’adoration proclamant le Christ comme consolation, refuge et Roi.',
   'tracks.consolation.playLabel': 'Lire Consolation',
   'tracks.gentillesse.coverAlt': 'Pochette de La Gentillesse',
   'tracks.gentillesse.fallback': 'La pochette de La Gentillesse est temporairement indisponible.',
   'tracks.gentillesse.number': 'Titre 02',
   'tracks.gentillesse.description': 'Hymne de bonté porté par la foi',
+  'laGentillesseSynopsis': 'Une célébration de la gentillesse, de la compassion et de la puissance de la grâce.',
   'tracks.gentillesse.playLabel': 'Lire La Gentillesse',
   'tracks.wonderful.coverAlt': 'Pochette de Wonderful',
   'tracks.wonderful.fallback': 'La pochette de Wonderful est temporairement indisponible.',
   'tracks.wonderful.number': 'Titre 03',
   'tracks.wonderful.description': 'Louange joyeuse et gratitude',
+  'wonderfulSynopsis': 'Un témoignage joyeux de la bonté, de la fidélité et de l’amour de Dieu.',
   'tracks.wonderful.playLabel': 'Lire Wonderful',
   'tracks.womanifesto.audioLabel': 'Womanifesto de Carine Sanadina',
   'tracks.womanifesto.coverAlt': 'Pochette de Womanifesto',
@@ -279,6 +287,7 @@ translations.fr = {
   'tracks.womanifesto.number': 'Titre 04',
   'tracks.womanifesto.shortDescription': 'Un hymne gospel africain plein d’âme qui célèbre la résilience féminine, la guérison, la grâce et la victoire par la foi.',
   'tracks.womanifesto.description': 'Un hymne gospel africain plein d’âme qui célèbre la résilience féminine, la guérison, la grâce et la victoire par la foi.',
+  'womanifestoSynopsis': 'Une déclaration de guérison, de résilience et de grâce pour les femmes qui se relèvent.',
   'tracks.womanifesto.playLabel': 'Lire Womanifesto',
   'tracks.paranoia.title': 'Paranoïa Persécutive',
   'tracks.paranoia.audioLabel': 'Paranoïa Persécutive de Carine Sanadina',
@@ -287,6 +296,7 @@ translations.fr = {
   'tracks.paranoia.number': 'Titre 05',
   'tracks.paranoia.shortDescription': 'Un morceau français cinématographique sur l’intuition, la protection et la conscience de survie, où la vigilance devient à la fois avertissement et sagesse.',
   'tracks.paranoia.description': 'Un morceau français cinématographique sur l’intuition, la protection et la conscience de survie, où la vigilance devient à la fois avertissement et sagesse.',
+  'paranoiaPersecutiveSynopsis': 'Une réflexion cinématographique sur l’intuition, la vigilance et le discernement spirituel.',
   'tracks.paranoia.playLabel': 'Lire Paranoïa Persécutive',
   'mini.label': 'Mini lecteur du titre en cours',
   'mini.noTrack': 'Aucun titre sélectionné',
@@ -426,18 +436,21 @@ translations.es = {
   'tracks.consolation.fallback': 'La portada de Consolation no está disponible temporalmente.',
   'tracks.consolation.number': 'Pista 01',
   'tracks.consolation.description': 'Consuelo y esperanza centrados en la sanación',
+  'consolationSynopsis': 'Un himno de adoración que proclama a Cristo como consuelo, refugio y Rey.',
   'tracks.consolation.playLabel': 'Reproducir Consolation',
   'tracks.gentillesse.audioLabel': 'La Gentillesse de Carine Sanadina',
   'tracks.gentillesse.coverAlt': 'Portada de La Gentillesse',
   'tracks.gentillesse.fallback': 'La portada de La Gentillesse no está disponible temporalmente.',
   'tracks.gentillesse.number': 'Pista 02',
   'tracks.gentillesse.description': 'Himno de bondad lleno de fe',
+  'laGentillesseSynopsis': 'Una celebración de la bondad, la compasión y el poder de la gracia.',
   'tracks.gentillesse.playLabel': 'Reproducir La Gentillesse',
   'tracks.wonderful.audioLabel': 'Wonderful de Carine Sanadina',
   'tracks.wonderful.coverAlt': 'Portada de Wonderful',
   'tracks.wonderful.fallback': 'La portada de Wonderful no está disponible temporalmente.',
   'tracks.wonderful.number': 'Pista 03',
   'tracks.wonderful.description': 'Alabanza alegre y gratitud',
+  'wonderfulSynopsis': 'Un alegre testimonio de la bondad, fidelidad y amor de Dios.',
   'tracks.wonderful.playLabel': 'Reproducir Wonderful',
   'tracks.womanifesto.audioLabel': 'Womanifesto de Carine Sanadina',
   'tracks.womanifesto.coverAlt': 'Portada de Womanifesto',
@@ -445,6 +458,7 @@ translations.es = {
   'tracks.womanifesto.number': 'Pista 04',
   'tracks.womanifesto.shortDescription': 'Un himno gospel africano con alma que celebra la resiliencia femenina, la sanación, la gracia y la victoria por la fe.',
   'tracks.womanifesto.description': 'Un himno gospel africano con alma que celebra la resiliencia femenina, la sanación, la gracia y la victoria por la fe.',
+  'womanifestoSynopsis': 'Una declaración de sanación, resiliencia y gracia para mujeres que se levantan más fuertes.',
   'tracks.womanifesto.playLabel': 'Reproducir Womanifesto',
   'tracks.paranoia.title': 'Paranoïa Persécutive',
   'tracks.paranoia.audioLabel': 'Paranoïa Persécutive de Carine Sanadina',
@@ -453,6 +467,7 @@ translations.es = {
   'tracks.paranoia.number': 'Pista 05',
   'tracks.paranoia.shortDescription': 'Una pista francesa cinematográfica sobre intuición, protección y conciencia de supervivencia, donde la vigilancia se vuelve advertencia y sabiduría.',
   'tracks.paranoia.description': 'Una pista francesa cinematográfica sobre intuición, protección y conciencia de supervivencia, donde la vigilancia se vuelve advertencia y sabiduría.',
+  'paranoiaPersecutiveSynopsis': 'Una reflexión cinematográfica sobre la intuición, la vigilancia y el discernimiento espiritual.',
   'tracks.paranoia.playLabel': 'Reproducir Paranoïa Persécutive',
   'mini.label': 'Minirreproductor de la pista actual',
   'mini.noTrack': 'No hay pista seleccionada',
@@ -600,6 +615,7 @@ translations.ln = {
   'tracks.consolation.fallback': 'Ezipeli ya loyembo Libondisi ezali komonana te mpo na mwa ntango.',
   'tracks.consolation.number': 'Loyembo 01',
   'tracks.consolation.description': 'Libondisi ya motema mpe elikya ya kobika',
+  'consolationSynopsis': 'Nzembo ya losambo oyo ezali kotombola Klisto lokola kobondisama, ekimelo mpe Mokonzi.',
   'tracks.consolation.playLabel': 'Beta Loyembo Libondisi',
   'tracks.gentillesse.title': 'Boboto',
   'tracks.gentillesse.audioLabel': 'Boboto ya Carine Sanadina',
@@ -607,6 +623,7 @@ translations.ln = {
   'tracks.gentillesse.fallback': 'Ezipeli ya loyembo Boboto ezali komonana te mpo na mwa ntango.',
   'tracks.gentillesse.number': 'Loyembo 02',
   'tracks.gentillesse.description': 'Loyembo ya boboto oyo etondi na kondima',
+  'laGentillesseSynopsis': 'Botomboli ya boboto, mawa mpe nguya ya ngolu.',
   'tracks.gentillesse.playLabel': 'Beta Loyembo Boboto',
   'tracks.wonderful.title': 'Kitoko mingi',
   'tracks.wonderful.audioLabel': 'Kitoko mingi ya Carine Sanadina',
@@ -614,6 +631,7 @@ translations.ln = {
   'tracks.wonderful.fallback': 'Ezipeli ya loyembo Kitoko mingi ezali komonana te mpo na mwa ntango.',
   'tracks.wonderful.number': 'Loyembo 03',
   'tracks.wonderful.description': 'Masanzoli ya esengo mpe matondi',
+  'wonderfulSynopsis': 'Litatoli ya esengo ya bolamu, bosembo mpe bolingo ya Nzambe.',
   'tracks.wonderful.playLabel': 'Beta Loyembo Kitoko mingi',
   'tracks.womanifesto.audioLabel': 'Womanifesto ya Carine Sanadina',
   'tracks.womanifesto.coverAlt': 'Elilingi ya ezipeli ya Womanifesto',
@@ -621,6 +639,7 @@ translations.ln = {
   'tracks.womanifesto.number': 'Loyembo 04',
   'tracks.womanifesto.shortDescription': 'Loyembo ya gospel ya Afrika ya mozindo oyo ekumisaka mpiko ya basi, kobika, ngolu, mpe elonga na nzela ya kondima.',
   'tracks.womanifesto.description': 'Loyembo ya gospel ya Afrika ya mozindo oyo ekumisaka mpiko ya basi, kobika, ngolu, mpe elonga na nzela ya kondima.',
+  'womanifestoSynopsis': 'Litatoli ya kobika, makasi mpe ngolu mpo na basi bazali kotelema lisusu.',
   'tracks.womanifesto.playLabel': 'Beta Womanifesto',
   'tracks.paranoia.title': 'Paranoïa Persécutive',
   'tracks.paranoia.audioLabel': 'Paranoïa Persécutive ya Carine Sanadina',
@@ -629,6 +648,7 @@ translations.ln = {
   'tracks.paranoia.number': 'Loyembo 05',
   'tracks.paranoia.shortDescription': 'Loyembo ya Lifalanse ya sinema oyo etaleli intuition, bobateli, mpe ekɛngɛ mpo na kobika, epai vigilance ekómaka likebisi mpe bwanya.',
   'tracks.paranoia.description': 'Loyembo ya Lifalanse ya sinema oyo etaleli intuition, bobateli, mpe ekɛngɛ mpo na kobika, epai vigilance ekómaka likebisi mpe bwanya.',
+  'paranoiaPersecutiveSynopsis': 'Likambo ya mozindo na ntina ya mayele ya motema, bokebi mpe bososoli ya molimo.',
   'tracks.paranoia.playLabel': 'Beta Paranoïa Persécutive',
   'mini.label': 'Mwa ebɛtelo ya loyembo oyo ezali koyokana',
   'mini.noTrack': 'Loyembo eponami naino te',
@@ -777,6 +797,7 @@ translations.sw = {
   "tracks.consolation.fallback": "Sanaa ya jalada la Consolation haipatikani kwa sasa.",
   "tracks.consolation.number": "Wimbo wa 01",
   "tracks.consolation.description": "Uponyaji unaozingatia faraja na matumaini",
+  "consolationSynopsis": "Wimbo wa ibada unaomtangaza Kristo kama faraja, kimbilio na Mfalme.",
   "tracks.consolation.playLabel": "Cheza Faraja",
   "tracks.gentillesse.title": "La Gentillesse",
   "tracks.gentillesse.audioLabel": "La Gentillesse na Carine Sanadina",
@@ -784,6 +805,7 @@ translations.sw = {
   "tracks.gentillesse.fallback": "Sanaa ya jalada ya La Gentillesse haipatikani kwa sasa.",
   "tracks.gentillesse.number": "Wimbo wa 02",
   "tracks.gentillesse.description": "Wimbo wa fadhili uliojaa imani",
+  "laGentillesseSynopsis": "Sherehe ya wema, huruma na nguvu ya neema.",
   "tracks.gentillesse.playLabel": "Cheza La Gentillesse",
   "tracks.wonderful.title": "Ajabu",
   "tracks.wonderful.audioLabel": "Ajabu na Carine Sanadina",
@@ -791,6 +813,7 @@ translations.sw = {
   "tracks.wonderful.fallback": "Sanaa nzuri ya jalada haipatikani kwa sasa.",
   "tracks.wonderful.number": "Wimbo wa 03",
   "tracks.wonderful.description": "Sifa za furaha na shukrani",
+  "wonderfulSynopsis": "Ushuhuda wa furaha wa wema, uaminifu na upendo wa Mungu.",
   "tracks.wonderful.playLabel": "Cheza Ajabu",
   "tracks.womanifesto.audioLabel": "Womanifesto na Carine Sanadina",
   "tracks.womanifesto.coverAlt": "Sanaa ya jalada la Womanifesto",
@@ -798,6 +821,7 @@ translations.sw = {
   "tracks.womanifesto.number": "Wimbo 04",
   "tracks.womanifesto.shortDescription": "Wimbo wa injili ya Kiafrika wenye hisia unaosherehekea uthabiti wa wanawake, uponyaji, neema, na ushindi kupitia imani.",
   "tracks.womanifesto.description": "Wimbo wa injili ya Kiafrika wenye hisia unaosherehekea uthabiti wa wanawake, uponyaji, neema, na ushindi kupitia imani.",
+  "womanifestoSynopsis": "Tamko la uponyaji, ustahimilivu na neema kwa wanawake wanaoinuka kwa nguvu zaidi.",
   "tracks.womanifesto.playLabel": "Cheza Womanifesto",
   "tracks.paranoia.title": "Paranoïa Persécutive",
   "tracks.paranoia.audioLabel": "Paranoïa Persécutive na Carine Sanadina",
@@ -806,6 +830,7 @@ translations.sw = {
   "tracks.paranoia.number": "Wimbo 05",
   "tracks.paranoia.shortDescription": "Wimbo wa Kifaransa wa sinema kuhusu hisia za ndani, ulinzi, na umakini wa kuishi, ambapo uangalifu huwa onyo na hekima.",
   "tracks.paranoia.description": "Wimbo wa Kifaransa wa sinema kuhusu hisia za ndani, ulinzi, na umakini wa kuishi, ambapo uangalifu huwa onyo na hekima.",
+  "paranoiaPersecutiveSynopsis": "Tafakari ya kisinema kuhusu angavu, umakini na utambuzi wa kiroho.",
   "tracks.paranoia.playLabel": "Cheza Paranoïa Persécutive",
   "mini.label": "Mchezaji mdogo wa wimbo wa sasa",
   "mini.noTrack": "Hakuna wimbo uliochaguliwa",
@@ -954,6 +979,7 @@ translations.yo = {
   "tracks.consolation.fallback": "Iṣẹ ọna ideri itunu ko si fun igba diẹ.",
   "tracks.consolation.number": "Orin 01",
   "tracks.consolation.description": "Itunu ati ireti ti o dojukọ iwosan",
+  "consolationSynopsis": "Orin ìjọsìn tó ń kéde Kristi gẹ́gẹ́ bí ìtùnú, ààbò àti Ọba.",
   "tracks.consolation.playLabel": "Play Itunu",
   "tracks.gentillesse.title": "La Gentillesse",
   "tracks.gentillesse.audioLabel": "La Gentillesse nipasẹ Carine Sanadina",
@@ -961,6 +987,7 @@ translations.yo = {
   "tracks.gentillesse.fallback": "La Gentillesse aworan ideri ko si fun igba diẹ.",
   "tracks.gentillesse.number": "Orin 02",
   "tracks.gentillesse.description": "Orin iyin ti o kun igbagbo",
+  "laGentillesseSynopsis": "Ayẹyẹ inú-rere, àánú àti agbára oore-ọfẹ.",
   "tracks.gentillesse.playLabel": "Play La Gentillesse",
   "tracks.wonderful.title": "Iyanu",
   "tracks.wonderful.audioLabel": "Iyanu nipasẹ Carine Sanadina",
@@ -968,6 +995,7 @@ translations.yo = {
   "tracks.wonderful.fallback": "Iṣẹ ọna ideri iyalẹnu ko si fun igba diẹ.",
   "tracks.wonderful.number": "Orin 03",
   "tracks.wonderful.description": "Iyin ati idupe",
+  "wonderfulSynopsis": "Ẹrí ayọ̀ nípa rere, ìṣòtítọ́ àti ìfẹ́ Ọlọ́run.",
   "tracks.wonderful.playLabel": "Play Iyanu",
   "tracks.womanifesto.audioLabel": "Womanifesto nipasẹ Carine Sanadina",
   "tracks.womanifesto.coverAlt": "Aworan ideri Womanifesto",
@@ -975,6 +1003,7 @@ translations.yo = {
   "tracks.womanifesto.number": "Orin 04",
   "tracks.womanifesto.shortDescription": "Orin gospel Áfíríkà alárinrin tí ń ṣe ayẹyẹ ìfaradà obìnrin, ìwòsàn, oore-ọfẹ́, àti ìṣẹ́gun nípasẹ̀ ìgbàgbọ́.",
   "tracks.womanifesto.description": "Orin gospel Áfíríkà alárinrin tí ń ṣe ayẹyẹ ìfaradà obìnrin, ìwòsàn, oore-ọfẹ́, àti ìṣẹ́gun nípasẹ̀ ìgbàgbọ́.",
+  "womanifestoSynopsis": "Ìkéde ìwòsàn, ìfaradà àti oore-ọfẹ fún àwọn obìnrin tí ń dìde ní agbára.",
   "tracks.womanifesto.playLabel": "Play Womanifesto",
   "tracks.paranoia.title": "Paranoïa Persécutive",
   "tracks.paranoia.audioLabel": "Paranoïa Persécutive nipasẹ Carine Sanadina",
@@ -983,6 +1012,7 @@ translations.yo = {
   "tracks.paranoia.number": "Orin 05",
   "tracks.paranoia.shortDescription": "Orin Faransé sinimátíkì nipa ìmọ̀lára inú, aabo, ati ìṣọ́ra ìwalaaye, nibiti ìṣọ́ra di ìkìlọ̀ ati ọgbọn.",
   "tracks.paranoia.description": "Orin Faransé sinimátíkì nipa ìmọ̀lára inú, aabo, ati ìṣọ́ra ìwalaaye, nibiti ìṣọ́ra di ìkìlọ̀ ati ọgbọn.",
+  "paranoiaPersecutiveSynopsis": "Ìrònú alárinká nípa ìmọ̀ inú, ìṣọ́ra àti ìmòye ẹ̀mí.",
   "tracks.paranoia.playLabel": "Play Paranoïa Persécutive",
   "mini.label": "Ẹrọ orin mini lọwọlọwọ",
   "mini.noTrack": "Ko si orin ti o yan",
@@ -2497,7 +2527,8 @@ const CARINE_MUSIC_PLAYLIST = [
     about: 'A tender song of comfort, reassurance, faith, and emotional restoration for hearts that need courage after hardship.',
     credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
     lyricsTimed: [],
-    translationKey: 'tracks.consolation'
+    translationKey: 'tracks.consolation',
+    synopsisKey: 'consolationSynopsis'
   },
   {
     id: 'gentillesse',
@@ -2514,7 +2545,8 @@ const CARINE_MUSIC_PLAYLIST = [
     about: 'A faith-filled meditation on kindness as strength: compassion that protects dignity, restores atmosphere, and makes room for grace.',
     credits: 'Written by Paul Iyogun (Omoluabi).\nProduced by Paul Iyogun (Omoluabi).\nMastered by Paul Iyogun (Omoluabi).\nPerformed by Carine Sanadina.\nPresented by Omoluabi Productions.',
     lyricsTimed: [],
-    translationKey: 'tracks.gentillesse'
+    translationKey: 'tracks.gentillesse',
+    synopsisKey: 'laGentillesseSynopsis'
   },
   {
     id: 'wonderful',
@@ -2531,7 +2563,8 @@ const CARINE_MUSIC_PLAYLIST = [
     about: 'A praise-filled expression of gratitude, joy, and wonder at God’s goodness through every season.',
     credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
     lyricsTimed: [],
-    translationKey: 'tracks.wonderful'
+    translationKey: 'tracks.wonderful',
+    synopsisKey: 'wonderfulSynopsis'
   },
   {
     id: 'womanifesto',
@@ -2550,7 +2583,8 @@ const CARINE_MUSIC_PLAYLIST = [
     about: 'A soulful African gospel anthem celebrating feminine resilience, healing, grace, victory, identity, and restoration through faith.',
     credits: 'Written by Paul Iyogun (Omoluabi).\nProduced by Paul Iyogun (Omoluabi).\nMastered by Paul Iyogun (Omoluabi).\nPerformed by Carine Sanadina.\nPresented by Omoluabi Productions.',
     lyricsTimed: [],
-    translationKey: 'tracks.womanifesto'
+    translationKey: 'tracks.womanifesto',
+    synopsisKey: 'womanifestoSynopsis'
   },
   {
     id: 'paranoia-persecutive',
@@ -2569,7 +2603,8 @@ const CARINE_MUSIC_PLAYLIST = [
     about: 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
     credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
     lyricsTimed: [],
-    translationKey: 'tracks.paranoia'
+    translationKey: 'tracks.paranoia',
+    synopsisKey: 'paranoiaPersecutiveSynopsis'
   }
 ];
 
@@ -2607,6 +2642,8 @@ const renderCarinePlaylist = () => {
     const trackTitle = escapePlaylistText(track.title);
     const trackArtist = escapePlaylistText(track.artist);
     const trackDescription = escapePlaylistText(track.description);
+    const synopsisKey = escapePlaylistAttribute(track.synopsisKey || `${track.translationKey}.synopsis`);
+    const trackSynopsis = escapePlaylistText(t(track.synopsisKey || `${track.translationKey}.synopsis`, ''));
     const trackMood = escapePlaylistAttribute(track.mood);
     const trackId = escapePlaylistAttribute(track.id);
     const coverUrl = escapePlaylistAttribute(track.coverUrl);
@@ -2665,6 +2702,7 @@ const renderCarinePlaylist = () => {
         <div class="track-meta">
           <h3 id="${titleId}" data-i18n="${trackKey}.title">${trackTitle}</h3>
           <p class="artist-name">${trackArtist}</p>
+          <p class="track-synopsis" data-i18n="${synopsisKey}">${trackSynopsis}</p>
           <p class="track-description" data-i18n="${trackKey}.description">${trackDescription}</p>
         </div>
 
