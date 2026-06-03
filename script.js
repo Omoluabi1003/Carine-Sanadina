@@ -2562,8 +2562,10 @@ const CARINE_MUSIC_PLAYLIST = [
     coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/00243680-B36E-4587-8623-9AEFD1896D1A.png',
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Paranoi%CC%88a%20Perse%CC%81cutive.mp3',
     artworkFit: 'contain',
-    lyricsPath: '/lyrics/paranoia-persecutive.lrc',
-    lyricsLrc: '/lyrics/paranoia-persecutive.lrc',
+    lyrics: '/lyrics/paranoia-persecutive.txt',
+    // TODO: Convert Paranoïa Persécutive lyrics to timed LRC for sing-along sync.
+    // Future timed lyrics path: /lyrics/paranoia-persecutive.lrc
+    lyricsLrc: '',
     about: 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
     credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
     lyricsTimed: [],
@@ -4460,7 +4462,7 @@ if (musicPlayers.length) {
     if (!resolveSiteAssetPath(lyricsPath)) {
       lyricEntries = [];
       lyricTiming = [];
-      setLyricsMessage('Synced lyrics are not available for this track yet.');
+      setLyricsMessage(translate('lyrics.unavailable'));
       return;
     }
 
@@ -4472,7 +4474,7 @@ if (musicPlayers.length) {
       if (currentLyricsPlayer !== player) return;
       lyricEntries = [];
       lyricTiming = [];
-      setLyricsMessage('Synced lyrics are not available for this track yet.');
+      setLyricsMessage(translate('lyrics.unavailable'));
     }
   };
 
