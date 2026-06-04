@@ -3011,6 +3011,384 @@ Object.entries(extendedLanguageTranslations).forEach(([language, dictionary]) =>
   translations[language] = { ...translations[DEFAULT_LANGUAGE], ...dictionary };
 });
 
+
+const i18nHardeningTranslations = {
+  en: {
+    'music.visualizerStyle.orb': 'Orb',
+    'music.visualizerStyle.waveform': 'Wave Bars',
+    'music.visualizerStyle.particle-field': 'Particle Field',
+    'music.visualizerStyle.wireframe-lattice': 'Wireframe Lattice',
+    'music.visualizerStyle.waveform-tunnel': 'Wave Tunnel',
+    'music.visualizerStyle.holographic-rings': 'Holographic Rings',
+    'lyrics.debug.ariaLabel': 'Lyrics calibration diagnostics',
+    'lyrics.debug.title': 'Lyrics calibration',
+    'lyrics.debug.close': 'Close lyrics diagnostics',
+    'vinyl.debug.ariaLabel': 'Vinyl diagnostics',
+    'vinyl.debug.title': 'Vinyl diagnostics'
+  },
+  fr: {
+    'music.visualizerStyle.orb': 'Orbe',
+    'music.visualizerStyle.waveform': 'Barres d’onde',
+    'music.visualizerStyle.particle-field': 'Champ de particules',
+    'music.visualizerStyle.wireframe-lattice': 'Treillis filaire',
+    'music.visualizerStyle.waveform-tunnel': 'Tunnel d’onde',
+    'music.visualizerStyle.holographic-rings': 'Anneaux holographiques',
+    'lyrics.debug.ariaLabel': 'Diagnostics de calibration des paroles',
+    'lyrics.debug.title': 'Calibration des paroles',
+    'lyrics.debug.close': 'Fermer les diagnostics des paroles',
+    'vinyl.debug.ariaLabel': 'Diagnostics vinyle',
+    'vinyl.debug.title': 'Diagnostics vinyle',
+    'guide.welcome': 'Bonjour, je suis le guide de Carine — un espace doux pour découvrir ses livres, sa musique et son message de guérison. Comment puis-je vous aider ?',
+    'audio.pause': 'Pause'
+  },
+  es: {
+    'music.visualizerStyle.orb': 'Orbe',
+    'music.visualizerStyle.waveform': 'Barras de onda',
+    'music.visualizerStyle.particle-field': 'Campo de partículas',
+    'music.visualizerStyle.wireframe-lattice': 'Retícula alámbrica',
+    'music.visualizerStyle.waveform-tunnel': 'Túnel de onda',
+    'music.visualizerStyle.holographic-rings': 'Anillos holográficos',
+    'lyrics.debug.ariaLabel': 'Diagnóstico de calibración de letras',
+    'lyrics.debug.title': 'Calibración de letras',
+    'lyrics.debug.close': 'Cerrar diagnóstico de letras',
+    'vinyl.debug.ariaLabel': 'Diagnóstico de vinilo',
+    'vinyl.debug.title': 'Diagnóstico de vinilo',
+    'guide.welcome': 'Hola, soy la guía de Carine: un espacio amable para descubrir sus libros, su música y su mensaje de sanación. ¿Cómo puedo ayudarte?',
+    'lyrics.return': 'Volver al reproductor',
+    'lyrics.focusKicker': 'Modo de letras enfocadas',
+    'lyrics.moreMenu': '⋯ Más',
+    'lyrics.moreMenuLabel': 'Menú de letras enfocadas',
+    'lyrics.moreClose': 'Cerrar menú de letras'
+  },
+  ln: {
+    'music.visualizerStyle.orb': 'Libungutulu',
+    'music.visualizerStyle.waveform': 'Banzete ya mbonge',
+    'music.visualizerStyle.particle-field': 'Esika ya biloko mikemike',
+    'music.visualizerStyle.wireframe-lattice': 'Réseau ya bansinga',
+    'music.visualizerStyle.waveform-tunnel': 'Tunnel ya mbonge',
+    'music.visualizerStyle.holographic-rings': 'Bapete ya hologramme',
+    'lyrics.debug.ariaLabel': 'Botali ya kobongisa maloba ya loyembo',
+    'lyrics.debug.title': 'Kobongisa maloba ya loyembo',
+    'lyrics.debug.close': 'Kanga botali ya maloba ya loyembo',
+    'vinyl.debug.ariaLabel': 'Botali ya vinyle',
+    'vinyl.debug.title': 'Botali ya vinyle',
+    'guide.welcome': 'Mbote, ngai nazali motambwisi ya Carine — esika ya boboto mpo na koyeba mikanda, miziki mpe nsango na ye ya kobika. Nakoki kosalisa yo ndenge nini?',
+    'lyrics.return': 'Zonga na ebɛtelo',
+    'lyrics.focusKicker': 'Mode ya kotala maloba',
+    'lyrics.moreMenu': '⋯ Mosusu',
+    'lyrics.moreMenuLabel': 'Menu ya maloba ya loyembo',
+    'lyrics.moreClose': 'Kanga menu ya maloba'
+  },
+  sw: {
+    'music.visualizerStyle.orb': 'Duara',
+    'music.visualizerStyle.waveform': 'Mihimili ya mawimbi',
+    'music.visualizerStyle.particle-field': 'Uwanja wa chembe',
+    'music.visualizerStyle.wireframe-lattice': 'Wavu wa waya',
+    'music.visualizerStyle.waveform-tunnel': 'Handaki la mawimbi',
+    'music.visualizerStyle.holographic-rings': 'Pete za hologramu',
+    'lyrics.debug.ariaLabel': 'Uchunguzi wa kusawazisha maneno',
+    'lyrics.debug.title': 'Usawazishaji wa maneno',
+    'lyrics.debug.close': 'Funga uchunguzi wa maneno',
+    'vinyl.debug.ariaLabel': 'Uchunguzi wa vinyl',
+    'vinyl.debug.title': 'Uchunguzi wa vinyl',
+    'guide.welcome': 'Habari, mimi ni mwongozo wa Carine — nafasi tulivu ya kuchunguza vitabu, muziki na ujumbe wake wa uponyaji. Ninawezaje kukusaidia?',
+    'lyrics.return': 'Rudi kwa kichezaji',
+    'lyrics.focusKicker': 'Hali ya maneno yaliyoangaziwa',
+    'lyrics.moreMenu': '⋯ Zaidi',
+    'lyrics.moreMenuLabel': 'Menyu ya maneno yaliyoangaziwa',
+    'lyrics.moreClose': 'Funga menyu ya maneno'
+  },
+  yo: {
+    'music.visualizerStyle.orb': 'Òrbù',
+    'music.visualizerStyle.waveform': 'Àwọn ọ̀pá ìgbì',
+    'music.visualizerStyle.particle-field': 'Pápá patikulu',
+    'music.visualizerStyle.wireframe-lattice': 'Àwọ̀n waya',
+    'music.visualizerStyle.waveform-tunnel': 'Ọ̀nà ìgbì',
+    'music.visualizerStyle.holographic-rings': 'Àwọn oruka hologramu',
+    'lyrics.debug.ariaLabel': 'Ìtọ́pinpin ìtọ́nisọ́nà àwọn ọ̀rọ̀ orin',
+    'lyrics.debug.title': 'Ìtọ́nisọ́nà àwọn ọ̀rọ̀ orin',
+    'lyrics.debug.close': 'Pa ìtọ́pinpin ọ̀rọ̀ orin',
+    'vinyl.debug.ariaLabel': 'Ìtọ́pinpin vinyl',
+    'vinyl.debug.title': 'Ìtọ́pinpin vinyl',
+    'guide.welcome': 'Báwo, èmi ni amọ̀nà Carine — ibi pẹ̀lẹ́ fún ṣíṣàwárí àwọn ìwé rẹ̀, orin rẹ̀ àti ìránṣẹ́ ìwòsàn rẹ̀. Báwo ni mo ṣe lè ràn ọ́ lọ́wọ́?',
+    'lyrics.return': 'Padà sí ẹrọ orin',
+    'lyrics.focusKicker': 'Ipo ọ̀rọ̀ orin àfiyèsí',
+    'lyrics.moreMenu': '⋯ Síi',
+    'lyrics.moreMenuLabel': 'Àkojọ ọ̀rọ̀ orin àfiyèsí',
+    'lyrics.moreClose': 'Pa àkojọ ọ̀rọ̀ orin'
+  },
+  de: {
+    'music.visualizerStyle.orb': 'Kugel',
+    'music.visualizerStyle.waveform': 'Wellenbalken',
+    'music.visualizerStyle.particle-field': 'Partikelfeld',
+    'music.visualizerStyle.wireframe-lattice': 'Drahtgitter',
+    'music.visualizerStyle.waveform-tunnel': 'Wellentunnel',
+    'music.visualizerStyle.holographic-rings': 'Holografische Ringe',
+    'lyrics.debug.ariaLabel': 'Diagnose zur Liedtext-Kalibrierung',
+    'lyrics.debug.title': 'Liedtext-Kalibrierung',
+    'lyrics.debug.close': 'Liedtext-Diagnose schließen',
+    'vinyl.debug.ariaLabel': 'Vinyl-Diagnose',
+    'vinyl.debug.title': 'Vinyl-Diagnose',
+    'books.pain.kicker': 'Memoir',
+    'music.playlist': 'Wiedergabeliste',
+    'audio.pause': 'Pause',
+    'legal.kicker': 'Rechtliches / Bedingungen',
+    'legal.heading': 'Hinweis zu Website-Eigentum und Nutzung',
+    'legal.ariaLabel': 'Rechtliche Hinweise und Eigentumshinweise',
+    'legal.ownership.title': 'Hinweis zu Eigentum und Plattform',
+    'legal.ip.title': 'Geistiges Eigentum',
+    'legal.artist.title': 'Künstlermaterialien und Bildnis',
+    'legal.noAgency.title': 'Keine Agentur- oder Managementvertretung',
+    'legal.music.title': 'Nutzung von Musik und Medien',
+    'legal.websiteUse.title': 'Website-Nutzung',
+    'legal.liability.title': 'Haftungsbeschränkung',
+    'legal.takedown.title': 'Anfragen zur Entfernung oder Korrektur',
+    'legal.takedown.link': 'Zum Kontaktbereich',
+    'legal.entity.title': 'Verantwortliche Rechtseinheit',
+    'offline.kicker': 'Offline',
+    'reflection.category.advocacy': 'Fürsprache',
+    'lyrics.tab.lyrics': 'Liedtexte',
+    'lyrics.tab.credits': 'Mitwirkende',
+    'lyrics.credits': 'Mitwirkende',
+    'music.visualizerToggleLabel': 'Visualizer'
+  },
+  ar: {
+    'music.visualizerStyle.orb': 'كرة مضيئة',
+    'music.visualizerStyle.waveform': 'أشرطة الموجة',
+    'music.visualizerStyle.particle-field': 'حقل الجسيمات',
+    'music.visualizerStyle.wireframe-lattice': 'شبكة سلكية',
+    'music.visualizerStyle.waveform-tunnel': 'نفق الموجة',
+    'music.visualizerStyle.holographic-rings': 'حلقات هولوغرافية',
+    'lyrics.debug.ariaLabel': 'تشخيص معايرة كلمات الأغاني',
+    'lyrics.debug.title': 'معايرة كلمات الأغاني',
+    'lyrics.debug.close': 'إغلاق تشخيص الكلمات',
+    'vinyl.debug.ariaLabel': 'تشخيص الأسطوانة',
+    'vinyl.debug.title': 'تشخيص الأسطوانة',
+    'tracks.consolation.number': 'المقطع 01',
+    'tracks.consolation.description': 'تعزية صادقة ورجاء للشفاء',
+    'consolationSynopsis': 'أغنية عبادة ترفع المسيح باعتباره التعزية والملجأ والملك.',
+    'tracks.gentillesse.number': 'المقطع 02',
+    'tracks.gentillesse.description': 'أغنية لطف ممتلئة بالإيمان',
+    'laGentillesseSynopsis': 'احتفاء باللطف والرحمة وقوة النعمة.',
+    'tracks.wonderful.number': 'المقطع 03',
+    'tracks.wonderful.description': 'تسبيح مبهج وامتنان',
+    'wonderfulSynopsis': 'شهادة فرِحة عن صلاح الله وأمانته ومحبته.',
+    'tracks.womanifesto.number': 'المقطع 04',
+    'tracks.womanifesto.shortDescription': 'أغنية غوسبل أفريقية عاطفية تحتفي بقوة النساء والشفاء والنعمة والانتصار بالإيمان.',
+    'tracks.womanifesto.description': 'أغنية غوسبل أفريقية عاطفية تحتفي بقوة النساء والشفاء والنعمة والانتصار بالإيمان.',
+    'womanifestoSynopsis': 'نشيد مفعم بالتمكين يكرّم صمود المرأة والنعمة والانتصار.',
+    'tracks.paranoia.number': 'المقطع 05',
+    'tracks.paranoia.shortDescription': 'أغنية فرنسية سينمائية عن الحدس والحماية والوعي عند النجاة.',
+    'tracks.paranoia.description': 'أغنية فرنسية سينمائية تستكشف الحدس والحماية والوعي المرتبط بالنجاة، حيث تصبح اليقظة إنذاراً وحكمة.',
+    'paranoiaPersecutiveSynopsis': 'تأمل درامي في التمييز والحذر الواقي وحكمة البقاء.',
+    'focus.gridLabel': 'مجالات التركيز',
+    'cta.disclaimer': 'لا ينشئ هذا الموقع وكالة أو إدارة أو نشرًا أو شراكة أو توظيفًا أو تمثيلًا قانونيًا. تتطلب مناقشات التعاون أو الحجز اتفاقًا كتابيًا منفصلًا.',
+    'cta.optionsLabel': 'خيارات التواصل',
+    'cta.invite': 'ادعُ كارين للتحدث',
+    'cta.media': 'اطلب مقابلة إعلامية',
+    'cta.music': 'ناقش تعاونًا موسيقيًا',
+    'cta.books': 'محادثة حول الكتب',
+    'legal.kicker': 'الشؤون القانونية / الشروط',
+    'legal.heading': 'إشعار ملكية الموقع واستخدامه',
+    'legal.ariaLabel': 'الشروط القانونية وإشعارات الملكية',
+    'legal.ownership.title': 'إشعار الملكية والمنصة',
+    'legal.ip.title': 'الملكية الفكرية',
+    'legal.artist.title': 'مواد الفنانة وصورتها',
+    'legal.noAgency.title': 'لا توجد وكالة أو تمثيل إداري',
+    'legal.music.title': 'استخدام الموسيقى والوسائط',
+    'legal.websiteUse.title': 'استخدام الموقع',
+    'legal.liability.title': 'تحديد المسؤولية',
+    'legal.takedown.title': 'طلبات الإزالة أو التصحيح',
+    'legal.takedown.link': 'الانتقال إلى قسم التواصل',
+    'legal.entity.title': 'الكيان القانوني الحاكم',
+    'music.visualizerAvailable': 'تظهر حركة المؤثر البصري أعلاه.',
+    'press.headshots.title': 'صور شخصية وبورتريهات',
+    'press.headshots.body': 'يمكن إرفاق الصور المعتمدة والمواد الإعلامية القابلة للتنزيل هنا عند توفر الملفات النهائية. لا تُضمَّن أي ملفات ثنائية تلقائيًا.',
+    'press.assetsPlaceholder': 'عنصر نائب للأصول القابلة للتنزيل',
+    'press.books.title': 'قائمة الكتب',
+    'press.music.title': 'قائمة الموسيقى',
+    'reflections.architectureNote': 'تُنمذج كل خاطرة بعنوان ومقتطف وتاريخ وفئة وصورة وغلاف ومسار محتوى غني لإضافة كتابات جديدة من دون تغيير الإيقاع البصري للصفحة.',
+    'reflections.explore': 'استكشف العمل المرتبط',
+    'reflections.exploreAria': 'استكشف القسم المرتبط بـ {title}'
+  },
+  'zh-CN': {
+    'music.visualizerStyle.orb': '光球',
+    'music.visualizerStyle.waveform': '波形条',
+    'music.visualizerStyle.particle-field': '粒子场',
+    'music.visualizerStyle.wireframe-lattice': '线框网格',
+    'music.visualizerStyle.waveform-tunnel': '波形隧道',
+    'music.visualizerStyle.holographic-rings': '全息环',
+    'lyrics.debug.ariaLabel': '歌词校准诊断',
+    'lyrics.debug.title': '歌词校准',
+    'lyrics.debug.close': '关闭歌词诊断',
+    'vinyl.debug.ariaLabel': '黑胶诊断',
+    'vinyl.debug.title': '黑胶诊断',
+    'tracks.consolation.number': '曲目 01',
+    'tracks.gentillesse.number': '曲目 02',
+    'tracks.wonderful.number': '曲目 03',
+    'tracks.womanifesto.number': '曲目 04',
+    'tracks.paranoia.number': '曲目 05',
+    'tracks.paranoia.shortDescription': '一首电影感法语歌曲，探索直觉、保护与幸存者的警觉。',
+    'tracks.paranoia.description': '一首电影感法语歌曲，探索直觉、保护与幸存意识；警觉既是提醒，也成为智慧。',
+    'paranoiaPersecutiveSynopsis': '关于辨别、保护性的警觉与幸存智慧的戏剧性沉思。',
+    'focus.gridLabel': '重点领域',
+    'cta.disclaimer': '本网站不建立代理、管理、出版、合作、雇佣或法律代表关系。合作或预约讨论需另行签署书面协议。',
+    'cta.optionsLabel': '联系选项',
+    'cta.invite': '邀请 Carine 演讲',
+    'cta.media': '申请媒体采访',
+    'cta.music': '讨论音乐合作',
+    'cta.books': '图书交流',
+    'legal.kicker': '法律 / 条款',
+    'legal.heading': '网站所有权与使用说明',
+    'legal.ariaLabel': '法律条款和所有权说明',
+    'legal.ownership.title': '所有权与平台说明',
+    'legal.ip.title': '知识产权',
+    'legal.artist.title': '艺术家资料与肖像',
+    'legal.noAgency.title': '无代理或管理代表关系',
+    'legal.music.title': '音乐与媒体使用',
+    'legal.websiteUse.title': '网站使用',
+    'legal.liability.title': '责任限制',
+    'legal.takedown.title': '删除或更正请求',
+    'legal.takedown.link': '前往联系部分',
+    'legal.entity.title': '主管实体',
+    'music.visualizerAvailable': '可视化动画显示在上方。',
+    'press.headshots.title': '头像与肖像',
+    'press.headshots.body': '最终文件可用后，可在此附上已批准的肖像和可下载媒体资料。不会自动捆绑任何二进制资源。',
+    'press.assetsPlaceholder': '可下载资源占位',
+    'press.books.title': '图书列表',
+    'press.music.title': '音乐列表',
+    'reflections.architectureNote': '每篇反思都以标题、摘要、日期、分类、封面图、路径和富内容入口建模，因此可以添加新文章而不改变页面的视觉节奏。',
+    'reflections.explore': '探索相关作品',
+    'reflections.exploreAria': '探索与 {title} 相关的部分'
+  }
+};
+
+if (translations.zh && !translations['zh-CN']) {
+  translations['zh-CN'] = translations.zh;
+}
+if (translations.zh) {
+  delete translations.zh;
+}
+Object.values(translations).forEach((dictionary) => {
+  dictionary['language.name.zh-CN'] = '中文';
+  delete dictionary['language.name.zh'];
+});
+Object.entries(i18nHardeningTranslations).forEach(([language, dictionary]) => {
+  if (translations[language]) Object.assign(translations[language], dictionary);
+});
+
+
+const finalTranslationCoverageOverrides = {
+  fr: {
+    'nav.contact': 'Contact',
+    'books.toxic.kicker': 'Guide',
+    'reflection.hidden.readTime': '4 min',
+    'reflection.red.readTime': '5 min',
+    'reflection.sunshine.readTime': '3 min',
+    'reflection.storm.readTime': '4 min',
+    'reflection.kindness.readTime': '3 min',
+    'reflection.consolation.readTime': '3 min',
+    'reflection.advocacy.readTime': '4 min'
+  },
+  es: {
+    'reflection.hidden.readTime': '4 min',
+    'reflection.red.readTime': '5 min',
+    'reflection.sunshine.readTime': '3 min',
+    'reflection.storm.readTime': '4 min',
+    'reflection.kindness.readTime': '3 min',
+    'reflection.consolation.readTime': '3 min',
+    'reflection.advocacy.readTime': '4 min'
+  },
+  ln: {
+    'reflection.hidden.readTime': 'min 4',
+    'reflection.red.readTime': 'min 5',
+    'reflection.sunshine.readTime': 'min 3',
+    'reflection.storm.readTime': 'min 4',
+    'reflection.kindness.readTime': 'min 3',
+    'reflection.consolation.readTime': 'min 3',
+    'reflection.advocacy.readTime': 'min 4'
+  },
+  sw: {
+    'reflection.hidden.readTime': 'dak 4',
+    'reflection.red.readTime': 'dak 5',
+    'reflection.sunshine.readTime': 'dak 3',
+    'reflection.storm.readTime': 'dak 4',
+    'reflection.kindness.readTime': 'dak 3',
+    'reflection.consolation.readTime': 'dak 3',
+    'reflection.advocacy.readTime': 'dak 4'
+  },
+  yo: {
+    'reflection.hidden.readTime': 'ìṣẹ́jú 4',
+    'reflection.red.readTime': 'ìṣẹ́jú 5',
+    'reflection.sunshine.readTime': 'ìṣẹ́jú 3',
+    'reflection.storm.readTime': 'ìṣẹ́jú 4',
+    'reflection.kindness.readTime': 'ìṣẹ́jú 3',
+    'reflection.consolation.readTime': 'ìṣẹ́jú 3',
+    'reflection.advocacy.readTime': 'ìṣẹ́jú 4'
+  },
+  de: {
+    'tracks.consolation.number': 'Titel 01',
+    'tracks.gentillesse.number': 'Titel 02',
+    'tracks.wonderful.number': 'Titel 03',
+    'tracks.womanifesto.number': 'Titel 04',
+    'tracks.paranoia.number': 'Titel 05',
+    'legal.music.body': 'Musik, Bilder, Texte, Audio, Artwork, Video und andere Medien werden zur werblichen Sichtbarkeit, Information und genehmigten Künstlerpräsentation gezeigt. Die Rechte verbleiben bei den jeweiligen Eigentümern. Unerlaubtes Kopieren, Herunterladen, Wiederverwenden, Ändern, Weiterverbreiten, öffentliches Posten oder kommerzielles Verwerten ist ohne schriftliche Erlaubnis des zuständigen Rechteinhabers untersagt.',
+    'legal.websiteUse.body': 'Besucher dürfen die Website für persönliche, informative und werbliche Entdeckungszwecke ansehen. Die Nutzung der Website darf den Betrieb nicht stören, die Beziehung einer Partei nicht falsch darstellen und keine Unterstützung, Vertretung oder Erlaubnis suggerieren, die nicht separat schriftlich erteilt wurde.',
+    'legal.takedown.body': 'Anfragen zu Korrektur, Entfernung, Rechtefragen, Medienfragen oder Eigentumsklärung sollten über den Kontaktbereich der Website gesendet werden. Bitte geben Sie genügend Details an, um das konkrete Material und die Art der Anfrage prüfen zu können.',
+    'offline.kicker': 'Ohne Verbindung'
+  },
+  ar: {
+    'legal.music.body': 'تُعرض الموسيقى والصور والنصوص والصوت والأعمال الفنية والفيديو والوسائط الأخرى لأغراض الظهور الترويجي والسياق المعلوماتي والعرض المعتمد للفنانة. تبقى الحقوق لأصحابها المعنيين. يُحظر النسخ أو التنزيل أو إعادة الاستخدام أو التعديل أو إعادة التوزيع أو النشر العام أو الاستغلال التجاري من دون إذن مكتوب من صاحب الحق المناسب.',
+    'legal.websiteUse.body': 'يجوز للزوار مشاهدة الموقع لأغراض شخصية ومعلوماتية وترويجية. يجب ألا يعرقل استخدام الموقع تشغيله، أو يسيء تمثيل علاقة أي طرف، أو يوحي بتأييد أو تمثيل أو إذن لم يُمنح بشكل كتابي منفصل.',
+    'legal.takedown.body': 'تُرسل طلبات التصحيح أو الإزالة أو مسائل الحقوق أو الأسئلة الإعلامية أو توضيح الملكية عبر قسم التواصل في الموقع. يُرجى تضمين تفاصيل كافية لتحديد المادة المعنية وطبيعة الطلب حتى يمكن مراجعته بشكل مناسب.',
+    'reflection.hidden.quote': 'قد يشكّل الألم القصة، لكنه لا يملك نهايتها.',
+    'reflection.hidden.prompt': 'أين تحتاج إلى لغة ألطف لشيء نجوت منه؟',
+    'reflection.red.excerpt': 'ملاحظة مستوحاة من الكتاب حول تمييز التلاعب العاطفي والخطر الروحي والتعلقات غير الصحية والأنماط التي تستنزف الصفاء والثقة والغاية بهدوء.',
+    'reflection.red.quote': 'ما يكلّفك سلامك يطلب منك تمييزًا.',
+    'reflection.red.prompt': 'أي نمط يطلب منك اختيار الوضوح مبكرًا؟',
+    'reflection.sunshine.quote': 'الرجاء لا ينكر العاصفة؛ بل يبقي مصباحًا مضاءً خلالها.',
+    'reflection.sunshine.prompt': 'أي نور صغير يمكنك حمله إلى هذا الأسبوع؟',
+    'reflection.storm.excerpt': 'تأمل يركّز على الاستعادة للقراء الذين يعيدون بناء السلام بعد المشقة، ويكرّم القوة غير المرئية التي تأتي بعد النجاة.',
+    'reflection.storm.quote': 'غالبًا ما يبدأ الشفاء كقرار خاص بأن نتنفس من جديد.',
+    'reflection.storm.prompt': 'كيف ستبدو الاستعادة إذا لم تكن بحاجة إلى استعجال؟',
+    'reflection.kindness.quote': 'يمكن للّطف أن يبقى قويًا بما يكفي ليغيّر جوّ المكان.',
+    'reflection.kindness.prompt': 'أين يمكن أن يصبح اللطف حدًا صحيًا لا عبئًا؟',
+    'reflection.consolation.excerpt': 'تأمل مستوحى من الموسيقى حول تلقي التعزية بلا خجل، خاصة عندما يبدو الشفاء بطيئًا أو خاصًا أو غير مكتمل.',
+    'reflection.consolation.quote': 'تمنح التعزية الشجاعة مكانًا آمنًا لتبدأ من جديد.',
+    'reflection.consolation.prompt': 'أي شكل من التعزية يساعدك على الاستمرار اليوم؟',
+    'reflection.advocacy.excerpt': 'ملاحظة هادئة حول التحدث من أجل الناجين من دون تحويل الألم إلى مشهد، واختيار الكرامة والأمان والإيمان والاستعادة مركزًا لكل حديث.',
+    'reflection.advocacy.quote': 'يمكن للحقيقة أن تكون ثابتة من دون أن تفقد رقتها.',
+    'reflection.advocacy.prompt': 'أين يمكن لصوتك أن يحمي الكرامة هذا الأسبوع؟'
+  },
+  'zh-CN': {
+    'legal.music.body': '音乐、图片、文字、音频、艺术作品、视频和其他媒体用于推广展示、信息说明和经批准的艺术家呈现。权利归各自所有者所有。未经相应权利人书面许可，禁止复制、下载、再使用、修改、再分发、公开发布或商业利用。',
+    'legal.websiteUse.body': '访问者可以出于个人、信息了解和推广发现目的浏览本网站。网站使用不得干扰网站运行、误述任何一方关系，或暗示未经另行书面授予的背书、代表关系或许可。',
+    'legal.takedown.body': '更正、删除、权利问题、媒体问题或所有权澄清请求应通过网站联系部分发送。请提供足够细节，以便识别具体材料和请求性质并进行适当审核。',
+    'reflection.hidden.quote': '痛苦也许会塑造故事，但它不能拥有结局。',
+    'reflection.hidden.prompt': '关于你曾经熬过的事，哪里需要更温柔的语言？',
+    'reflection.red.excerpt': '一篇受书籍启发的短文，关于识别情感操控、属灵危险、不健康依附，以及悄悄耗尽清晰、自信和目标感的模式。',
+    'reflection.red.quote': '凡是夺走你平安的，都在提醒你需要分辨。',
+    'reflection.red.prompt': '哪一种模式一直在提醒你更早选择清晰？',
+    'reflection.sunshine.quote': '盼望并不否认风暴；它是在风暴中点亮一盏灯。',
+    'reflection.sunshine.prompt': '这一周你可以带着哪一点小光前行？',
+    'reflection.storm.excerpt': '一篇以恢复为中心的默想，献给在艰难之后重建平安的读者，尊重幸存之后那份未被看见的力量。',
+    'reflection.storm.quote': '疗愈常常始于一个私密的决定：重新呼吸。',
+    'reflection.storm.prompt': '如果恢复不必被催促，它会是什么样子？',
+    'reflection.kindness.quote': '温柔依然可以强大到改变一个空间。',
+    'reflection.kindness.prompt': '哪里可以让善意成为边界，而不是负担？',
+    'reflection.consolation.excerpt': '一篇受音乐启发的反思，关于不带羞耻地接受安慰，尤其当疗愈缓慢、私密或尚未完成时。',
+    'reflection.consolation.quote': '安慰给勇气一个安全的地方重新开始。',
+    'reflection.consolation.prompt': '今天哪一种安慰能帮助你继续前行？',
+    'reflection.advocacy.excerpt': '一篇安静的短文，关于为幸存者发声而不把痛苦变成表演，并把尊严、安全、信仰和恢复置于每一次对话中心。',
+    'reflection.advocacy.quote': '真相可以坚定，同时不失温柔。',
+    'reflection.advocacy.prompt': '这一周，你的声音可以在哪里守护尊严？'
+  }
+};
+
+Object.entries(finalTranslationCoverageOverrides).forEach(([language, dictionary]) => {
+  if (translations[language]) Object.assign(translations[language], dictionary);
+});
+
 const supportedLanguages = Object.keys(translations);
 let currentLanguage = DEFAULT_LANGUAGE;
 
@@ -3062,13 +3440,105 @@ const storeLanguage = (language) => {
   }
 };
 
-const normalizeLanguage = (language) => (supportedLanguages.includes(language) ? language : DEFAULT_LANGUAGE);
+const normalizeLanguage = (language) => {
+  const normalizedLanguage = language === 'zh' ? 'zh-CN' : language;
+  return supportedLanguages.includes(normalizedLanguage) ? normalizedLanguage : DEFAULT_LANGUAGE;
+};
+
+const TRANSLATION_AUDIT_ALLOWED_TEXT = [
+  'Carine Sanadina',
+  'Omoluabi Productions',
+  'ETL GIS Consulting LLC',
+  'The Pain Nobody Saw',
+  'If It’s Red, It’s Toxic',
+  'The Road to Sunshine',
+  'After The Storm',
+  'Consolation',
+  'La Gentillesse',
+  'Wonderful',
+  'Womanifesto',
+  'Paranoïa Persécutive'
+];
+
+const isAllowedTranslationAuditText = (value = '') => TRANSLATION_AUDIT_ALLOWED_TEXT.some((allowedText) => value.includes(allowedText));
+
+const listMissingTranslations = () => {
+  const englishKeys = Object.keys(translations[DEFAULT_LANGUAGE] || {}).sort();
+  const report = supportedLanguages.reduce((summary, language) => {
+    if (language === DEFAULT_LANGUAGE) return summary;
+    const dictionary = translations[language] || {};
+    const missing = englishKeys.filter((key) => !(key in dictionary));
+    const englishFallbacks = englishKeys.filter((key) => (
+      dictionary[key] === translations[DEFAULT_LANGUAGE][key]
+      && !isAllowedTranslationAuditText(String(dictionary[key] || ''))
+      && key !== 'html.lang'
+      && !key.startsWith('language.name.')
+    ));
+
+    summary[language] = { missing, englishFallbacks };
+    return summary;
+  }, {});
+
+  window.console?.groupCollapsed?.('[i18n] Missing translation audit');
+  window.console?.table?.(Object.entries(report).map(([language, result]) => ({
+    language,
+    missing: result.missing.length,
+    englishFallbacks: result.englishFallbacks.length
+  })));
+  window.console?.info?.(report);
+  window.console?.groupEnd?.();
+  return report;
+};
+
+const auditTranslations = () => {
+  const missing = listMissingTranslations();
+  const visibleText = Array.from(document.body?.querySelectorAll('*') || [])
+    .filter((element) => {
+      const tagName = element.tagName?.toLowerCase();
+      if (['script', 'style', 'template', 'svg', 'path'].includes(tagName)) return false;
+      if (element.closest('[hidden], [aria-hidden="true"]')) return false;
+      return Boolean(element.childNodes?.length);
+    })
+    .flatMap((element) => Array.from(element.childNodes)
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => ({ element, text: node.textContent.trim().replace(/\s+/g, ' ') }))
+      .filter(({ text }) => text && !isAllowedTranslationAuditText(text))
+      .filter(({ element }) => !element.closest('[data-i18n], [data-i18n-html]'))
+    );
+
+  const untranslatedEnglish = currentLanguage === DEFAULT_LANGUAGE ? [] : Array.from(document.querySelectorAll('[data-i18n], [data-i18n-placeholder], [data-i18n-aria-label], [data-i18n-title], [data-i18n-alt]'))
+    .map((element) => {
+      const keys = [element.dataset.i18n, element.dataset.i18nPlaceholder, element.dataset.i18nAriaLabel, element.dataset.i18nTitle, element.dataset.i18nAlt].filter(Boolean);
+      return keys.map((key) => ({ key, value: translations[currentLanguage]?.[key], english: translations[DEFAULT_LANGUAGE]?.[key] }));
+    })
+    .flat()
+    .filter(({ value, english }) => value && english && value === english && !isAllowedTranslationAuditText(String(value)));
+
+  const report = {
+    language: currentLanguage,
+    missing,
+    hardcodedVisibleText: visibleText.map(({ element, text }) => ({
+      text,
+      selector: element.id ? `#${element.id}` : element.className ? `${element.tagName.toLowerCase()}.${String(element.className).trim().replace(/\s+/g, '.')}` : element.tagName.toLowerCase()
+    })),
+    untranslatedEnglish
+  };
+
+  window.console?.groupCollapsed?.('[i18n] Translation coverage audit');
+  window.console?.info?.(report);
+  window.console?.groupEnd?.();
+  return report;
+};
+
+window.listMissingTranslations = listMissingTranslations;
+window.auditTranslations = auditTranslations;
 
 const applyTranslations = (language) => {
   const nextLanguage = normalizeLanguage(language);
   currentLanguage = nextLanguage;
   document.documentElement.lang = t('html.lang', nextLanguage, nextLanguage);
   document.documentElement.dir = nextLanguage === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.classList.toggle('is-rtl', nextLanguage === 'ar');
 
   document.querySelectorAll('[data-i18n]').forEach((element) => {
     if (element.matches('[data-mini-title][data-has-track="true"], [data-mobile-title][data-has-track="true"]')) {
@@ -3426,7 +3896,8 @@ const createPlaylistTrackViewModel = (track) => {
     synopsis: t(synopsisKey, ''),
     titleId: `track-${track.id}-title`,
     fallbackId: `music-cover-${track.id}-fallback`,
-    credits: track.credits || translate('tracks.genericCredits'),
+    creditsKey: `${translationKey}.credits`,
+    credits: t(`${translationKey}.credits`, translate('tracks.genericCredits')),
     lyricsLrc: track.lyricsLrc || track.lyricsPath || '',
     lyricsTimed: JSON.stringify(Array.isArray(track.lyricsTimed) ? track.lyricsTimed : [])
   };
@@ -3509,6 +3980,7 @@ const renderCarinePlaylist = () => {
     const sunoSource = escapePlaylistAttribute(model.sunoSource || '');
     const about = escapePlaylistAttribute(model.about || model.description || '');
     const credits = escapePlaylistAttribute(model.credits);
+    const creditsKey = escapePlaylistAttribute(model.creditsKey);
     const lyricsTimed = escapePlaylistAttribute(model.lyricsTimed);
 
     return `
@@ -3531,6 +4003,7 @@ const renderCarinePlaylist = () => {
         data-track-suno-source="${sunoSource}"
         data-track-about="${about}"
         data-track-credits="${credits}"
+        data-track-credits-key="${creditsKey}"
         data-track-lyrics-timed="${lyricsTimed}"
       >
         <audio aria-label="${escapePlaylistAttribute(`${model.title} by ${model.artist}`)}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
@@ -5083,7 +5556,10 @@ if (musicPlayers.length) {
     return localizedAbout || player.dataset.trackAbout || translate('lyrics.moreDetails');
   };
 
-  const getTrackCreditsContent = (player) => player?.dataset.trackCredits || translate('tracks.genericCredits');
+  const getTrackCreditsContent = (player) => {
+    const creditsKey = player?.dataset.trackCreditsKey || '';
+    return creditsKey ? t(creditsKey, translate('tracks.genericCredits')) : translate('tracks.genericCredits');
+  };
 
   const renderLyricsMoreDetails = (player = activePlayer) => {
     if (!player) return;
@@ -5269,11 +5745,11 @@ if (musicPlayers.length) {
     lyricsDebugPanel = document.createElement('aside');
     lyricsDebugPanel.className = 'lyrics-debug-panel';
     lyricsDebugPanel.setAttribute('aria-live', 'polite');
-    lyricsDebugPanel.setAttribute('aria-label', 'Lyrics calibration diagnostics');
+    lyricsDebugPanel.setAttribute('aria-label', translate('lyrics.debug.ariaLabel'));
     lyricsDebugPanel.innerHTML = `
       <header>
-        <strong>Lyrics calibration</strong>
-        <button type="button" data-lyrics-debug-close aria-label="Close lyrics diagnostics">×</button>
+        <strong>${escapePlaylistText(translate('lyrics.debug.title'))}</strong>
+        <button type="button" data-lyrics-debug-close aria-label="${escapePlaylistText(translate('lyrics.debug.close'))}">×</button>
       </header>
       <div data-lyrics-debug-body></div>
     `;
@@ -5578,12 +6054,12 @@ if (musicPlayers.length) {
   const isCoarsePointerDevice = () => Boolean(coarsePointerQuery && coarsePointerQuery.matches);
 
   const VISUALIZATION_STYLES = [
-    { id: 'orb', label: 'Orb' },
-    { id: 'waveform', label: 'Wave Bars' },
-    { id: 'particle-field', label: 'Particle Field' },
-    { id: 'wireframe-lattice', label: 'Wireframe Lattice' },
-    { id: 'waveform-tunnel', label: 'Wave Tunnel' },
-    { id: 'holographic-rings', label: 'Holographic Rings' }
+    { id: 'orb', labelKey: 'music.visualizerStyle.orb' },
+    { id: 'waveform', labelKey: 'music.visualizerStyle.waveform' },
+    { id: 'particle-field', labelKey: 'music.visualizerStyle.particle-field' },
+    { id: 'wireframe-lattice', labelKey: 'music.visualizerStyle.wireframe-lattice' },
+    { id: 'waveform-tunnel', labelKey: 'music.visualizerStyle.waveform-tunnel' },
+    { id: 'holographic-rings', labelKey: 'music.visualizerStyle.holographic-rings' }
   ];
   const DEFAULT_VISUALIZATION_STYLE = 'waveform';
   const normalizeVisualizationStyle = (styleId) => {
@@ -5702,7 +6178,7 @@ if (musicPlayers.length) {
   const setupVisualizationStyleSelector = () => {
     if (!visualizerStyleSelect) return;
     visualizerStyleSelect.innerHTML = VISUALIZATION_STYLES.map((style) => (
-      `<option value="${style.id}">${style.label}</option>`
+      `<option value="${style.id}">${escapePlaylistText(translate(style.labelKey))}</option>`
     )).join('');
     visualizerStyleSelect.value = selectedVisualizationStyle;
   };
@@ -6668,6 +7144,7 @@ if (musicPlayers.length) {
     }
   });
   window.addEventListener('carine:languagechange', () => {
+    setupVisualizationStyleSelector();
     setVisualizerFallback(false);
     updateVisualizerToggleUI();
   });
@@ -6885,7 +7362,7 @@ if (musicPlayers.length) {
     const panel = document.createElement('aside');
     panel.className = 'vinyl-debug-panel';
     panel.setAttribute('aria-live', 'polite');
-    panel.setAttribute('aria-label', 'Vinyl diagnostics');
+    panel.setAttribute('aria-label', translate('vinyl.debug.ariaLabel'));
     document.body.appendChild(panel);
     const render = async () => {
       const diagnostics = await collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, { sampleTransform: false });
@@ -6913,7 +7390,7 @@ if (musicPlayers.length) {
         ['stale cache', diagnostics.serviceWorkerCacheStatus.possibleStaleCache],
         ['APP_VERSION', APP_VERSION]
       ];
-      panel.innerHTML = `<strong>Vinyl diagnostics</strong>${rows.map(([label, value]) => `<div><span>${escapeDiagnosticHtml(label)}</span><b>${escapeDiagnosticHtml(value)}</b></div>`).join('')}`;
+      panel.innerHTML = `<strong>${escapeDiagnosticHtml(translate('vinyl.debug.title'))}</strong>${rows.map(([label, value]) => `<div><span>${escapeDiagnosticHtml(label)}</span><b>${escapeDiagnosticHtml(value)}</b></div>`).join('')}`;
     };
     render();
     window.setInterval(render, 1000);
