@@ -1,4 +1,4 @@
-const APP_VERSION = 'carine-site-2026-06-03-paranoia-persecutive';
+const APP_VERSION = 'carine-site-2026-06-04-hygiene-pass';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v9-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';

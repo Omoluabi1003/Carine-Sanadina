@@ -1,7 +1,10 @@
-const LANGUAGE_STORAGE_KEY = 'carine-sanadina-language';
+const CARINE_STORAGE_PREFIX = 'carine-sanadina';
+const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
+const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
+const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-03-paranoia-persecutive';
-const APP_VERSION_STORAGE_KEY = 'carine-sanadina-app-version';
+const APP_VERSION = 'carine-site-2026-06-04-hygiene-pass';
+const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
 const translations = {};
@@ -2478,7 +2481,7 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/'/g, '&#39;');
 
 const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive'];
-const PLAYLIST_STORAGE_KEYS = ['carine-sanadina-player-state'];
+const PLAYLIST_STORAGE_KEYS = [PLAYER_STATE_STORAGE_KEY];
 const CACHE_SENSITIVE_STORAGE_KEYS = [
   ...PLAYLIST_STORAGE_KEYS,
   'carine-sanadina-app-shell-cache',
@@ -2612,6 +2615,64 @@ const assertRequiredPlaylistTracks = () => REQUIRED_MUSIC_TRACK_IDS.every((requi
   CARINE_MUSIC_PLAYLIST.some((track) => track.id === requiredId && track.audioUrl && track.coverUrl)
 );
 
+const getSafePlaylistTracks = () => CARINE_MUSIC_PLAYLIST.filter((track) => track && track.id && track.title && track.audioUrl && track.coverUrl);
+
+const createPlaylistTrackViewModel = (track) => {
+  const translationKey = track.translationKey || '';
+  const synopsisKey = track.synopsisKey || `${translationKey}.synopsis`;
+  const durationValue = Number(track.duration);
+  const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
+
+  return {
+    ...track,
+    artworkFit,
+    durationLabel: formatTrackDuration(durationValue),
+    durationValue: Number.isFinite(durationValue) && durationValue > 0 ? String(durationValue) : '',
+    synopsisKey,
+    synopsis: t(synopsisKey, ''),
+    titleId: `track-${track.id}-title`,
+    fallbackId: `music-cover-${track.id}-fallback`,
+    credits: track.credits || translate('tracks.genericCredits'),
+    lyricsLrc: track.lyricsLrc || track.lyricsPath || '',
+    lyricsTimed: JSON.stringify(Array.isArray(track.lyricsTimed) ? track.lyricsTimed : [])
+  };
+};
+
+const renderExpandedTrackOption = (track) => {
+  const model = createPlaylistTrackViewModel(track);
+  const trackKey = escapePlaylistAttribute(model.translationKey);
+
+  return `
+        <button
+          class="expanded-track-option"
+          type="button"
+          data-expanded-track-option
+          data-track-id="${escapePlaylistAttribute(model.id)}"
+          aria-label="Play ${escapePlaylistAttribute(model.title)}"
+          data-i18n-aria-label="${trackKey}.playLabel"
+        >
+          <span class="expanded-track-option__thumb">
+            <img
+              src="${escapePlaylistAttribute(model.coverUrl)}"
+              alt=""
+              width="96"
+              height="96"
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer"
+              data-artwork-fit="${model.artworkFit}"
+            />
+          </span>
+          <span class="expanded-track-option__meta">
+            <strong data-i18n="${trackKey}.title">${escapePlaylistText(model.title)}</strong>
+            <span>${escapePlaylistText(model.artist)}</span>
+          </span>
+          <span class="expanded-track-option__duration">${model.durationLabel}</span>
+          <span class="expanded-track-option__indicator equalizer" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        </button>
+      `;
+};
+
 const renderCarinePlaylist = () => {
   const playlistMount = document.querySelector('[data-playlist-tracks]');
   const expandedPlaylistMount = document.querySelector('[data-expanded-playlist-tracks]');
@@ -2626,7 +2687,7 @@ const renderCarinePlaylist = () => {
   if (expandedFocusPlaylistMount) expandedFocusPlaylistMount.dataset.playlistVersion = PLAYLIST_VERSION;
   document.documentElement.dataset.playlistVersion = PLAYLIST_VERSION;
 
-  const safePlaylist = CARINE_MUSIC_PLAYLIST.filter((track) => track && track.id && track.title && track.audioUrl && track.coverUrl);
+  const safePlaylist = getSafePlaylistTracks();
 
   if (safePlaylist.length !== REQUIRED_MUSIC_TRACK_IDS.length || !assertRequiredPlaylistTracks()) {
     playlistMount.dataset.playlistError = 'missing-required-track';
@@ -2634,28 +2695,27 @@ const renderCarinePlaylist = () => {
     delete playlistMount.dataset.playlistError;
   }
 
-  playlistMount.innerHTML = safePlaylist.map((track, index) => {
-    const trackKey = escapePlaylistAttribute(track.translationKey);
-    const titleId = `track-${escapePlaylistAttribute(track.id)}-title`;
-    const fallbackId = `music-cover-${escapePlaylistAttribute(track.id)}-fallback`;
-    const durationLabel = formatTrackDuration(Number(track.duration));
-    const trackTitle = escapePlaylistText(track.title);
-    const trackArtist = escapePlaylistText(track.artist);
-    const trackDescription = escapePlaylistText(track.description);
-    const synopsisKey = escapePlaylistAttribute(track.synopsisKey || `${track.translationKey}.synopsis`);
-    const trackSynopsis = escapePlaylistText(t(track.synopsisKey || `${track.translationKey}.synopsis`, ''));
-    const trackMood = escapePlaylistAttribute(track.mood);
-    const trackId = escapePlaylistAttribute(track.id);
-    const coverUrl = escapePlaylistAttribute(track.coverUrl);
-    const audioUrl = escapePlaylistAttribute(track.audioUrl);
-    const durationValue = Number.isFinite(Number(track.duration)) && Number(track.duration) > 0 ? String(Number(track.duration)) : '';
-    const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
-    const lyricsPath = escapePlaylistAttribute(track.lyrics || '');
-    const lyricsLrcPath = escapePlaylistAttribute(track.lyricsLrc || track.lyricsPath || '');
-    const sunoSource = escapePlaylistAttribute(track.sunoSource || '');
-    const about = escapePlaylistAttribute(track.about || track.description || '');
-    const credits = escapePlaylistAttribute(track.credits || translate('tracks.genericCredits'));
-    const lyricsTimed = escapePlaylistAttribute(JSON.stringify(Array.isArray(track.lyricsTimed) ? track.lyricsTimed : []));
+  playlistMount.innerHTML = safePlaylist.map((track) => {
+    const model = createPlaylistTrackViewModel(track);
+    const trackKey = escapePlaylistAttribute(model.translationKey);
+    const titleId = escapePlaylistAttribute(model.titleId);
+    const fallbackId = escapePlaylistAttribute(model.fallbackId);
+    const trackTitle = escapePlaylistText(model.title);
+    const trackArtist = escapePlaylistText(model.artist);
+    const trackDescription = escapePlaylistText(model.description);
+    const synopsisKey = escapePlaylistAttribute(model.synopsisKey);
+    const trackSynopsis = escapePlaylistText(model.synopsis);
+    const trackMood = escapePlaylistAttribute(model.mood);
+    const trackId = escapePlaylistAttribute(model.id);
+    const coverUrl = escapePlaylistAttribute(model.coverUrl);
+    const audioUrl = escapePlaylistAttribute(model.audioUrl);
+    const durationValue = escapePlaylistAttribute(model.durationValue);
+    const lyricsPath = escapePlaylistAttribute(model.lyrics || '');
+    const lyricsLrcPath = escapePlaylistAttribute(model.lyricsLrc || '');
+    const sunoSource = escapePlaylistAttribute(model.sunoSource || '');
+    const about = escapePlaylistAttribute(model.about || model.description || '');
+    const credits = escapePlaylistAttribute(model.credits);
+    const lyricsTimed = escapePlaylistAttribute(model.lyricsTimed);
 
     return `
       <article
@@ -2665,13 +2725,13 @@ const renderCarinePlaylist = () => {
         data-track-id="${trackId}"
         data-track-translation-key="${trackKey}"
         data-audio-src="${audioUrl}"
-        data-track-title="${escapePlaylistAttribute(track.title)}"
-        data-track-artist="${escapePlaylistAttribute(track.artist)}"
+        data-track-title="${escapePlaylistAttribute(model.title)}"
+        data-track-artist="${escapePlaylistAttribute(model.artist)}"
         data-track-cover="${coverUrl}"
-        data-track-duration="${escapePlaylistAttribute(durationValue)}"
+        data-track-duration="${durationValue}"
         data-track-mood="${trackMood}"
-        data-track-description="${escapePlaylistAttribute(track.description)}"
-        data-track-artwork-fit="${artworkFit}"
+        data-track-description="${escapePlaylistAttribute(model.description)}"
+        data-track-artwork-fit="${model.artworkFit}"
         data-track-lyrics="${lyricsPath}"
         data-track-lyrics-lrc="${lyricsLrcPath}"
         data-track-suno-source="${sunoSource}"
@@ -2679,11 +2739,11 @@ const renderCarinePlaylist = () => {
         data-track-credits="${credits}"
         data-track-lyrics-timed="${lyricsTimed}"
       >
-        <audio aria-label="${escapePlaylistAttribute(`${track.title} by ${track.artist}`)}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
+        <audio aria-label="${escapePlaylistAttribute(`${model.title} by ${model.artist}`)}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
         <div class="track-cover-wrap">
           <img
             src="${coverUrl}"
-            alt="${escapePlaylistAttribute(`${track.title} cover art`)}"
+            alt="${escapePlaylistAttribute(`${model.title} cover art`)}"
             data-i18n-alt="${trackKey}.coverAlt"
             class="track-cover"
             width="1000"
@@ -2692,7 +2752,7 @@ const renderCarinePlaylist = () => {
             decoding="async"
             referrerpolicy="no-referrer"
             data-fallback-target="${fallbackId}"
-            data-artwork-fit="${artworkFit}"
+            data-artwork-fit="${model.artworkFit}"
           />
           <div class="image-fallback music-cover-fallback" id="${fallbackId}" role="note" aria-live="polite">
             <span data-i18n="${trackKey}.fallback">${trackTitle} cover art is temporarily unavailable.</span>
@@ -2712,10 +2772,10 @@ const renderCarinePlaylist = () => {
 
         <div class="track-duration" aria-live="off">
           <span class="sr-only" data-i18n="music.duration">Duration:</span>
-          <span data-duration>${durationLabel}</span>
+          <span data-duration>${model.durationLabel}</span>
         </div>
 
-        <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play ${escapePlaylistAttribute(track.title)}" data-track-key="${trackKey}.title" data-i18n-aria-label="${trackKey}.playLabel">
+        <button class="track-play-toggle" type="button" data-play-toggle aria-label="Play ${escapePlaylistAttribute(model.title)}" data-track-key="${trackKey}.title" data-i18n-aria-label="${trackKey}.playLabel">
           <span class="play-icon" aria-hidden="true">▶</span>
         </button>
         <p class="audio-status" data-audio-status role="status" aria-live="polite"></p>
@@ -2723,40 +2783,7 @@ const renderCarinePlaylist = () => {
     `;
   }).join('');
 
-  const expandedPlaylistMarkup = safePlaylist.map((track) => {
-      const trackKey = escapePlaylistAttribute(track.translationKey);
-      const durationLabel = formatTrackDuration(Number(track.duration));
-      const artworkFit = track.artworkFit === 'contain' ? 'contain' : 'cover';
-      return `
-        <button
-          class="expanded-track-option"
-          type="button"
-          data-expanded-track-option
-          data-track-id="${escapePlaylistAttribute(track.id)}"
-          aria-label="Play ${escapePlaylistAttribute(track.title)}"
-          data-i18n-aria-label="${trackKey}.playLabel"
-        >
-          <span class="expanded-track-option__thumb">
-            <img
-              src="${escapePlaylistAttribute(track.coverUrl)}"
-              alt=""
-              width="96"
-              height="96"
-              loading="lazy"
-              decoding="async"
-              referrerpolicy="no-referrer"
-              data-artwork-fit="${artworkFit}"
-            />
-          </span>
-          <span class="expanded-track-option__meta">
-            <strong data-i18n="${trackKey}.title">${escapePlaylistText(track.title)}</strong>
-            <span>${escapePlaylistText(track.artist)}</span>
-          </span>
-          <span class="expanded-track-option__duration">${durationLabel}</span>
-          <span class="expanded-track-option__indicator equalizer" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-        </button>
-      `;
-    }).join('');
+  const expandedPlaylistMarkup = safePlaylist.map(renderExpandedTrackOption).join('');
 
   if (expandedPlaylistMount) expandedPlaylistMount.innerHTML = expandedPlaylistMarkup;
   if (expandedFocusPlaylistMount) expandedFocusPlaylistMount.innerHTML = expandedPlaylistMarkup;
@@ -2766,8 +2793,10 @@ renderCarinePlaylist();
 
 applyLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
 
-const CARINE_SPLASH_SEEN_KEY = 'carineSplashSeen';
-const CARINE_SPLASH_SUCCESS_KEY = 'carineSplashSuccessfulLoad';
+const CARINE_SPLASH_SEEN_KEY = getCarineStorageKey('splash-seen');
+const CARINE_SPLASH_SUCCESS_KEY = getCarineStorageKey('splash-successful-load');
+const LEGACY_SPLASH_SEEN_KEY = 'carineSplashSeen';
+const LEGACY_SPLASH_SUCCESS_KEY = 'carineSplashSuccessfulLoad';
 const CARINE_SPLASH_STARTED_AT = window.__carineSplashBootAt || performance.now();
 const CARINE_SPLASH_MIN_VISIBLE_MS = 8000;
 const CARINE_SPLASH_FIRST_VISIT_MS = 12000;
@@ -2810,7 +2839,9 @@ const writeSplashStorage = (key, value) => {
 };
 
 const hasSuccessfulSplashLoad = () => readSplashStorage(CARINE_SPLASH_SUCCESS_KEY) === 'true'
-  || readSplashStorage(CARINE_SPLASH_SEEN_KEY) === 'true';
+  || readSplashStorage(CARINE_SPLASH_SEEN_KEY) === 'true'
+  || readSplashStorage(LEGACY_SPLASH_SUCCESS_KEY) === 'true'
+  || readSplashStorage(LEGACY_SPLASH_SEEN_KEY) === 'true';
 
 const waitForSplashDelay = (milliseconds) => new Promise((resolve) => {
   window.setTimeout(resolve, Math.max(0, milliseconds));
@@ -3439,9 +3470,11 @@ const initializeReflections = () => {
 };
 
 const initializePwaExperience = () => {
-  const INSTALL_DISMISSED_AT_KEY = 'carineInstallDismissedAt';
-  const INSTALL_SHOWN_AT_KEY = 'carineInstallPromptShownAt';
-  const INSTALL_INSTALLED_KEY = 'carineAppInstalled';
+  const INSTALL_DISMISSED_AT_KEY = getCarineStorageKey('install-dismissed-at');
+  const INSTALL_SHOWN_AT_KEY = getCarineStorageKey('install-shown-at');
+  const INSTALL_INSTALLED_KEY = getCarineStorageKey('install-installed');
+  const LEGACY_DISMISSED_AT_KEY = 'carineInstallDismissedAt';
+  const LEGACY_INSTALLED_KEY = 'carineAppInstalled';
   const LEGACY_DISMISSED_KEY = 'carineAppInstallPromptDismissed';
   const LEGACY_SHOWN_AT_KEY = 'carineAppInstallPromptShownAt';
   const INSTALL_DISMISSAL_WINDOW = 7 * 24 * 60 * 60 * 1000;
@@ -3509,6 +3542,13 @@ const initializePwaExperience = () => {
     const currentDismissedAt = Number(readStorage(INSTALL_DISMISSED_AT_KEY));
     if (Number.isFinite(currentDismissedAt) && currentDismissedAt > 0) return currentDismissedAt;
 
+    const legacyDismissedAt = Number(readStorage(LEGACY_DISMISSED_AT_KEY));
+    if (Number.isFinite(legacyDismissedAt) && legacyDismissedAt > 0) {
+      writeStorage(INSTALL_DISMISSED_AT_KEY, String(legacyDismissedAt));
+      removeStorage(LEGACY_DISMISSED_AT_KEY);
+      return legacyDismissedAt;
+    }
+
     const legacyShownAt = Number(readStorage(LEGACY_SHOWN_AT_KEY));
     if (readStorage(LEGACY_DISMISSED_KEY) === 'true' && Number.isFinite(legacyShownAt) && legacyShownAt > 0) {
       writeStorage(INSTALL_DISMISSED_AT_KEY, String(legacyShownAt));
@@ -3521,7 +3561,8 @@ const initializePwaExperience = () => {
     const dismissedAt = getDismissedAt();
     return dismissedAt > 0 && Date.now() - dismissedAt < INSTALL_DISMISSAL_WINDOW;
   };
-  const shouldShowInstallToast = () => !isStandaloneDisplay() && readStorage(INSTALL_INSTALLED_KEY) !== 'true' && !wasRecentlyDismissed();
+  const isInstallMarkedComplete = () => readStorage(INSTALL_INSTALLED_KEY) === 'true' || readStorage(LEGACY_INSTALLED_KEY) === 'true';
+  const shouldShowInstallToast = () => !isStandaloneDisplay() && !isInstallMarkedComplete() && !wasRecentlyDismissed();
   const setFallbackInstructionCopy = () => {
     if (!installPanelCopy) return;
     const key = isIosDevice() ? 'pwa.iosInstructions' : 'pwa.safariInstructions';
@@ -3586,6 +3627,7 @@ const initializePwaExperience = () => {
       const choice = await deferredInstallPrompt.userChoice;
       if (choice?.outcome === 'accepted') {
         writeStorage(INSTALL_INSTALLED_KEY, 'true');
+        removeStorage(LEGACY_INSTALLED_KEY);
         hideInstallToast();
       } else {
         dismissInstallToast();
@@ -3621,6 +3663,7 @@ const initializePwaExperience = () => {
 
   window.addEventListener('appinstalled', () => {
     writeStorage(INSTALL_INSTALLED_KEY, 'true');
+    removeStorage(LEGACY_INSTALLED_KEY);
     hideInstallToast();
   });
 };
@@ -3826,9 +3869,9 @@ if (musicPlayers.length) {
   let isSwitchingTracks = false;
   let shuffleEnabled = false;
   let repeatMode = 'off';
-  const PLAYER_STORAGE_KEY = 'carine-sanadina-player-state';
-  const VISUALIZER_STORAGE_KEY = 'carine-sanadina-visualizer-enabled';
-  const VISUALIZER_STYLE_STORAGE_KEY = 'carine-sanadina-visualizer-style';
+  const PLAYER_STORAGE_KEY = PLAYER_STATE_STORAGE_KEY;
+  const VISUALIZER_STORAGE_KEY = getCarineStorageKey('visualizer-enabled');
+  const VISUALIZER_STYLE_STORAGE_KEY = getCarineStorageKey('visualizer-style');
   const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   const reduceMotion = reduceMotionQuery.matches;
   const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
