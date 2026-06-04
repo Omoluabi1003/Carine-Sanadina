@@ -1984,6 +1984,24 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   -webkit-backface-visibility: hidden;
 }
 
+html.is-ios .music-visualizer .visualizer-unit {
+  display: block;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: bottom center;
+}
+
+html.is-ios .music-visualizer.visualizer-playing .visualizer-units,
+html.is-ios .music-visualizer.visualizer-fallback .visualizer-units,
+html.is-ios .music-visualizer.visualizer-idle .visualizer-units {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+}
+
 .music-visualizer.is-idle span,
 .music-visualizer.is-paused span {
   animation: visualizerIdleBreath 2.6s ease-in-out infinite;
@@ -2008,7 +2026,9 @@ h1, h2, h3, blockquote { color: var(--ivory); }
 
 .music-visualizer.visualizer-fallback span {
   animation: visualizerFallbackPulse var(--fallback-duration, 1.18s) cubic-bezier(0.42, 0, 0.2, 1) infinite;
+  -webkit-animation: visualizerFallbackPulse var(--fallback-duration, 1.18s) cubic-bezier(0.42, 0, 0.2, 1) infinite;
   animation-delay: var(--unit-delay, 0s);
+  -webkit-animation-delay: var(--unit-delay, 0s);
   filter: none;
 }
 
@@ -2038,6 +2058,19 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   }
   48% {
     opacity: var(--bar-opacity, 0.88);
+    transform: translate3d(var(--unit-x, 0px), var(--unit-y, 0px), 0) rotate(var(--unit-rotate, 0deg)) scale(var(--unit-scale-x, 1), calc(var(--unit-scale-y, 0.6) * 1.16));
+  }
+}
+
+@-webkit-keyframes visualizerFallbackPulse {
+  0%, 100% {
+    opacity: 0.46;
+    -webkit-transform: translate3d(var(--unit-x, 0px), var(--unit-y, 0px), 0) rotate(var(--unit-rotate, 0deg)) scale(var(--unit-scale-x, 1), calc(var(--unit-scale-y, 0.6) * 0.76));
+    transform: translate3d(var(--unit-x, 0px), var(--unit-y, 0px), 0) rotate(var(--unit-rotate, 0deg)) scale(var(--unit-scale-x, 1), calc(var(--unit-scale-y, 0.6) * 0.76));
+  }
+  48% {
+    opacity: var(--bar-opacity, 0.88);
+    -webkit-transform: translate3d(var(--unit-x, 0px), var(--unit-y, 0px), 0) rotate(var(--unit-rotate, 0deg)) scale(var(--unit-scale-x, 1), calc(var(--unit-scale-y, 0.6) * 1.16));
     transform: translate3d(var(--unit-x, 0px), var(--unit-y, 0px), 0) rotate(var(--unit-rotate, 0deg)) scale(var(--unit-scale-x, 1), calc(var(--unit-scale-y, 0.6) * 1.16));
   }
 }
