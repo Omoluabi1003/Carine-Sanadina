@@ -6784,3 +6784,91 @@ body.lyrics-expanded-open .mini-player.is-visible {
     line-height: 1.28;
   }
 }
+
+/* RTL polish for Arabic while preserving player, chatbot, lyrics, and forms. */
+html[dir="rtl"] body {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] .nav {
+  direction: rtl;
+}
+
+html[dir="rtl"] .language-switcher {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html[dir="rtl"] .language-switcher__label {
+  padding-left: 0;
+  padding-right: 10px;
+}
+
+html[dir="rtl"] .language-switcher__menu {
+  right: auto;
+  left: 0;
+  transform-origin: top left;
+}
+
+html[dir="rtl"] .language-option {
+  text-align: right;
+}
+
+html[dir="rtl"] .hero-actions,
+html[dir="rtl"] .cta-paths,
+html[dir="rtl"] .footer-nav,
+html[dir="rtl"] .guide-starters,
+html[dir="rtl"] .lyrics-tabs,
+html[dir="rtl"] .music-control-row {
+  direction: rtl;
+}
+
+html[dir="rtl"] input,
+html[dir="rtl"] textarea,
+html[dir="rtl"] select,
+html[dir="rtl"] .guide-input,
+html[dir="rtl"] .guide-message,
+html[dir="rtl"] .lyrics-line,
+html[dir="rtl"] .lyrics-panel,
+html[dir="rtl"] .track-description,
+html[dir="rtl"] .track-synopsis {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] .mini-player,
+html[dir="rtl"] [data-audio-player],
+html[dir="rtl"] .lyrics-expanded-panel,
+html[dir="rtl"] .guide-panel {
+  direction: rtl;
+}
+
+html[dir="rtl"] .player-range,
+html[dir="rtl"] .mini-player [type="range"],
+html[dir="rtl"] [data-audio-player] [type="range"] {
+  direction: ltr;
+}
+
+html[dir="rtl"] .mini-player-title,
+html[dir="rtl"] .mini-player-artist,
+html[dir="rtl"] .track-title,
+html[dir="rtl"] .track-meta {
+  text-align: right;
+}
+
+html[dir="rtl"] .guide-message--user {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html[dir="rtl"] .guide-message--bot {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+@media (max-width: 760px) {
+  html[dir="rtl"] .language-switcher {
+    margin-right: 0;
+  }
+}
