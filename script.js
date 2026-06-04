@@ -3877,8 +3877,13 @@ if (musicPlayers.length) {
   const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
   const userAgent = window.navigator.userAgent || '';
   const platform = window.navigator.platform || '';
-  const isAppleTouchDevice = /iP(ad|hone|od)/.test(userAgent)
-    || (platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && "ontouchend" in document);
+  if (isIOS) {
+    document.documentElement.classList.add('is-ios');
+  }
+  const isAppleTouchDevice = isIOS;
   const isWebKitEngine = /AppleWebKit/i.test(userAgent) && !/Android/i.test(userAgent);
   const isIosWebKit = isAppleTouchDevice && isWebKitEngine;
   const isIosSafari = isIosWebKit;
@@ -4873,6 +4878,33 @@ if (musicPlayers.length) {
     return blockers;
   };
 
+  const getRenderSnapshot = (element) => {
+    if (!element) return { found: false };
+    const styles = window.getComputedStyle(element);
+    const rect = element.getBoundingClientRect?.() || { width: 0, height: 0 };
+    return {
+      found: true,
+      tag: element.tagName.toLowerCase(),
+      className: element.className || '',
+      display: styles.display,
+      visibility: styles.visibility,
+      opacity: styles.opacity,
+      overflow: `${styles.overflow}/${styles.overflowX}/${styles.overflowY}`,
+      clipPath: styles.clipPath || styles.webkitClipPath || 'none',
+      size: `${Math.round(rect.width)} × ${Math.round(rect.height)}`
+    };
+  };
+
+  const getAncestorRenderSnapshots = (element, maxDepth = 4) => {
+    const snapshots = [];
+    let current = element?.parentElement || null;
+    while (current && snapshots.length < maxDepth) {
+      snapshots.push(getRenderSnapshot(current));
+      current = current.parentElement;
+    }
+    return snapshots;
+  };
+
   const setupVisualizationStyleSelector = () => {
     if (!visualizerStyleSelect) return;
     visualizerStyleSelect.innerHTML = VISUALIZATION_STYLES.map((style) => (
@@ -4930,6 +4962,8 @@ if (musicPlayers.length) {
       this.lastDrawTime = 0;
       this.lastDiagnosticsTime = 0;
       this.lastReportedFrameCount = 0;
+      this.lastDiagnosticTransform = '';
+      this.lastDiagnosticTransformTime = 0;
       this.lastAnalyserAudioTime = 0;
       this.flatFrames = 0;
       this.activeFrames = 0;
@@ -5567,16 +5601,24 @@ if (musicPlayers.length) {
         audioCurrentTime: Number.isFinite(audio?.currentTime) ? Math.round(audio.currentTime * 1000) / 1000 : 0,
         audioDuration: Number.isFinite(audio?.duration) ? Math.round(audio.duration * 1000) / 1000 : 0,
         lastAudioEvent,
+        visualizerRootExists: Boolean(this.container),
+        barElementsExist: this.units.length > 0,
+        visualizerToggleChecked: Boolean(visualizerToggle?.checked),
+        activeAudioElementFound: Boolean(audio),
         visualizerPlayingClassPresent: Boolean(this.container?.classList.contains('visualizer-playing')),
+        correctElementHasPlayingClass: Boolean(this.container?.matches?.('.music-visualizer.visualizer-playing')),
+        animatedBarContainerHasPlayingClass: Boolean(this.container?.querySelector?.('.visualizer-units')?.classList.contains('visualizer-playing')),
         animationFrameLoopRunning: Boolean(this.frameId),
         frameCount: this.frameCount,
         frameCountIncreasing: this.frameCount > (this.lastReportedFrameCount || 0),
         containerSize: `${Math.round(containerRect.width)} × ${Math.round(containerRect.height)}`,
         barCountInDom: this.units.length,
         firstBarAnimationName: barStyles?.animationName || 'unavailable',
+        firstBarAnimationDuration: barStyles?.animationDuration || 'unavailable',
         firstBarAnimationPlayState: barStyles?.animationPlayState || 'unavailable',
         firstBarTransform: transformValue,
         firstBarScaleY: parseCssScaleY(transformValue),
+        transformChangedSinceLastDiagnosticWhilePlaying: Boolean(audio && !audio.paused && !audio.ended && this.lastDiagnosticTransform && this.lastDiagnosticTransform !== transformValue && window.performance.now() - this.lastDiagnosticTransformTime >= 900),
         prefersReducedMotion: reduceMotionQuery.matches,
         audioContextState: this.getAudioContextState(),
         analyserConnected: analyserSnapshot.connected,
@@ -5589,20 +5631,53 @@ if (musicPlayers.length) {
         fallbackModeActive: this.fallbackActive,
         documentVisibilityState: document.visibilityState,
         gpuHints,
-        renderBlockers: getBlockingRenderStyles(this.container),
+        parentRenderSnapshots: getAncestorRenderSnapshots(this.container),
+        renderBlockers: getBlockingRenderStyles(this.container).concat(getBlockingRenderStyles(this.container?.parentElement)),
+        serviceWorkerCache: {
+          controller: navigator.serviceWorker?.controller?.scriptURL || 'none',
+          expectedAppVersion: APP_VERSION,
+          storedAppVersion: (() => {
+            try { return window.localStorage.getItem(APP_VERSION_STORAGE_KEY) || 'missing'; } catch (error) { return 'unavailable'; }
+          })(),
+          possibleStaleCache: (() => {
+            try { return Boolean(window.localStorage.getItem(APP_VERSION_STORAGE_KEY) && window.localStorage.getItem(APP_VERSION_STORAGE_KEY) !== APP_VERSION); } catch (error) { return false; }
+          })()
+        },
         mode: this.mode,
         forceMode: this.getForceMode() || 'none'
       };
     }
 
+    categorizeFailure(diagnostics) {
+      const containerSize = this.container?.getBoundingClientRect?.() || { width: 0, height: 0 };
+      const rootHasPlayingClass = Boolean(this.container?.classList.contains('visualizer-playing'));
+      const firstBarAnimationDisabled = diagnostics.firstBarAnimationName === 'none' || diagnostics.firstBarAnimationDuration === '0s' || diagnostics.firstBarAnimationDuration === '0ms';
+      if (!diagnostics.visualizerRootExists) return 'visualizer root missing';
+      if (!diagnostics.barElementsExist) return 'bars missing';
+      if (diagnostics.prefersReducedMotion && diagnostics.audioPlaying) return 'prefers-reduced-motion blocking animation';
+      if (diagnostics.audioPlaying && diagnostics.visualizerEnabled && !rootHasPlayingClass) return 'playing class not applied';
+      if (diagnostics.audioPlaying && diagnostics.visualizerEnabled && rootHasPlayingClass && !diagnostics.correctElementHasPlayingClass) return 'wrong element receiving class';
+      if (diagnostics.audioPlaying && firstBarAnimationDisabled && !diagnostics.animationFrameLoopRunning) return 'CSS animation disabled';
+      if (diagnostics.audioPlaying && diagnostics.firstBarAnimationName !== 'none' && diagnostics.firstBarAnimationPlayState === 'paused') return 'animation-play-state paused';
+      if (containerSize.width <= 0 || containerSize.height <= 0) return 'zero-height container';
+      if (diagnostics.renderBlockers.some((blocker) => /display:none|visibility:hidden|visibility:collapse|opacity:0/.test(blocker))) return 'hidden parent';
+      if (diagnostics.audioPlaying && diagnostics.lastAudioEvent === 'none') return 'event listener not firing';
+      if (diagnostics.serviceWorkerCache?.possibleStaleCache) return 'stale service worker cache';
+      if (diagnostics.audioPlaying && !diagnostics.transformChangedSinceLastDiagnosticWhilePlaying && diagnostics.frameCountIncreasing === false) return 'transform not changing';
+      return 'unknown';
+    }
+
     logDiagnostics(event = 'state', immediate = false) {
       if (!this.isDebugEnabled() || !window.console?.groupCollapsed) return;
       const now = window.performance.now();
-      if (!immediate && now - this.lastDiagnosticsTime < 3000) return;
+      if (!immediate && now - this.lastDiagnosticsTime < 2400) return;
       this.lastDiagnosticsTime = now;
       const diagnostics = this.collectDiagnostics();
+      diagnostics.failureCategory = this.categorizeFailure(diagnostics);
       this.lastReportedFrameCount = this.frameCount;
-      window.console.groupCollapsed(`[music visualizer] ${event} ${diagnostics.timestamp}`);
+      this.lastDiagnosticTransform = diagnostics.firstBarTransform;
+      this.lastDiagnosticTransformTime = now;
+      window.console.groupCollapsed(`[music visualizer] ${event} ${diagnostics.failureCategory} ${diagnostics.timestamp}`);
       window.console.info(diagnostics);
       window.console.groupEnd();
     }
@@ -5646,11 +5721,13 @@ if (musicPlayers.length) {
 
     const render = () => {
       const diagnostics = visualizerController.collectDiagnostics(activePlayer ? getAudio(activePlayer) : null);
+      diagnostics.failureCategory = visualizerController.categorizeFailure(diagnostics);
       const rows = [
         ['Browser/platform detected', diagnostics.browserPlatform],
         ['Safari version', diagnostics.safariVersion],
         ['iOS version', diagnostics.iosVersion],
         ['iOS detected', diagnostics.iosDetected],
+        ['Failure category', diagnostics.failureCategory],
         ['Visualizer enabled', diagnostics.visualizerEnabled],
         ['Selected visualization style', diagnostics.selectedVisualizationStyle],
         ['Active track title', diagnostics.activeTrackTitle],
@@ -5677,7 +5754,28 @@ if (musicPlayers.length) {
     };
 
     render();
-    window.setInterval(render, 1000);
+    visualizerController.logDiagnostics('debug-panel', true);
+    window.setInterval(() => {
+      render();
+      visualizerController.logDiagnostics('debug-panel');
+    }, 2500);
+  };
+
+  const categorizeVisualizerSelfCheckFailure = (checks, diagnostics, blockers) => {
+    if (!diagnostics.visualizerRootExists) return 'visualizer root missing';
+    if (!checks.barsPresentInDom) return 'bars missing';
+    if (checks.audioPlaying && diagnostics.visualizerEnabled && !checks.visualizerPlayingClass) return 'playing class not applied';
+    if (checks.audioPlaying && diagnostics.visualizerEnabled && checks.visualizerPlayingClass && !diagnostics.correctElementHasPlayingClass) return 'wrong element receiving class';
+    if (checks.audioPlaying && !checks.firstBarHasActiveCssAnimation && !checks.requestAnimationFrameRunning) return 'CSS animation disabled';
+    if (checks.audioPlaying && checks.firstBarHasActiveCssAnimation && !checks.animationPlayStateRunning) return 'animation-play-state paused';
+    if (!checks.containerHasSize) return 'zero-height container';
+    if (blockers.some((blocker) => /display:none|visibility:hidden|visibility:collapse|opacity:0/.test(blocker))) return 'hidden parent';
+    if (!checks.reducedMotionNotDisabling) return 'prefers-reduced-motion blocking animation';
+    if (!checks.eventListenersFiring) return 'event listener not firing';
+    if (diagnostics.serviceWorkerCache?.possibleStaleCache) return 'stale service worker cache';
+    if (checks.audioPlaying && !checks.transformOrHeightChangingAcross1000ms && !checks.requestAnimationFrameRunning) return 'transform not changing';
+    if (checks.audioPlaying && !checks.transformOrHeightChangingAcross1000ms && diagnostics.iosDetected) return 'transform not changing';
+    return 'unknown';
   };
 
   const collectVisualizerSelfCheck = async (audio, startedAtTime, startedAtFrame, startedAtEvent) => {
@@ -5686,7 +5784,11 @@ if (musicPlayers.length) {
     const beforeTransform = beforeStyles?.transform || beforeStyles?.webkitTransform || '';
     const beforeHeight = beforeStyles?.height || '';
     const beforeFrame = visualizerController?.frameCount || 0;
-    await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+    if (audio && !audio.paused && !audio.ended) {
+      await new Promise((resolve) => window.setTimeout(resolve, 1000));
+    } else {
+      await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+    }
     const afterStyles = firstBar ? window.getComputedStyle(firstBar) : null;
     const afterTransform = afterStyles?.transform || afterStyles?.webkitTransform || '';
     const afterHeight = afterStyles?.height || '';
@@ -5703,6 +5805,7 @@ if (musicPlayers.length) {
       firstBarHasActiveCssAnimation: Boolean(afterStyles && afterStyles.animationName !== 'none'),
       animationPlayStateRunning: Boolean(afterStyles && afterStyles.animationPlayState === 'running'),
       transformOrHeightChanging: beforeTransform !== afterTransform || beforeHeight !== afterHeight,
+      transformOrHeightChangingAcross1000ms: Boolean(audio && !audio.paused && !audio.ended && (beforeTransform !== afterTransform || beforeHeight !== afterHeight)),
       containerHasSize: rect.width > 0 && rect.height > 0,
       renderingNotBlocked: blockers.length === 0,
       reducedMotionNotDisabling: !reduceMotionQuery.matches,
@@ -5711,17 +5814,7 @@ if (musicPlayers.length) {
       eventListenersFiring: lastAudioEvent !== startedAtEvent || ['play', 'playing', 'timeupdate'].includes(lastAudioEvent)
     };
     const failures = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
-    let likelyFailureCategory = 'other';
-    if (!checks.visualizerPlayingClass) likelyFailureCategory = diagnostics.visualizerEnabled ? 'CSS class not applied' : 'CSS class not applied';
-    else if ((!checks.firstBarHasActiveCssAnimation || !checks.animationPlayStateRunning) && !checks.transformOrHeightChanging) likelyFailureCategory = 'CSS animation disabled';
-    else if (!checks.reducedMotionNotDisabling) likelyFailureCategory = 'prefers-reduced-motion issue';
-    else if (!checks.containerHasSize) likelyFailureCategory = 'zero-height container';
-    else if (blockers.some((blocker) => /display|visibility|opacity/.test(blocker))) likelyFailureCategory = 'display/visibility issue';
-    else if (blockers.some((blocker) => /overflow|clip-path/.test(blocker))) likelyFailureCategory = 'overflow/clipping issue';
-    else if (!checks.requestAnimationFrameRunning) likelyFailureCategory = 'requestAnimationFrame not running';
-    else if (!checks.audioContextUsable) likelyFailureCategory = 'AudioContext suspended';
-    else if (!checks.analyserNotFlatWhenUsed) likelyFailureCategory = 'analyser returning flat/zero data';
-    else if (!checks.eventListenersFiring) likelyFailureCategory = 'event listeners not firing';
+    const likelyFailureCategory = categorizeVisualizerSelfCheckFailure(checks, diagnostics, blockers);
     return { timestamp: new Date().toISOString(), checks, failures, likelyFailureCategory, diagnostics, blockers, beforeTransform, afterTransform, beforeHeight, afterHeight };
   };
 
