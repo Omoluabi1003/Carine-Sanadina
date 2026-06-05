@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-05-player-state-regression-fix';
+const APP_VERSION = 'carine-site-2026-06-05-reason-catalog';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -124,6 +124,16 @@ translations.en = {
   'tracks.paranoia.description': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
   'paranoiaPersecutiveSynopsis': 'A cinematic reflection on intuition, vigilance, and spiritual discernment.',
   'tracks.paranoia.playLabel': 'Play Paranoïa Persécutive',
+  'tracks.reason.title': 'Reason',
+  'tracks.reason.audioLabel': 'Reason by Carine Sanadina',
+  'tracks.reason.coverAlt': 'Reason cover art',
+  'tracks.reason.fallback': 'Reason cover art is temporarily unavailable.',
+  'tracks.reason.number': 'Track 06',
+  'tracks.reason.description': 'A joyful Afropop celebration of purpose, hustle, and the reason behind every season of growth.',
+  'tracks.reason.about': 'Reason captures Carine Sanadina’s vibrant message of purpose, movement, and gratitude. It blends everyday hustle with celebratory energy, reminding listeners that every step, every dance, and every season of growth carries meaning.',
+  'reasonSynopsis': 'A joyful Afropop celebration of purpose, hustle, and the reason behind every season of growth.',
+  'tracks.reason.credits': 'Artist: Carine Sanadina\nProduced by Omoluabi Productions\nPresented by Omoluabi Productions',
+  'tracks.reason.playLabel': 'Play Reason',
   'mini.label': 'Current track mini player',
   'mini.noTrack': 'No track selected',
   'mini.toggleLabel': 'Play or pause current track',
@@ -1124,7 +1134,7 @@ const premiumExperienceTranslations = {
     'press.books.title': 'Book List',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, and After The Storm.',
     'press.music.title': 'Music List',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, and Paranoïa Persécutive are presented as a tender listening window into Carine’s healing-centered artistry.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, and Reason are presented as a tender listening window into Carine’s healing-centered artistry.',
     'speaking.title': 'Speaking Topics',
     'speaking.topic1': 'Domestic violence awareness and hidden survival',
     'speaking.topic2': 'Faith, resilience, and rebuilding self-worth',
@@ -3760,7 +3770,7 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
-const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive'];
+const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason'];
 const PLAYLIST_STORAGE_KEYS = [PLAYER_STATE_STORAGE_KEY];
 const CACHE_SENSITIVE_STORAGE_KEYS = [
   ...PLAYLIST_STORAGE_KEYS,
@@ -3888,6 +3898,24 @@ const CARINE_MUSIC_PLAYLIST = [
     lyricsTimed: [],
     translationKey: 'tracks.paranoia',
     synopsisKey: 'paranoiaPersecutiveSynopsis'
+  },
+  {
+    id: 'reason',
+    title: 'Reason',
+    artist: 'Carine Sanadina',
+    mood: 'Purpose • Hustle • Gratitude • Celebration',
+    shortDescription: 'A joyful Afropop celebration of purpose, hustle, and the reason behind every season of growth.',
+    description: 'A joyful Afropop celebration of purpose, hustle, and the reason behind every season of growth.',
+    coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/D60D546C-83C3-401A-8C56-3B48FD5022E0.png',
+    audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Reason.mp3',
+    lyrics: '',
+    // TODO: Create /lyrics/reason.lrc when timed lyrics are available.
+    lyricsLrc: '',
+    about: 'Reason captures Carine Sanadina’s vibrant message of purpose, movement, and gratitude. It blends everyday hustle with celebratory energy, reminding listeners that every step, every dance, and every season of growth carries meaning.',
+    credits: 'Artist: Carine Sanadina\nProduced by Omoluabi Productions\nPresented by Omoluabi Productions',
+    lyricsTimed: [],
+    translationKey: 'tracks.reason',
+    synopsisKey: 'reasonSynopsis'
   }
 ];
 
@@ -5613,7 +5641,9 @@ if (musicPlayers.length) {
   const getTrackAboutContent = (player = activePlayer) => {
     const track = getTrackForPlayer(player);
     if (!track) return translate('lyrics.moreDetails');
-    const localizedAbout = track.translationKey ? getOptionalTranslation(`${track.translationKey}.description`) : '';
+    const localizedAbout = track.translationKey
+      ? getOptionalTranslation(`${track.translationKey}.about`) || getOptionalTranslation(`${track.translationKey}.description`)
+      : '';
     return localizedAbout || track.about || track.synopsis || translate('lyrics.moreDetails');
   };
 
