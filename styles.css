@@ -8146,3 +8146,76 @@ body.expanded-player-open { overflow: auto; }
     margin-top: 18px;
   }
 }
+
+/* Critical player-state regression fixes: keep controls clickable and the record geometrically stable. */
+.inline-listening-experience .console-icon-control,
+.inline-listening-experience .track-play-toggle,
+.inline-listening-experience .console-playlist-toggle,
+.inline-listening-experience .lyrics-tab,
+.inline-listening-experience .lyrics-expand-toggle {
+  position: relative;
+  z-index: 8;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.direct-drive-console .expanded-vinyl-disc {
+  width: min(52vw, 260px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 50%;
+  transform-origin: 50% 50%;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.direct-drive-console .expanded-vinyl-wrap {
+  place-items: center;
+  align-items: center;
+  justify-items: center;
+}
+
+.direct-drive-console .expanded-vinyl-wrap.is-playing .platter-strobe-ring,
+.direct-drive-console .expanded-vinyl-wrap.vinyl-playing .platter-strobe-ring {
+  animation: platter-strobe-shimmer 2.4s linear infinite;
+}
+
+@keyframes platter-strobe-shimmer {
+  from { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0.5; }
+  50% { opacity: 0.78; }
+  to { transform: translate3d(0, 0, 0) rotate(360deg); opacity: 0.5; }
+}
+
+.inline-listening-experience.is-expanded-player {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  align-items: start;
+  overflow-y: auto;
+  padding: max(16px, env(safe-area-inset-top)) 12px max(20px, env(safe-area-inset-bottom));
+  background: rgba(2, 7, 17, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.inline-listening-experience.is-expanded-player .inline-player-card {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+body.expanded-player-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .direct-drive-console .expanded-vinyl-disc,
+  .direct-drive-console .expanded-vinyl-wrap.is-playing .platter-strobe-ring,
+  .direct-drive-console .expanded-vinyl-wrap.vinyl-playing .platter-strobe-ring {
+    animation: none !important;
+    will-change: auto;
+  }
+}
