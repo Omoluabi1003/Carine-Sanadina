@@ -673,61 +673,70 @@
           <button class="mobile-player-close" type="button" data-mobile-close aria-label="Close player" data-i18n-aria-label="mini.close">×</button>
           <div class="expanded-player-grabber" aria-hidden="true"></div>
           <div class="expanded-player-layout">
-            <div class="expanded-player-hero">
-              <div class="expanded-artwork-wrap expanded-vinyl-wrap" data-vinyl-stage>
-                <div class="expanded-artwork-glow expanded-vinyl-glow" aria-hidden="true"></div>
-                <div class="turntable-deck-accent" aria-hidden="true">
-                  <span class="turntable-status-light"></span>
-                  <span class="turntable-control-dot"></span>
-                  <span class="turntable-control-dot"></span>
+            <section class="luxury-audio-console" aria-label="Carine Sanadina audio console" data-i18n-aria-label="console.label">
+              <div class="console-brand" aria-hidden="true">CARINE SANADINA AUDIO</div>
+              <div class="console-top">
+                <div class="console-turntable">
+                  <div class="expanded-artwork-wrap expanded-vinyl-wrap" data-vinyl-stage>
+                    <div class="expanded-artwork-glow expanded-vinyl-glow" aria-hidden="true"></div>
+                    <div class="turntable-deck-accent" aria-hidden="true">
+                      <span class="turntable-status-light"></span>
+                      <span class="turntable-control-dot"></span>
+                      <span class="turntable-control-dot"></span>
+                    </div>
+                    <div class="expanded-vinyl-disc" aria-hidden="true" data-vinyl-disc>
+                      <div class="expanded-vinyl-sheen"></div>
+                      <div class="expanded-vinyl-label">
+                        <img class="mobile-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mobile-cover />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="expanded-vinyl-disc" aria-hidden="true" data-vinyl-disc>
-                  <div class="expanded-vinyl-sheen"></div>
-                  <div class="expanded-vinyl-label">
-                    <img class="mobile-player-cover" src="" alt="" referrerpolicy="no-referrer" data-mobile-cover />
+                <div class="console-now-playing">
+                  <div class="console-status-row">
+                    <p class="eyebrow" data-i18n="music.nowPlaying">Now playing</p>
+                    <span class="console-playback-status" data-console-status data-i18n="console.ready">Ready</span>
+                  </div>
+                  <h3 id="mobile-player-title" data-mobile-title data-i18n="mini.noTrack">No track selected</h3>
+                  <p class="console-artist" data-mobile-artist>Carine Sanadina</p>
+                  <p class="console-synopsis" data-console-synopsis data-i18n="console.selectSynopsis">Select a song to begin a healing-centered listening experience.</p>
+                  <div class="expanded-visualizer" aria-hidden="true" data-expanded-visualizer>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
                   </div>
                 </div>
               </div>
-              <div class="expanded-player-copy">
-                <p class="eyebrow" data-i18n="music.nowPlaying">Now playing</p>
-                <h3 id="mobile-player-title" data-mobile-title data-i18n="mini.noTrack">No track selected</h3>
-                <p data-mobile-artist>Carine Sanadina</p>
+              <div class="console-transport">
+                <div class="expanded-player-progress" aria-live="off">
+                  <span data-expanded-current>0:00</span>
+                  <label class="sr-only" for="expanded-player-progress" data-i18n="mini.progress">Current track progress</label>
+                  <input id="expanded-player-progress" class="player-range progress-range expanded-progress-range" type="range" min="0" max="100" value="0" step="0.1" data-expanded-progress disabled aria-disabled="true" aria-label="Current track progress" data-i18n-aria-label="mini.progress" />
+                  <span data-expanded-duration>0:00</span>
+                </div>
+                <div class="mobile-player-actions expanded-player-actions" aria-label="Music playback controls" data-i18n-aria-label="music.controlsLabel">
+                  <button class="console-icon-control" type="button" data-mobile-shuffle aria-label="Shuffle" data-i18n-aria-label="music.shuffle" title="Shuffle" data-i18n-title="music.shuffle">⌘</button>
+                  <button class="console-icon-control" type="button" data-mobile-previous aria-label="Previous track" data-i18n-aria-label="console.previous" title="Previous track" data-i18n-title="console.previous">|◀</button>
+                  <button class="track-play-toggle expanded-play-toggle" type="button" data-mobile-toggle aria-label="Play or pause current track" data-i18n-aria-label="mini.toggleLabel"><span class="play-icon" aria-hidden="true">▶</span></button>
+                  <button class="console-icon-control" type="button" data-mobile-next aria-label="Next track" data-i18n-aria-label="music.nextTrack" title="Next track" data-i18n-title="music.nextTrack">▶|</button>
+                  <button class="console-icon-control console-repeat-control" type="button" data-mobile-repeat aria-label="Repeat off" data-i18n-aria-label="music.repeatOff" title="Repeat off" data-i18n-title="music.repeatOff">↻</button>
+                  <button class="console-playlist-toggle" type="button" data-console-playlist-toggle aria-expanded="false" aria-controls="console-playlist-drawer">
+                    <span aria-hidden="true">☷</span><span data-i18n="music.playlist">Playlist</span>
+                  </button>
+                </div>
               </div>
-              <div class="expanded-player-progress" aria-live="off">
-                <span data-expanded-current>0:00</span>
-                <label class="sr-only" for="expanded-player-progress" data-i18n="mini.progress">Current track progress</label>
-                <input
-                  id="expanded-player-progress"
-                  class="player-range progress-range expanded-progress-range"
-                  type="range"
-                  min="0"
-                  max="100"
-                  value="0"
-                  step="0.1"
-                  data-expanded-progress
-                  disabled
-                  aria-disabled="true"
-                  aria-label="Current track progress" data-i18n-aria-label="mini.progress"
-                />
-                <span data-expanded-duration>0:00</span>
+            </section>
+            <aside class="console-playlist-drawer" id="console-playlist-drawer" data-console-playlist-drawer aria-hidden="true">
+              <button class="console-playlist-backdrop" type="button" data-console-playlist-close tabindex="-1" aria-label="Close playlist" data-i18n-aria-label="console.closePlaylist"></button>
+              <div class="console-playlist-panel">
+                <div class="console-playlist-heading">
+                  <div><span class="eyebrow" data-i18n="console.collection">Listening collection</span><h3 data-i18n="music.playlist">Playlist</h3></div>
+                  <button class="console-playlist-close" type="button" data-console-playlist-close aria-label="Close playlist" data-i18n-aria-label="console.closePlaylist">×</button>
+                </div>
+                <div class="expanded-track-picker" aria-label="Choose a track in expanded player" data-i18n-aria-label="music.playlistLabel">
+                  <div class="expanded-track-list" data-expanded-playlist-tracks></div>
+                </div>
               </div>
-              <div class="mobile-player-actions expanded-player-actions">
-                <button class="control-chip" type="button" data-mobile-shuffle data-i18n="music.shuffle">Shuffle</button>
-                <button class="track-play-toggle expanded-play-toggle" type="button" data-mobile-toggle aria-label="Play or pause current track" data-i18n-aria-label="mini.toggleLabel"><span class="play-icon" aria-hidden="true">▶</span></button>
-                <button class="control-chip" type="button" data-mobile-repeat data-i18n="music.repeatOff">Repeat Off</button>
-              </div>
-              <div class="expanded-visualizer" aria-hidden="true" data-expanded-visualizer>
-                <span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span>
-              </div>
-            </div>
-            <div class="expanded-track-picker" aria-label="Choose a track in expanded player" data-i18n-aria-label="music.playlistLabel">
-              <div class="expanded-track-picker__header">
-                <span data-i18n="music.playlist">Playlist</span>
-                <span data-i18n="music.time">Time</span>
-              </div>
-              <div class="expanded-track-list" data-expanded-playlist-tracks></div>
-            </div>
+            </aside>
             <div class="lyrics-panel" data-lyrics-panel>
               <div class="lyrics-focus-bar" data-lyrics-focus-bar hidden>
                 <button class="lyrics-return-button" type="button" data-lyrics-return data-i18n="lyrics.return">Back to Player</button>
