@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-05-player-layout-restoration';
+const APP_VERSION = 'carine-site-2026-06-05-player-state-regression-fix';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3891,6 +3891,17 @@ const CARINE_MUSIC_PLAYLIST = [
   }
 ];
 
+// Normalize the playlist once so every player surface resolves the same track shape.
+CARINE_MUSIC_PLAYLIST.forEach((track) => {
+  track.audioSrc = track.audioUrl;
+  track.cover = track.coverUrl;
+  track.lyricsPath = track.lyricsLrc || '';
+  track.staticLyricsPath = track.lyrics || '';
+  track.synopsis = track.shortDescription || track.description || track.about || '';
+});
+
+const MUSIC_TRACKS_BY_ID = new Map(CARINE_MUSIC_PLAYLIST.map((track) => [track.id, track]));
+
 const assertRequiredPlaylistTracks = () => {
   const playlistIds = CARINE_MUSIC_PLAYLIST.map((track) => track?.id).filter(Boolean);
   const uniquePlaylistIds = new Set(playlistIds);
@@ -5229,6 +5240,7 @@ if (musicPlayers.length) {
   const miniShuffle = document.querySelector('[data-mini-shuffle]');
   const miniRepeat = document.querySelector('[data-mini-repeat]');
   const miniExpand = document.querySelector('[data-mini-expand]');
+  const playerExpand = document.querySelector('[data-player-expand]');
   const mobileClose = document.querySelector('[data-mobile-close]');
   const expandedProgress = document.querySelector('[data-expanded-progress]');
   const expandedCurrent = document.querySelector('[data-expanded-current]');
@@ -5254,6 +5266,11 @@ if (musicPlayers.length) {
   const lyricsTabs = Array.from(document.querySelectorAll('[data-lyrics-tab]'));
   const lyricsExpandToggle = document.querySelector('[data-lyrics-expand]');
   let activeLyricsTab = 'lyrics';
+  let activeTrackId = '';
+  let activeTrack = null;
+  let lyricsLoadToken = 0;
+  let loadedLyricsPath = '';
+  const buttonListenerStatus = {};
   let isLyricsExpanded = false;
   let isLyricsMoreOpen = false;
   let lyricEntries = [];
@@ -5276,7 +5293,7 @@ if (musicPlayers.length) {
     gentillesse: 'laGentillesse',
     wonderful: 'wonderful',
     womanifesto: 'womanifesto',
-    paranoia: 'paranoiaPersecutive'
+    'paranoia-persecutive': 'paranoiaPersecutive'
   };
   const lyricsSourceMap = {
     consolation: '/lyrics/consolation.lrc',
@@ -5590,16 +5607,21 @@ if (musicPlayers.length) {
     activeLyricIndex = -1;
   };
 
-  const getTrackAboutContent = (player) => {
-    if (!player) return translate('lyrics.moreDetails');
-    const trackKey = player.dataset.trackTranslationKey || '';
-    const localizedAbout = trackKey ? translate(`${trackKey}.description`) : '';
-    return localizedAbout || player.dataset.trackAbout || translate('lyrics.moreDetails');
+  const getTrackForPlayer = (player = activePlayer) => MUSIC_TRACKS_BY_ID.get(player?.dataset.trackId || activeTrackId) || null;
+  const getOptionalTranslation = (key) => String(translations[currentLanguage]?.[key] ?? translations[DEFAULT_LANGUAGE]?.[key] ?? '');
+
+  const getTrackAboutContent = (player = activePlayer) => {
+    const track = getTrackForPlayer(player);
+    if (!track) return translate('lyrics.moreDetails');
+    const localizedAbout = track.translationKey ? getOptionalTranslation(`${track.translationKey}.description`) : '';
+    return localizedAbout || track.about || track.synopsis || translate('lyrics.moreDetails');
   };
 
-  const getTrackCreditsContent = (player) => {
-    const creditsKey = player?.dataset.trackCreditsKey || '';
-    return creditsKey ? t(creditsKey, translate('tracks.genericCredits')) : translate('tracks.genericCredits');
+  const getTrackCreditsContent = (player = activePlayer) => {
+    const track = getTrackForPlayer(player);
+    if (!track) return translate('tracks.genericCredits');
+    const localizedCredits = track.translationKey ? getOptionalTranslation(`${track.translationKey}.credits`) : '';
+    return localizedCredits || track.credits || translate('tracks.genericCredits');
   };
 
   const renderLyricsMoreDetails = (player = activePlayer) => {
@@ -5642,7 +5664,8 @@ if (musicPlayers.length) {
 
   const syncLyricsExpandMode = () => {
     const canExpandLyrics = activeLyricsTab === 'lyrics';
-    const isPlayerOpen = mobilePlayer?.classList.contains('is-open') ?? true;
+    const isInlinePlayer = mobilePlayer?.classList.contains('inline-listening-experience');
+    const isPlayerOpen = isInlinePlayer || (mobilePlayer?.classList.contains('is-open') ?? true);
     const isExpanded = canExpandLyrics && isLyricsExpanded && isPlayerOpen;
     if (!isExpanded && isLyricsMoreOpen) setLyricsMoreOpen(false);
     mobilePlayer?.classList.toggle('is-lyrics-expanded', isExpanded);
@@ -5844,19 +5867,27 @@ if (musicPlayers.length) {
 
   const loadLyricsForPlayer = async (player) => {
     if (!player || !lyricsScroll) return;
+    const requestedTrackId = player.dataset.trackId || '';
+    const requestToken = lyricsLoadToken;
+    const track = MUSIC_TRACKS_BY_ID.get(requestedTrackId);
     currentLyricsPlayer = player;
     currentLyricsLrcPath = '';
+    loadedLyricsPath = '';
     stopLyricsAnimationLoop();
     activeLyricIndex = -1;
+    lyricEntries = [];
+    lyricTiming = [];
+    setLyricsMessage(t('lyrics.loading', 'Loading lyrics…'));
 
-    const mappedLrcPath = lyricsSourceMap[player.dataset.trackId] || '';
-    const lrcPath = mappedLrcPath || player.dataset.trackLyricsLrc || '';
+    const mappedLrcPath = lyricsSourceMap[requestedTrackId] || '';
+    const lrcPath = mappedLrcPath || track?.lyricsPath || player.dataset.trackLyricsLrc || '';
     if (lrcPath) {
       try {
         const lrcLyrics = parseLrcText(await fetchCachedText(lrcPath));
-        if (currentLyricsPlayer !== player) return;
+        if (requestToken !== lyricsLoadToken || activeTrackId !== requestedTrackId || currentLyricsPlayer !== player) return;
         if (lrcLyrics.length) {
           currentLyricsLrcPath = lrcPath;
+          loadedLyricsPath = lrcPath;
           applyTimedLyrics(lrcLyrics, player, lrcPath);
           updateActiveLyric(getAudio(player), { forceScroll: true, event: 'load' });
           startLyricsAnimationLoop(getAudio(player));
@@ -5872,7 +5903,7 @@ if (musicPlayers.length) {
       }
     }
 
-    const lyricsPath = player.dataset.trackLyrics || '';
+    const lyricsPath = track?.staticLyricsPath || player.dataset.trackLyrics || '';
     if (!resolveSiteAssetPath(lyricsPath)) {
       lyricEntries = [];
       lyricTiming = [];
@@ -5882,10 +5913,11 @@ if (musicPlayers.length) {
 
     try {
       const fallbackLyrics = await fetchCachedText(lyricsPath);
-      if (currentLyricsPlayer !== player) return;
+      if (requestToken !== lyricsLoadToken || activeTrackId !== requestedTrackId || currentLyricsPlayer !== player) return;
+      loadedLyricsPath = lyricsPath;
       applyFallbackLyrics(fallbackLyrics);
     } catch (error) {
-      if (currentLyricsPlayer !== player) return;
+      if (requestToken !== lyricsLoadToken || activeTrackId !== requestedTrackId || currentLyricsPlayer !== player) return;
       lyricEntries = [];
       lyricTiming = [];
       setLyricsMessage(translate('lyrics.unavailable'));
@@ -6077,6 +6109,19 @@ if (musicPlayers.length) {
   };
 
   const setActiveTrack = (player) => {
+    const nextTrackId = player?.dataset.trackId || '';
+    const trackChanged = nextTrackId !== activeTrackId;
+    activePlayer = player || null;
+    activeTrackId = nextTrackId;
+    activeTrack = MUSIC_TRACKS_BY_ID.get(activeTrackId) || null;
+    if (trackChanged) {
+      lyricsLoadToken += 1;
+      currentLyricsPlayer = null;
+      loadedLyricsPath = '';
+      lyricEntries = [];
+      lyricTiming = [];
+      setLyricsMessage(activeTrack ? t('lyrics.loading', 'Loading lyrics…') : translate('lyrics.selectTrack'));
+    }
     musicPlayers.forEach((track) => track.classList.toggle('is-active', track === player));
     expandedTrackOptions.forEach((option) => {
       const isActive = Boolean(player && option.dataset.trackId === player.dataset.trackId);
@@ -7617,13 +7662,14 @@ if (musicPlayers.length) {
   };
 
   const showMiniPlayer = (player) => {
+    const audio = getAudio(player);
+    setActiveTrack(player);
+
     if (!mini || !miniPlayer) {
+      syncTransportButtons(audio);
+      updateMediaSessionMetadata(player);
       return;
     }
-
-    const audio = getAudio(player);
-    activePlayer = player;
-    setActiveTrack(player);
     miniPlayer.classList.add('is-visible');
     miniPlayer.setAttribute('aria-hidden', 'false');
     updateMiniPlayerBodyState();
@@ -8415,7 +8461,8 @@ if (musicPlayers.length) {
 
   const setMobilePlayerOpen = (isOpen) => {
     if (!mobilePlayer) return;
-    mobilePlayer.classList.toggle('is-open', isOpen);
+    const isInlinePlayer = mobilePlayer.classList.contains('inline-listening-experience');
+    mobilePlayer.classList.toggle(isInlinePlayer ? 'is-expanded-player' : 'is-open', isOpen);
     if (isOpen) {
       setLyricsExpanded(false);
       setLyricsTab('lyrics');
@@ -8423,8 +8470,14 @@ if (musicPlayers.length) {
       setConsolePlaylistOpen(false);
     }
     document.body.classList.toggle('expanded-player-open', isOpen);
-    mobilePlayer.setAttribute('aria-hidden', String(!isOpen));
-    miniExpand?.setAttribute('aria-expanded', String(isOpen));
+    mobilePlayer.setAttribute('aria-hidden', isInlinePlayer ? 'false' : String(!isOpen));
+    [miniExpand, playerExpand].forEach((button) => button?.setAttribute('aria-expanded', String(isOpen)));
+    if (playerExpand) {
+      const label = isOpen ? translate('mini.close') : translate('mini.expand');
+      playerExpand.setAttribute('aria-label', label);
+      playerExpand.setAttribute('title', label);
+      playerExpand.classList.toggle('is-active', isOpen);
+    }
     syncLyricsExpandMode();
     if (isOpen && activePlayer) {
       const audio = getAudio(activePlayer);
@@ -8467,6 +8520,8 @@ if (musicPlayers.length) {
   });
 
   miniExpand?.addEventListener('click', () => setMobilePlayerOpen(!mobilePlayer?.classList.contains('is-open')));
+  playerExpand?.addEventListener('click', () => setMobilePlayerOpen(!mobilePlayer?.classList.contains('is-expanded-player')));
+  buttonListenerStatus.expandCollapse = Boolean(miniExpand || playerExpand);
   mobileClose?.addEventListener('click', () => setMobilePlayerOpen(false));
   mobilePlayer?.addEventListener('click', (event) => {
     if (event.target === mobilePlayer) setMobilePlayerOpen(false);
@@ -8488,6 +8543,33 @@ if (musicPlayers.length) {
     syncTransportButtons(audio);
   });
 
+  window.debugMusicState = () => {
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    const report = {
+      activeTrackId,
+      activeTrackTitle: activeTrack?.title || '',
+      activeAudioSrc: audio?.currentSrc || audio?.src || activeTrack?.audioSrc || '',
+      audioPaused: audio?.paused ?? true,
+      audioCurrentTime: Number.isFinite(audio?.currentTime) ? Math.round(audio.currentTime * 1000) / 1000 : 0,
+      loadedLyricsPath,
+      activeLyricsTrackId: currentLyricsPlayer?.dataset.trackId || '',
+      currentTab: activeLyricsTab,
+      buttonListenerStatus: {
+        playPause: Boolean(mobileToggle && musicPlayers.every((player) => getPlayToggle(player))),
+        previous: Boolean(mobilePrevious),
+        next: Boolean(nextButton || mobileNext),
+        shuffle: Boolean(shuffleButton || mobileShuffle || miniShuffle),
+        repeat: Boolean(repeatButton || mobileRepeat || miniRepeat),
+        playlist: Boolean(consolePlaylistToggle),
+        expandCollapse: Boolean(miniExpand || playerExpand),
+        tabs: lyricsTabs.length === 3
+      },
+      playlistTrackCount: musicPlayers.length
+    };
+    window.console?.info?.('[music state]', report);
+    return report;
+  };
+
   const storedState = getStoredPlayerState();
   shuffleEnabled = Boolean(storedState.shuffleEnabled);
   repeatMode = ['all', 'one', 'off'].includes(storedState.repeatMode) ? storedState.repeatMode : 'all';
@@ -8504,7 +8586,6 @@ if (musicPlayers.length) {
     if (restoredAudio && Number.isFinite(storedState.currentTime) && storedState.currentTime > 0) {
       restoredAudio.currentTime = storedState.currentTime;
     }
-    syncStage(restoredPlayer);
     setActiveTrack(restoredPlayer);
   }
 }
