@@ -1,4 +1,4 @@
-const APP_VERSION = 'carine-site-2026-06-05-playback-lyrics-sync';
+const APP_VERSION = 'carine-site-2026-06-05-player-layout-restoration';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v10-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';

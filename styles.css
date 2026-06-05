@@ -8000,3 +8000,149 @@ body.expanded-player-open { overflow: auto; }
     max-height: 28px;
   }
 }
+
+/* Professional lyrics-first transport restoration. */
+.inline-player-card .expanded-visualizer,
+.inline-player-card .console-visualizer-settings {
+  display: none !important;
+}
+
+.inline-player-card .console-transport {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.inline-player-card .console-transport .expanded-player-progress {
+  width: 100%;
+}
+
+.inline-player-card .console-transport .expanded-player-actions {
+  justify-content: center;
+}
+
+.inline-player-card .console-icon-control,
+.inline-player-card .console-playlist-toggle,
+.inline-player-card .console-transport .expanded-play-toggle {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+
+.inline-player-card .console-playlist-toggle {
+  width: auto;
+  padding-inline: 13px;
+}
+
+.control-icon {
+  display: inline-grid;
+  width: 21px;
+  height: 21px;
+  place-items: center;
+  pointer-events: none;
+}
+
+.control-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.expanded-play-toggle .control-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+  stroke: none;
+}
+
+.console-icon-control.is-active {
+  border-color: rgba(232, 197, 121, 0.72);
+  color: #fff4d7;
+  background: linear-gradient(145deg, rgba(55, 87, 128, 0.98), rgba(15, 35, 67, 0.98));
+  box-shadow: inset 0 0 0 1px rgba(255, 229, 169, 0.13), 0 0 18px rgba(218, 186, 118, 0.18);
+}
+
+.console-repeat-control.is-repeat-one .control-icon::after {
+  content: "1";
+  position: absolute;
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.console-repeat-control .control-icon {
+  position: relative;
+}
+
+.expanded-vinyl-disc,
+.expanded-vinyl-disc.is-playing,
+.expanded-vinyl-disc.vinyl-playing,
+.expanded-vinyl-wrap.is-playing .expanded-vinyl-disc,
+.expanded-vinyl-wrap.vinyl-playing .expanded-vinyl-disc,
+.expanded-vinyl-wrap.turntable-playing .expanded-vinyl-disc,
+.expanded-player-card.turntable-playing .expanded-vinyl-disc {
+  animation-name: carine-vinyl-spin;
+  animation-duration: 15s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.expanded-vinyl-disc:not(.is-playing):not(.vinyl-playing) {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .direct-drive-deck .expanded-vinyl-disc,
+  .expanded-vinyl-disc {
+    animation: carine-vinyl-spin 30s linear infinite !important;
+    animation-play-state: paused !important;
+  }
+
+  .direct-drive-deck .expanded-vinyl-disc.is-playing,
+  .direct-drive-deck .expanded-vinyl-disc.vinyl-playing {
+    animation-play-state: running !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .direct-drive-deck .console-turntable {
+    flex-basis: clamp(180px, 28vh, 260px);
+    height: clamp(180px, 28vh, 260px);
+    max-height: clamp(180px, 28vh, 260px);
+  }
+
+  .direct-drive-deck .expanded-artwork-wrap {
+    width: clamp(180px, 58vw, 260px);
+    height: clamp(180px, 28vh, 260px);
+    max-height: clamp(180px, 28vh, 260px);
+  }
+
+  .inline-player-card .console-transport .expanded-player-actions {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(44px, 1fr));
+    gap: 4px;
+  }
+
+  .inline-player-card .console-playlist-toggle {
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .inline-player-card .console-playlist-label {
+    display: none;
+  }
+
+  .inline-player-card .lyrics-panel {
+    min-height: 58vh;
+    margin-top: 18px;
+  }
+}

@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-05-playback-lyrics-sync';
+const APP_VERSION = 'carine-site-2026-06-05-player-layout-restoration';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3891,11 +3891,25 @@ const CARINE_MUSIC_PLAYLIST = [
   }
 ];
 
-const assertRequiredPlaylistTracks = () => REQUIRED_MUSIC_TRACK_IDS.every((requiredId) =>
-  CARINE_MUSIC_PLAYLIST.some((track) => track.id === requiredId && track.audioUrl && track.coverUrl)
-);
+const assertRequiredPlaylistTracks = () => {
+  const playlistIds = CARINE_MUSIC_PLAYLIST.map((track) => track?.id).filter(Boolean);
+  const uniquePlaylistIds = new Set(playlistIds);
 
-const getSafePlaylistTracks = () => CARINE_MUSIC_PLAYLIST.filter((track) => track && track.id && track.title && track.audioUrl && track.coverUrl);
+  return uniquePlaylistIds.size === REQUIRED_MUSIC_TRACK_IDS.length
+    && playlistIds.length === REQUIRED_MUSIC_TRACK_IDS.length
+    && REQUIRED_MUSIC_TRACK_IDS.every((requiredId) => {
+      const track = CARINE_MUSIC_PLAYLIST.find((candidate) => candidate?.id === requiredId);
+      return Boolean(track?.title && track?.audioUrl && track?.coverUrl);
+    });
+};
+
+const getSafePlaylistTracks = () => {
+  const tracksById = new Map(CARINE_MUSIC_PLAYLIST
+    .filter((track) => track?.id && track?.title && track?.audioUrl && track?.coverUrl)
+    .map((track) => [track.id, track]));
+
+  return REQUIRED_MUSIC_TRACK_IDS.map((trackId) => tracksById.get(trackId)).filter(Boolean);
+};
 
 const createPlaylistTrackViewModel = (track) => {
   const translationKey = track.translationKey || '';
@@ -5394,12 +5408,21 @@ if (musicPlayers.length) {
     }
   };
 
+  const setAccessibleControlLabel = (button, label) => {
+    if (!button) return;
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+  };
+
   const updateCommandButtons = () => {
-    if (shuffleButton) {
-      shuffleButton.setAttribute('aria-pressed', String(shuffleEnabled));
-      shuffleButton.textContent = translate(shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle');
-      shuffleButton.classList.toggle('is-active', shuffleEnabled);
-    }
+    const shuffleLabel = translate(shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle');
+    [shuffleButton, mobileShuffle, miniShuffle].forEach((button) => {
+      if (!button) return;
+      button.setAttribute('aria-pressed', String(shuffleEnabled));
+      setAccessibleControlLabel(button, shuffleLabel);
+      if (!button.querySelector('.control-icon, svg')) button.textContent = shuffleLabel;
+      button.classList.toggle('is-active', shuffleEnabled);
+    });
 
     const repeatLabelKey = repeatMode === 'one' ? 'music.repeatOne' : repeatMode === 'all' ? 'music.repeatAll' : 'music.repeatOff';
     const repeatLabel = translate(repeatLabelKey);
@@ -5407,18 +5430,10 @@ if (musicPlayers.length) {
       if (!button) return;
       button.dataset.repeatMode = repeatMode;
       button.setAttribute('aria-pressed', String(repeatMode !== 'off'));
-      button.setAttribute('aria-label', repeatLabel);
-      button.setAttribute('title', repeatLabel);
-      button.textContent = repeatLabel;
+      setAccessibleControlLabel(button, repeatLabel);
+      if (!button.querySelector('.control-icon, svg')) button.textContent = repeatLabel;
       button.classList.toggle('is-active', repeatMode !== 'off');
       button.classList.toggle('is-repeat-one', repeatMode === 'one');
-    });
-
-    [mobileShuffle, miniShuffle].forEach((button) => {
-      if (!button) return;
-      button.setAttribute('aria-pressed', String(shuffleEnabled));
-      button.textContent = translate(shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle');
-      button.classList.toggle('is-active', shuffleEnabled);
     });
   };
 
@@ -6139,7 +6154,7 @@ if (musicPlayers.length) {
     }
   };
 
-  let visualizerEnabled = readVisualizerPreference();
+  let visualizerEnabled = Boolean(visualizerCanvas && readVisualizerPreference());
   let selectedVisualizationStyle = readVisualizerStylePreference();
 
   const WAVEFORM_UNIT_COUNT = 64;
@@ -7458,9 +7473,24 @@ if (musicPlayers.length) {
   };
 
   const syncVinylExperience = (isPlaying) => {
-    isVinylPlaying = Boolean(isPlaying && !reduceMotion);
-    vinylStages.forEach((stage) => stage.classList.toggle('is-playing', Boolean(isPlaying)));
-    expandedPlayerCard?.classList.toggle('is-playing', Boolean(isPlaying));
+    const shouldRotate = Boolean(isPlaying);
+    isVinylPlaying = shouldRotate;
+
+    vinylStages.forEach((stage) => {
+      stage.classList.toggle('is-playing', shouldRotate);
+      stage.classList.toggle('vinyl-playing', shouldRotate);
+      stage.classList.toggle('turntable-playing', shouldRotate);
+    });
+
+    vinylDiscs.forEach((disc) => {
+      disc.classList.toggle('is-playing', shouldRotate);
+      disc.classList.toggle('vinyl-playing', shouldRotate);
+      disc.style.animationPlayState = shouldRotate ? 'running' : 'paused';
+      disc.style.webkitAnimationPlayState = shouldRotate ? 'running' : 'paused';
+    });
+
+    expandedPlayerCard?.classList.toggle('is-playing', shouldRotate);
+    expandedPlayerCard?.classList.toggle('turntable-playing', shouldRotate);
   };
 
   setupVinylDebugPanel();
@@ -7470,10 +7500,13 @@ if (musicPlayers.length) {
     if (!button) return;
 
     const label = translate(isPlaying ? 'audio.pause' : 'audio.play');
-    const icon = isPlaying ? '❚❚' : '▶';
     const iconElement = button.querySelector('.play-icon');
 
-    if (iconElement) iconElement.textContent = icon;
+    if (iconElement) {
+      iconElement.innerHTML = isPlaying
+        ? '<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>'
+        : '<svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7V5z"/></svg>';
+    }
     button.classList.toggle('is-playing', isPlaying);
     button.setAttribute('aria-label', label);
     button.setAttribute('title', label);
