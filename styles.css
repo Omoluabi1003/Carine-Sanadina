@@ -6876,8 +6876,6 @@ html[dir="rtl"] .guide-message--bot {
 /* Grounded luxury turntable treatment for the regular and expanded players. */
 .streaming-stage .stage-vinyl-wrap,
 .expanded-player-card .expanded-vinyl-wrap {
-  --deck-blue: #102347;
-  --deck-ink: #081120;
   position: relative;
   isolation: isolate;
   display: grid;
@@ -7024,7 +7022,7 @@ html[dir="rtl"] .guide-message--bot {
 
 .streaming-stage .stage-vinyl-wrap.is-playing .expanded-vinyl-glow,
 .expanded-player-card.is-playing .expanded-vinyl-glow {
-  filter: blur(20px);
+  filter: blur(20px) saturate(1.22);
 }
 
 @media (max-width: 920px) {
@@ -7051,12 +7049,5 @@ html[dir="rtl"] .guide-message--bot {
   .expanded-player-card .expanded-vinyl-label {
     width: 34%;
     padding: 4px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .streaming-stage .stage-vinyl-wrap.is-playing .expanded-vinyl-glow,
-  .expanded-player-card.is-playing .expanded-vinyl-glow {
-    animation: none;
   }
 }
