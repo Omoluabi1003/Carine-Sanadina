@@ -5646,16 +5646,27 @@ if (musicPlayers.length) {
     if (activePlayer && activeLyricsTab === 'lyrics') updateActiveLyric(getAudio(activePlayer));
   };
 
-  const fetchCachedText = async (assetPath) => {
-    const resolvedPath = resolveSiteAssetPath(assetPath);
-    if (!resolvedPath) return '';
+  const fetchCachedText = async (path) => {
+    if (!path) return '';
+    const resolvedPath = resolveSiteAssetPath(path);
 
     if (!lyricsCache.has(resolvedPath)) {
-      const versionedPath = new URL(resolvedPath, window.location.href);
-      versionedPath.searchParams.set('v', APP_VERSION);
-      const response = await fetch(versionedPath, { cache: 'no-cache' });
-      if (!response.ok) throw new Error(`Lyrics request failed: ${response.status}`);
-      lyricsCache.set(resolvedPath, await response.text());
+      const promise = (async () => {
+        try {
+          const versionedPath = new URL(resolvedPath, window.location.href);
+          versionedPath.searchParams.set('v', APP_VERSION);
+
+          const response = await fetch(versionedPath, { cache: 'no-cache' });
+          if (!response.ok) throw new Error(`Lyrics request failed: ${response.status}`);
+
+          return await response.text();
+        } catch (error) {
+          lyricsCache.delete(resolvedPath);
+          throw error;
+        }
+      })();
+
+      lyricsCache.set(resolvedPath, promise);
     }
 
     return lyricsCache.get(resolvedPath);
@@ -7828,8 +7839,8 @@ if (musicPlayers.length) {
     updateActiveLyric(audio, { forceScroll: true, event: 'media-session-seek' });
     updateMediaSessionPosition(audio);
   };
-  setMediaSessionActionHandler('seekbackward', (details) => seekActiveAudioBy(-(details.seekOffset || 10)));
-  setMediaSessionActionHandler('seekforward', (details) => seekActiveAudioBy(details.seekOffset || 10));
+  setMediaSessionActionHandler('seekbackward', (details) => seekActiveAudioBy(-(details?.seekOffset || 10)));
+  setMediaSessionActionHandler('seekforward', (details) => seekActiveAudioBy(details?.seekOffset || 10));
 
   musicPlayers.forEach((musicPlayer) => {
     const audio = getAudio(musicPlayer);

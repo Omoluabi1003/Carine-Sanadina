@@ -97,6 +97,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetchFresh(request)
         .then((response) => cacheResponse(request, response))
+        .catch(async () => (await caches.match(request)) || Response.error())
     );
     return;
   }
