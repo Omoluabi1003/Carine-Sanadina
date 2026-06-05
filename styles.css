@@ -6872,3 +6872,191 @@ html[dir="rtl"] .guide-message--bot {
     margin-right: 0;
   }
 }
+
+/* Grounded luxury turntable treatment for the regular and expanded players. */
+.streaming-stage .stage-vinyl-wrap,
+.expanded-player-card .expanded-vinyl-wrap {
+  --deck-blue: #102347;
+  --deck-ink: #081120;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1.16 / 1;
+  overflow: hidden;
+  border: 1px solid rgba(219, 234, 254, 0.18);
+  border-radius: clamp(24px, 4vw, 38px);
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.13), transparent 22%, transparent 68%, rgba(96, 165, 250, 0.09)),
+    radial-gradient(circle at 18% 18%, rgba(74, 140, 255, 0.2), transparent 34%),
+    radial-gradient(circle at 88% 84%, rgba(218, 186, 118, 0.12), transparent 30%),
+    linear-gradient(145deg, rgba(16, 35, 71, 0.96), rgba(8, 17, 32, 0.98));
+  box-shadow:
+    0 30px 70px rgba(0, 3, 12, 0.5),
+    0 0 42px rgba(74, 140, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(218, 186, 118, 0.12);
+  filter: none;
+}
+
+.streaming-stage .stage-vinyl-wrap::before,
+.expanded-player-card .expanded-vinyl-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto;
+  z-index: 4;
+  height: 42%;
+  border-radius: inherit;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.14), transparent 38%, rgba(255, 255, 255, 0.025) 72%);
+  pointer-events: none;
+}
+
+.streaming-stage .stage-vinyl-wrap::after,
+.expanded-player-card .expanded-vinyl-wrap::after {
+  content: "";
+  position: absolute;
+  inset: auto 10% 5%;
+  z-index: -1;
+  height: 13%;
+  border-radius: 50%;
+  background: rgba(0, 2, 8, 0.78);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.streaming-stage .stage-vinyl-wrap {
+  --vinyl-size: min(78%, 300px);
+  width: min(100%, 390px);
+  padding: clamp(18px, 3vw, 28px) clamp(46px, 6vw, 68px) clamp(18px, 3vw, 28px) clamp(18px, 3vw, 28px);
+}
+
+.expanded-player-card .expanded-vinyl-wrap {
+  --vinyl-size: min(76%, 292px);
+  width: min(100%, 380px);
+  padding: clamp(18px, 2.5vw, 26px) clamp(48px, 5vw, 66px) clamp(18px, 2.5vw, 26px) clamp(18px, 2.5vw, 26px);
+}
+
+.streaming-stage .stage-vinyl-disc,
+.expanded-player-card .expanded-vinyl-disc {
+  z-index: 2;
+  width: var(--vinyl-size);
+  max-width: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 248, 238, 0.12),
+    inset 0 0 0 10px rgba(255, 255, 255, 0.018),
+    inset 0 0 42px rgba(0, 0, 0, 0.86),
+    0 12px 0 rgba(1, 5, 14, 0.88),
+    0 26px 38px rgba(0, 0, 0, 0.5),
+    0 0 34px rgba(74, 140, 255, 0.16);
+}
+
+.streaming-stage .stage-vinyl-label,
+.expanded-player-card .expanded-vinyl-label {
+  width: 35%;
+  padding: clamp(4px, 0.7vw, 7px);
+  box-shadow:
+    0 0 0 5px rgba(6, 13, 26, 0.74),
+    0 0 0 6px rgba(218, 186, 118, 0.24),
+    0 10px 28px rgba(0, 0, 0, 0.44);
+}
+
+.streaming-stage .stage-vinyl-label::after,
+.expanded-player-card .expanded-vinyl-label::after {
+  inset: 45%;
+  opacity: 1;
+  background: radial-gradient(circle at 38% 32%, #fff8ee, #c9a45f 62%, #705024 100%);
+  box-shadow: 0 0 0 2px rgba(8, 17, 32, 0.72), 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.turntable-deck-accent {
+  position: absolute;
+  top: 14%;
+  right: clamp(12px, 4%, 20px);
+  bottom: 14%;
+  z-index: 3;
+  width: clamp(24px, 9%, 34px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(9px, 1.4vw, 14px);
+  padding-top: 8%;
+  border-left: 1px solid rgba(219, 234, 254, 0.09);
+  pointer-events: none;
+}
+
+.turntable-status-light,
+.turntable-control-dot {
+  display: block;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.turntable-status-light {
+  width: 6px;
+  height: 6px;
+  margin-bottom: auto;
+  background: #60a5fa;
+  box-shadow: 0 0 12px rgba(96, 165, 250, 0.9);
+}
+
+.turntable-control-dot {
+  width: clamp(9px, 2vw, 13px);
+  height: clamp(9px, 2vw, 13px);
+  border: 1px solid rgba(255, 248, 238, 0.28);
+  background: linear-gradient(145deg, rgba(255, 248, 238, 0.18), rgba(8, 17, 32, 0.72));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.16), 0 3px 8px rgba(0, 0, 0, 0.36);
+}
+
+.turntable-control-dot:last-child {
+  border-color: rgba(218, 186, 118, 0.34);
+  background: linear-gradient(145deg, rgba(218, 186, 118, 0.3), rgba(91, 62, 23, 0.58));
+}
+
+.streaming-stage .expanded-vinyl-glow,
+.expanded-player-card .expanded-vinyl-glow {
+  inset: 10% 18% 8% 5%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(74, 140, 255, 0.34), rgba(218, 186, 118, 0.12) 48%, transparent 72%);
+  filter: blur(18px);
+  opacity: 0.66;
+}
+
+.streaming-stage .stage-vinyl-wrap.is-playing .expanded-vinyl-glow,
+.expanded-player-card.is-playing .expanded-vinyl-glow {
+  filter: blur(20px);
+}
+
+@media (max-width: 920px) {
+  .streaming-stage .stage-vinyl-wrap {
+    --vinyl-size: min(76%, 254px);
+    width: min(78vw, 340px);
+  }
+}
+
+@media (max-width: 640px) {
+  .streaming-stage .stage-vinyl-wrap,
+  .expanded-player-card .expanded-vinyl-wrap {
+    --vinyl-size: 74%;
+    width: min(82vw, 310px);
+    padding: 15px 42px 15px 15px;
+    border-radius: 26px;
+  }
+
+  .expanded-player-card .expanded-vinyl-wrap {
+    width: min(76vw, 292px);
+  }
+
+  .streaming-stage .stage-vinyl-label,
+  .expanded-player-card .expanded-vinyl-label {
+    width: 34%;
+    padding: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .streaming-stage .stage-vinyl-wrap.is-playing .expanded-vinyl-glow,
+  .expanded-player-card.is-playing .expanded-vinyl-glow {
+    animation: none;
+  }
+}
