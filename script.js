@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-04-hygiene-pass';
+const APP_VERSION = 'carine-site-2026-06-05-playback-lyrics-sync';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -5132,10 +5132,10 @@ if (musicPlayers.length) {
 
   let activePlayer = null;
   let lastAudioEvent = 'none';
-  let userStoppedPlayback = false;
-  let isSwitchingTracks = false;
+  let userStoppedManually = false;
+  let wasPlayingBeforeBackground = false;
   let shuffleEnabled = false;
-  let repeatMode = 'off';
+  let repeatMode = 'all';
   const PLAYER_STORAGE_KEY = PLAYER_STATE_STORAGE_KEY;
   const VISUALIZER_STORAGE_KEY = getCarineStorageKey('visualizer-enabled');
   const VISUALIZER_STYLE_STORAGE_KEY = getCarineStorageKey('visualizer-style');
@@ -5231,13 +5231,15 @@ if (musicPlayers.length) {
     consolation: 0,
     laGentillesse: 0,
     wonderful: 0,
-    womanifesto: 0
+    womanifesto: 0,
+    paranoiaPersecutive: 0
   };
   const lyricsTrackIds = {
     consolation: 'consolation',
     gentillesse: 'laGentillesse',
     wonderful: 'wonderful',
-    womanifesto: 'womanifesto'
+    womanifesto: 'womanifesto',
+    paranoia: 'paranoiaPersecutive'
   };
   const lyricsSourceMap = {
     consolation: '/lyrics/consolation.lrc',
@@ -5250,6 +5252,7 @@ if (musicPlayers.length) {
   let lyricsDebugPanel = null;
   let lyricsDebugPanelTimer = 0;
   let lastLyricsScrollRequest = { triggered: false, scrolled: false, targetTop: 0 };
+  let lastLyricsScrollTime = 0;
   const LYRICS_DEBUG_STORAGE_KEY = 'carineLyricsDebug';
   const LYRICS_DEBUG_QUERY_KEY = 'lyricsDebug';
   const isAudioDebugEnabled = ['localhost', '127.0.0.1', ''].includes(window.location.hostname)
@@ -5648,7 +5651,9 @@ if (musicPlayers.length) {
     if (!resolvedPath) return '';
 
     if (!lyricsCache.has(resolvedPath)) {
-      const response = await fetch(resolvedPath, { cache: 'force-cache' });
+      const versionedPath = new URL(resolvedPath, window.location.href);
+      versionedPath.searchParams.set('v', APP_VERSION);
+      const response = await fetch(versionedPath, { cache: 'no-cache' });
       if (!response.ok) throw new Error(`Lyrics request failed: ${response.status}`);
       lyricsCache.set(resolvedPath, await response.text());
     }
@@ -5712,8 +5717,12 @@ if (musicPlayers.length) {
       totalParsedLines: lyricTiming.length,
       lineStartTime: activeTiming ? roundLyricsTime(activeTiming.time) : null,
       nextLineStartTime: nextTiming ? roundLyricsTime(nextTiming.time) : null,
+      activeAudioExists: Boolean(audio),
+      activeAudioMatchesTrack: Boolean(audio && player && audio === getAudio(player)),
+      lyricsMode: lyricTiming.length ? 'timed' : 'static',
       playbackState: !audio ? 'no-audio' : audio.ended ? 'ended' : audio.paused ? 'paused' : 'playing',
       syncEngineRunning: Boolean(lyricsAnimationFrame),
+      lastScrollTime: lastLyricsScrollTime || null,
       autoScrollTriggered: Boolean(details.autoScrollTriggered),
       activeLineChanged: Boolean(details.activeLineChanged),
       lyricsContainerScrolled: Boolean(details.lyricsContainerScrolled),
@@ -5861,6 +5870,7 @@ if (musicPlayers.length) {
 
     if (!shouldMove) return false;
 
+    lastLyricsScrollTime = Date.now();
     lyricsScroll.scrollTo({
       top: boundedTop,
       behavior: reduceMotion ? 'auto' : 'smooth'
@@ -5877,13 +5887,15 @@ if (musicPlayers.length) {
     const effectiveTime = currentTime + offsetValue;
     let nextIndex = -1;
 
-    for (const timing of lyricTiming) {
-      if (effectiveTime >= timing.time && effectiveTime < timing.endTime) {
-        nextIndex = timing.index;
-      } else if (effectiveTime >= timing.time) {
-        nextIndex = timing.index;
+    let low = 0;
+    let high = lyricTiming.length - 1;
+    while (low <= high) {
+      const middle = Math.floor((low + high) / 2);
+      if (lyricTiming[middle].time <= effectiveTime) {
+        nextIndex = lyricTiming[middle].index;
+        low = middle + 1;
       } else {
-        break;
+        high = middle - 1;
       }
     }
 
@@ -5965,13 +5977,7 @@ if (musicPlayers.length) {
 
   window.debugLyricsSync = () => {
     const diagnostics = collectLyricsDiagnostics(activePlayer ? getAudio(activePlayer) : null);
-    const report = {
-      currentTrack: diagnostics.activeTrackId,
-      currentOffset: diagnostics.offsetValue,
-      activeLine: diagnostics.activeLyricText,
-      parsedLyricCount: diagnostics.totalParsedLines,
-      syncEngineRunning: diagnostics.syncEngineRunning
-    };
+    const report = { ...diagnostics };
     window.console?.groupCollapsed?.('[lyrics sync] manual debugLyricsSync()');
     window.console?.info?.(report);
     window.console?.groupEnd?.();
@@ -6015,7 +6021,7 @@ if (musicPlayers.length) {
     if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
     if (activeLyricsTab !== 'lyrics') renderTrackInfo(player);
     renderLyricsMoreDetails(player);
-    loadLyricsForPlayer(player);
+    if (currentLyricsPlayer !== player) loadLyricsForPlayer(player);
     syncTransportButtons(getAudio(player));
     resizeVisualizerSurface();
   };
@@ -7129,18 +7135,38 @@ if (musicPlayers.length) {
   });
   document.addEventListener('visibilitychange', async () => {
     resizeVisualizerSurface();
-    logAudioDiagnostics('visibilitychange');
-    if (!document.hidden && visualizerEnabled && activePlayer) {
-      const audio = getAudio(activePlayer);
-      if (audio && !audio.paused && !audio.ended) {
-        try {
-          const context = await ensureAudioContextForGesture({ allowCreate: false, allowResume: true });
-          if (context) connectAudioToAnalyser(audio);
-        } catch (error) {
-          warnAnalyzerFallback(error?.message || error);
-        }
-        startVisualizer(audio);
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+
+    if (document.hidden) {
+      wasPlayingBeforeBackground = Boolean(audio && !audio.paused && !audio.ended);
+      logAudioDiagnostics('visibility-hidden', { audio, wasPlayingBeforeBackground, userStoppedManually });
+      return;
+    }
+
+    logAudioDiagnostics('visibility-visible', { audio, wasPlayingBeforeBackground, userStoppedManually });
+    if (!audio) return;
+
+    if (wasPlayingBeforeBackground && audio.paused && !audio.ended && !userStoppedManually) {
+      try {
+        await playAudio(activePlayer, { isAutoAdvance: true });
+      } catch (error) {
+        logAudioDiagnostics('visibility-resume-blocked', { audio, message: error?.message || String(error) });
       }
+    } else {
+      syncMiniProgress(audio);
+      syncTransportButtons(audio);
+      updateActiveLyric(audio, { forceScroll: true, event: 'visibility-visible' });
+    }
+
+    wasPlayingBeforeBackground = false;
+    if (visualizerEnabled && !audio.paused && !audio.ended) {
+      try {
+        const context = await ensureAudioContextForGesture({ allowCreate: false, allowResume: true });
+        if (context) connectAudioToAnalyser(audio);
+      } catch (error) {
+        warnAnalyzerFallback(error?.message || error);
+      }
+      startVisualizer(audio);
     }
   });
   window.addEventListener('carine:languagechange', () => {
@@ -7625,7 +7651,6 @@ if (musicPlayers.length) {
     audio.volume = mini && mini.volume ? Number(mini.volume.value) : 0.85;
     syncDuration(player);
     setPlayerReadyState(player, true);
-    audio.load();
   };
 
   const pauseOtherPlayers = (currentPlayer) => {
@@ -7654,16 +7679,14 @@ if (musicPlayers.length) {
       return false;
     }
 
-    const previousSource = audio.currentSrc || audio.getAttribute('src') || '';
+    const previousSource = audio.getAttribute('src') || '';
     const verifiedSource = applyResolvedAudioSource(player, audio);
     if (previousSource !== verifiedSource) {
       audio.load();
     }
 
-    isSwitchingTracks = true;
     pauseOtherPlayers(player);
-    isSwitchingTracks = false;
-    userStoppedPlayback = false;
+    userStoppedManually = false;
     stopVisualizer('idle');
     showMiniPlayer(player);
 
@@ -7747,6 +7770,9 @@ if (musicPlayers.length) {
     const nextPlayer = getNextTrack(currentPlayer);
 
     if (!nextPlayer) {
+      const audio = currentPlayer ? getAudio(currentPlayer) : null;
+      userStoppedManually = true;
+      if (audio && !audio.paused) audio.pause();
       resetMiniPlayer();
       persistPlayerState();
       return;
@@ -7773,7 +7799,7 @@ if (musicPlayers.length) {
   setMediaSessionActionHandler('pause', () => {
     const audio = activePlayer ? getAudio(activePlayer) : null;
     if (audio) {
-      userStoppedPlayback = true;
+      userStoppedManually = true;
       audio.pause();
     }
   });
@@ -7792,6 +7818,18 @@ if (musicPlayers.length) {
     syncMiniProgress(audio);
     updateMediaSessionPosition(audio);
   });
+  const seekActiveAudioBy = (delta) => {
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    if (!audio) return;
+    const duration = getSafeDuration(audio, getFallbackDuration(activePlayer));
+    const nextTime = Math.max(0, audio.currentTime + delta);
+    audio.currentTime = duration > 0 ? Math.min(nextTime, duration) : nextTime;
+    syncMiniProgress(audio);
+    updateActiveLyric(audio, { forceScroll: true, event: 'media-session-seek' });
+    updateMediaSessionPosition(audio);
+  };
+  setMediaSessionActionHandler('seekbackward', (details) => seekActiveAudioBy(-(details.seekOffset || 10)));
+  setMediaSessionActionHandler('seekforward', (details) => seekActiveAudioBy(details.seekOffset || 10));
 
   musicPlayers.forEach((musicPlayer) => {
     const audio = getAudio(musicPlayer);
@@ -7902,10 +7940,6 @@ if (musicPlayers.length) {
         }
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
-        if (!audio.ended && !isSwitchingTracks) {
-          userStoppedPlayback = true;
-        }
-
         stopVisualizer(audio.ended ? 'idle' : 'paused');
         updateVisualizerToggleUI();
         if ('mediaSession' in navigator && activePlayer === musicPlayer) {
@@ -7925,7 +7959,7 @@ if (musicPlayers.length) {
       });
 
       audio.addEventListener('ended', () => {
-        const shouldAdvance = activePlayer === musicPlayer && !userStoppedPlayback;
+        const shouldAdvance = activePlayer === musicPlayer && !userStoppedManually;
         stopLyricsAnimationLoop();
         updateActiveLyric(audio, { forceScroll: true, event: 'ended' });
         const nextPlayer = shouldAdvance ? getNextTrack(musicPlayer) : null;
@@ -8011,7 +8045,7 @@ if (musicPlayers.length) {
         if (audio.paused) {
           playAudio(musicPlayer);
         } else {
-          userStoppedPlayback = true;
+          userStoppedManually = true;
           audio.pause();
         }
       });
@@ -8036,7 +8070,7 @@ if (musicPlayers.length) {
       if (audio.paused) {
         playAudio(activePlayer);
       } else {
-        userStoppedPlayback = true;
+        userStoppedManually = true;
         audio.pause();
       }
     });
@@ -8279,7 +8313,7 @@ if (musicPlayers.length) {
     const audio = getAudio(activePlayer);
     if (audio.paused) playAudio(activePlayer);
     else {
-      userStoppedPlayback = true;
+      userStoppedManually = true;
       audio.pause();
     }
   });
@@ -8355,7 +8389,7 @@ if (musicPlayers.length) {
 
   const storedState = getStoredPlayerState();
   shuffleEnabled = Boolean(storedState.shuffleEnabled);
-  repeatMode = ['all', 'one', 'off'].includes(storedState.repeatMode) ? storedState.repeatMode : 'off';
+  repeatMode = ['all', 'one', 'off'].includes(storedState.repeatMode) ? storedState.repeatMode : 'all';
   if (mini?.volume && Number.isFinite(storedState.volume)) {
     mini.volume.value = String(Math.min(Math.max(storedState.volume, 0), 1));
     setRangeFill(mini.volume, mini.volume.value, mini.volume.max);

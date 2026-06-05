@@ -1,6 +1,6 @@
-const APP_VERSION = 'carine-site-2026-06-04-hygiene-pass';
+const APP_VERSION = 'carine-site-2026-06-05-playback-lyrics-sync';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v9-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v10-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
@@ -21,7 +21,7 @@ const isHtmlRequest = (request) => request.mode === 'navigate'
 
 const isManifestOrPlaylistDataRequest = (request) => {
   const url = new URL(request.url);
-  return /manifest\.json$/i.test(url.pathname) || /playlist/i.test(url.pathname);
+  return /manifest\.json$/i.test(url.pathname) || /playlist/i.test(url.pathname) || /\/lyrics\/.*\.(?:lrc|txt)$/i.test(url.pathname);
 };
 
 const isVersionedStaticAsset = (request) => {
