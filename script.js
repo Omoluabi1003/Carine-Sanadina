@@ -3389,6 +3389,22 @@ Object.entries(finalTranslationCoverageOverrides).forEach(([language, dictionary
   if (translations[language]) Object.assign(translations[language], dictionary);
 });
 
+const audioConsoleTranslations = {
+  en: { 'console.label': 'Carine Sanadina luxury audio console', 'console.ready': 'Ready', 'console.playing': 'Playing', 'console.paused': 'Paused', 'console.previous': 'Previous track', 'console.closePlaylist': 'Close playlist', 'console.collection': 'Listening collection', 'console.selectSynopsis': 'Select a song to begin a healing-centered listening experience.' },
+  fr: { 'console.label': 'Console audio de luxe Carine Sanadina', 'console.ready': 'Prêt', 'console.playing': 'Lecture', 'console.paused': 'En pause', 'console.previous': 'Titre précédent', 'console.closePlaylist': 'Fermer la playlist', 'console.collection': 'Collection d’écoute', 'console.selectSynopsis': 'Choisissez une chanson pour commencer une écoute centrée sur la guérison.' },
+  es: { 'console.label': 'Consola de audio de lujo Carine Sanadina', 'console.ready': 'Lista', 'console.playing': 'Reproduciendo', 'console.paused': 'En pausa', 'console.previous': 'Canción anterior', 'console.closePlaylist': 'Cerrar lista', 'console.collection': 'Colección para escuchar', 'console.selectSynopsis': 'Elige una canción para comenzar una experiencia de escucha centrada en la sanación.' },
+  ln: { 'console.label': 'Console audio ya kitoko ya Carine Sanadina', 'console.ready': 'Ebongami', 'console.playing': 'Ezali kobeta', 'console.paused': 'Epemi', 'console.previous': 'Loyembo eleki', 'console.closePlaylist': 'Kanga playlist', 'console.collection': 'Lisanga ya koyoka', 'console.selectSynopsis': 'Pona loyembo mpo na kobanda koyoka na motema ya kobika.' },
+  sw: { 'console.label': 'Dashibodi ya sauti ya kifahari ya Carine Sanadina', 'console.ready': 'Tayari', 'console.playing': 'Inacheza', 'console.paused': 'Imesitishwa', 'console.previous': 'Wimbo uliopita', 'console.closePlaylist': 'Funga orodha', 'console.collection': 'Mkusanyiko wa kusikiliza', 'console.selectSynopsis': 'Chagua wimbo kuanza uzoefu wa kusikiliza unaolenga uponyaji.' },
+  yo: { 'console.label': 'Ẹrọ orin adùn Carine Sanadina', 'console.ready': 'Ṣetán', 'console.playing': 'Ó ń dun', 'console.paused': 'Ó dúró', 'console.previous': 'Orin tó ṣáájú', 'console.closePlaylist': 'Pa àkójọ orin', 'console.collection': 'Àkójọ ìgbọ́ran', 'console.selectSynopsis': 'Yan orin kan láti bẹ̀rẹ̀ ìrírí ìgbọ́ran tó dojú kọ ìwòsàn.' },
+  de: { 'console.label': 'Luxus-Audiokonsole von Carine Sanadina', 'console.ready': 'Bereit', 'console.playing': 'Wiedergabe', 'console.paused': 'Pausiert', 'console.previous': 'Vorheriger Titel', 'console.closePlaylist': 'Wiedergabeliste schließen', 'console.collection': 'Hörsammlung', 'console.selectSynopsis': 'Wählen Sie einen Song für ein heilsames Hörerlebnis.' },
+  ar: { 'console.label': 'وحدة الصوت الفاخرة لكارين سانادينا', 'console.ready': 'جاهز', 'console.playing': 'قيد التشغيل', 'console.paused': 'متوقف مؤقتًا', 'console.previous': 'المقطع السابق', 'console.closePlaylist': 'إغلاق قائمة التشغيل', 'console.collection': 'مجموعة الاستماع', 'console.selectSynopsis': 'اختر أغنية لبدء تجربة استماع تتمحور حول التعافي.' },
+  'zh-CN': { 'console.label': 'Carine Sanadina 豪华音频控制台', 'console.ready': '就绪', 'console.playing': '播放中', 'console.paused': '已暂停', 'console.previous': '上一首', 'console.closePlaylist': '关闭播放列表', 'console.collection': '聆听精选', 'console.selectSynopsis': '选择一首歌曲，开启以疗愈为中心的聆听体验。' }
+};
+
+Object.entries(audioConsoleTranslations).forEach(([language, dictionary]) => {
+  if (translations[language]) Object.assign(translations[language], dictionary);
+});
+
 const supportedLanguages = Object.keys(translations);
 let currentLanguage = DEFAULT_LANGUAGE;
 
@@ -5189,6 +5205,13 @@ if (musicPlayers.length) {
   const mobileToggle = document.querySelector('[data-mobile-toggle]');
   const mobileShuffle = document.querySelector('[data-mobile-shuffle]');
   const mobileRepeat = document.querySelector('[data-mobile-repeat]');
+  const mobilePrevious = document.querySelector('[data-mobile-previous]');
+  const mobileNext = document.querySelector('[data-mobile-next]');
+  const consoleSynopsis = document.querySelector('[data-console-synopsis]');
+  const consoleStatus = document.querySelector('[data-console-status]');
+  const consolePlaylistToggle = document.querySelector('[data-console-playlist-toggle]');
+  const consolePlaylistDrawer = document.querySelector('[data-console-playlist-drawer]');
+  const consolePlaylistCloseButtons = Array.from(document.querySelectorAll('[data-console-playlist-close]'));
   const miniShuffle = document.querySelector('[data-mini-shuffle]');
   const miniRepeat = document.querySelector('[data-mini-repeat]');
   const miniExpand = document.querySelector('[data-mini-expand]');
@@ -6030,6 +6053,7 @@ if (musicPlayers.length) {
     if (mobileTitle) mobileTitle.textContent = title;
     if (lyricsFocusTitle) lyricsFocusTitle.textContent = title;
     if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
+    if (consoleSynopsis) consoleSynopsis.textContent = getTrackAboutContent(player) || translate('console.selectSynopsis');
     if (activeLyricsTab !== 'lyrics') renderTrackInfo(player);
     renderLyricsMoreDetails(player);
     if (currentLyricsPlayer !== player) loadLyricsForPlayer(player);
@@ -7482,6 +7506,11 @@ if (musicPlayers.length) {
 
     if (miniPlayer) miniPlayer.classList.toggle('is-playing', activeIsPlaying);
     expandedVisualizer?.classList.toggle('is-playing', activeIsPlaying);
+    if (consoleStatus) {
+      const statusKey = activeIsPlaying ? 'console.playing' : activePlayer ? 'console.paused' : 'console.ready';
+      consoleStatus.textContent = translate(statusKey);
+      consoleStatus.dataset.state = activeIsPlaying ? 'playing' : activePlayer ? 'paused' : 'ready';
+    }
     syncVinylExperience(activeIsPlaying);
     setTransportButtonState(mini?.toggle, activeIsPlaying);
     setTransportButtonState(mobileToggle, activeIsPlaying);
@@ -7775,6 +7804,12 @@ if (musicPlayers.length) {
     }
 
     return repeatMode === 'all' ? musicPlayers[0] : null;
+  };
+
+  const playPreviousTrack = (currentPlayer) => {
+    const currentIndex = musicPlayers.indexOf(currentPlayer);
+    const previousPlayer = musicPlayers[currentIndex > 0 ? currentIndex - 1 : musicPlayers.length - 1] || musicPlayers[0];
+    if (previousPlayer) playAudio(previousPlayer);
   };
 
   const playNextTrack = (currentPlayer) => {
@@ -8309,12 +8344,28 @@ if (musicPlayers.length) {
   mobileRepeat?.addEventListener('click', cycleRepeat);
   miniRepeat?.addEventListener('click', cycleRepeat);
   nextButton?.addEventListener('click', () => playNextTrack(activePlayer || musicPlayers[0]));
+  mobilePrevious?.addEventListener('click', () => playPreviousTrack(activePlayer || musicPlayers[0]));
+  mobileNext?.addEventListener('click', () => playNextTrack(activePlayer || musicPlayers[0]));
+
+  const setConsolePlaylistOpen = (isOpen) => {
+    const open = Boolean(isOpen);
+    consolePlaylistDrawer?.classList.toggle('is-open', open);
+    consolePlaylistDrawer?.setAttribute('aria-hidden', String(!open));
+    consolePlaylistToggle?.setAttribute('aria-expanded', String(open));
+    expandedPlayerCard?.classList.toggle('is-playlist-open', open);
+  };
+
+  consolePlaylistToggle?.addEventListener('click', () => {
+    setConsolePlaylistOpen(!consolePlaylistDrawer?.classList.contains('is-open'));
+  });
+  consolePlaylistCloseButtons.forEach((button) => button.addEventListener('click', () => setConsolePlaylistOpen(false)));
 
   expandedTrackOptions.forEach((option) => {
     option.addEventListener('click', () => {
       const selectedPlayer = musicPlayers.find((player) => player.dataset.trackId === option.dataset.trackId);
       if (selectedPlayer) {
         playAudio(selectedPlayer);
+        setConsolePlaylistOpen(false);
         if (isLyricsExpanded) setLyricsMoreOpen(false);
       }
     });
@@ -8332,6 +8383,7 @@ if (musicPlayers.length) {
   const setMobilePlayerOpen = (isOpen) => {
     if (!mobilePlayer) return;
     mobilePlayer.classList.toggle('is-open', isOpen);
+    if (!isOpen) setConsolePlaylistOpen(false);
     document.body.classList.toggle('expanded-player-open', isOpen);
     mobilePlayer.setAttribute('aria-hidden', String(!isOpen));
     miniExpand?.setAttribute('aria-expanded', String(isOpen));
