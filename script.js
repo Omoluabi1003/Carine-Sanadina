@@ -8383,7 +8383,12 @@ if (musicPlayers.length) {
   const setMobilePlayerOpen = (isOpen) => {
     if (!mobilePlayer) return;
     mobilePlayer.classList.toggle('is-open', isOpen);
-    if (!isOpen) setConsolePlaylistOpen(false);
+    if (isOpen) {
+      setLyricsExpanded(false);
+      setLyricsTab('lyrics');
+    } else {
+      setConsolePlaylistOpen(false);
+    }
     document.body.classList.toggle('expanded-player-open', isOpen);
     mobilePlayer.setAttribute('aria-hidden', String(!isOpen));
     miniExpand?.setAttribute('aria-expanded', String(isOpen));
