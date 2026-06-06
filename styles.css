@@ -8814,3 +8814,401 @@ body > footer {
     transition: none;
   }
 }
+
+/* ==========================================================================
+   Premium spatial design system — depth without distraction
+   Containers and objects occupy depth; text, controls, and lyrics stay flat.
+   ========================================================================== */
+:root {
+  --space-perspective: 1500px;
+  --space-depth-low: 10px;
+  --space-depth-medium: 24px;
+  --space-depth-high: 42px;
+  --space-glass-edge: rgba(191, 219, 254, 0.24);
+  --space-gold-edge: rgba(240, 216, 154, 0.3);
+  --space-deep-shadow: 0 36px 90px rgba(0, 7, 24, 0.42);
+  --space-lift-shadow: 0 44px 110px rgba(0, 7, 24, 0.55), 0 0 54px rgba(96, 165, 250, 0.12);
+}
+
+@supports (perspective: 1px) {
+  .hero-grid,
+  .book-grid,
+  .music-shell,
+  .reflection-grid,
+  .press-kit-grid,
+  .final-cta .container {
+    perspective: var(--space-perspective);
+    perspective-origin: 50% 42%;
+  }
+
+  .hero-grid,
+  .portrait-card,
+  .book-card,
+  .book-cover,
+  .luxury-audio-console,
+  .direct-drive-deck,
+  .reflection-card,
+  .premium-card,
+  .cta-panel {
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+  }
+}
+
+/* Hero: an editorial glass composition with restrained pointer parallax. */
+.hero-copy { position: relative; }
+
+.hero-grid {
+  --scene-x: 0px;
+  --scene-y: 0px;
+  --copy-x: 0px;
+  --copy-y: 0px;
+  isolation: isolate;
+}
+
+.hero-grid::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 8% -7% 5% 34%;
+  border: 1px solid rgba(191, 219, 254, 0.08);
+  border-radius: 54% 46% 42% 58% / 44% 48% 52% 56%;
+  background:
+    radial-gradient(circle at 54% 36%, rgba(147, 197, 253, 0.14), transparent 40%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent 64%);
+  filter: blur(0.2px);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.06), 0 50px 120px rgba(0, 8, 30, 0.24);
+  transform: translate3d(0, 0, -70px) rotate(-4deg);
+  pointer-events: none;
+}
+
+.hero-copy.reveal.is-visible {
+  transform: translate3d(var(--copy-x), var(--copy-y), 28px);
+}
+
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  inset: -34px -42px;
+  z-index: -1;
+  border-radius: 44px;
+  border: 1px solid rgba(191, 219, 254, 0.1);
+  background:
+    linear-gradient(135deg, rgba(11, 31, 66, 0.35), rgba(5, 17, 42, 0.12)),
+    radial-gradient(circle at 10% 0%, rgba(240, 216, 154, 0.09), transparent 20rem);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.07), 0 32px 90px rgba(0, 9, 30, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.portrait-card.reveal.is-visible {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --pointer-lift: 0px;
+  transform: translate3d(0, var(--pointer-lift), 44px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) rotateZ(1deg);
+  background:
+    linear-gradient(145deg, rgba(20, 48, 92, 0.74), rgba(3, 14, 36, 0.68)),
+    radial-gradient(circle at 20% 0%, rgba(240, 216, 154, 0.2), transparent 16rem);
+  border-color: rgba(191, 219, 254, 0.24);
+  box-shadow: var(--space-deep-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px rgba(0, 0, 0, 0.3);
+  will-change: transform;
+}
+
+.portrait-card.reveal.is-visible:hover,
+.portrait-card.reveal.is-visible:focus-within {
+  --pointer-lift: -8px;
+  border-color: var(--space-gold-edge);
+  box-shadow: var(--space-lift-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.portrait-card::after {
+  content: "";
+  position: absolute;
+  inset: 4% -13px -14px 6%;
+  z-index: -1;
+  border-radius: 42px;
+  background: linear-gradient(145deg, rgba(4, 13, 34, 0.88), rgba(1, 6, 20, 0.96));
+  box-shadow: 14px 25px 50px rgba(0, 4, 16, 0.44);
+  transform: translateZ(-28px);
+  pointer-events: none;
+}
+
+.portrait-frame { transform: translateZ(18px); }
+.portrait-caption {
+  position: relative;
+  transform: translateZ(20px);
+  color: #c8d8ef;
+}
+
+.hero-actions {
+  position: relative;
+  transform: translateZ(14px);
+}
+
+/* Library: each cover reads as a standing hardcover, not a flat thumbnail. */
+.book-grid { align-items: stretch; }
+
+.book-card.reveal.is-visible {
+  --book-rotate: 0deg;
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0) rotateY(var(--book-rotate));
+  transform-origin: 50% 88%;
+  background:
+    linear-gradient(145deg, rgba(15, 38, 78, 0.78), rgba(3, 14, 35, 0.72)),
+    radial-gradient(circle at 18% 0%, rgba(240, 216, 154, 0.12), transparent 15rem);
+  border-color: rgba(191, 219, 254, 0.17);
+  box-shadow: 0 30px 70px rgba(0, 7, 24, 0.32), inset 0 1px rgba(255, 255, 255, 0.09);
+  transition: transform 300ms cubic-bezier(.2,.8,.2,1), border-color 300ms ease, box-shadow 300ms ease;
+}
+
+.book-card.reveal.is-visible:nth-child(odd) { --book-rotate: -0.7deg; }
+.book-card.reveal.is-visible:nth-child(even) { --book-rotate: 0.7deg; }
+
+.book-card.reveal.is-visible:hover,
+.book-card.reveal.is-visible:focus-within {
+  --book-rotate: 1.5deg;
+  transform: translate3d(0, -10px, 32px) rotateY(var(--book-rotate));
+  border-color: var(--space-gold-edge);
+  box-shadow: 0 46px 100px rgba(0, 7, 24, 0.52), 0 0 44px rgba(240, 216, 154, 0.1), inset 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.book-card.reveal.is-visible:nth-child(even):hover,
+.book-card.reveal.is-visible:nth-child(even):focus-within { --book-rotate: -1.5deg; }
+
+.book-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 8%;
+  right: 3%;
+  bottom: -13px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 4, 18, 0.52);
+  filter: blur(14px);
+  transform: translateZ(-35px) rotateX(78deg);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.book-cover {
+  overflow: visible;
+  transform: translateZ(18px);
+  box-shadow: inset 0 0 0 1px rgba(219, 234, 254, 0.22), 0 24px 48px rgba(0, 6, 20, 0.36);
+}
+
+.book-cover::after {
+  content: "";
+  position: absolute;
+  top: 8%;
+  bottom: 8%;
+  left: -8px;
+  width: 12px;
+  border-radius: 5px 0 0 5px;
+  background: linear-gradient(90deg, #020817, #173b78 58%, rgba(219, 234, 254, 0.22));
+  box-shadow: -5px 8px 16px rgba(0, 4, 18, 0.42);
+  transform: translateZ(-7px) rotateY(-18deg);
+  transform-origin: right center;
+  pointer-events: none;
+}
+
+.book-cover .official-book-cover,
+.book-cover .cover-art { transform: translateZ(8px); }
+.book-body { position: relative; transform: translateZ(16px); }
+.book-body h3,
+.book-body p,
+.book-body .button { transform: none; }
+
+/* Listening room: layered deck materials with a protected, flat lyrics plane. */
+.luxury-audio-console {
+  position: relative;
+  overflow: visible;
+  border-color: rgba(191, 219, 254, 0.24);
+  background:
+    linear-gradient(145deg, rgba(19, 43, 82, 0.92), rgba(2, 10, 27, 0.94)),
+    radial-gradient(circle at 16% 0%, rgba(240, 216, 154, 0.13), transparent 24rem);
+  box-shadow: 0 48px 120px rgba(0, 5, 20, 0.58), inset 0 1px rgba(255, 255, 255, 0.16), inset 0 -2px rgba(0, 0, 0, 0.5);
+}
+
+.luxury-audio-console::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 18px -12px -16px 22px;
+  border-radius: inherit;
+  background: linear-gradient(150deg, #061328, #01050f);
+  box-shadow: 18px 30px 60px rgba(0, 3, 14, 0.52);
+  transform: translateZ(-32px);
+  pointer-events: none;
+}
+
+.direct-drive-deck {
+  transform: translateZ(24px);
+  box-shadow: 0 24px 48px rgba(0, 4, 18, 0.4), inset 0 1px rgba(255,255,255,0.2), inset 0 -2px rgba(0,0,0,0.48);
+}
+
+.direct-drive-deck .console-turntable { transform: translateZ(24px); }
+.direct-drive-deck .expanded-artwork-wrap {
+  transform: translateZ(18px);
+  box-shadow: 0 24px 46px rgba(0, 4, 18, 0.5), inset 0 1px rgba(255, 255, 255, 0.16);
+}
+.direct-drive-deck .expanded-vinyl-disc {
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.58), inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 26px rgba(0,0,0,0.5);
+}
+
+.console-now-playing,
+.console-controls,
+.console-deck-controls { transform: translateZ(28px); }
+
+.lyrics-panel,
+.lyrics-stage,
+.lyrics-focus-bar,
+.lyrics-line,
+.lyrics-panel button,
+.lyrics-panel a {
+  transform-style: flat;
+  -webkit-transform-style: flat;
+}
+
+.lyrics-panel {
+  position: relative;
+  z-index: 8;
+  transform: none !important;
+  perspective: none;
+  box-shadow: 0 26px 70px rgba(0, 7, 24, 0.34), inset 0 1px rgba(255,255,255,0.12);
+}
+
+/* Journal cards and media board: quiet layered glass and paper. */
+.reflection-card.reveal.is-visible,
+.premium-card.reveal.is-visible {
+  --card-tilt: 0deg;
+  position: relative;
+  overflow: visible;
+  transform: translate3d(0, 0, 0) rotateY(var(--card-tilt));
+  background:
+    linear-gradient(145deg, rgba(16, 41, 82, 0.74), rgba(4, 16, 39, 0.68)),
+    radial-gradient(circle at 15% 0%, rgba(191, 219, 254, 0.1), transparent 15rem);
+  border-color: rgba(191, 219, 254, 0.18);
+  box-shadow: 0 28px 72px rgba(0, 7, 24, 0.34), inset 0 1px rgba(255,255,255,0.1);
+  transition: transform 280ms cubic-bezier(.2,.8,.2,1), box-shadow 280ms ease, border-color 280ms ease;
+}
+
+.reflection-card.reveal.is-visible:hover,
+.reflection-card.reveal.is-visible:focus-within,
+.premium-card.reveal.is-visible:hover,
+.premium-card.reveal.is-visible:focus-within {
+  transform: translate3d(0, -8px, 24px) rotateY(var(--card-tilt));
+  border-color: rgba(240, 216, 154, 0.28);
+  box-shadow: 0 42px 96px rgba(0, 7, 24, 0.5), 0 0 40px rgba(96, 165, 250, 0.09), inset 0 1px rgba(255,255,255,0.14);
+}
+
+.reflection-card::after,
+.premium-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 10px -8px -10px 14px;
+  border-radius: inherit;
+  border: 1px solid rgba(191, 219, 254, 0.07);
+  background: rgba(2, 9, 25, 0.5);
+  transform: translateZ(-18px);
+  pointer-events: none;
+}
+
+.press-kit-grid .premium-card:nth-child(3n + 1) { --card-tilt: -0.6deg; }
+.press-kit-grid .premium-card:nth-child(3n + 2) { --card-tilt: 0.45deg; }
+.press-kit-grid .premium-card:nth-child(3n) { --card-tilt: -0.25deg; }
+.press-kit-grid .premium-card::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(240, 216, 154, 0.09);
+  border-radius: calc(var(--radius-lg) - 8px);
+  pointer-events: none;
+}
+
+/* Contact: a luminous invitation floating above the ambient field. */
+.cta-panel.reveal.is-visible {
+  transform: translate3d(0, 0, 30px);
+  overflow: visible;
+  border-color: rgba(240, 216, 154, 0.25);
+  box-shadow: 0 48px 120px rgba(0, 6, 22, 0.5), 0 0 90px rgba(198, 161, 91, 0.1), inset 0 1px rgba(255,255,255,0.15);
+  transition: transform 300ms cubic-bezier(.2,.8,.2,1), box-shadow 300ms ease;
+}
+
+.cta-panel.reveal.is-visible:hover,
+.cta-panel.reveal.is-visible:focus-within {
+  transform: translate3d(0, -6px, 38px);
+  box-shadow: 0 54px 130px rgba(0, 6, 22, 0.56), 0 0 110px rgba(198, 161, 91, 0.14), inset 0 1px rgba(255,255,255,0.18);
+}
+
+.cta-panel::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 18px -12px -16px 22px;
+  border-radius: inherit;
+  background: rgba(1, 7, 21, 0.58);
+  filter: blur(1px);
+  transform: translateZ(-30px);
+  pointer-events: none;
+}
+
+/* Pointer-enhanced hero uses only compositor-friendly custom transforms. */
+.spatial-pointer-ready .hero-copy,
+.spatial-pointer-ready .portrait-card { will-change: transform; }
+
+@media (hover: none), (pointer: coarse), (max-width: 920px) {
+  .hero-grid { perspective: 1200px; }
+  .hero-copy.reveal.is-visible { transform: translate3d(0, 0, 12px); }
+  .portrait-card.reveal.is-visible { transform: translate3d(0, 0, 20px) rotateZ(0.5deg); }
+  .book-card.reveal.is-visible,
+  .book-card.reveal.is-visible:nth-child(odd),
+  .book-card.reveal.is-visible:nth-child(even) { --book-rotate: 0deg; }
+  .book-card.reveal.is-visible:hover,
+  .book-card.reveal.is-visible:focus-within { transform: translate3d(0, -5px, 16px); }
+}
+
+@media (max-width: 640px) {
+  :root { --space-perspective: 1200px; }
+  .hero-copy::before { inset: -22px -16px; border-radius: 30px; }
+  .hero-grid::before { inset: 18% -18% 8% 18%; opacity: 0.7; }
+  .portrait-card::after,
+  .luxury-audio-console::after,
+  .reflection-card::after,
+  .premium-card::after,
+  .cta-panel::after { transform: translateZ(-12px); }
+  .book-cover::after { left: -5px; width: 8px; }
+  .direct-drive-deck { transform: translateZ(12px); }
+  .reflection-card.reveal.is-visible:hover,
+  .reflection-card.reveal.is-visible:focus-within,
+  .premium-card.reveal.is-visible:hover,
+  .premium-card.reveal.is-visible:focus-within { transform: translate3d(0, -4px, 12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy.reveal.is-visible,
+  .portrait-card.reveal.is-visible,
+  .portrait-card.reveal.is-visible:hover,
+  .portrait-card.reveal.is-visible:focus-within,
+  .book-card.reveal.is-visible,
+  .book-card.reveal.is-visible:hover,
+  .book-card.reveal.is-visible:focus-within,
+  .reflection-card.reveal.is-visible,
+  .reflection-card.reveal.is-visible:hover,
+  .reflection-card.reveal.is-visible:focus-within,
+  .premium-card.reveal.is-visible,
+  .premium-card.reveal.is-visible:hover,
+  .premium-card.reveal.is-visible:focus-within,
+  .cta-panel.reveal.is-visible,
+  .cta-panel.reveal.is-visible:hover,
+  .cta-panel.reveal.is-visible:focus-within {
+    transform: none !important;
+  }
+
+  .spatial-pointer-ready .hero-copy,
+  .spatial-pointer-ready .portrait-card { will-change: auto; }
+}

@@ -1,4 +1,4 @@
-const APP_VERSION = 'carine-site-2026-06-06-halleluyah-catalog';
+const APP_VERSION = 'carine-site-2026-06-06-spatial-depth';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v11-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';

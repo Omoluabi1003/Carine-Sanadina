@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-06-halleluyah-catalog';
+const APP_VERSION = 'carine-site-2026-06-06-spatial-depth';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -8773,3 +8773,54 @@ if ('IntersectionObserver' in window && sectionAtmospheres.length) {
 } else {
   sectionAtmospheres.forEach((atmosphere) => atmosphere.classList.add('is-atmosphere-visible'));
 }
+
+// Progressive spatial pointer response for the hero portrait. Text and controls
+// remain planar; only the decorative scene and portrait container receive tilt.
+(() => {
+  const heroScene = document.querySelector('.hero-grid');
+  const portrait = heroScene?.querySelector('.portrait-card');
+  const precisePointer = window.matchMedia?.('(hover: hover) and (pointer: fine)');
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+
+  if (!heroScene || !portrait || !precisePointer?.matches || reducedMotion?.matches) return;
+
+  let frame = 0;
+  let pointerX = 0;
+  let pointerY = 0;
+
+  const renderSpatialPosition = () => {
+    const bounds = heroScene.getBoundingClientRect();
+    const normalizedX = Math.min(Math.max((pointerX - bounds.left) / bounds.width, 0), 1) - 0.5;
+    const normalizedY = Math.min(Math.max((pointerY - bounds.top) / bounds.height, 0), 1) - 0.5;
+
+    heroScene.style.setProperty('--scene-x', `${normalizedX * 12}px`);
+    heroScene.style.setProperty('--scene-y', `${normalizedY * 10}px`);
+    heroScene.style.setProperty('--copy-x', `${normalizedX * -8}px`);
+    heroScene.style.setProperty('--copy-y', `${normalizedY * -7}px`);
+    portrait.style.setProperty('--tilt-x', `${normalizedY * -5}deg`);
+    portrait.style.setProperty('--tilt-y', `${normalizedX * 5}deg`);
+    frame = 0;
+  };
+
+  const queueSpatialPosition = (event) => {
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (!frame) frame = window.requestAnimationFrame(renderSpatialPosition);
+  };
+
+  const resetSpatialPosition = () => {
+    if (frame) window.cancelAnimationFrame(frame);
+    frame = 0;
+    heroScene.style.setProperty('--scene-x', '0px');
+    heroScene.style.setProperty('--scene-y', '0px');
+    heroScene.style.setProperty('--copy-x', '0px');
+    heroScene.style.setProperty('--copy-y', '0px');
+    portrait.style.setProperty('--tilt-x', '0deg');
+    portrait.style.setProperty('--tilt-y', '0deg');
+  };
+
+  document.documentElement.classList.add('spatial-pointer-ready');
+  heroScene.addEventListener('pointermove', queueSpatialPosition, { passive: true });
+  heroScene.addEventListener('pointerleave', resetSpatialPosition, { passive: true });
+  window.addEventListener('blur', resetSpatialPosition, { passive: true });
+})();
