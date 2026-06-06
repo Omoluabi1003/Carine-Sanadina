@@ -65,7 +65,8 @@ const staticRootAssets = [
   'La Gentillesse.png',
   'Wonderful cover.png',
   '4B4AE259-EC5A-46A2-BB9A-355667A3C23C.png',
-  '00243680-B36E-4587-8623-9AEFD1896D1A.png'
+  '00243680-B36E-4587-8623-9AEFD1896D1A.png',
+  'Halleluyah Cover.png'
 ];
 
 for (const file of staticRootAssets) {

@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-05-reason-catalog';
+const APP_VERSION = 'carine-site-2026-06-06-halleluyah-catalog';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3415,6 +3415,76 @@ Object.entries(audioConsoleTranslations).forEach(([language, dictionary]) => {
   if (translations[language]) Object.assign(translations[language], dictionary);
 });
 
+const halleluyahTranslations = {
+  en: {
+    'tracks.halleluyah.title': 'Halleluyah',
+    'tracks.halleluyah.audioLabel': 'Halleluyah by Carine Sanadina',
+    'tracks.halleluyah.coverAlt': 'Halleluyah cover art',
+    'tracks.halleluyah.fallback': 'Halleluyah cover art is temporarily unavailable.',
+    'tracks.halleluyah.number': 'Track 07',
+    'tracks.halleluyah.description': 'A Lingala worship anthem celebrating God’s glory, majesty, and eternal praise through heartfelt adoration.',
+    'tracks.halleluyah.about': 'Halleluyah is a faith-filled Lingala worship song that exalts God through praise, gratitude, and reverence. Drawing inspiration from heavenly worship and the language of adoration, the song invites listeners into an atmosphere of spiritual reflection, joy, and devotion.',
+    'halleluyahSynopsis': 'A Lingala worship anthem celebrating God’s glory, majesty, and eternal praise through heartfelt adoration.',
+    'tracks.halleluyah.credits': 'Artist: Carine Sanadina\nLanguage: Lingala\nProduced by Omoluabi Productions\nPresented by Omoluabi Productions',
+    'tracks.halleluyah.playLabel': 'Play Halleluyah',
+    'tracks.halleluyah.lyricsFallback': 'Synced lyrics coming soon.'
+  },
+  fr: {
+    'tracks.halleluyah.description': 'Un hymne d’adoration en lingala célébrant la gloire, la majesté et la louange éternelle de Dieu avec une adoration sincère.',
+    'tracks.halleluyah.about': 'Halleluyah est un chant d’adoration en lingala, rempli de foi, qui exalte Dieu par la louange, la gratitude et la révérence. Inspiré par l’adoration céleste et le langage de l’adoration, ce chant invite à une atmosphère de réflexion spirituelle, de joie et de dévotion.',
+    'halleluyahSynopsis': 'Un hymne d’adoration en lingala célébrant la gloire, la majesté et la louange éternelle de Dieu avec une adoration sincère.',
+    'tracks.halleluyah.credits': 'Artiste : Carine Sanadina\nLangue : lingala\nProduit par Omoluabi Productions\nPrésenté par Omoluabi Productions',
+    'tracks.halleluyah.lyricsFallback': 'Paroles synchronisées bientôt disponibles.'
+  },
+  es: {
+    'tracks.halleluyah.description': 'Un himno de adoración en lingala que celebra la gloria, la majestad y la alabanza eterna de Dios con sincera devoción.',
+    'tracks.halleluyah.about': 'Halleluyah es una canción de adoración en lingala llena de fe que exalta a Dios mediante la alabanza, la gratitud y la reverencia. Inspirada en la adoración celestial, invita a una atmósfera de reflexión espiritual, alegría y devoción.',
+    'halleluyahSynopsis': 'Un himno de adoración en lingala que celebra la gloria, la majestad y la alabanza eterna de Dios con sincera devoción.',
+    'tracks.halleluyah.credits': 'Artista: Carine Sanadina\nIdioma: lingala\nProducido por Omoluabi Productions\nPresentado por Omoluabi Productions'
+  },
+  ln: {
+    'tracks.halleluyah.description': 'Loyembo ya losambo na Lingala oyo ekumisaka nkembo, bonene mpe masanzoli ya seko ya Nzambe na motema mobimba.',
+    'tracks.halleluyah.about': 'Halleluyah ezali loyembo ya losambo na Lingala, etondi na kondima, oyo ekumisaka Nzambe na masanzoli, botondi mpe limemya. Ezwaka molimo na losambo ya lola mpe ebengisaka bayoki na esika ya kokanisa makambo ya molimo, esengo mpe komipesa.',
+    'halleluyahSynopsis': 'Loyembo ya losambo na Lingala oyo ekumisaka nkembo, bonene mpe masanzoli ya seko ya Nzambe na motema mobimba.',
+    'tracks.halleluyah.credits': 'Moyembi: Carine Sanadina\nMonɔkɔ: Lingala\nEbisami na Omoluabi Productions\nElakisami na Omoluabi Productions',
+    'tracks.halleluyah.lyricsFallback': 'Maloba ya loyembo ekoya kala mingi te.'
+  },
+  sw: {
+    'tracks.halleluyah.description': 'Wimbo wa ibada wa Lingala unaosherehekea utukufu, ukuu na sifa za milele za Mungu kwa kuabudu kwa moyo wote.',
+    'tracks.halleluyah.about': 'Halleluyah ni wimbo wa ibada wa Lingala uliojaa imani unaomtukuza Mungu kwa sifa, shukrani na heshima. Ukivutiwa na ibada ya mbinguni, unawaalika wasikilizaji katika mazingira ya tafakari ya kiroho, furaha na kujitoa.',
+    'halleluyahSynopsis': 'Wimbo wa ibada wa Lingala unaosherehekea utukufu, ukuu na sifa za milele za Mungu kwa kuabudu kwa moyo wote.',
+    'tracks.halleluyah.credits': 'Msanii: Carine Sanadina\nLugha: Lingala\nImetayarishwa na Omoluabi Productions\nImewasilishwa na Omoluabi Productions'
+  },
+  yo: {
+    'tracks.halleluyah.description': 'Orin ìjọsìn Lingala tó ń ṣe ayẹyẹ ògo, ọlá ńlá àti ìyìn ayérayé Ọlọ́run pẹ̀lú ìfẹ́kúfẹ̀ẹ́ ọkàn.',
+    'tracks.halleluyah.about': 'Halleluyah jẹ́ orin ìjọsìn Lingala tó kún fún ìgbàgbọ́, tó ń gbé Ọlọ́run ga nípasẹ̀ ìyìn, ọpẹ́ àti ọ̀wọ̀. Ó ń pe àwọn olùgbọ́ sínú àyíká ìrònú ẹ̀mí, ayọ̀ àti ìfọkànsìn.',
+    'halleluyahSynopsis': 'Orin ìjọsìn Lingala tó ń ṣe ayẹyẹ ògo, ọlá ńlá àti ìyìn ayérayé Ọlọ́run pẹ̀lú ìfẹ́kúfẹ̀ẹ́ ọkàn.',
+    'tracks.halleluyah.credits': 'Olórin: Carine Sanadina\nÈdè: Lingala\nOmoluabi Productions ló ṣe é\nOmoluabi Productions ló gbé e kalẹ̀'
+  },
+  de: {
+    'tracks.halleluyah.description': 'Eine Lingala-Hymne, die Gottes Herrlichkeit, Majestät und ewigen Lobpreis in inniger Anbetung feiert.',
+    'tracks.halleluyah.about': 'Halleluyah ist ein glaubensvoller Lingala-Worshipsong, der Gott durch Lobpreis, Dankbarkeit und Ehrfurcht erhöht. Inspiriert von himmlischer Anbetung lädt das Lied zu geistlicher Besinnung, Freude und Hingabe ein.',
+    'halleluyahSynopsis': 'Eine Lingala-Hymne, die Gottes Herrlichkeit, Majestät und ewigen Lobpreis in inniger Anbetung feiert.',
+    'tracks.halleluyah.credits': 'Künstlerin: Carine Sanadina\nSprache: Lingala\nProduziert von Omoluabi Productions\nPräsentiert von Omoluabi Productions'
+  },
+  ar: {
+    'tracks.halleluyah.description': 'ترنيمة عبادة بلغة اللينغالا تحتفي بمجد الله وجلاله وتسبيحه الأبدي من خلال تعبد صادق.',
+    'tracks.halleluyah.about': 'Halleluyah ترنيمة عبادة بلغة اللينغالا مفعمة بالإيمان، تمجد الله بالتسبيح والامتنان والتوقير. تستلهم العبادة السماوية وتدعو المستمعين إلى أجواء من التأمل الروحي والفرح والتكريس.',
+    'halleluyahSynopsis': 'ترنيمة عبادة بلغة اللينغالا تحتفي بمجد الله وجلاله وتسبيحه الأبدي من خلال تعبد صادق.',
+    'tracks.halleluyah.credits': 'الفنانة: Carine Sanadina\nاللغة: Lingala\nإنتاج Omoluabi Productions\nتقديم Omoluabi Productions'
+  },
+  'zh-CN': {
+    'tracks.halleluyah.description': '一首林加拉语敬拜赞歌，以真挚敬拜颂扬上帝的荣耀、威严与永恒赞美。',
+    'tracks.halleluyah.about': 'Halleluyah 是一首充满信心的林加拉语敬拜歌曲，以赞美、感恩和敬畏尊崇上帝。歌曲从天上的敬拜汲取灵感，邀请听众进入属灵反思、喜乐与委身的氛围。',
+    'halleluyahSynopsis': '一首林加拉语敬拜赞歌，以真挚敬拜颂扬上帝的荣耀、威严与永恒赞美。',
+    'tracks.halleluyah.credits': '艺人：Carine Sanadina\n语言：Lingala\n制作：Omoluabi Productions\n呈现：Omoluabi Productions'
+  }
+};
+
+Object.entries(halleluyahTranslations).forEach(([language, dictionary]) => {
+  if (translations[language]) Object.assign(translations[language], dictionary);
+});
+
 const supportedLanguages = Object.keys(translations);
 let currentLanguage = DEFAULT_LANGUAGE;
 
@@ -3483,7 +3553,8 @@ const TRANSLATION_AUDIT_ALLOWED_TEXT = [
   'La Gentillesse',
   'Wonderful',
   'Womanifesto',
-  'Paranoïa Persécutive'
+  'Paranoïa Persécutive',
+  'Halleluyah'
 ];
 
 const isAllowedTranslationAuditText = (value = '') => TRANSLATION_AUDIT_ALLOWED_TEXT.some((allowedText) => value.includes(allowedText));
@@ -3770,7 +3841,7 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
-const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason'];
+const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah'];
 const PLAYLIST_STORAGE_KEYS = [PLAYER_STATE_STORAGE_KEY];
 const CACHE_SENSITIVE_STORAGE_KEYS = [
   ...PLAYLIST_STORAGE_KEYS,
@@ -3916,6 +3987,27 @@ const CARINE_MUSIC_PLAYLIST = [
     lyricsTimed: [],
     translationKey: 'tracks.reason',
     synopsisKey: 'reasonSynopsis'
+  },
+  {
+    id: 'halleluyah',
+    title: 'Halleluyah',
+    artist: 'Carine Sanadina',
+    language: 'Lingala',
+    genre: 'Gospel Worship',
+    mood: 'Worship • Praise • Faith • Reverence • Spiritual Upliftment',
+    shortDescription: 'A Lingala worship anthem celebrating God’s glory, majesty, and eternal praise through heartfelt adoration.',
+    description: 'A Lingala worship anthem celebrating God’s glory, majesty, and eternal praise through heartfelt adoration.',
+    coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Halleluyah%20Cover.png',
+    audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Hallelujah.mp3',
+    lyrics: '',
+    // TODO: Add /lyrics/halleluyah.lrc when synchronized lyrics are available.
+    lyricsLrc: '',
+    lyricsFallbackKey: 'tracks.halleluyah.lyricsFallback',
+    about: 'Halleluyah is a faith-filled Lingala worship song that exalts God through praise, gratitude, and reverence. Drawing inspiration from heavenly worship and the language of adoration, the song invites listeners into an atmosphere of spiritual reflection, joy, and devotion.',
+    credits: 'Artist: Carine Sanadina\nLanguage: Lingala\nProduced by Omoluabi Productions\nPresented by Omoluabi Productions',
+    lyricsTimed: [],
+    translationKey: 'tracks.halleluyah',
+    synopsisKey: 'halleluyahSynopsis'
   }
 ];
 
@@ -5937,7 +6029,7 @@ if (musicPlayers.length) {
     if (!resolveSiteAssetPath(lyricsPath)) {
       lyricEntries = [];
       lyricTiming = [];
-      setLyricsMessage(translate('lyrics.unavailable'));
+      setLyricsMessage(t(track?.lyricsFallbackKey || 'lyrics.unavailable', translate('lyrics.unavailable')));
       return;
     }
 
@@ -5950,7 +6042,7 @@ if (musicPlayers.length) {
       if (requestToken !== lyricsLoadToken || activeTrackId !== requestedTrackId || currentLyricsPlayer !== player) return;
       lyricEntries = [];
       lyricTiming = [];
-      setLyricsMessage(translate('lyrics.unavailable'));
+      setLyricsMessage(t(track?.lyricsFallbackKey || 'lyrics.unavailable', translate('lyrics.unavailable')));
     }
   };
 
