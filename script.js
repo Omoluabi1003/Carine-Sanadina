@@ -8757,3 +8757,53 @@ if (musicPlayers.length) {
     setActiveTrack(restoredPlayer);
   }
 }
+
+// Decorative atmospheres are activated only near the viewport so the background
+// remains inexpensive on mobile while preserving the page's cinematic depth.
+const sectionAtmospheres = [...document.querySelectorAll('[data-section-atmosphere], .section')];
+
+if ('IntersectionObserver' in window && sectionAtmospheres.length) {
+  const atmosphereObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      entry.target.classList.toggle('is-atmosphere-visible', entry.isIntersecting);
+    });
+  }, { rootMargin: '35% 0px', threshold: 0.01 });
+
+  sectionAtmospheres.forEach((atmosphere) => atmosphereObserver.observe(atmosphere));
+} else {
+  sectionAtmospheres.forEach((atmosphere) => atmosphere.classList.add('is-atmosphere-visible'));
+}
+
+// Keep pointer depth deliberately subtle and disable it when reduced motion is
+// requested. CSS consumes these values without changing the established palette.
+const premiumDepthQuery = window.matchMedia('(prefers-reduced-motion: no-preference) and (pointer: fine)');
+let premiumDepthFrame = 0;
+
+const resetPremiumDepth = () => {
+  document.documentElement.style.setProperty('--premium-depth-rotate-x', '0deg');
+  document.documentElement.style.setProperty('--premium-depth-rotate-y', '0deg');
+  document.documentElement.style.setProperty('--premium-depth-offset-x', '0px');
+  document.documentElement.style.setProperty('--premium-depth-offset-y', '0px');
+  document.documentElement.style.setProperty('--premium-depth-origin-x', '50%');
+  document.documentElement.style.setProperty('--premium-depth-origin-y', '50%');
+};
+
+const updatePremiumDepth = (event) => {
+  if (!premiumDepthQuery.matches || premiumDepthFrame) return;
+
+  premiumDepthFrame = window.requestAnimationFrame(() => {
+    const depthX = ((event.clientX / window.innerWidth) - 0.5).toFixed(3);
+    const depthY = ((event.clientY / window.innerHeight) - 0.5).toFixed(3);
+    document.documentElement.style.setProperty('--premium-depth-rotate-x', `${depthY * -0.7}deg`);
+    document.documentElement.style.setProperty('--premium-depth-rotate-y', `${depthX * 0.7}deg`);
+    document.documentElement.style.setProperty('--premium-depth-offset-x', `${depthX * 12}px`);
+    document.documentElement.style.setProperty('--premium-depth-offset-y', `${depthY * 12}px`);
+    document.documentElement.style.setProperty('--premium-depth-origin-x', `${50 + (depthX * 3)}%`);
+    document.documentElement.style.setProperty('--premium-depth-origin-y', `${50 + (depthY * 3)}%`);
+    premiumDepthFrame = 0;
+  });
+};
+
+window.addEventListener('pointermove', updatePremiumDepth, { passive: true });
+window.addEventListener('blur', resetPremiumDepth);
+premiumDepthQuery.addEventListener?.('change', resetPremiumDepth);
