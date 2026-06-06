@@ -8773,3 +8773,70 @@ if ('IntersectionObserver' in window && sectionAtmospheres.length) {
 } else {
   sectionAtmospheres.forEach((atmosphere) => atmosphere.classList.add('is-atmosphere-visible'));
 }
+
+// Apply restrained pointer depth only to large display surfaces on precise pointers.
+// Text and controls remain on the same plane; custom properties move the container.
+const premiumDepthQuery = window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+const premiumDepthSelector = [
+  '.hero .portrait-card.is-visible',
+  '.book-card.is-visible',
+  '.luxury-audio-console',
+  '.reflection-card',
+  '.premium-card.is-visible',
+  '.cta-panel.is-visible'
+].join(',');
+
+let activeDepthSurface = null;
+let pendingDepthFrame = 0;
+let pendingDepthPoint = null;
+
+const resetDepthSurface = (surface) => {
+  if (!surface) return;
+  surface.style.setProperty('--tilt-x', '0deg');
+  surface.style.setProperty('--tilt-y', '0deg');
+};
+
+const updateDepthSurface = () => {
+  pendingDepthFrame = 0;
+  if (!activeDepthSurface || !pendingDepthPoint || !premiumDepthQuery.matches) return;
+
+  const bounds = activeDepthSurface.getBoundingClientRect();
+  if (!bounds.width || !bounds.height) return;
+
+  const normalizedX = Math.min(1, Math.max(-1, ((pendingDepthPoint.x - bounds.left) / bounds.width - 0.5) * 2));
+  const normalizedY = Math.min(1, Math.max(-1, ((pendingDepthPoint.y - bounds.top) / bounds.height - 0.5) * 2));
+  const maximumTilt = activeDepthSurface.matches('.hero .portrait-card') ? 3 : 1.75;
+
+  activeDepthSurface.style.setProperty('--tilt-x', `${(-normalizedY * maximumTilt).toFixed(2)}deg`);
+  activeDepthSurface.style.setProperty('--tilt-y', `${(normalizedX * maximumTilt).toFixed(2)}deg`);
+};
+
+document.addEventListener('pointermove', (event) => {
+  if (!premiumDepthQuery.matches || event.pointerType === 'touch') return;
+
+  const surface = event.target instanceof Element ? event.target.closest(premiumDepthSelector) : null;
+  if (surface !== activeDepthSurface) {
+    resetDepthSurface(activeDepthSurface);
+    activeDepthSurface = surface;
+  }
+  if (!surface) return;
+
+  pendingDepthPoint = { x: event.clientX, y: event.clientY };
+  if (!pendingDepthFrame) pendingDepthFrame = window.requestAnimationFrame(updateDepthSurface);
+}, { passive: true });
+
+document.addEventListener('pointerout', (event) => {
+  if (!activeDepthSurface) return;
+  const nextTarget = event.relatedTarget instanceof Element ? event.relatedTarget : null;
+  if (nextTarget && activeDepthSurface.contains(nextTarget)) return;
+  resetDepthSurface(activeDepthSurface);
+  activeDepthSurface = null;
+  pendingDepthPoint = null;
+}, { passive: true });
+
+premiumDepthQuery.addEventListener?.('change', (event) => {
+  if (!event.matches) {
+    resetDepthSurface(activeDepthSurface);
+    activeDepthSurface = null;
+  }
+});

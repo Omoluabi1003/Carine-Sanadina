@@ -8814,3 +8814,378 @@ body > footer {
     transition: none;
   }
 }
+
+/* Premium spatial system: restrained, composited depth for display surfaces. */
+:root {
+  --scene-perspective: 1500px;
+  --depth-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-grid,
+.book-grid,
+.music-shell,
+.reflections-shell,
+.press-kit-grid,
+.final-cta {
+  perspective: var(--scene-perspective);
+  perspective-origin: 50% 42%;
+}
+
+.hero-grid,
+.hero-copy,
+.portrait-card,
+.book-card,
+.book-cover,
+.luxury-audio-console,
+.direct-drive-deck,
+.reflection-card,
+.premium-card,
+.cta-panel {
+  transform-style: preserve-3d;
+}
+
+/* Keep copy on a single readable plane while separating it from the atmosphere. */
+.hero-copy.reveal.is-visible {
+  position: relative;
+  z-index: 2;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid rgba(191, 219, 254, 0.14);
+  border-radius: clamp(28px, 4vw, 44px);
+  background:
+    linear-gradient(145deg, rgba(9, 32, 69, 0.54), rgba(3, 14, 35, 0.24)),
+    radial-gradient(circle at 12% 0%, rgba(240, 216, 154, 0.1), transparent 36%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 34px 90px rgba(0, 8, 28, 0.28);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  transform: translate3d(0, 0, 34px);
+}
+
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  z-index: -1;
+  border-radius: inherit;
+  border: 1px solid rgba(240, 216, 154, 0.08);
+  pointer-events: none;
+  transform: translateZ(-18px);
+}
+
+.hero .portrait-card.reveal.is-visible,
+.book-card.reveal.is-visible,
+.reflection-card,
+.premium-card.reveal.is-visible,
+.cta-panel.reveal.is-visible,
+.luxury-audio-console {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --surface-lift: 0px;
+  --surface-z: 0px;
+  transform: translate3d(0, var(--surface-lift), var(--surface-z)) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transition:
+    transform 420ms var(--depth-ease),
+    border-color 320ms ease,
+    box-shadow 420ms var(--depth-ease);
+  will-change: transform;
+}
+
+.hero .portrait-card.reveal.is-visible {
+  --surface-z: 54px;
+  box-shadow:
+    0 44px 110px rgba(0, 7, 24, 0.46),
+    0 12px 34px rgba(240, 216, 154, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.hero .portrait-card.reveal.is-visible:hover,
+.hero .portrait-card.reveal.is-visible:focus-within {
+  --surface-lift: -8px;
+  --surface-z: 66px;
+}
+
+.portrait-frame {
+  transform: translateZ(18px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 248, 238, 0.3),
+    0 26px 52px rgba(0, 7, 24, 0.34);
+}
+
+.portrait-caption {
+  position: relative;
+  transform: translateZ(26px);
+}
+
+/* Hardcover construction: cover plane, paper block, spine and shelf shadow. */
+.book-grid {
+  align-items: stretch;
+  gap: clamp(22px, 2.4vw, 32px);
+}
+
+.book-card.reveal.is-visible {
+  overflow: visible;
+  border-color: rgba(191, 219, 254, 0.15);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.82), rgba(238, 244, 255, 0.58)),
+    radial-gradient(circle at 16% 0%, rgba(240, 216, 154, 0.3), transparent 36%);
+  box-shadow:
+    0 30px 70px rgba(0, 7, 24, 0.3),
+    0 7px 0 -3px rgba(1, 10, 29, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.book-card.reveal.is-visible:hover,
+.book-card.reveal.is-visible:focus-within {
+  --surface-lift: -11px;
+  --surface-z: 26px;
+  border-color: rgba(240, 216, 154, 0.4);
+  box-shadow:
+    0 48px 98px rgba(0, 7, 24, 0.4),
+    0 12px 0 -5px rgba(1, 10, 29, 0.46),
+    0 0 48px rgba(240, 216, 154, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.book-cover-official {
+  overflow: visible;
+  isolation: isolate;
+  transform: translate3d(0, 0, 20px) rotateY(-1.5deg);
+  transform-origin: left center;
+  box-shadow:
+    -9px 13px 0 -5px rgba(1, 7, 20, 0.68),
+    0 26px 48px rgba(0, 7, 24, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  transition: transform 420ms var(--depth-ease), box-shadow 420ms var(--depth-ease);
+}
+
+.book-card:hover .book-cover-official,
+.book-card:focus-within .book-cover-official {
+  transform: translate3d(2px, -3px, 30px) rotateY(-3deg);
+  box-shadow:
+    -13px 17px 0 -6px rgba(1, 7, 20, 0.72),
+    0 34px 58px rgba(0, 7, 24, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.book-cover-official::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 10%;
+  right: -8px;
+  bottom: 7%;
+  width: 12px;
+  border-radius: 0 4px 4px 0;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 252, 238, 0.94) 0 2px, rgba(206, 192, 160, 0.78) 2px 3px),
+    #e8ddc5;
+  box-shadow: 4px 5px 8px rgba(0, 7, 24, 0.3);
+  transform: translateZ(-8px);
+}
+
+.official-book-cover {
+  transform: translateZ(8px);
+  box-shadow:
+    -5px 0 0 rgba(3, 10, 25, 0.72),
+    0 22px 40px rgba(0, 7, 24, 0.34);
+}
+
+.book-body {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(12px);
+}
+
+/* Audio hardware is layered; lyrics intentionally remain flat and dominant. */
+.luxury-audio-console {
+  --surface-z: 20px;
+  border-color: rgba(191, 219, 254, 0.2);
+  box-shadow:
+    0 52px 120px rgba(0, 5, 18, 0.52),
+    0 10px 0 -4px rgba(1, 6, 17, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -22px 45px rgba(0, 0, 0, 0.28);
+}
+
+.luxury-audio-console:hover,
+.luxury-audio-console:focus-within {
+  --surface-z: 28px;
+  border-color: rgba(240, 216, 154, 0.25);
+}
+
+.direct-drive-deck {
+  transform: translateZ(24px);
+  overflow: visible;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -18px 36px rgba(0, 0, 0, 0.32),
+    0 26px 0 -17px rgba(1, 6, 17, 0.9),
+    0 42px 68px rgba(0, 4, 14, 0.46);
+}
+
+.direct-drive-deck .expanded-artwork-wrap {
+  transform: translateZ(34px);
+  box-shadow:
+    0 30px 0 -19px rgba(0, 0, 0, 0.84),
+    0 38px 54px rgba(0, 0, 0, 0.5),
+    0 0 0 2px rgba(180, 205, 233, 0.24),
+    inset 0 0 0 10px #07101d;
+}
+
+.direct-drive-deck .expanded-vinyl-disc { transform: translateZ(8px); }
+.direct-drive-deck .expanded-vinyl-label,
+.record-spindle { transform: translate(-50%, -50%) translateZ(14px); }
+.direct-drive-deck .console-now-playing { transform: translateZ(22px); }
+
+.lyrics-panel,
+.lyrics-panel * {
+  transform-style: flat;
+}
+
+.lyrics-panel {
+  position: relative;
+  z-index: 8;
+  transform: none;
+  box-shadow:
+    0 30px 80px rgba(0, 5, 18, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Journal cards and editorial sheets float, but their content stays planar. */
+.reflection-card {
+  --surface-z: 8px;
+  overflow: visible;
+  border-color: rgba(191, 219, 254, 0.17);
+  background:
+    linear-gradient(145deg, rgba(13, 42, 82, 0.86), rgba(4, 16, 38, 0.9)),
+    radial-gradient(circle at 10% 0%, rgba(240, 216, 154, 0.08), transparent 36%);
+  box-shadow:
+    0 32px 72px rgba(0, 5, 18, 0.38),
+    0 7px 0 -4px rgba(151, 177, 211, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.reflection-card:hover,
+.reflection-card:focus-within {
+  --surface-lift: -8px;
+  --surface-z: 24px;
+  box-shadow:
+    0 46px 92px rgba(0, 5, 18, 0.48),
+    0 10px 0 -5px rgba(151, 177, 211, 0.16),
+    0 0 48px rgba(96, 165, 250, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+.reflection-card__cover {
+  transform: translateZ(18px);
+  box-shadow: 0 24px 48px rgba(0, 5, 18, 0.42);
+}
+
+.reflection-card > :not(.reflection-card__cover) { position: relative; z-index: 2; }
+
+.premium-card.reveal.is-visible {
+  --surface-z: 6px;
+  position: relative;
+  overflow: visible;
+  border-color: rgba(191, 219, 254, 0.16);
+  background: linear-gradient(150deg, rgba(234, 242, 255, 0.09), rgba(234, 242, 255, 0.035));
+  box-shadow:
+    0 30px 74px rgba(0, 5, 18, 0.34),
+    7px 8px 0 -4px rgba(184, 205, 232, 0.09),
+    13px 15px 0 -8px rgba(240, 216, 154, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+}
+
+.premium-card.reveal.is-visible:hover,
+.premium-card.reveal.is-visible:focus-within {
+  --surface-lift: -7px;
+  --surface-z: 22px;
+  border-color: rgba(240, 216, 154, 0.28);
+  box-shadow:
+    0 44px 92px rgba(0, 5, 18, 0.44),
+    9px 10px 0 -4px rgba(184, 205, 232, 0.11),
+    16px 18px 0 -8px rgba(240, 216, 154, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.cta-panel.reveal.is-visible {
+  --surface-z: 30px;
+  position: relative;
+  overflow: visible;
+  border: 1px solid rgba(240, 216, 154, 0.26);
+  background:
+    linear-gradient(145deg, rgba(10, 39, 80, 0.88), rgba(3, 15, 37, 0.86)),
+    radial-gradient(circle at 50% 0%, rgba(240, 216, 154, 0.15), transparent 38%);
+  box-shadow:
+    0 48px 120px rgba(0, 5, 18, 0.5),
+    0 0 72px rgba(240, 216, 154, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(22px) saturate(125%);
+  -webkit-backdrop-filter: blur(22px) saturate(125%);
+}
+
+.cta-panel.reveal.is-visible:hover,
+.cta-panel.reveal.is-visible:focus-within {
+  --surface-lift: -5px;
+  --surface-z: 38px;
+}
+
+@media (max-width: 900px) {
+  :root { --scene-perspective: 1800px; }
+
+  .hero-copy.reveal.is-visible,
+  .hero .portrait-card.reveal.is-visible,
+  .book-card.reveal.is-visible,
+  .reflection-card,
+  .premium-card.reveal.is-visible,
+  .cta-panel.reveal.is-visible,
+  .luxury-audio-console {
+    --tilt-x: 0deg !important;
+    --tilt-y: 0deg !important;
+    --surface-z: 0px;
+    will-change: auto;
+  }
+
+  .hero-copy.reveal.is-visible { transform: none; }
+  .portrait-frame,
+  .portrait-caption,
+  .book-body,
+  .reflection-card__cover { transform: none; }
+  .book-cover-official { transform: rotateY(-1deg); }
+  .direct-drive-deck { transform: none; overflow: hidden; }
+}
+
+@media (max-width: 600px) {
+  .hero-copy.reveal.is-visible {
+    padding: 22px;
+    border-radius: 28px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .book-card.reveal.is-visible,
+  .reflection-card,
+  .premium-card.reveal.is-visible,
+  .cta-panel.reveal.is-visible,
+  .luxury-audio-console {
+    box-shadow: 0 24px 54px rgba(0, 5, 18, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy.reveal.is-visible,
+  .hero .portrait-card.reveal.is-visible,
+  .book-card.reveal.is-visible,
+  .book-cover-official,
+  .reflection-card,
+  .premium-card.reveal.is-visible,
+  .cta-panel.reveal.is-visible,
+  .luxury-audio-console,
+  .direct-drive-deck,
+  .direct-drive-deck .expanded-artwork-wrap {
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+}
