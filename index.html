@@ -218,6 +218,16 @@
     </script>
   </head>
   <body>
+    <div class="premium-background" aria-hidden="true">
+      <div class="premium-background__depth"></div>
+      <div class="premium-background__rays"></div>
+      <div class="premium-background__texture"></div>
+      <div class="premium-background__glow"></div>
+      <div class="premium-background__dust">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
     <div class="cinematic-splash" data-cinematic-splash role="status" aria-live="polite" aria-label="Carine Sanadina app is opening" data-i18n-aria-label="splash.ariaLabel">
       <div class="splash-ambient splash-ambient-one" aria-hidden="true"></div>
       <div class="splash-ambient splash-ambient-two" aria-hidden="true"></div>
@@ -327,6 +337,7 @@
 
     <main id="main">
       <section class="hero section" id="hero">
+        <div class="section-atmosphere section-atmosphere--healing" aria-hidden="true" data-section-atmosphere><span></span><span></span></div>
         <div class="hero-glow" aria-hidden="true"></div>
         <div class="container hero-grid">
           <div class="hero-copy reveal">
@@ -379,6 +390,7 @@
       </section>
 
       <section class="section about" id="about" aria-labelledby="about-heading">
+        <div class="section-atmosphere section-atmosphere--restoration" aria-hidden="true" data-section-atmosphere><span></span><span></span></div>
         <div class="container split-layout">
           <div class="section-kicker reveal" data-i18n="about.kicker">About Carine</div>
           <div class="about-content reveal">
@@ -397,6 +409,7 @@
       </section>
 
       <section class="section works" id="works" aria-labelledby="works-heading">
+        <div class="section-atmosphere section-atmosphere--authors" aria-hidden="true" data-section-atmosphere><span></span><span></span></div>
         <div class="container">
           <div class="section-heading reveal">
             <p class="eyebrow" data-i18n="works.kicker">Books</p>
@@ -520,6 +533,7 @@
       </section>
 
       <section class="section music-showcase" id="music" aria-labelledby="music-heading">
+        <div class="section-atmosphere section-atmosphere--listening" aria-hidden="true" data-section-atmosphere><span></span><span></span></div>
         <div class="music-ambient" aria-hidden="true"></div>
         <div class="container music-shell">
           <div class="section-heading center reveal">
@@ -666,6 +680,7 @@
 
 
       <section class="section reflections" id="reflections" aria-labelledby="reflections-heading">
+        <div class="section-atmosphere section-atmosphere--morning" aria-hidden="true" data-section-atmosphere><span></span><span></span></div>
         <div class="reflections-ambient" aria-hidden="true"></div>
         <div class="container reflections-shell">
           <div class="section-heading reveal">
@@ -691,6 +706,7 @@
       </section>
 
       <section class="section premium-content" id="press" aria-labelledby="press-heading">
+        <div class="section-atmosphere section-atmosphere--editorial" aria-hidden="true" data-section-atmosphere><span></span><span></span></div>
         <div class="container">
           <div class="section-heading reveal">
             <p class="eyebrow" data-i18n="press.kicker">Press Kit</p>
@@ -770,6 +786,7 @@
 
       <!-- TODO: Add email capture or member experiences only after a real static-compatible endpoint/auth provider is confirmed and ready to connect. -->
       <section class="section final-cta" id="contact" aria-labelledby="contact-heading">
+        <div class="section-atmosphere section-atmosphere--invitation" aria-hidden="true" data-section-atmosphere><span></span><span></span></div>
         <div class="container cta-panel reveal">
           <p class="eyebrow" data-i18n="cta.kicker">Begin the conversation</p>
           <h2 id="contact-heading" data-i18n="cta.heading">Invite the voice. Share the story. Build a healing-centered moment.</h2>
