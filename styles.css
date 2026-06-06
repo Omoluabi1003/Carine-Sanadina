@@ -8457,3 +8457,90 @@ body.expanded-player-open {
     max-height: min(70dvh, 520px);
   }
 }
+
+/* Premium CSS 3D atmosphere
+   Uses the established sapphire-and-gold system without replacing page backgrounds. */
+:root {
+  --premium-depth-rotate-x: 0deg;
+  --premium-depth-rotate-y: 0deg;
+  --premium-depth-offset-x: 0px;
+  --premium-depth-offset-y: 0px;
+  --premium-depth-origin-x: 50%;
+  --premium-depth-origin-y: 50%;
+}
+
+.section {
+  isolation: isolate;
+  perspective: 1200px;
+  perspective-origin: var(--premium-depth-origin-x) var(--premium-depth-origin-y);
+}
+
+.section:not(.music-showcase) > .container {
+  transform-style: preserve-3d;
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), filter 700ms ease;
+}
+
+.section:not(.music-showcase).is-atmosphere-visible > .container {
+  transform:
+    rotateX(var(--premium-depth-rotate-x))
+    rotateY(var(--premium-depth-rotate-y))
+    translateZ(0);
+  filter: drop-shadow(0 24px 46px rgba(4, 20, 47, 0.08));
+}
+
+.section-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  contain: paint;
+  transform: translateZ(-1px) scale(1.001);
+  transition: opacity 1.2s ease;
+}
+
+.section-atmosphere.is-atmosphere-visible {
+  opacity: 0.42;
+}
+
+.section-atmosphere::before,
+.section-atmosphere::after,
+.section-atmosphere span {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.section-atmosphere::before {
+  inset: -18%;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(10, 45, 99, 0.16), transparent 42%),
+    radial-gradient(circle at 82% 68%, rgba(231, 211, 154, 0.08), transparent 36%);
+  transform:
+    translate3d(
+      var(--premium-depth-offset-x),
+      var(--premium-depth-offset-y),
+      0
+    )
+    scale(1.03);
+  transition: transform 500ms ease-out;
+}
+
+.section-atmosphere::after {
+  inset: 0;
+  background: linear-gradient(118deg, transparent 34%, rgba(231, 211, 154, 0.035) 49%, transparent 64%);
+}
+
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  .section {
+    perspective: none;
+  }
+
+  .section:not(.music-showcase).is-atmosphere-visible > .container,
+  .section-atmosphere,
+  .section-atmosphere::before {
+    transform: none;
+    transition: none;
+  }
+}
