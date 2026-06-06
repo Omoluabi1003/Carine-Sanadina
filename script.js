@@ -8548,18 +8548,64 @@ if (musicPlayers.length) {
   mobilePrevious?.addEventListener('click', () => playPreviousTrack(activePlayer || musicPlayers[0]));
   mobileNext?.addEventListener('click', () => playNextTrack(activePlayer || musicPlayers[0]));
 
-  const setConsolePlaylistOpen = (isOpen) => {
+  // Keep the drawer outside the inline player's clipping/transform context so it is
+  // always positioned against the visual viewport, including mobile Safari.
+  if (consolePlaylistDrawer && consolePlaylistDrawer.parentElement !== document.body) {
+    document.body.append(consolePlaylistDrawer);
+  }
+
+  let playlistFocusRequest = 0;
+  const getPlaylistFocusableElements = () => Array.from(consolePlaylistDrawer?.querySelectorAll(
+    'button:not([disabled]):not([tabindex="-1"]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  ) || []).filter((element) => element.getClientRects().length > 0);
+
+  const setConsolePlaylistOpen = (isOpen, { returnFocus = true } = {}) => {
     const open = Boolean(isOpen);
+    const wasOpen = Boolean(consolePlaylistDrawer?.classList.contains('is-open'));
+    playlistFocusRequest += 1;
+    const focusRequest = playlistFocusRequest;
+
     consolePlaylistDrawer?.classList.toggle('is-open', open);
     consolePlaylistDrawer?.setAttribute('aria-hidden', String(!open));
     consolePlaylistToggle?.setAttribute('aria-expanded', String(open));
     expandedPlayerCard?.classList.toggle('is-playlist-open', open);
+
+    if (open && !wasOpen) {
+      window.requestAnimationFrame(() => {
+        if (focusRequest !== playlistFocusRequest || !consolePlaylistDrawer?.classList.contains('is-open')) return;
+        const firstTrack = consolePlaylistDrawer.querySelector('[data-expanded-track-option]');
+        (firstTrack || getPlaylistFocusableElements()[0])?.focus({ preventScroll: true });
+      });
+    } else if (!open && wasOpen && returnFocus) {
+      consolePlaylistToggle?.focus({ preventScroll: true });
+    }
   };
 
   consolePlaylistToggle?.addEventListener('click', () => {
     setConsolePlaylistOpen(!consolePlaylistDrawer?.classList.contains('is-open'));
   });
   consolePlaylistCloseButtons.forEach((button) => button.addEventListener('click', () => setConsolePlaylistOpen(false)));
+
+  consolePlaylistDrawer?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      setConsolePlaylistOpen(false);
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+    const focusable = getPlaylistFocusableElements();
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
 
   expandedTrackOptions.forEach((option) => {
     option.addEventListener('click', () => {

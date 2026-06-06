@@ -8315,3 +8315,143 @@ body.expanded-player-open {
     transform-origin: bottom left;
   }
 }
+
+/* Viewport-safe playlist drawer: portal-ready so clipped player parents cannot crop it. */
+.console-playlist-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  display: grid;
+  place-items: center end;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.console-playlist-backdrop {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  touch-action: none;
+}
+
+.console-playlist-panel {
+  position: relative;
+  inset: auto;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, calc(100vw - max(32px, env(safe-area-inset-left) + env(safe-area-inset-right))));
+  height: auto;
+  max-height: min(70vh, 520px);
+  padding: 20px 16px;
+  overflow: hidden;
+  border: 1px solid rgba(189, 216, 255, 0.18);
+  border-radius: 26px;
+  box-shadow: -20px 24px 70px rgba(0, 0, 0, 0.52);
+  transform: translateX(calc(100% + 32px));
+}
+
+.console-playlist-heading {
+  flex: 0 0 auto;
+  margin-bottom: 14px;
+}
+
+.console-playlist-panel .expanded-track-picker {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.console-playlist-panel .expanded-track-list {
+  flex: 1 1 auto;
+  max-height: none;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+  padding-right: 3px;
+}
+
+.console-playlist-panel .expanded-track-option {
+  grid-template-columns: 58px minmax(0, 1fr) minmax(42px, auto);
+  min-width: 0;
+  min-height: 72px;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+.console-playlist-panel .expanded-track-option__meta,
+.console-playlist-panel .expanded-track-option__meta strong,
+.console-playlist-panel .expanded-track-option__meta span {
+  min-width: 0;
+}
+
+.console-playlist-panel .expanded-track-option__meta strong {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+}
+
+.console-playlist-panel .expanded-track-option__meta span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.console-playlist-close {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (max-width: 820px) {
+  .console-playlist-drawer {
+    padding:
+      max(8px, env(safe-area-inset-top))
+      max(8px, env(safe-area-inset-right))
+      max(8px, env(safe-area-inset-bottom))
+      max(8px, env(safe-area-inset-left));
+    place-items: end center;
+  }
+
+  .console-playlist-panel {
+    inset: auto;
+    width: 100%;
+    height: auto;
+    max-height: min(70vh, 520px);
+    padding: 18px 12px max(14px, env(safe-area-inset-bottom));
+    border-radius: 26px 26px 18px 18px;
+    transform: translateY(calc(100% + max(24px, env(safe-area-inset-bottom))));
+  }
+
+  .console-playlist-panel .expanded-track-option {
+    grid-template-columns: 52px minmax(0, 1fr) minmax(38px, auto);
+    min-height: 68px;
+    gap: 10px;
+    padding: 8px 10px;
+  }
+
+  .console-playlist-panel .expanded-track-option__thumb {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+@supports (height: 100dvh) {
+  .console-playlist-panel {
+    max-height: min(70dvh, 520px);
+  }
+}
