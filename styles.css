@@ -8266,3 +8266,237 @@ body.expanded-player-open {
     will-change: auto;
   }
 }
+
+/* Integrated turntable geometry: every part uses this deck's shared coordinate system. */
+.turntable-assembly {
+  --platter-left: 18%;
+  --platter-top: 18%;
+  --platter-size: 34%;
+  --platter-center-x: 35%;
+  --platter-center-y: 48.22%;
+  --tonearm-pivot-x: 70%;
+  --tonearm-pivot-y: 23%;
+  --stylus-target-x: 50%;
+  --stylus-target-y: 38%;
+  --tonearm-length: 21.71%;
+  --tonearm-angle: 157.13deg;
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  overflow: hidden;
+}
+
+.turntable-assembly .console-turntable {
+  position: absolute;
+  z-index: 2;
+  left: var(--platter-left);
+  top: var(--platter-top);
+  width: var(--platter-size);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  transform: none;
+}
+
+.turntable-assembly .expanded-artwork-wrap {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: 1 / 1;
+  padding: clamp(9px, 1.8vw, 22px);
+}
+
+.turntable-assembly .expanded-vinyl-disc {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: 1 / 1;
+}
+
+.turntable-assembly .tonearm-assembly {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.turntable-assembly .tonearm-pivot {
+  top: var(--tonearm-pivot-y);
+  left: var(--tonearm-pivot-x);
+  right: auto;
+  width: clamp(34px, 4.8vw, 60px);
+  transform: translate(-50%, -50%);
+}
+
+.turntable-assembly .tonearm-counterweight {
+  top: calc(var(--tonearm-pivot-y) - 4.8%);
+  left: calc(var(--tonearm-pivot-x) + 3.6%);
+  right: auto;
+  width: clamp(25px, 3.7vw, 46px);
+  transform: translate(-50%, -50%);
+}
+
+.turntable-assembly .tonearm-arm {
+  top: var(--tonearm-pivot-y);
+  left: var(--tonearm-pivot-x);
+  right: auto;
+  width: var(--tonearm-length);
+  height: clamp(4px, 0.48vw, 6px);
+  transform: translateY(-50%) rotate(var(--tonearm-angle));
+  transform-origin: left center;
+}
+
+.turntable-assembly .tonearm-headshell {
+  top: var(--stylus-target-y);
+  left: var(--stylus-target-x);
+  width: clamp(24px, 3.2vw, 40px);
+  height: clamp(10px, 1.35vw, 17px);
+  transform: translate(-82%, -50%) rotate(-22.87deg);
+  transform-origin: right center;
+}
+
+.turntable-assembly .tonearm-headshell::after {
+  display: none;
+}
+
+.turntable-assembly .tonearm-stylus {
+  position: absolute;
+  z-index: 2;
+  top: var(--stylus-target-y);
+  left: var(--stylus-target-x);
+  width: clamp(4px, 0.55vw, 7px);
+  height: clamp(7px, 0.8vw, 10px);
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, #8c6c34, #f0ce7f);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
+  transform: translate(-50%, -8%) rotate(-5deg);
+  transform-origin: top center;
+}
+
+.turntable-assembly .console-now-playing {
+  position: absolute;
+  z-index: 6;
+  right: 9%;
+  bottom: 18%;
+  width: 32%;
+  margin: 0;
+  padding: clamp(13px, 2vw, 24px);
+}
+
+.turntable-assembly .pitch-control {
+  top: 20%;
+  right: 3.5%;
+  transform: none;
+}
+
+.turntable-assembly .pitch-rail {
+  height: clamp(80px, 15.6vw, 175px);
+}
+
+.turntable-assembly .deck-power-control {
+  top: 4%;
+  left: 3%;
+}
+
+.turntable-assembly .deck-hardware-controls {
+  top: auto;
+  bottom: 4%;
+  left: 3%;
+  transform: none;
+}
+
+.direct-drive-console[data-tonearm="hidden"] .turntable-assembly .tonearm-assembly {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .turntable-assembly .console-now-playing {
+    right: 8%;
+    bottom: 12%;
+    width: 34%;
+    padding: 14px;
+  }
+
+  .turntable-assembly .console-now-playing h3 {
+    font-size: clamp(1.2rem, 3.2vw, 1.8rem);
+  }
+
+  .turntable-assembly .pitch-control {
+    right: 2.5%;
+    transform: scale(0.78);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 700px) {
+  .turntable-assembly {
+    overflow: hidden;
+  }
+
+  .turntable-assembly .tonearm-assembly {
+    display: none;
+  }
+
+  .turntable-assembly .console-turntable {
+    left: 10%;
+    top: 16%;
+    width: 42%;
+  }
+
+  .turntable-assembly .console-now-playing {
+    right: 5%;
+    bottom: 10%;
+    width: 39%;
+    padding: 10px;
+  }
+
+  .turntable-assembly .console-now-playing h3 {
+    margin-top: 3px;
+    font-size: clamp(1rem, 5vw, 1.35rem);
+  }
+
+  .turntable-assembly .console-artist {
+    font-size: 0.72rem;
+  }
+
+  .turntable-assembly .console-synopsis {
+    display: none;
+  }
+
+  .turntable-assembly .console-status-row .eyebrow {
+    font-size: 0.48rem;
+  }
+
+  .turntable-assembly .console-playback-status {
+    font-size: 0.5rem;
+  }
+
+  .turntable-assembly .pitch-control {
+    top: 19%;
+    right: 1.5%;
+    transform: scale(0.48);
+    transform-origin: top center;
+  }
+
+  .turntable-assembly .deck-power-control {
+    top: 3%;
+    left: 2.5%;
+    transform: scale(0.58);
+    transform-origin: top left;
+  }
+
+  .turntable-assembly .deck-hardware-controls {
+    bottom: 3%;
+    left: 2.5%;
+    transform: scale(0.5);
+    transform-origin: bottom left;
+  }
+}
