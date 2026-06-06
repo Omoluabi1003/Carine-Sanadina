@@ -615,11 +615,11 @@
 
               </section>
 
-              <aside class="console-playlist-drawer" id="console-playlist-drawer" data-console-playlist-drawer aria-hidden="true">
+              <aside class="console-playlist-drawer" id="console-playlist-drawer" data-console-playlist-drawer role="dialog" aria-modal="true" aria-labelledby="console-playlist-title" aria-hidden="true">
                 <button class="console-playlist-backdrop" type="button" data-console-playlist-close tabindex="-1" aria-label="Close playlist" data-i18n-aria-label="console.closePlaylist"></button>
                 <div class="console-playlist-panel">
                   <div class="console-playlist-heading">
-                    <div><span class="eyebrow" data-i18n="console.collection">Listening collection</span><h3 data-i18n="music.playlist">Playlist</h3></div>
+                    <div><span class="eyebrow" data-i18n="console.collection">Listening collection</span><h3 id="console-playlist-title" data-i18n="music.playlist">Playlist</h3></div>
                     <button class="console-playlist-close" type="button" data-console-playlist-close aria-label="Close playlist" data-i18n-aria-label="console.closePlaylist">×</button>
                   </div>
                   <div class="expanded-track-picker" aria-label="Choose a track" data-i18n-aria-label="music.playlistLabel">
