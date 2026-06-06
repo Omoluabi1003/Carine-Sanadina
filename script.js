@@ -8757,3 +8757,19 @@ if (musicPlayers.length) {
     setActiveTrack(restoredPlayer);
   }
 }
+
+// Decorative atmospheres are activated only near the viewport so the background
+// remains inexpensive on mobile while preserving the page's cinematic depth.
+const sectionAtmospheres = [...document.querySelectorAll('[data-section-atmosphere]')];
+
+if ('IntersectionObserver' in window && sectionAtmospheres.length) {
+  const atmosphereObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      entry.target.classList.toggle('is-atmosphere-visible', entry.isIntersecting);
+    });
+  }, { rootMargin: '35% 0px', threshold: 0.01 });
+
+  sectionAtmospheres.forEach((atmosphere) => atmosphereObserver.observe(atmosphere));
+} else {
+  sectionAtmospheres.forEach((atmosphere) => atmosphere.classList.add('is-atmosphere-visible'));
+}
