@@ -7532,101 +7532,6 @@ body.expanded-player-open .guide-widget { opacity: 0; visibility: hidden; pointe
 
 .deck-power-knob::after { content: ""; display: block; width: 2px; height: 8px; margin: 3px auto 0; background: #e8d19d; border-radius: 2px; }
 
-.tonearm-assembly {
-  --tonearm-width: clamp(260px, 29vw, 360px);
-  --tonearm-angle: -16deg;
-  position: absolute;
-  z-index: 3;
-  top: 10%;
-  right: 14%;
-  width: var(--tonearm-width);
-  height: calc(var(--tonearm-width) * 0.48);
-  pointer-events: none;
-}
-
-.tonearm-counterweight,
-.tonearm-pivot {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 34% 28%, #edf3f7, #7d8f9f 38%, #26384a 70%, #101b29);
-  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.55);
-}
-
-.tonearm-counterweight {
-  top: 0;
-  right: 0;
-  width: clamp(34px, 3.7vw, 46px);
-  aspect-ratio: 1;
-  border: clamp(3px, 0.35vw, 4px) solid #091522;
-}
-
-.tonearm-pivot {
-  top: 20%;
-  right: 3%;
-  width: clamp(48px, 4.8vw, 60px);
-  aspect-ratio: 1;
-  border: clamp(6px, 0.65vw, 8px) solid #091522;
-}
-
-.tonearm-pivot::before {
-  content: "";
-  position: absolute;
-  inset: -7px;
-  z-index: -1;
-  border: 1px solid rgba(176, 202, 225, 0.2);
-  border-radius: 50%;
-  background: rgba(4, 15, 29, 0.76);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.38);
-}
-
-.tonearm-pivot::after {
-  content: "";
-  position: absolute;
-  inset: 31%;
-  border: 1px solid rgba(235, 244, 251, 0.58);
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #cbd7e0, #52677a 65%, #1a2938);
-}
-
-.tonearm-arm {
-  position: absolute;
-  top: 36%;
-  right: 10%;
-  width: 88%;
-  height: clamp(4px, 0.48vw, 6px);
-  border: 1px solid rgba(239, 247, 252, 0.46);
-  border-radius: 999px;
-  background: linear-gradient(180deg, #f4f8fa, #91a4b4 43%, #33475a 72%, #b9c8d2);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.58);
-  transform: rotate(var(--tonearm-angle));
-  transform-origin: right center;
-}
-
-.tonearm-headshell {
-  position: absolute;
-  top: 76%;
-  left: 0;
-  width: clamp(30px, 3.2vw, 40px);
-  height: clamp(12px, 1.35vw, 17px);
-  border: 1px solid rgba(224, 234, 241, 0.35);
-  border-radius: 3px 8px 4px 3px;
-  background: linear-gradient(180deg, #dce4e9, #607486 58%, #182636);
-  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.52);
-  transform: rotate(var(--tonearm-angle));
-  transform-origin: right center;
-}
-
-.tonearm-headshell::after {
-  content: "";
-  position: absolute;
-  left: 4px;
-  bottom: -7px;
-  width: clamp(5px, 0.55vw, 7px);
-  height: clamp(7px, 0.7vw, 9px);
-  border-radius: 0 0 3px 3px;
-  background: linear-gradient(90deg, #8c6c34, #e3c273);
-}
-
 .pitch-control {
   position: absolute;
   z-index: 4;
@@ -7730,11 +7635,6 @@ body.expanded-player-open { overflow: auto; }
   }
 
   .direct-drive-deck .expanded-artwork-wrap { width: min(100%, 360px); padding: 18px; }
-  .tonearm-assembly {
-    --tonearm-width: clamp(250px, 33vw, 300px);
-    top: 9%;
-    right: 12%;
-  }
   .pitch-control { right: 18px; transform: scale(0.86); transform-origin: top center; }
   .direct-drive-deck .console-now-playing { margin-right: 8px; padding: 18px; }
   .direct-drive-deck .console-synopsis { display: none; }
@@ -7766,7 +7666,6 @@ body.expanded-player-open { overflow: auto; }
   .direct-drive-deck .console-now-playing h3 { font-size: clamp(1.3rem, 7vw, 1.8rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .direct-drive-deck .console-artist { margin-top: 4px; }
   .direct-drive-deck .console-now-playing .expanded-visualizer { display: flex; height: 20px; margin-top: 7px; }
-  .tonearm-assembly { display: none; }
   .pitch-control { top: 104px; right: 12px; transform: scale(0.66); }
   .deck-power-control { top: 9px; left: 10px; transform: scale(0.74); transform-origin: top left; }
   .deck-hardware-controls { bottom: auto; top: 274px; left: 17px; transform: scale(0.72); transform-origin: left top; }
@@ -7795,9 +7694,6 @@ body.expanded-player-open { overflow: auto; }
 @media (prefers-reduced-motion: reduce) {
   .direct-drive-deck .expanded-vinyl-disc { animation: none !important; }
 }
-
-/* Set data-tonearm="hidden" on the console if a future layout cannot preserve the hardware geometry. */
-.direct-drive-console[data-tonearm="hidden"] .tonearm-assembly { display: none; }
 
 /* Mobile lyrics-first player balance: the deck supports the song instead of consuming it. */
 @media (max-width: 640px) {
@@ -7876,10 +7772,6 @@ body.expanded-player-open { overflow: auto; }
     height: 16px;
     margin-top: 7px;
     padding-block: 2px;
-  }
-
-  .tonearm-assembly {
-    display: none;
   }
 
   .pitch-control {
@@ -8274,12 +8166,6 @@ body.expanded-player-open {
   --platter-size: 34%;
   --platter-center-x: 35%;
   --platter-center-y: 48.22%;
-  --tonearm-pivot-x: 70%;
-  --tonearm-pivot-y: 23%;
-  --stylus-target-x: 50%;
-  --stylus-target-y: 38%;
-  --tonearm-length: 21.71%;
-  --tonearm-angle: 157.13deg;
   position: relative;
   display: block;
   width: 100%;
@@ -8318,69 +8204,6 @@ body.expanded-player-open {
   aspect-ratio: 1 / 1;
 }
 
-.turntable-assembly .tonearm-assembly {
-  position: absolute;
-  z-index: 5;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.turntable-assembly .tonearm-pivot {
-  top: var(--tonearm-pivot-y);
-  left: var(--tonearm-pivot-x);
-  right: auto;
-  width: clamp(34px, 4.8vw, 60px);
-  transform: translate(-50%, -50%);
-}
-
-.turntable-assembly .tonearm-counterweight {
-  top: calc(var(--tonearm-pivot-y) - 4.8%);
-  left: calc(var(--tonearm-pivot-x) + 3.6%);
-  right: auto;
-  width: clamp(25px, 3.7vw, 46px);
-  transform: translate(-50%, -50%);
-}
-
-.turntable-assembly .tonearm-arm {
-  top: var(--tonearm-pivot-y);
-  left: var(--tonearm-pivot-x);
-  right: auto;
-  width: var(--tonearm-length);
-  height: clamp(4px, 0.48vw, 6px);
-  transform: translateY(-50%) rotate(var(--tonearm-angle));
-  transform-origin: left center;
-}
-
-.turntable-assembly .tonearm-headshell {
-  top: var(--stylus-target-y);
-  left: var(--stylus-target-x);
-  width: clamp(24px, 3.2vw, 40px);
-  height: clamp(10px, 1.35vw, 17px);
-  transform: translate(-82%, -50%) rotate(-22.87deg);
-  transform-origin: right center;
-}
-
-.turntable-assembly .tonearm-headshell::after {
-  display: none;
-}
-
-.turntable-assembly .tonearm-stylus {
-  position: absolute;
-  z-index: 2;
-  top: var(--stylus-target-y);
-  left: var(--stylus-target-x);
-  width: clamp(4px, 0.55vw, 7px);
-  height: clamp(7px, 0.8vw, 10px);
-  border-radius: 0 0 3px 3px;
-  background: linear-gradient(90deg, #8c6c34, #f0ce7f);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
-  transform: translate(-50%, -8%) rotate(-5deg);
-  transform-origin: top center;
-}
-
 .turntable-assembly .console-now-playing {
   position: absolute;
   z-index: 6;
@@ -8413,10 +8236,6 @@ body.expanded-player-open {
   transform: none;
 }
 
-.direct-drive-console[data-tonearm="hidden"] .turntable-assembly .tonearm-assembly {
-  display: none;
-}
-
 @media (max-width: 900px) {
   .turntable-assembly .console-now-playing {
     right: 8%;
@@ -8439,10 +8258,6 @@ body.expanded-player-open {
 @media (max-width: 700px) {
   .turntable-assembly {
     overflow: hidden;
-  }
-
-  .turntable-assembly .tonearm-assembly {
-    display: none;
   }
 
   .turntable-assembly .console-turntable {
