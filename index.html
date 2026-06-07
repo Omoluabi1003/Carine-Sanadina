@@ -682,7 +682,21 @@
         <div class="video-modal__backdrop" data-video-close aria-hidden="true"></div>
         <section class="video-modal__panel" role="dialog" aria-modal="true" aria-labelledby="video-modal-title" data-i18n-aria-label="videos.modalLabel">
           <button class="video-modal__close" type="button" data-video-close aria-label="Close Video" data-i18n-aria-label="videos.close">×</button>
-          <div class="video-modal__player" data-video-player></div>
+          <div class="video-modal__player" data-video-player>
+            <iframe
+              data-video-iframe
+              title="Carine Sanadina YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              hidden
+            ></iframe>
+            <div class="video-modal__placeholder" data-video-placeholder hidden>
+              <strong data-i18n="videos.comingSoon">More videos coming soon.</strong>
+              <span data-i18n="videos.placeholder">New videos will appear here as their official YouTube IDs are confirmed.</span>
+            </div>
+          </div>
           <div class="video-modal__content">
             <p class="eyebrow" data-i18n="videos.kicker">YouTube</p>
             <h2 id="video-modal-title" data-video-modal-title data-i18n="videos.channelTitle">Carine Sanadina on YouTube</h2>

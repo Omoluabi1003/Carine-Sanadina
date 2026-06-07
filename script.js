@@ -8907,12 +8907,14 @@ if (musicPlayers.length) {
 }
 
 const CARINE_YOUTUBE_CHANNEL_URL = 'https://youtube.com/@cariotendre?si=HsyeKHavudAxk3tu';
+const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+const YOUTUBE_EMBED_PARAMETERS = 'rel=0&modestbranding=1&playsinline=1';
 const CARINE_VIDEOS = [
   {
     id: 'carine-youtube-channel',
     title: 'Carine Sanadina on YouTube',
     description: 'A dedicated in-app home for Carine’s music, reflections, and creative video work.',
-    // TODO: Add the official YouTube video ID when Carine confirms the first featured upload.
+    // Manually add only the 11-character ID after an official upload is confirmed (never a URL).
     youtubeVideoId: '',
     thumbnail: '',
     category: 'videos.category',
@@ -8923,6 +8925,8 @@ const CARINE_VIDEOS = [
 const videoGrid = document.querySelector('[data-video-grid]');
 const videoModal = document.querySelector('[data-video-modal]');
 const videoPlayer = document.querySelector('[data-video-player]');
+const videoIframe = document.querySelector('[data-video-iframe]');
+const videoPlaceholder = document.querySelector('[data-video-placeholder]');
 const videoModalTitle = document.querySelector('[data-video-modal-title]');
 const videoModalDescription = document.querySelector('[data-video-modal-description]');
 const videoExternalLink = document.querySelector('[data-video-external]');
@@ -8936,27 +8940,42 @@ const escapeVideoText = (value) => String(value || '')
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#039;');
 
+const getYouTubeVideoId = (video) => {
+  const videoId = typeof video?.youtubeVideoId === 'string' ? video.youtubeVideoId.trim() : '';
+  return YOUTUBE_VIDEO_ID_PATTERN.test(videoId) ? videoId : '';
+};
+
+const isPlayableVideo = (video) => Boolean(getYouTubeVideoId(video));
+
+const getYouTubeEmbedUrl = (videoId) => (
+  `https://www.youtube.com/embed/${videoId}?${YOUTUBE_EMBED_PARAMETERS}`
+);
+
 const renderVideoCards = () => {
   if (!videoGrid) return;
   videoGrid.innerHTML = CARINE_VIDEOS.map((video) => {
-    const title = video.youtubeVideoId ? video.title : translate('videos.channelTitle');
-    const description = video.youtubeVideoId ? video.description : translate('videos.channelDescription');
+    const playable = isPlayableVideo(video);
+    const title = playable ? video.title : translate('videos.channelTitle');
+    const description = playable ? video.description : translate('videos.channelDescription');
     const thumbnail = video.thumbnail
       ? `<img src="${escapeVideoText(video.thumbnail)}" alt="" loading="lazy" decoding="async">`
       : '<span class="video-card__monogram" aria-hidden="true">CS</span>';
+    const action = playable
+      ? `<button class="button button-primary video-card__button" type="button" data-video-open="${escapeVideoText(video.id)}" aria-label="${escapeVideoText(`${translate('videos.watch')}: ${title}`)}">${escapeVideoText(translate('videos.watch'))}</button>`
+      : `<span class="button button-primary video-card__button video-card__button--disabled" aria-disabled="true">${escapeVideoText(translate('videos.comingSoon'))}</span>
+         <a class="button button-secondary video-card__external" href="${escapeVideoText(CARINE_YOUTUBE_CHANNEL_URL)}" target="_blank" rel="noopener noreferrer">${escapeVideoText(translate('videos.openYoutube'))}</a>`;
+
     return `
-      <article class="video-card${video.featured ? ' is-featured' : ''}">
+      <article class="video-card${video.featured ? ' is-featured' : ''}${playable ? '' : ' is-placeholder'}" data-video-card data-video-playable="${playable}">
         <div class="video-card__thumbnail">
           ${thumbnail}
-          <span class="video-card__play" aria-hidden="true">▶</span>
+          ${playable ? '<span class="video-card__play" aria-hidden="true">▶</span>' : ''}
         </div>
         <div class="video-card__body">
           <p class="video-card__category">${escapeVideoText(translate(video.category))}</p>
           <h3>${escapeVideoText(title)}</h3>
           <p>${escapeVideoText(description)}</p>
-          <button class="button button-primary video-card__button" type="button" data-video-open="${escapeVideoText(video.id)}" aria-label="${escapeVideoText(`${translate('videos.watch')}: ${title}`)}">
-            ${escapeVideoText(video.youtubeVideoId ? translate('videos.watch') : translate('videos.comingSoon'))}
-          </button>
+          <div class="video-card__actions">${action}</div>
         </div>
       </article>`;
   }).join('');
@@ -8969,54 +8988,48 @@ const pauseMusicForVideo = () => {
 };
 
 const getVideoModalFocusableElements = () => videoModal
-  ? Array.from(videoModal.querySelectorAll('button:not([disabled]), a[href], iframe')).filter((element) => !element.hidden)
+  ? Array.from(videoModal.querySelectorAll('button:not([disabled]), a[href], iframe:not([hidden])')).filter((element) => !element.hidden)
   : [];
 
+const clearVideoIframe = () => {
+  if (!videoIframe) return;
+  videoIframe.src = '';
+  videoIframe.removeAttribute('src');
+  videoIframe.hidden = true;
+};
+
 const openVideoModal = (video, trigger) => {
-  if (!videoModal || !videoPlayer || !video) return;
+  if (!videoModal || !videoPlayer || !videoIframe || !video || !isPlayableVideo(video)) return false;
+
+  const videoId = getYouTubeVideoId(video);
   activeVideo = video;
   videoTrigger = trigger || document.activeElement;
-  const title = video.youtubeVideoId ? video.title : translate('videos.channelTitle');
-  const description = video.youtubeVideoId ? video.description : translate('videos.placeholder');
-  if (videoModalTitle) videoModalTitle.textContent = title;
-  if (videoModalDescription) videoModalDescription.textContent = description;
+  if (videoModalTitle) videoModalTitle.textContent = video.title;
+  if (videoModalDescription) videoModalDescription.textContent = video.description;
+  if (videoExternalLink) videoExternalLink.href = `https://www.youtube.com/watch?v=${videoId}`;
 
-  if (video.youtubeVideoId) {
-    pauseMusicForVideo();
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(video.youtubeVideoId)}?rel=0`;
-    iframe.title = video.title;
-    iframe.loading = 'lazy';
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-    iframe.allowFullscreen = true;
-    videoPlayer.replaceChildren(iframe);
-    if (videoExternalLink) videoExternalLink.href = `https://www.youtube.com/watch?v=${encodeURIComponent(video.youtubeVideoId)}`;
-  } else {
-    const placeholder = document.createElement('div');
-    placeholder.className = 'video-modal__placeholder';
-    const heading = document.createElement('strong');
-    heading.textContent = translate('videos.comingSoon');
-    const copy = document.createElement('span');
-    copy.textContent = translate('videos.placeholder');
-    placeholder.append(heading, copy);
-    videoPlayer.replaceChildren(placeholder);
-    if (videoExternalLink) videoExternalLink.href = CARINE_YOUTUBE_CHANNEL_URL;
-  }
+  pauseMusicForVideo();
+  if (videoPlaceholder) videoPlaceholder.hidden = true;
+  videoIframe.title = `${video.title} — YouTube video player`;
+  videoIframe.src = getYouTubeEmbedUrl(videoId);
+  videoIframe.hidden = false;
 
   videoModal.hidden = false;
   document.body.classList.add('video-modal-open');
   window.requestAnimationFrame(() => videoModal.querySelector('[data-video-close]')?.focus());
+  return true;
 };
 
 const closeVideoModal = () => {
-  if (!videoModal || videoModal.hidden) return;
+  if (!videoModal) return;
+  const wasOpen = !videoModal.hidden;
+  clearVideoIframe();
   videoModal.hidden = true;
   document.body.classList.remove('video-modal-open');
-  if (videoPlayer) videoPlayer.replaceChildren();
   activeVideo = null;
   const returnTarget = videoTrigger;
   videoTrigger = null;
-  returnTarget?.focus?.();
+  if (wasOpen) returnTarget?.focus?.();
 };
 
 videoGrid?.addEventListener('click', (event) => {
@@ -9051,12 +9064,23 @@ document.addEventListener('keydown', (event) => {
 
 window.addEventListener('carine:languagechange', () => {
   renderVideoCards();
-  if (activeVideo) {
-    if (videoModalTitle && !activeVideo.youtubeVideoId) videoModalTitle.textContent = translate('videos.channelTitle');
-    if (videoModalDescription && !activeVideo.youtubeVideoId) videoModalDescription.textContent = translate('videos.placeholder');
-  }
 });
 
+window.debugYouTubePlayer = () => {
+  const selectedVideoId = getYouTubeVideoId(activeVideo);
+  const report = {
+    selectedVideoId: selectedVideoId || null,
+    iframeSrc: videoIframe?.getAttribute('src') || '',
+    modalOpen: Boolean(videoModal && !videoModal.hidden),
+    isPlayable: Boolean(selectedVideoId),
+    videoCardCount: videoGrid?.querySelectorAll('[data-video-card]').length || 0,
+    placeholderCount: videoGrid?.querySelectorAll('[data-video-playable="false"]').length || 0
+  };
+  window.console?.info?.('[YouTube player state]', report);
+  return report;
+};
+
+clearVideoIframe();
 renderVideoCards();
 
 // Decorative atmospheres are activated only near the viewport so the background
