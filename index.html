@@ -674,9 +674,25 @@
             <h2 id="videos-heading" data-i18n="videos.heading">Videos</h2>
             <p data-i18n="videos.subtitle">Watch Carine Sanadina’s music, reflections, and creative work without leaving the experience.</p>
           </div>
-          <div class="video-grid reveal" data-video-grid></div>
+          <div class="videos-showcase__action reveal">
+            <button class="button button-primary videos-drawer-trigger" type="button" data-videos-trigger aria-expanded="false" aria-controls="videos-drawer" data-i18n="videos.heading">Videos</button>
+          </div>
         </div>
       </section>
+
+      <div class="videos-drawer" id="videos-drawer" data-videos-drawer hidden>
+        <div class="videos-drawer__backdrop" data-videos-drawer-close aria-hidden="true"></div>
+        <section class="videos-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="videos-drawer-title">
+          <header class="videos-drawer__header">
+            <div>
+              <p class="eyebrow" data-i18n="videos.kicker">YouTube</p>
+              <h2 id="videos-drawer-title" data-i18n="videos.more">More videos</h2>
+            </div>
+            <button class="videos-drawer__close" type="button" data-videos-drawer-close aria-label="Close Video" data-i18n-aria-label="videos.close">×</button>
+          </header>
+          <div class="video-grid" data-video-grid></div>
+        </section>
+      </div>
 
       <div class="video-modal" data-video-modal hidden>
         <div class="video-modal__backdrop" data-video-close aria-hidden="true"></div>
