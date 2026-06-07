@@ -216,6 +216,7 @@ translations.en = {
   'videos.watch': 'Watch Video',
   'videos.close': 'Close Video',
   'videos.openYoutube': 'Open on YouTube',
+  'videos.more': 'More videos',
   'videos.comingSoon': 'More videos coming soon.',
   'videos.channelTitle': 'Carine Sanadina on YouTube',
   'videos.channelDescription': 'A dedicated in-app home for Carine’s music, reflections, and creative video work.',
@@ -400,6 +401,7 @@ translations.fr = {
   'videos.watch': 'Regarder la vidéo',
   'videos.close': 'Fermer la vidéo',
   'videos.openYoutube': 'Ouvrir sur YouTube',
+  'videos.more': 'Plus de vidéos',
   'videos.comingSoon': 'D’autres vidéos arrivent bientôt.',
   'videos.channelTitle': 'Carine Sanadina sur YouTube',
   'videos.channelDescription': 'Un espace intégré dédié à la musique, aux réflexions et aux créations vidéo de Carine.',
@@ -582,6 +584,7 @@ translations.es = {
   'videos.watch': 'Ver video',
   'videos.close': 'Cerrar video',
   'videos.openYoutube': 'Abrir en YouTube',
+  'videos.more': 'Más videos',
   'videos.comingSoon': 'Muy pronto habrá más videos.',
   'videos.channelTitle': 'Carine Sanadina en YouTube',
   'videos.channelDescription': 'Un espacio dentro de la aplicación para la música, las reflexiones y el trabajo creativo en video de Carine.',
@@ -776,6 +779,7 @@ translations.ln = {
   'videos.watch': 'Tala video',
   'videos.close': 'Kanga video',
   'videos.openYoutube': 'Fungola na YouTube',
+  'videos.more': 'Bavideo mosusu',
   'videos.comingSoon': 'Bavideo mosusu ekoya kala mingi te.',
   'videos.channelTitle': 'Carine Sanadina na YouTube',
   'videos.channelDescription': 'Esika ya kati ya site mpo na miziki, makanisi mpe bavideo ya bokeli ya Carine.',
@@ -970,6 +974,7 @@ translations.sw = {
   'videos.watch': 'Tazama Video',
   'videos.close': 'Funga Video',
   'videos.openYoutube': 'Fungua kwenye YouTube',
+  'videos.more': 'Video zaidi',
   'videos.comingSoon': 'Video zaidi zinakuja hivi karibuni.',
   'videos.channelTitle': 'Carine Sanadina kwenye YouTube',
   'videos.channelDescription': 'Eneo maalum ndani ya tovuti kwa muziki, tafakari na kazi za video za Carine.',
@@ -3545,6 +3550,7 @@ const halleluyahTranslations = {
   'videos.watch': 'Wo Fídíò',
   'videos.close': 'Pa Fídíò',
   'videos.openYoutube': 'Ṣí lórí YouTube',
+  'videos.more': 'Àwọn fídíò míì',
   'videos.comingSoon': 'Àwọn fídíò míì ń bọ̀ láìpẹ́.',
   'videos.channelTitle': 'Carine Sanadina lórí YouTube',
   'videos.channelDescription': 'Àyè inú ojúlé fún orin, ìrònú àti iṣẹ́ fídíò àtinúdá Carine.',
@@ -8906,32 +8912,58 @@ if (musicPlayers.length) {
   }
 }
 
-const CARINE_YOUTUBE_CHANNEL_URL = 'https://youtube.com/@cariotendre?si=HsyeKHavudAxk3tu';
 const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 const YOUTUBE_EMBED_PARAMETERS = 'rel=0&modestbranding=1&playsinline=1';
-const CARINE_VIDEOS = [
+const youtubeVideos = [
   {
-    id: 'carine-youtube-channel',
-    title: 'Carine Sanadina on YouTube',
-    description: 'A dedicated in-app home for Carine’s music, reflections, and creative video work.',
-    // Manually add only the 11-character ID after an official upload is confirmed (never a URL).
-    youtubeVideoId: '',
-    thumbnail: '',
-    category: 'videos.category',
-    featured: true
+    id: 'youtube-rmce92iuu3m',
+    // TODO: Replace this fallback with the exact YouTube title when metadata access is available.
+    title: 'Carine Sanadina — Featured Video I',
+    youtubeVideoId: 'RMce92iUU3M',
+    embedUrl: 'https://www.youtube.com/embed/RMce92iUU3M?rel=0&modestbranding=1&playsinline=1',
+    thumbnail: 'https://img.youtube.com/vi/RMce92iUU3M/hqdefault.jpg',
+    description: 'Watch this featured Carine Sanadina video in the website’s private, uninterrupted media experience.'
+  },
+  {
+    id: 'youtube-afnhmh4wuks',
+    // TODO: Replace this fallback with the exact YouTube title when metadata access is available.
+    title: 'Carine Sanadina — Featured Video II',
+    youtubeVideoId: 'aFnhMh4wUks',
+    embedUrl: 'https://www.youtube.com/embed/aFnhMh4wUks?rel=0&modestbranding=1&playsinline=1',
+    thumbnail: 'https://img.youtube.com/vi/aFnhMh4wUks/hqdefault.jpg',
+    description: 'Discover another moment from Carine’s music, reflections, and healing-centered creative work.'
+  },
+  {
+    id: 'youtube-qlwoxh2u5sk',
+    // TODO: Replace this fallback with the exact YouTube title when metadata access is available.
+    title: 'Carine Sanadina — Featured Video III',
+    youtubeVideoId: 'qLWoxh2u5sk',
+    embedUrl: 'https://www.youtube.com/embed/qLWoxh2u5sk?rel=0&modestbranding=1&playsinline=1',
+    thumbnail: 'https://img.youtube.com/vi/qLWoxh2u5sk/hqdefault.jpg',
+    description: 'Experience Carine’s creative voice in an in-app video presentation designed to keep you present.'
+  },
+  {
+    id: 'youtube-qah9qzngjny',
+    // TODO: Replace this fallback with the exact YouTube title when metadata access is available.
+    title: 'Carine Sanadina — Featured Video IV',
+    youtubeVideoId: 'qAh9qzNGjNY',
+    embedUrl: 'https://www.youtube.com/embed/qAh9qzNGjNY?rel=0&modestbranding=1&playsinline=1',
+    thumbnail: 'https://img.youtube.com/vi/qAh9qzNGjNY/hqdefault.jpg',
+    description: 'Continue with Carine’s official YouTube collection without leaving the website experience.'
   }
 ];
 
+const videosTrigger = document.querySelector('[data-videos-trigger]');
+const videosDrawer = document.querySelector('[data-videos-drawer]');
 const videoGrid = document.querySelector('[data-video-grid]');
 const videoModal = document.querySelector('[data-video-modal]');
-const videoPlayer = document.querySelector('[data-video-player]');
 const videoIframe = document.querySelector('[data-video-iframe]');
 const videoPlaceholder = document.querySelector('[data-video-placeholder]');
 const videoModalTitle = document.querySelector('[data-video-modal-title]');
 const videoModalDescription = document.querySelector('[data-video-modal-description]');
 const videoExternalLink = document.querySelector('[data-video-external]');
-let videoTrigger = null;
 let activeVideo = null;
+let lastClickedVideo = null;
 
 const escapeVideoText = (value) => String(value || '')
   .replace(/&/g, '&amp;')
@@ -8945,40 +8977,32 @@ const getYouTubeVideoId = (video) => {
   return YOUTUBE_VIDEO_ID_PATTERN.test(videoId) ? videoId : '';
 };
 
-const isPlayableVideo = (video) => Boolean(getYouTubeVideoId(video));
-
 const getYouTubeEmbedUrl = (videoId) => (
   `https://www.youtube.com/embed/${videoId}?${YOUTUBE_EMBED_PARAMETERS}`
 );
 
+const hasValidEmbedUrl = (video) => {
+  const videoId = getYouTubeVideoId(video);
+  return Boolean(videoId && video?.embedUrl === getYouTubeEmbedUrl(videoId));
+};
+
+const isPlayableVideo = (video) => Boolean(getYouTubeVideoId(video) && hasValidEmbedUrl(video));
+
 const renderVideoCards = () => {
   if (!videoGrid) return;
-  videoGrid.innerHTML = CARINE_VIDEOS.map((video) => {
-    const playable = isPlayableVideo(video);
-    const title = playable ? video.title : translate('videos.channelTitle');
-    const description = playable ? video.description : translate('videos.channelDescription');
-    const thumbnail = video.thumbnail
-      ? `<img src="${escapeVideoText(video.thumbnail)}" alt="" loading="lazy" decoding="async">`
-      : '<span class="video-card__monogram" aria-hidden="true">CS</span>';
-    const action = playable
-      ? `<button class="button button-primary video-card__button" type="button" data-video-open="${escapeVideoText(video.id)}" aria-label="${escapeVideoText(`${translate('videos.watch')}: ${title}`)}">${escapeVideoText(translate('videos.watch'))}</button>`
-      : `<span class="button button-primary video-card__button video-card__button--disabled" aria-disabled="true">${escapeVideoText(translate('videos.comingSoon'))}</span>
-         <a class="button button-secondary video-card__external" href="${escapeVideoText(CARINE_YOUTUBE_CHANNEL_URL)}" target="_blank" rel="noopener noreferrer">${escapeVideoText(translate('videos.openYoutube'))}</a>`;
-
-    return `
-      <article class="video-card${video.featured ? ' is-featured' : ''}${playable ? '' : ' is-placeholder'}" data-video-card data-video-playable="${playable}">
-        <div class="video-card__thumbnail">
-          ${thumbnail}
-          ${playable ? '<span class="video-card__play" aria-hidden="true">▶</span>' : ''}
-        </div>
-        <div class="video-card__body">
-          <p class="video-card__category">${escapeVideoText(translate(video.category))}</p>
-          <h3>${escapeVideoText(title)}</h3>
-          <p>${escapeVideoText(description)}</p>
-          <div class="video-card__actions">${action}</div>
-        </div>
-      </article>`;
-  }).join('');
+  videoGrid.innerHTML = youtubeVideos.filter(isPlayableVideo).map((video) => `
+    <article class="video-card" data-video-card>
+      <div class="video-card__thumbnail">
+        <img src="${escapeVideoText(video.thumbnail)}" alt="" loading="lazy" decoding="async">
+        <span class="video-card__play" aria-hidden="true">▶</span>
+      </div>
+      <div class="video-card__body">
+        <p class="video-card__category">${escapeVideoText(translate('videos.category'))}</p>
+        <h3>${escapeVideoText(video.title)}</h3>
+        <p>${escapeVideoText(video.description)}</p>
+        <button class="button button-primary video-card__button" type="button" data-video-open="${escapeVideoText(video.id)}" aria-label="${escapeVideoText(`${translate('videos.watch')}: ${video.title}`)}">${escapeVideoText(translate('videos.watch'))}</button>
+      </div>
+    </article>`).join('');
 };
 
 const pauseMusicForVideo = () => {
@@ -8987,9 +9011,34 @@ const pauseMusicForVideo = () => {
   });
 };
 
-const getVideoModalFocusableElements = () => videoModal
-  ? Array.from(videoModal.querySelectorAll('button:not([disabled]), a[href], iframe:not([hidden])')).filter((element) => !element.hidden)
+const setVideoOverlayLock = () => {
+  document.body.classList.toggle('video-overlay-open', Boolean(
+    (videosDrawer && !videosDrawer.hidden) || (videoModal && !videoModal.hidden)
+  ));
+};
+
+const getFocusableElements = (container) => container
+  ? Array.from(container.querySelectorAll('button:not([disabled]), a[href], iframe:not([hidden])')).filter((element) => !element.hidden)
   : [];
+
+const focusVideosTrigger = () => window.requestAnimationFrame(() => videosTrigger?.focus());
+
+const openVideosDrawer = () => {
+  if (!videosDrawer || !videosTrigger) return;
+  videosDrawer.hidden = false;
+  videosTrigger.setAttribute('aria-expanded', 'true');
+  setVideoOverlayLock();
+  window.requestAnimationFrame(() => videosDrawer.querySelector('[data-videos-drawer-close]')?.focus());
+};
+
+const closeVideosDrawer = ({ returnFocus = true } = {}) => {
+  if (!videosDrawer) return;
+  const wasOpen = !videosDrawer.hidden;
+  videosDrawer.hidden = true;
+  videosTrigger?.setAttribute('aria-expanded', 'false');
+  setVideoOverlayLock();
+  if (wasOpen && returnFocus) focusVideosTrigger();
+};
 
 const clearVideoIframe = () => {
   if (!videoIframe) return;
@@ -8998,24 +9047,22 @@ const clearVideoIframe = () => {
   videoIframe.hidden = true;
 };
 
-const openVideoModal = (video, trigger) => {
-  if (!videoModal || !videoPlayer || !videoIframe || !video || !isPlayableVideo(video)) return false;
-
+const openVideoModal = (video) => {
+  if (!videoModal || !videoIframe || !isPlayableVideo(video)) return false;
   const videoId = getYouTubeVideoId(video);
   activeVideo = video;
-  videoTrigger = trigger || document.activeElement;
+  lastClickedVideo = video.id;
+  closeVideosDrawer({ returnFocus: false });
   if (videoModalTitle) videoModalTitle.textContent = video.title;
   if (videoModalDescription) videoModalDescription.textContent = video.description;
   if (videoExternalLink) videoExternalLink.href = `https://www.youtube.com/watch?v=${videoId}`;
-
   pauseMusicForVideo();
   if (videoPlaceholder) videoPlaceholder.hidden = true;
   videoIframe.title = `${video.title} — YouTube video player`;
   videoIframe.src = getYouTubeEmbedUrl(videoId);
   videoIframe.hidden = false;
-
   videoModal.hidden = false;
-  document.body.classList.add('video-modal-open');
+  setVideoOverlayLock();
   window.requestAnimationFrame(() => videoModal.querySelector('[data-video-close]')?.focus());
   return true;
 };
@@ -9025,31 +9072,39 @@ const closeVideoModal = () => {
   const wasOpen = !videoModal.hidden;
   clearVideoIframe();
   videoModal.hidden = true;
-  document.body.classList.remove('video-modal-open');
   activeVideo = null;
-  const returnTarget = videoTrigger;
-  videoTrigger = null;
-  if (wasOpen) returnTarget?.focus?.();
+  setVideoOverlayLock();
+  if (wasOpen) focusVideosTrigger();
 };
 
+videosTrigger?.addEventListener('click', openVideosDrawer);
 videoGrid?.addEventListener('click', (event) => {
   const trigger = event.target.closest('[data-video-open]');
   if (!trigger) return;
-  const video = CARINE_VIDEOS.find((item) => item.id === trigger.dataset.videoOpen);
-  openVideoModal(video, trigger);
+  const video = youtubeVideos.find((item) => item.id === trigger.dataset.videoOpen);
+  openVideoModal(video);
 });
 
+document.querySelectorAll('[data-videos-drawer-close]').forEach((button) => {
+  button.addEventListener('click', () => closeVideosDrawer());
+});
 document.querySelectorAll('[data-video-close]').forEach((button) => button.addEventListener('click', closeVideoModal));
 
 document.addEventListener('keydown', (event) => {
-  if (!videoModal || videoModal.hidden) return;
+  const activeOverlay = videoModal && !videoModal.hidden
+    ? videoModal
+    : videosDrawer && !videosDrawer.hidden
+      ? videosDrawer
+      : null;
+  if (!activeOverlay) return;
   if (event.key === 'Escape') {
     event.preventDefault();
-    closeVideoModal();
+    if (activeOverlay === videoModal) closeVideoModal();
+    else closeVideosDrawer();
     return;
   }
   if (event.key !== 'Tab') return;
-  const focusable = getVideoModalFocusableElements();
+  const focusable = getFocusableElements(activeOverlay);
   if (!focusable.length) return;
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
@@ -9062,24 +9117,25 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-window.addEventListener('carine:languagechange', () => {
-  renderVideoCards();
-});
+window.addEventListener('carine:languagechange', renderVideoCards);
 
 window.debugYouTubePlayer = () => {
   const selectedVideoId = getYouTubeVideoId(activeVideo);
   const report = {
+    videoCount: youtubeVideos.length,
     selectedVideoId: selectedVideoId || null,
     iframeSrc: videoIframe?.getAttribute('src') || '',
-    modalOpen: Boolean(videoModal && !videoModal.hidden),
-    isPlayable: Boolean(selectedVideoId),
-    videoCardCount: videoGrid?.querySelectorAll('[data-video-card]').length || 0,
-    placeholderCount: videoGrid?.querySelectorAll('[data-video-playable="false"]').length || 0
+    drawerOpen: Boolean(videosDrawer && !videosDrawer.hidden),
+    playerOpen: Boolean(videoModal && !videoModal.hidden),
+    lastClickedVideo,
+    hasValidEmbedUrl: activeVideo ? hasValidEmbedUrl(activeVideo) : youtubeVideos.every(hasValidEmbedUrl)
   };
   window.console?.info?.('[YouTube player state]', report);
   return report;
 };
 
+if (videosDrawer && videosDrawer.parentElement !== document.body) document.body.append(videosDrawer);
+if (videoModal && videoModal.parentElement !== document.body) document.body.append(videoModal);
 clearVideoIframe();
 renderVideoCards();
 
