@@ -216,6 +216,9 @@ translations.en = {
   'videos.watch': 'Watch Video',
   'videos.close': 'Close Video',
   'videos.openYoutube': 'Open on YouTube',
+  'videos.visitChannel': "Visit Carine's YouTube Channel",
+  'videos.shortChannel': 'YouTube Channel',
+  'videos.channelAccessDescription': "Watch Carine Sanadina's videos, music, reflections, and creative work.",
   'videos.more': 'More videos',
   'videos.comingSoon': 'More videos coming soon.',
   'videos.channelTitle': 'Carine Sanadina on YouTube',
@@ -401,6 +404,9 @@ translations.fr = {
   'videos.watch': 'Regarder la vidéo',
   'videos.close': 'Fermer la vidéo',
   'videos.openYoutube': 'Ouvrir sur YouTube',
+  'videos.visitChannel': 'Visiter la chaîne YouTube de Carine',
+  'videos.shortChannel': 'Chaîne YouTube',
+  'videos.channelAccessDescription': 'Regardez les vidéos, la musique, les réflexions et les créations de Carine Sanadina.',
   'videos.more': 'Plus de vidéos',
   'videos.comingSoon': 'D’autres vidéos arrivent bientôt.',
   'videos.channelTitle': 'Carine Sanadina sur YouTube',
@@ -584,6 +590,9 @@ translations.es = {
   'videos.watch': 'Ver video',
   'videos.close': 'Cerrar video',
   'videos.openYoutube': 'Abrir en YouTube',
+  'videos.visitChannel': 'Visitar el canal de YouTube de Carine',
+  'videos.shortChannel': 'Canal de YouTube',
+  'videos.channelAccessDescription': 'Mira los videos, la música, las reflexiones y el trabajo creativo de Carine Sanadina.',
   'videos.more': 'Más videos',
   'videos.comingSoon': 'Muy pronto habrá más videos.',
   'videos.channelTitle': 'Carine Sanadina en YouTube',
@@ -779,6 +788,9 @@ translations.ln = {
   'videos.watch': 'Tala video',
   'videos.close': 'Kanga video',
   'videos.openYoutube': 'Fungola na YouTube',
+  'videos.visitChannel': 'Kende na chaîne YouTube ya Carine',
+  'videos.shortChannel': 'Chaîne YouTube',
+  'videos.channelAccessDescription': 'Tala bavideo, miziki, makanisi mpe misala ya bokeli ya Carine Sanadina.',
   'videos.more': 'Bavideo mosusu',
   'videos.comingSoon': 'Bavideo mosusu ekoya kala mingi te.',
   'videos.channelTitle': 'Carine Sanadina na YouTube',
@@ -974,6 +986,9 @@ translations.sw = {
   'videos.watch': 'Tazama Video',
   'videos.close': 'Funga Video',
   'videos.openYoutube': 'Fungua kwenye YouTube',
+  'videos.visitChannel': 'Tembelea chaneli ya YouTube ya Carine',
+  'videos.shortChannel': 'Chaneli ya YouTube',
+  'videos.channelAccessDescription': 'Tazama video, muziki, tafakari na kazi za ubunifu za Carine Sanadina.',
   'videos.more': 'Video zaidi',
   'videos.comingSoon': 'Video zaidi zinakuja hivi karibuni.',
   'videos.channelTitle': 'Carine Sanadina kwenye YouTube',
@@ -3550,6 +3565,9 @@ const halleluyahTranslations = {
   'videos.watch': 'Wo Fídíò',
   'videos.close': 'Pa Fídíò',
   'videos.openYoutube': 'Ṣí lórí YouTube',
+  'videos.visitChannel': 'Ṣàbẹ̀wò sí ikanni YouTube Carine',
+  'videos.shortChannel': 'Ikanni YouTube',
+  'videos.channelAccessDescription': 'Wo àwọn fídíò, orin, ìrònú àti iṣẹ́ ẹ̀dá Carine Sanadina.',
   'videos.more': 'Àwọn fídíò míì',
   'videos.comingSoon': 'Àwọn fídíò míì ń bọ̀ láìpẹ́.',
   'videos.channelTitle': 'Carine Sanadina lórí YouTube',
@@ -8914,44 +8932,66 @@ if (musicPlayers.length) {
 
 const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 const YOUTUBE_EMBED_PARAMETERS = 'rel=0&modestbranding=1&playsinline=1';
-const youtubeVideos = [
+const YOUTUBE_CHANNEL_URL = 'https://youtube.com/@cariotendre?si=HsyeKHavudAxk3tu';
+const YOUTUBE_VIDEOS_ENDPOINT = '/api/youtube-videos';
+
+const getYouTubeEmbedUrl = (videoId) => (
+  `https://www.youtube.com/embed/${videoId}?${YOUTUBE_EMBED_PARAMETERS}`
+);
+
+// Stable manual catalog: this remains the guaranteed fallback when the optional
+// serverless YouTube Data API endpoint is unavailable, unconfigured, or slow.
+const MANUAL_YOUTUBE_VIDEOS = [
   {
     id: 'youtube-rmce92iuu3m',
-    // TODO: Replace this fallback with the exact YouTube title when metadata access is available.
     title: 'Carine Sanadina — Featured Video I',
     youtubeVideoId: 'RMce92iUU3M',
-    embedUrl: 'https://www.youtube.com/embed/RMce92iUU3M?rel=0&modestbranding=1&playsinline=1',
     thumbnail: 'https://img.youtube.com/vi/RMce92iUU3M/hqdefault.jpg',
     description: 'Watch this featured Carine Sanadina video in the website’s private, uninterrupted media experience.'
   },
   {
     id: 'youtube-afnhmh4wuks',
-    // TODO: Replace this fallback with the exact YouTube title when metadata access is available.
     title: 'Carine Sanadina — Featured Video II',
     youtubeVideoId: 'aFnhMh4wUks',
-    embedUrl: 'https://www.youtube.com/embed/aFnhMh4wUks?rel=0&modestbranding=1&playsinline=1',
     thumbnail: 'https://img.youtube.com/vi/aFnhMh4wUks/hqdefault.jpg',
     description: 'Discover another moment from Carine’s music, reflections, and healing-centered creative work.'
   },
   {
     id: 'youtube-qlwoxh2u5sk',
-    // TODO: Replace this fallback with the exact YouTube title when metadata access is available.
     title: 'Carine Sanadina — Featured Video III',
     youtubeVideoId: 'qLWoxh2u5sk',
-    embedUrl: 'https://www.youtube.com/embed/qLWoxh2u5sk?rel=0&modestbranding=1&playsinline=1',
     thumbnail: 'https://img.youtube.com/vi/qLWoxh2u5sk/hqdefault.jpg',
     description: 'Experience Carine’s creative voice in an in-app video presentation designed to keep you present.'
   },
   {
     id: 'youtube-qah9qzngjny',
-    // TODO: Replace this fallback with the exact YouTube title when metadata access is available.
     title: 'Carine Sanadina — Featured Video IV',
     youtubeVideoId: 'qAh9qzNGjNY',
-    embedUrl: 'https://www.youtube.com/embed/qAh9qzNGjNY?rel=0&modestbranding=1&playsinline=1',
     thumbnail: 'https://img.youtube.com/vi/qAh9qzNGjNY/hqdefault.jpg',
     description: 'Continue with Carine’s official YouTube collection without leaving the website experience.'
   }
 ];
+
+const normalizeYouTubeVideo = (video) => {
+  const youtubeVideoId = typeof video?.youtubeVideoId === 'string' ? video.youtubeVideoId.trim() : '';
+  if (!YOUTUBE_VIDEO_ID_PATTERN.test(youtubeVideoId)) return null;
+  return {
+    id: typeof video.id === 'string' && video.id ? video.id : `youtube-${youtubeVideoId.toLowerCase()}`,
+    title: typeof video.title === 'string' && video.title.trim() ? video.title.trim() : 'Carine Sanadina — YouTube Video',
+    youtubeVideoId,
+    embedUrl: getYouTubeEmbedUrl(youtubeVideoId),
+    thumbnail: typeof video.thumbnail === 'string' && video.thumbnail.startsWith('https://')
+      ? video.thumbnail
+      : `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg`,
+    description: typeof video.description === 'string' && video.description.trim()
+      ? video.description.trim()
+      : 'Watch Carine Sanadina’s latest creative work inside the website.',
+    publishedAt: typeof video.publishedAt === 'string' ? video.publishedAt : ''
+  };
+};
+
+const manualYouTubeVideos = MANUAL_YOUTUBE_VIDEOS.map(normalizeYouTubeVideo).filter(Boolean);
+let youtubeVideos = [...manualYouTubeVideos];
 
 const videosTrigger = document.querySelector('[data-videos-trigger]');
 const videosDrawer = document.querySelector('[data-videos-drawer]');
@@ -8961,9 +9001,10 @@ const videoIframe = document.querySelector('[data-video-iframe]');
 const videoPlaceholder = document.querySelector('[data-video-placeholder]');
 const videoModalTitle = document.querySelector('[data-video-modal-title]');
 const videoModalDescription = document.querySelector('[data-video-modal-description]');
-const videoExternalLink = document.querySelector('[data-video-external]');
 let activeVideo = null;
-let lastClickedVideo = null;
+let lastClickedElement = null;
+let lastSelectedVideoId = null;
+let lastPlayIconDiagnostics = { pointerEvents: null, topElement: null };
 
 const escapeVideoText = (value) => String(value || '')
   .replace(/&/g, '&amp;')
@@ -8977,10 +9018,6 @@ const getYouTubeVideoId = (video) => {
   return YOUTUBE_VIDEO_ID_PATTERN.test(videoId) ? videoId : '';
 };
 
-const getYouTubeEmbedUrl = (videoId) => (
-  `https://www.youtube.com/embed/${videoId}?${YOUTUBE_EMBED_PARAMETERS}`
-);
-
 const hasValidEmbedUrl = (video) => {
   const videoId = getYouTubeVideoId(video);
   return Boolean(videoId && video?.embedUrl === getYouTubeEmbedUrl(videoId));
@@ -8990,23 +9027,55 @@ const isPlayableVideo = (video) => Boolean(getYouTubeVideoId(video) && hasValidE
 
 const renderVideoCards = () => {
   if (!videoGrid) return;
-  videoGrid.innerHTML = youtubeVideos.filter(isPlayableVideo).map((video) => `
-    <article class="video-card" data-video-card>
+  videoGrid.innerHTML = youtubeVideos.filter(isPlayableVideo).map((video) => {
+    const openLabel = escapeVideoText(`${translate('videos.watch')}: ${video.title}`);
+    const videoKey = escapeVideoText(video.id);
+    return `
+    <article class="video-card" data-video-card="${videoKey}">
       <div class="video-card__thumbnail">
         <img src="${escapeVideoText(video.thumbnail)}" alt="" loading="lazy" decoding="async">
-        <span class="video-card__play" aria-hidden="true">▶</span>
+        <button class="video-card__thumbnail-hit" type="button" data-video-open="${videoKey}" aria-label="${openLabel}"></button>
+        <button class="video-card__play" type="button" data-video-open="${videoKey}" data-video-play-icon aria-label="${openLabel}"><span aria-hidden="true">▶</span></button>
       </div>
       <div class="video-card__body">
         <p class="video-card__category">${escapeVideoText(translate('videos.category'))}</p>
-        <h3>${escapeVideoText(video.title)}</h3>
+        <h3><button class="video-card__title" type="button" data-video-open="${videoKey}">${escapeVideoText(video.title)}</button></h3>
         <p>${escapeVideoText(video.description)}</p>
-        <button class="button button-primary video-card__button" type="button" data-video-open="${escapeVideoText(video.id)}" aria-label="${escapeVideoText(`${translate('videos.watch')}: ${video.title}`)}">${escapeVideoText(translate('videos.watch'))}</button>
+        <button class="button button-primary video-card__button" type="button" data-video-open="${videoKey}" aria-label="${openLabel}">${escapeVideoText(translate('videos.watch'))}</button>
       </div>
-    </article>`).join('');
+    </article>`;
+  }).join('');
+};
+
+// Future-video strategy: consume one normalized shape regardless of source. The
+// endpoint keeps credentials server-side and caches upstream responses. Automatic
+// videos enhance the catalog but never block rendering; the four manual entries
+// are merged back in whenever the endpoint fails or omits one of them.
+const loadAutomaticYouTubeVideos = async () => {
+  try {
+    const response = await fetch(YOUTUBE_VIDEOS_ENDPOINT, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout ? AbortSignal.timeout(4500) : undefined
+    });
+    if (!response.ok) throw new Error(`YouTube endpoint returned ${response.status}`);
+    const payload = await response.json();
+    const automaticVideos = Array.isArray(payload?.videos)
+      ? payload.videos.map(normalizeYouTubeVideo).filter(Boolean)
+      : [];
+    if (!automaticVideos.length) return;
+    const mergedByVideoId = new Map();
+    [...automaticVideos, ...manualYouTubeVideos].forEach((video) => {
+      if (!mergedByVideoId.has(video.youtubeVideoId)) mergedByVideoId.set(video.youtubeVideoId, video);
+    });
+    youtubeVideos = [...mergedByVideoId.values()];
+    renderVideoCards();
+  } catch (error) {
+    window.console?.info?.('[YouTube catalog] Using manual fallback.', error?.message || error);
+  }
 };
 
 const pauseMusicForVideo = () => {
-  document.querySelectorAll('[data-audio-player] audio').forEach((audio) => {
+  document.querySelectorAll('audio').forEach((audio) => {
     if (!audio.paused) audio.pause();
   });
 };
@@ -9051,11 +9120,10 @@ const openVideoModal = (video) => {
   if (!videoModal || !videoIframe || !isPlayableVideo(video)) return false;
   const videoId = getYouTubeVideoId(video);
   activeVideo = video;
-  lastClickedVideo = video.id;
+  lastSelectedVideoId = videoId;
   closeVideosDrawer({ returnFocus: false });
   if (videoModalTitle) videoModalTitle.textContent = video.title;
   if (videoModalDescription) videoModalDescription.textContent = video.description;
-  if (videoExternalLink) videoExternalLink.href = `https://www.youtube.com/watch?v=${videoId}`;
   pauseMusicForVideo();
   if (videoPlaceholder) videoPlaceholder.hidden = true;
   videoIframe.title = `${video.title} — YouTube video player`;
@@ -9081,6 +9149,20 @@ videosTrigger?.addEventListener('click', openVideosDrawer);
 videoGrid?.addEventListener('click', (event) => {
   const trigger = event.target.closest('[data-video-open]');
   if (!trigger) return;
+  if (trigger.matches('[data-video-play-icon]')) {
+    const rect = trigger.getBoundingClientRect();
+    lastPlayIconDiagnostics = {
+      pointerEvents: window.getComputedStyle(trigger).pointerEvents,
+      topElement: describeElement(document.elementFromPoint(rect.left + (rect.width / 2), rect.top + (rect.height / 2)))
+    };
+  }
+  lastClickedElement = trigger.matches('[data-video-play-icon]')
+    ? 'playIcon'
+    : trigger.classList.contains('video-card__thumbnail-hit')
+      ? 'thumbnail'
+      : trigger.classList.contains('video-card__title')
+        ? 'title'
+        : 'watchVideo';
   const video = youtubeVideos.find((item) => item.id === trigger.dataset.videoOpen);
   openVideoModal(video);
 });
@@ -9119,15 +9201,32 @@ document.addEventListener('keydown', (event) => {
 
 window.addEventListener('carine:languagechange', renderVideoCards);
 
+const describeElement = (element) => {
+  if (!element) return null;
+  const tag = element.tagName?.toLowerCase() || 'unknown';
+  const marker = element.getAttribute?.('data-video-play-icon') !== null
+    ? '[data-video-play-icon]'
+    : element.classList?.length
+      ? `.${[...element.classList].join('.')}`
+      : '';
+  return `${tag}${marker}`;
+};
+
 window.debugYouTubePlayer = () => {
-  const selectedVideoId = getYouTubeVideoId(activeVideo);
+  const playIcon = videoGrid?.querySelector('[data-video-play-icon]') || null;
+  const rect = playIcon?.getBoundingClientRect();
+  const topElement = rect && rect.width && rect.height
+    ? document.elementFromPoint(rect.left + (rect.width / 2), rect.top + (rect.height / 2))
+    : null;
   const report = {
     videoCount: youtubeVideos.length,
-    selectedVideoId: selectedVideoId || null,
+    clickedElement: lastClickedElement,
+    selectedVideoId: getYouTubeVideoId(activeVideo) || lastSelectedVideoId,
     iframeSrc: videoIframe?.getAttribute('src') || '',
     drawerOpen: Boolean(videosDrawer && !videosDrawer.hidden),
     playerOpen: Boolean(videoModal && !videoModal.hidden),
-    lastClickedVideo,
+    playIconPointerEvents: playIcon ? window.getComputedStyle(playIcon).pointerEvents : lastPlayIconDiagnostics.pointerEvents,
+    topElementAtPlayIcon: describeElement(topElement) || lastPlayIconDiagnostics.topElement,
     hasValidEmbedUrl: activeVideo ? hasValidEmbedUrl(activeVideo) : youtubeVideos.every(hasValidEmbedUrl)
   };
   window.console?.info?.('[YouTube player state]', report);
@@ -9136,8 +9235,14 @@ window.debugYouTubePlayer = () => {
 
 if (videosDrawer && videosDrawer.parentElement !== document.body) document.body.append(videosDrawer);
 if (videoModal && videoModal.parentElement !== document.body) document.body.append(videoModal);
+document.querySelectorAll('[data-youtube-channel-link]').forEach((link) => {
+  link.href = YOUTUBE_CHANNEL_URL;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+});
 clearVideoIframe();
 renderVideoCards();
+loadAutomaticYouTubeVideos();
 
 // Decorative atmospheres are activated only near the viewport so the background
 // remains inexpensive on mobile while preserving the page's cinematic depth.
