@@ -8627,13 +8627,17 @@ body.video-modal-open { overflow: hidden; }
   inset: 0;
   z-index: 9999;
   display: grid;
+  align-items: center;
   justify-items: end;
-  padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 .videos-drawer[hidden] { display: none; }
 .videos-drawer__backdrop {
   position: absolute;
   inset: 0;
+  z-index: 0;
   background: rgba(0, 5, 17, .78);
   backdrop-filter: blur(12px);
 }
@@ -8642,10 +8646,13 @@ body.video-modal-open { overflow: hidden; }
   z-index: 1;
   display: flex;
   width: min(720px, 100%);
-  height: 100%;
-  max-height: calc(100dvh - max(28px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  height: auto;
+  max-height: min(82vh, 760px, calc(100vh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  max-height: min(82dvh, 760px, calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  min-height: 0;
   flex-direction: column;
   overflow: hidden;
+  pointer-events: auto;
   border: 1px solid rgba(180, 215, 255, .28);
   border-radius: 30px;
   color: var(--ivory);
@@ -8653,6 +8660,8 @@ body.video-modal-open { overflow: hidden; }
   box-shadow: 0 40px 120px rgba(0, 0, 0, .66);
 }
 .videos-drawer__header {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex: 0 0 auto;
   align-items: center;
@@ -8660,6 +8669,7 @@ body.video-modal-open { overflow: hidden; }
   gap: 20px;
   padding: 24px;
   border-bottom: 1px solid rgba(176, 211, 255, .16);
+  background: rgba(4, 19, 43, .34);
 }
 .videos-drawer__header .eyebrow { margin-bottom: 4px; color: #9fc8ff; }
 .videos-drawer__header h2 { margin: 0; color: white; }
@@ -8669,6 +8679,7 @@ body.video-modal-open { overflow: hidden; }
   min-width: 46px;
   height: 46px;
   place-items: center;
+  pointer-events: auto;
   border: 1px solid rgba(255, 255, 255, .28);
   border-radius: 50%;
   color: white;
@@ -8678,36 +8689,57 @@ body.video-modal-open { overflow: hidden; }
 }
 .videos-drawer__close:hover,
 .videos-drawer__close:focus-visible { background: #174e91; }
-.videos-drawer .video-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  margin: 0;
-  padding: 24px;
+.videos-drawer__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
 }
-.videos-drawer .video-card { min-height: 0; }
+.videos-drawer .video-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 24px 24px 0;
+  overflow: visible;
+}
+.videos-drawer .video-card {
+  min-height: 0;
+  pointer-events: auto;
+}
+.videos-drawer .video-card:last-child { margin-bottom: 48px; }
 .videos-drawer .video-card__thumbnail { min-height: 170px; }
 .videos-drawer .video-card__body { padding: 20px; }
-.videos-drawer .video-card__button { min-height: 44px; }
-body.video-overlay-open { overflow: hidden; }
+.videos-drawer .video-card__button {
+  min-height: 44px;
+  pointer-events: auto;
+}
+body.video-overlay-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
 
 @media (max-width: 680px) {
   .videos-drawer {
     align-items: end;
-    padding: max(10px, env(safe-area-inset-top)) 0 0;
+    justify-items: stretch;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   }
   .videos-drawer__panel {
     width: 100%;
-    height: auto;
-    max-height: calc(100dvh - max(10px, env(safe-area-inset-top)));
-    border-radius: 28px 28px 0 0;
+    max-height: min(86vh, 720px, calc(100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+    max-height: min(86dvh, 720px, calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+    border-radius: 24px;
   }
   .videos-drawer__header { padding: 18px 20px; }
   .videos-drawer .video-grid {
     grid-template-columns: 1fr;
     gap: 16px;
-    padding: 16px 16px max(20px, env(safe-area-inset-bottom));
+    padding: 16px 16px 0;
   }
   .videos-drawer .video-card {
     display: grid;
