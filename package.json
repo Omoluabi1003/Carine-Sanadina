@@ -4,7 +4,8 @@
   "private": true,
   "description": "Premium one-page website for Carine Sanadina.",
   "scripts": {
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "test": "node --test tests/*.test.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"
