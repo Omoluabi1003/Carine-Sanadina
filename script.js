@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-06-halleluyah-catalog';
+const APP_VERSION = 'carine-site-2026-06-07-fair-shuffle-videos';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -209,7 +209,19 @@ translations.en = {
   'footer.rights': '© 2026 Carine Sanadina. All Rights Reserved.',
   'footer.navLabel': 'Footer navigation',
   'footer.legal': 'Legal / Terms',
-  'footer.credit': 'Website concept, design, and digital presentation by Omoluabi Productions, a creative project operated under ETL GIS Consulting LLC.'
+  'footer.credit': 'Website concept, design, and digital presentation by Omoluabi Productions, a creative project operated under ETL GIS Consulting LLC.',
+  'videos.kicker': 'YouTube',
+  'videos.heading': 'Videos',
+  'videos.subtitle': 'Watch Carine Sanadina’s music, reflections, and creative work without leaving the experience.',
+  'videos.watch': 'Watch Video',
+  'videos.close': 'Close Video',
+  'videos.openYoutube': 'Open on YouTube',
+  'videos.comingSoon': 'More videos coming soon.',
+  'videos.channelTitle': 'Carine Sanadina on YouTube',
+  'videos.channelDescription': 'A dedicated in-app home for Carine’s music, reflections, and creative video work.',
+  'videos.placeholder': 'New videos will appear here as their official YouTube IDs are confirmed.',
+  'videos.modalLabel': 'Carine Sanadina video player',
+  'videos.category': 'Music • Reflections • Creative Work',
 };
 
 translations.fr = {
@@ -381,7 +393,19 @@ translations.fr = {
   'footer.rights': '© 2026 Carine Sanadina. Tous droits réservés.',
   'footer.navLabel': 'Navigation du pied de page',
   'footer.legal': 'Mentions légales / Conditions',
-  'footer.credit': 'Concept, design et présentation numérique du site par Omoluabi Productions, un projet créatif exploité sous ETL GIS Consulting LLC.'
+  'footer.credit': 'Concept, design et présentation numérique du site par Omoluabi Productions, un projet créatif exploité sous ETL GIS Consulting LLC.',
+  'videos.kicker': 'YouTube',
+  'videos.heading': 'Vidéos',
+  'videos.subtitle': 'Regardez la musique, les réflexions et le travail créatif de Carine Sanadina sans quitter l’expérience.',
+  'videos.watch': 'Regarder la vidéo',
+  'videos.close': 'Fermer la vidéo',
+  'videos.openYoutube': 'Ouvrir sur YouTube',
+  'videos.comingSoon': 'D’autres vidéos arrivent bientôt.',
+  'videos.channelTitle': 'Carine Sanadina sur YouTube',
+  'videos.channelDescription': 'Un espace intégré dédié à la musique, aux réflexions et aux créations vidéo de Carine.',
+  'videos.placeholder': 'Les nouvelles vidéos apparaîtront ici dès que leurs identifiants YouTube officiels seront confirmés.',
+  'videos.modalLabel': 'Lecteur vidéo de Carine Sanadina',
+  'videos.category': 'Musique • Réflexions • Création',
 };
 
 translations.es = {
@@ -551,7 +575,19 @@ translations.es = {
   'footer.rights': '© 2026 Carine Sanadina. Todos los derechos reservados.',
   'footer.navLabel': 'Navegación del pie de página',
   'footer.legal': 'Legal / Términos',
-  'footer.credit': 'Concepto, diseño y presentación digital del sitio por Omoluabi Productions, un proyecto creativo operado bajo ETL GIS Consulting LLC.'
+  'footer.credit': 'Concepto, diseño y presentación digital del sitio por Omoluabi Productions, un proyecto creativo operado bajo ETL GIS Consulting LLC.',
+  'videos.kicker': 'YouTube',
+  'videos.heading': 'Videos',
+  'videos.subtitle': 'Mira la música, las reflexiones y el trabajo creativo de Carine Sanadina sin salir de la experiencia.',
+  'videos.watch': 'Ver video',
+  'videos.close': 'Cerrar video',
+  'videos.openYoutube': 'Abrir en YouTube',
+  'videos.comingSoon': 'Muy pronto habrá más videos.',
+  'videos.channelTitle': 'Carine Sanadina en YouTube',
+  'videos.channelDescription': 'Un espacio dentro de la aplicación para la música, las reflexiones y el trabajo creativo en video de Carine.',
+  'videos.placeholder': 'Los nuevos videos aparecerán aquí cuando se confirmen sus identificadores oficiales de YouTube.',
+  'videos.modalLabel': 'Reproductor de video de Carine Sanadina',
+  'videos.category': 'Música • Reflexiones • Creatividad',
 };
 
 translations.ln = {
@@ -733,7 +769,19 @@ translations.ln = {
   'footer.rights': '© 2026 Carine Sanadina. Makoki nyonso ebatelami.',
   'footer.navLabel': 'Nzela ya kotambola na nse ya lokasa',
   'footer.legal': 'Mibeko / Maloba ya kosalela',
-  'footer.credit': 'Likanisi, kitoko mpe komonisa lokasa na nzela ya tekiniki esalemi na Omoluabi Productions, mosala ya bokeli oyo etambolaka na se ya ETL GIS Consulting LLC.'
+  'footer.credit': 'Likanisi, kitoko mpe komonisa lokasa na nzela ya tekiniki esalemi na Omoluabi Productions, mosala ya bokeli oyo etambolaka na se ya ETL GIS Consulting LLC.',
+  'videos.kicker': 'YouTube',
+  'videos.heading': 'Bavideo',
+  'videos.subtitle': 'Tala miziki, makanisi mpe misala ya bokeli ya Carine Sanadina kozanga kobima na site.',
+  'videos.watch': 'Tala video',
+  'videos.close': 'Kanga video',
+  'videos.openYoutube': 'Fungola na YouTube',
+  'videos.comingSoon': 'Bavideo mosusu ekoya kala mingi te.',
+  'videos.channelTitle': 'Carine Sanadina na YouTube',
+  'videos.channelDescription': 'Esika ya kati ya site mpo na miziki, makanisi mpe bavideo ya bokeli ya Carine.',
+  'videos.placeholder': 'Bavideo ya sika ekomonana awa ntango ba-ID na yango ya YouTube endimami.',
+  'videos.modalLabel': 'Lecteur ya video ya Carine Sanadina',
+  'videos.category': 'Miziki • Makanisi • Bokeli',
 };
 
 translations.sw = {
@@ -915,7 +963,19 @@ translations.sw = {
   "footer.rights": "© 2026 Carine Sanadina. All Rights Reserved.",
   "footer.navLabel": "Urambazaji wa kijachini",
   "footer.legal": "Sheria / Masharti",
-  "footer.credit": "Dhana ya tovuti, muundo na uwasilishaji dijitali na Omoluabi Productions, mradi wa ubunifu unaoendeshwa chini ya ETL GIS Consulting LLC."
+  "footer.credit": "Dhana ya tovuti, muundo na uwasilishaji dijitali na Omoluabi Productions, mradi wa ubunifu unaoendeshwa chini ya ETL GIS Consulting LLC.",
+  'videos.kicker': 'YouTube',
+  'videos.heading': 'Video',
+  'videos.subtitle': 'Tazama muziki, tafakari na kazi za ubunifu za Carine Sanadina bila kuondoka kwenye tovuti.',
+  'videos.watch': 'Tazama Video',
+  'videos.close': 'Funga Video',
+  'videos.openYoutube': 'Fungua kwenye YouTube',
+  'videos.comingSoon': 'Video zaidi zinakuja hivi karibuni.',
+  'videos.channelTitle': 'Carine Sanadina kwenye YouTube',
+  'videos.channelDescription': 'Eneo maalum ndani ya tovuti kwa muziki, tafakari na kazi za video za Carine.',
+  'videos.placeholder': 'Video mpya zitaonekana hapa vitambulisho rasmi vya YouTube vitakapothibitishwa.',
+  'videos.modalLabel': 'Kicheza video cha Carine Sanadina',
+  'videos.category': 'Muziki • Tafakari • Ubunifu',
 };
 
 translations.yo = {
@@ -3478,7 +3538,19 @@ const halleluyahTranslations = {
     'tracks.halleluyah.about': 'Halleluyah 是一首充满信心的林加拉语敬拜歌曲，以赞美、感恩和敬畏尊崇上帝。歌曲从天上的敬拜汲取灵感，邀请听众进入属灵反思、喜乐与委身的氛围。',
     'halleluyahSynopsis': '一首林加拉语敬拜赞歌，以真挚敬拜颂扬上帝的荣耀、威严与永恒赞美。',
     'tracks.halleluyah.credits': '艺人：Carine Sanadina\n语言：Lingala\n制作：Omoluabi Productions\n呈现：Omoluabi Productions'
-  }
+  },
+  'videos.kicker': 'YouTube',
+  'videos.heading': 'Àwọn Fídíò',
+  'videos.subtitle': 'Wo orin, ìrònú àti iṣẹ́ àtinúdá Carine Sanadina láì fi ojúlé náà sílẹ̀.',
+  'videos.watch': 'Wo Fídíò',
+  'videos.close': 'Pa Fídíò',
+  'videos.openYoutube': 'Ṣí lórí YouTube',
+  'videos.comingSoon': 'Àwọn fídíò míì ń bọ̀ láìpẹ́.',
+  'videos.channelTitle': 'Carine Sanadina lórí YouTube',
+  'videos.channelDescription': 'Àyè inú ojúlé fún orin, ìrònú àti iṣẹ́ fídíò àtinúdá Carine.',
+  'videos.placeholder': 'Àwọn fídíò tuntun yóò hàn níbí nígbà tí a bá fìdí ID YouTube wọn múlẹ̀.',
+  'videos.modalLabel': 'Ẹ̀rọ fídíò Carine Sanadina',
+  'videos.category': 'Orin • Ìrònú • Àtinúdá',
 };
 
 Object.entries(halleluyahTranslations).forEach(([language, dictionary]) => {
@@ -5296,6 +5368,9 @@ if (musicPlayers.length) {
   let userStoppedManually = false;
   let wasPlayingBeforeBackground = false;
   let shuffleEnabled = false;
+  let shuffleQueue = [];
+  let shuffleHistory = [];
+  let lastPlayedTracks = [];
   let repeatMode = 'all';
   const PLAYER_STORAGE_KEY = PLAYER_STATE_STORAGE_KEY;
   const VISUALIZER_STORAGE_KEY = getCarineStorageKey('visualizer-enabled');
@@ -5538,6 +5613,8 @@ if (musicPlayers.length) {
         currentTime: audio ? Math.floor(audio.currentTime) : 0,
         volume: mini?.volume ? Number(mini.volume.value) : 0.85,
         shuffleEnabled,
+        shuffleQueue,
+        shuffleHistory,
         repeatMode
       }));
     } catch (error) {
@@ -6236,6 +6313,10 @@ if (musicPlayers.length) {
     activePlayer = player || null;
     activeTrackId = nextTrackId;
     activeTrack = MUSIC_TRACKS_BY_ID.get(activeTrackId) || null;
+    if (trackChanged && activeTrackId) {
+      shuffleQueue = shuffleQueue.filter((trackId) => trackId !== activeTrackId);
+      lastPlayedTracks = [...lastPlayedTracks.filter((trackId) => trackId !== activeTrackId), activeTrackId].slice(-12);
+    }
     if (trackChanged) {
       lyricsLoadToken += 1;
       currentLyricsPlayer = null;
@@ -7987,28 +8068,75 @@ if (musicPlayers.length) {
     }
   };
 
+  const getPlaylistTrackIds = () => musicPlayers
+    .map((player) => player.dataset.trackId)
+    .filter(Boolean);
+
+  const shuffleTrackIds = (trackIds) => {
+    const shuffled = [...trackIds];
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    }
+    return shuffled;
+  };
+
+  const createShuffleQueue = (currentTrackId = activeTrackId) => {
+    shuffleQueue = shuffleTrackIds(getPlaylistTrackIds().filter((trackId) => trackId !== currentTrackId));
+    return shuffleQueue;
+  };
+
+  const getPlayerByTrackId = (trackId) => musicPlayers.find((player) => player.dataset.trackId === trackId) || null;
+
+  const getNextShuffledTrack = (currentTrackId) => {
+    if (musicPlayers.length <= 1) return musicPlayers[0] || null;
+
+    shuffleQueue = shuffleQueue.filter((trackId, index, queue) => (
+      trackId !== currentTrackId && getPlayerByTrackId(trackId) && queue.indexOf(trackId) === index
+    ));
+
+    if (!shuffleQueue.length) {
+      if (repeatMode !== 'all') return null;
+      createShuffleQueue(currentTrackId);
+    }
+
+    const nextTrackId = shuffleQueue.shift();
+    if (!nextTrackId) return null;
+    if (currentTrackId) shuffleHistory.push(currentTrackId);
+    return getPlayerByTrackId(nextTrackId);
+  };
+
   const getNextTrack = (currentPlayer) => {
-    if (repeatMode === 'one') {
-      return currentPlayer;
+    const sourcePlayer = getPlayerByTrackId(activeTrackId) || currentPlayer;
+    if (repeatMode === 'one') return sourcePlayer;
+
+    if (shuffleEnabled) {
+      return getNextShuffledTrack(sourcePlayer?.dataset.trackId || activeTrackId);
     }
 
-    if (shuffleEnabled && musicPlayers.length > 1) {
-      const available = musicPlayers.filter((player) => player !== currentPlayer);
-      return available[Math.floor(Math.random() * available.length)];
-    }
-
-    const currentIndex = musicPlayers.indexOf(currentPlayer);
+    const currentIndex = musicPlayers.indexOf(sourcePlayer);
     const nextPlayer = musicPlayers[currentIndex + 1];
-
-    if (nextPlayer) {
-      return nextPlayer;
-    }
-
+    if (nextPlayer) return nextPlayer;
     return repeatMode === 'all' ? musicPlayers[0] : null;
   };
 
   const playPreviousTrack = (currentPlayer) => {
-    const currentIndex = musicPlayers.indexOf(currentPlayer);
+    if (shuffleEnabled && shuffleHistory.length) {
+      let previousTrackId = shuffleHistory.pop();
+      while (previousTrackId && !getPlayerByTrackId(previousTrackId)) previousTrackId = shuffleHistory.pop();
+      const currentTrackId = activeTrackId || currentPlayer?.dataset.trackId || '';
+      if (currentTrackId && currentTrackId !== previousTrackId) {
+        shuffleQueue = [currentTrackId, ...shuffleQueue.filter((trackId) => trackId !== currentTrackId)];
+      }
+      const previousPlayer = getPlayerByTrackId(previousTrackId);
+      if (previousPlayer) {
+        playAudio(previousPlayer);
+        return;
+      }
+    }
+
+    const sourcePlayer = getPlayerByTrackId(activeTrackId) || currentPlayer;
+    const currentIndex = musicPlayers.indexOf(sourcePlayer);
     const previousPlayer = musicPlayers[currentIndex > 0 ? currentIndex - 1 : musicPlayers.length - 1] || musicPlayers[0];
     if (previousPlayer) playAudio(previousPlayer);
   };
@@ -8499,6 +8627,9 @@ if (musicPlayers.length) {
 
   const toggleShuffle = () => {
     shuffleEnabled = !shuffleEnabled;
+    shuffleHistory = [];
+    if (shuffleEnabled) createShuffleQueue(activeTrackId);
+    else shuffleQueue = [];
     updateCommandButtons();
     persistPlayerState();
   };
@@ -8738,8 +8869,24 @@ if (musicPlayers.length) {
     return report;
   };
 
+  window.debugShuffleState = () => {
+    const report = {
+      shuffleEnabled,
+      repeatMode,
+      activeTrackId,
+      shuffleQueue: [...shuffleQueue],
+      shuffleHistory: [...shuffleHistory],
+      playlistTrackCount: musicPlayers.length,
+      lastPlayedTracks: [...lastPlayedTracks]
+    };
+    window.console?.info?.('[shuffle state]', report);
+    return report;
+  };
+
   const storedState = getStoredPlayerState();
   shuffleEnabled = Boolean(storedState.shuffleEnabled);
+  shuffleQueue = Array.isArray(storedState.shuffleQueue) ? storedState.shuffleQueue.filter((trackId) => MUSIC_TRACKS_BY_ID.has(trackId)) : [];
+  shuffleHistory = Array.isArray(storedState.shuffleHistory) ? storedState.shuffleHistory.filter((trackId) => MUSIC_TRACKS_BY_ID.has(trackId)) : [];
   repeatMode = ['all', 'one', 'off'].includes(storedState.repeatMode) ? storedState.repeatMode : 'all';
   if (mini?.volume && Number.isFinite(storedState.volume)) {
     mini.volume.value = String(Math.min(Math.max(storedState.volume, 0), 1));
@@ -8755,8 +8902,162 @@ if (musicPlayers.length) {
       restoredAudio.currentTime = storedState.currentTime;
     }
     setActiveTrack(restoredPlayer);
+    if (shuffleEnabled && !shuffleQueue.length) createShuffleQueue(activeTrackId);
   }
 }
+
+const CARINE_YOUTUBE_CHANNEL_URL = 'https://youtube.com/@cariotendre?si=HsyeKHavudAxk3tu';
+const CARINE_VIDEOS = [
+  {
+    id: 'carine-youtube-channel',
+    title: 'Carine Sanadina on YouTube',
+    description: 'A dedicated in-app home for Carine’s music, reflections, and creative video work.',
+    // TODO: Add the official YouTube video ID when Carine confirms the first featured upload.
+    youtubeVideoId: '',
+    thumbnail: '',
+    category: 'videos.category',
+    featured: true
+  }
+];
+
+const videoGrid = document.querySelector('[data-video-grid]');
+const videoModal = document.querySelector('[data-video-modal]');
+const videoPlayer = document.querySelector('[data-video-player]');
+const videoModalTitle = document.querySelector('[data-video-modal-title]');
+const videoModalDescription = document.querySelector('[data-video-modal-description]');
+const videoExternalLink = document.querySelector('[data-video-external]');
+let videoTrigger = null;
+let activeVideo = null;
+
+const escapeVideoText = (value) => String(value || '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;');
+
+const renderVideoCards = () => {
+  if (!videoGrid) return;
+  videoGrid.innerHTML = CARINE_VIDEOS.map((video) => {
+    const title = video.youtubeVideoId ? video.title : translate('videos.channelTitle');
+    const description = video.youtubeVideoId ? video.description : translate('videos.channelDescription');
+    const thumbnail = video.thumbnail
+      ? `<img src="${escapeVideoText(video.thumbnail)}" alt="" loading="lazy" decoding="async">`
+      : '<span class="video-card__monogram" aria-hidden="true">CS</span>';
+    return `
+      <article class="video-card${video.featured ? ' is-featured' : ''}">
+        <div class="video-card__thumbnail">
+          ${thumbnail}
+          <span class="video-card__play" aria-hidden="true">▶</span>
+        </div>
+        <div class="video-card__body">
+          <p class="video-card__category">${escapeVideoText(translate(video.category))}</p>
+          <h3>${escapeVideoText(title)}</h3>
+          <p>${escapeVideoText(description)}</p>
+          <button class="button button-primary video-card__button" type="button" data-video-open="${escapeVideoText(video.id)}" aria-label="${escapeVideoText(`${translate('videos.watch')}: ${title}`)}">
+            ${escapeVideoText(video.youtubeVideoId ? translate('videos.watch') : translate('videos.comingSoon'))}
+          </button>
+        </div>
+      </article>`;
+  }).join('');
+};
+
+const pauseMusicForVideo = () => {
+  document.querySelectorAll('[data-audio-player] audio').forEach((audio) => {
+    if (!audio.paused) audio.pause();
+  });
+};
+
+const getVideoModalFocusableElements = () => videoModal
+  ? Array.from(videoModal.querySelectorAll('button:not([disabled]), a[href], iframe')).filter((element) => !element.hidden)
+  : [];
+
+const openVideoModal = (video, trigger) => {
+  if (!videoModal || !videoPlayer || !video) return;
+  activeVideo = video;
+  videoTrigger = trigger || document.activeElement;
+  const title = video.youtubeVideoId ? video.title : translate('videos.channelTitle');
+  const description = video.youtubeVideoId ? video.description : translate('videos.placeholder');
+  if (videoModalTitle) videoModalTitle.textContent = title;
+  if (videoModalDescription) videoModalDescription.textContent = description;
+
+  if (video.youtubeVideoId) {
+    pauseMusicForVideo();
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(video.youtubeVideoId)}?rel=0`;
+    iframe.title = video.title;
+    iframe.loading = 'lazy';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    videoPlayer.replaceChildren(iframe);
+    if (videoExternalLink) videoExternalLink.href = `https://www.youtube.com/watch?v=${encodeURIComponent(video.youtubeVideoId)}`;
+  } else {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'video-modal__placeholder';
+    const heading = document.createElement('strong');
+    heading.textContent = translate('videos.comingSoon');
+    const copy = document.createElement('span');
+    copy.textContent = translate('videos.placeholder');
+    placeholder.append(heading, copy);
+    videoPlayer.replaceChildren(placeholder);
+    if (videoExternalLink) videoExternalLink.href = CARINE_YOUTUBE_CHANNEL_URL;
+  }
+
+  videoModal.hidden = false;
+  document.body.classList.add('video-modal-open');
+  window.requestAnimationFrame(() => videoModal.querySelector('[data-video-close]')?.focus());
+};
+
+const closeVideoModal = () => {
+  if (!videoModal || videoModal.hidden) return;
+  videoModal.hidden = true;
+  document.body.classList.remove('video-modal-open');
+  if (videoPlayer) videoPlayer.replaceChildren();
+  activeVideo = null;
+  const returnTarget = videoTrigger;
+  videoTrigger = null;
+  returnTarget?.focus?.();
+};
+
+videoGrid?.addEventListener('click', (event) => {
+  const trigger = event.target.closest('[data-video-open]');
+  if (!trigger) return;
+  const video = CARINE_VIDEOS.find((item) => item.id === trigger.dataset.videoOpen);
+  openVideoModal(video, trigger);
+});
+
+document.querySelectorAll('[data-video-close]').forEach((button) => button.addEventListener('click', closeVideoModal));
+
+document.addEventListener('keydown', (event) => {
+  if (!videoModal || videoModal.hidden) return;
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeVideoModal();
+    return;
+  }
+  if (event.key !== 'Tab') return;
+  const focusable = getVideoModalFocusableElements();
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+});
+
+window.addEventListener('carine:languagechange', () => {
+  renderVideoCards();
+  if (activeVideo) {
+    if (videoModalTitle && !activeVideo.youtubeVideoId) videoModalTitle.textContent = translate('videos.channelTitle');
+    if (videoModalDescription && !activeVideo.youtubeVideoId) videoModalDescription.textContent = translate('videos.placeholder');
+  }
+});
+
+renderVideoCards();
 
 // Decorative atmospheres are activated only near the viewport so the background
 // remains inexpensive on mobile while preserving the page's cinematic depth.

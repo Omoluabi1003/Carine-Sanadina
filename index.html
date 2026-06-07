@@ -318,6 +318,7 @@
           <li><a href="#about" data-nav-link data-section="about" data-i18n="nav.about">About</a></li>
           <li><a href="#works" data-nav-link data-section="works" data-i18n="nav.books">Books</a></li>
           <li><a href="#music" data-nav-link data-section="music" data-i18n="nav.music">Music</a></li>
+          <li><a href="#videos" data-nav-link data-section="videos" data-i18n="videos.heading">Videos</a></li>
           <li><a href="#reflections" data-nav-link data-section="reflections" data-i18n="nav.reflections">Reflections</a></li>
           <li><a href="#press" data-nav-link data-section="press" data-i18n="nav.press">Press Kit</a></li>
           <li><a href="#contact" data-nav-link data-section="contact" data-i18n="nav.contact">Contact</a></li>
@@ -664,6 +665,32 @@
         </div>
       </section>
 
+
+      <section class="section videos-showcase" id="videos" aria-labelledby="videos-heading">
+        <div class="videos-glow" aria-hidden="true"></div>
+        <div class="container videos-shell">
+          <div class="section-heading center reveal">
+            <p class="eyebrow" data-i18n="videos.kicker">YouTube</p>
+            <h2 id="videos-heading" data-i18n="videos.heading">Videos</h2>
+            <p data-i18n="videos.subtitle">Watch Carine Sanadina’s music, reflections, and creative work without leaving the experience.</p>
+          </div>
+          <div class="video-grid reveal" data-video-grid></div>
+        </div>
+      </section>
+
+      <div class="video-modal" data-video-modal hidden>
+        <div class="video-modal__backdrop" data-video-close aria-hidden="true"></div>
+        <section class="video-modal__panel" role="dialog" aria-modal="true" aria-labelledby="video-modal-title" data-i18n-aria-label="videos.modalLabel">
+          <button class="video-modal__close" type="button" data-video-close aria-label="Close Video" data-i18n-aria-label="videos.close">×</button>
+          <div class="video-modal__player" data-video-player></div>
+          <div class="video-modal__content">
+            <p class="eyebrow" data-i18n="videos.kicker">YouTube</p>
+            <h2 id="video-modal-title" data-video-modal-title data-i18n="videos.channelTitle">Carine Sanadina on YouTube</h2>
+            <p data-video-modal-description data-i18n="videos.channelDescription">A dedicated in-app home for Carine’s music, reflections, and creative video work.</p>
+            <a class="button button-secondary video-modal__external" href="https://youtube.com/@cariotendre?si=HsyeKHavudAxk3tu" target="_blank" rel="noopener noreferrer" data-video-external data-i18n="videos.openYoutube">Open on YouTube</a>
+          </div>
+        </section>
+      </div>
 
       <section class="section reflections" id="reflections" aria-labelledby="reflections-heading">
         <div class="reflections-ambient" aria-hidden="true"></div>
