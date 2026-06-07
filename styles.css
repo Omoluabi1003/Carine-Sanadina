@@ -8581,7 +8581,11 @@ body.expanded-player-open {
 .video-card__category { margin: 0 0 9px; color: #9fc8ff; font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
 .video-card h3 { margin: 0 0 10px; color: white; font-size: clamp(1.35rem, 2.6vw, 1.75rem); }
 .video-card p { margin: 0 0 20px; color: rgba(224, 236, 255, .72); }
+.video-card__actions { display: grid; gap: 10px; }
 .video-card__button { width: 100%; cursor: pointer; }
+.video-card__button--disabled { cursor: not-allowed; opacity: .62; }
+.video-card__external { width: 100%; text-align: center; }
+.video-card.is-placeholder .video-card__thumbnail { filter: saturate(.72); }
 .video-modal { position: fixed; inset: 0; z-index: 10000; display: grid; padding: clamp(14px, 4vw, 44px); place-items: center; }
 .video-modal[hidden] { display: none; }
 .video-modal__backdrop { position: absolute; inset: 0; background: rgba(0, 5, 17, .84); backdrop-filter: blur(16px); }
@@ -8589,7 +8593,8 @@ body.expanded-player-open {
 .video-modal__close { position: absolute; top: 14px; right: 14px; z-index: 3; width: 46px; height: 46px; border: 1px solid rgba(255,255,255,.28); border-radius: 50%; color: white; background: rgba(2, 10, 25, .78); font-size: 1.6rem; cursor: pointer; }
 .video-modal__close:hover, .video-modal__close:focus-visible { background: #174e91; }
 .video-modal__player { display: grid; aspect-ratio: 16 / 9; place-items: center; overflow: hidden; border-radius: 30px 30px 0 0; background: radial-gradient(circle, #174e91, #020816 68%); }
-.video-modal__player iframe { width: 100%; height: 100%; border: 0; }
+.video-modal__player iframe { position: relative; z-index: 1; width: 100%; height: 100%; border: 0; pointer-events: auto; }
+.video-modal__player iframe[hidden] { display: none; }
 .video-modal__placeholder { max-width: 540px; padding: 70px 30px; text-align: center; color: rgba(229, 240, 255, .78); }
 .video-modal__placeholder strong { display: block; margin-bottom: 10px; color: white; font-size: 1.4rem; }
 .video-modal__content { padding: clamp(24px, 4vw, 38px); }
