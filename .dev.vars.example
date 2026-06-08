@@ -1,3 +1,0 @@
-# Copy to .dev.vars for local Worker development. Never commit real values.
-YOUTUBE_API_KEY="replace-with-a-restricted-google-api-key"
-YOUTUBE_CHANNEL_ID="replace-with-the-youtube-channel-id"
