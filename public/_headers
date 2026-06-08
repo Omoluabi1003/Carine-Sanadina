@@ -1,0 +1,30 @@
+# Baseline browser hardening for all static responses.
+/*
+  Permissions-Policy: camera=(), geolocation=(), microphone=()
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+
+# Never let HTML or service-worker metadata become stale in a browser cache.
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/offline.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+/manifest.json
+  Cache-Control: no-cache
+
+# Build-generated filenames contain a SHA-256 content hash.
+/styles.*.css
+  Cache-Control: public, max-age=31536000, immutable
+/script.*.js
+  Cache-Control: public, max-age=31536000, immutable
+/content-reflections.*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+# Do not index direct workers.dev preview or fallback hostnames.
+https://:version.:subdomain.workers.dev/*
+  X-Robots-Tag: noindex

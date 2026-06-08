@@ -5,9 +5,18 @@
   "description": "Premium one-page website for Carine Sanadina.",
   "scripts": {
     "build": "node scripts/build.js",
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "cf:dev": "npm run build && wrangler dev --env preview",
+    "cf:deploy:preview": "npm run build && wrangler deploy --env preview",
+    "cf:deploy:production": "npm run build && wrangler deploy --env production",
+    "cf:dry-run": "npm run build && wrangler deploy --env preview --dry-run --outdir .wrangler/deploy-preview",
+    "cf:types": "wrangler types"
   },
   "devDependencies": {
-    "@playwright/test": "^1.60.0"
+    "@playwright/test": "^1.60.0",
+    "wrangler": "^4.98.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }
