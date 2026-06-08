@@ -7,15 +7,12 @@ const root = path.resolve(__dirname, '..');
 const script = readFileSync(path.join(root, 'script.js'), 'utf8');
 const markup = readFileSync(path.join(root, 'index.html'), 'utf8');
 const styles = readFileSync(path.join(root, 'styles.css'), 'utf8');
-const youtubeHandler = require('../api/youtube-videos');
 
-const createResponse = () => ({
-  headers: {},
-  statusCode: null,
-  payload: null,
-  setHeader(name, value) { this.headers[name] = value; },
-  status(code) { this.statusCode = code; return this; },
-  json(payload) { this.payload = payload; return this; }
+const loadWorker = async () => (await import('../src/worker.mjs')).default;
+
+const createExecutionContext = () => ({
+  promises: [],
+  waitUntil(promise) { this.promises.push(promise); }
 });
 
 test('manual catalog and in-app player contract are present', () => {
@@ -51,44 +48,58 @@ test('debug utility exposes all requested diagnostics', () => {
   }
 });
 
-test('serverless endpoint fails safely when secrets are not configured', async () => {
-  const previousKey = process.env.YOUTUBE_API_KEY;
-  const previousChannel = process.env.YOUTUBE_CHANNEL_ID;
-  delete process.env.YOUTUBE_API_KEY;
-  delete process.env.YOUTUBE_CHANNEL_ID;
-  const response = createResponse();
-  await youtubeHandler({ method: 'GET' }, response);
-  assert.equal(response.statusCode, 503);
-  assert.equal(response.headers['Cache-Control'], 'no-store');
-  assert.match(response.payload.error, /manual video catalog/);
-  if (previousKey === undefined) delete process.env.YOUTUBE_API_KEY; else process.env.YOUTUBE_API_KEY = previousKey;
-  if (previousChannel === undefined) delete process.env.YOUTUBE_CHANNEL_ID; else process.env.YOUTUBE_CHANNEL_ID = previousChannel;
+test('Cloudflare Worker endpoint fails safely when secrets are not configured', async () => {
+  const worker = await loadWorker();
+  const response = await worker.fetch(
+    new Request('https://example.com/api/youtube-videos'),
+    {},
+    createExecutionContext()
+  );
+
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.get('Cache-Control'), 'no-store');
+  assert.match((await response.json()).error, /manual video catalog/);
 });
 
-test('serverless endpoint normalizes uploads and sets quota-saving cache headers', async () => {
-  const previousKey = process.env.YOUTUBE_API_KEY;
-  const previousChannel = process.env.YOUTUBE_CHANNEL_ID;
+test('Cloudflare Worker endpoint normalizes uploads and caches quota-saving responses', async () => {
+  const worker = await loadWorker();
   const previousFetch = global.fetch;
-  process.env.YOUTUBE_API_KEY = 'server-only-test-key';
-  process.env.YOUTUBE_CHANNEL_ID = 'channel-id';
+  const previousCaches = global.caches;
+  const cachedResponses = new Map();
+  global.caches = {
+    default: {
+      async match(request) { return cachedResponses.get(request.url); },
+      async put(request, response) { cachedResponses.set(request.url, response); }
+    }
+  };
   global.fetch = async (url) => ({
     ok: true,
     json: async () => String(url).includes('/channels?')
       ? { items: [{ contentDetails: { relatedPlaylists: { uploads: 'uploads-id' } } }] }
       : { items: [{ contentDetails: { videoId: 'RMce92iUU3M' }, snippet: { title: 'Exact title', description: 'Description', publishedAt: '2026-01-01T00:00:00Z', thumbnails: { high: { url: 'https://example.com/thumb.jpg' } } } }] }
   });
-  const response = createResponse();
-  await youtubeHandler({ method: 'GET' }, response);
-  assert.equal(response.statusCode, 200);
-  assert.equal(response.headers['Cache-Control'], 's-maxage=900, stale-while-revalidate=86400');
-  assert.deepEqual(response.payload.videos[0], {
-    youtubeVideoId: 'RMce92iUU3M',
-    title: 'Exact title',
-    description: 'Description',
-    thumbnail: 'https://example.com/thumb.jpg',
-    publishedAt: '2026-01-01T00:00:00Z'
-  });
-  global.fetch = previousFetch;
-  if (previousKey === undefined) delete process.env.YOUTUBE_API_KEY; else process.env.YOUTUBE_API_KEY = previousKey;
-  if (previousChannel === undefined) delete process.env.YOUTUBE_CHANNEL_ID; else process.env.YOUTUBE_CHANNEL_ID = previousChannel;
+
+  try {
+    const context = createExecutionContext();
+    const response = await worker.fetch(
+      new Request('https://example.com/api/youtube-videos'),
+      { YOUTUBE_API_KEY: 'server-only-test-key', YOUTUBE_CHANNEL_ID: 'channel-id' },
+      context
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('Cache-Control'), 'public, max-age=60, s-maxage=900, stale-while-revalidate=86400');
+    assert.deepEqual((await response.json()).videos[0], {
+      youtubeVideoId: 'RMce92iUU3M',
+      title: 'Exact title',
+      description: 'Description',
+      thumbnail: 'https://example.com/thumb.jpg',
+      publishedAt: '2026-01-01T00:00:00Z'
+    });
+    await Promise.all(context.promises);
+    assert.equal(cachedResponses.size, 1);
+  } finally {
+    global.fetch = previousFetch;
+    global.caches = previousCaches;
+  }
 });
