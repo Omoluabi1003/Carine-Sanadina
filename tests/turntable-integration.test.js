@@ -33,6 +33,9 @@ test('turntable geometry remains deck-relative and circular in layout', () => {
 
 test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states', () => {
   assert.match(script, /requestAnimationFrame\(animateVinylRotation\)/);
+  assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
+  assert.match(script, /disc\.style\.webkitTransform\s*=\s*discTransform/);
+  assert.match(css, /-webkit-transform:\s*translate3d\(0, 0, 4px\) rotateZ\(var\(--vinyl-rotation\)\)/);
   assert.match(script, /vinylDeceleration/);
   assert.match(script, /vinylVelocity\s*>\s*0/);
   assert.match(script, /syncVinylExperience\(false, 'ended'\)/);
