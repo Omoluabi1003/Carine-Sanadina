@@ -8853,3 +8853,263 @@ body.video-overlay-open {
   .videos-drawer .video-card { grid-template-columns: 1fr; }
   .videos-drawer .video-card__thumbnail { min-height: 180px; }
 }
+
+/* Unified sapphire-glass turntable: platter and tonearm share one physical deck. */
+.turntable-assembly {
+  --vinyl-rotation: 0deg;
+  --rose-gold: #d6a980;
+  --deck-silver: #aebdcb;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  background:
+    linear-gradient(128deg, rgba(255, 255, 255, 0.09), transparent 17%, transparent 72%, rgba(214, 169, 128, 0.055)),
+    radial-gradient(circle at 31% 42%, rgba(49, 117, 183, 0.17), transparent 31%),
+    linear-gradient(145deg, #0a2548 0%, #061831 48%, #020b19 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -14px 28px rgba(0, 0, 0, 0.38),
+    0 30px 60px rgba(0, 4, 15, 0.42);
+}
+
+.turntable-assembly::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 2.5%;
+  border: 1px solid rgba(188, 218, 245, 0.08);
+  border-radius: 17px;
+  background: linear-gradient(112deg, rgba(255, 255, 255, 0.045), transparent 28%, transparent 76%, rgba(214, 169, 128, 0.035));
+  pointer-events: none;
+}
+
+.turntable-assembly .console-turntable {
+  z-index: 3;
+  transform: rotateX(28deg) translateZ(10px);
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 24px 18px rgba(0, 0, 0, 0.44));
+}
+
+.turntable-assembly .expanded-artwork-wrap {
+  overflow: visible;
+  border: 1px solid rgba(214, 225, 236, 0.44);
+  background:
+    repeating-conic-gradient(from 0deg, rgba(233, 240, 247, 0.86) 0 0.45deg, #263849 0.5deg 2.8deg),
+    radial-gradient(circle, #758696 0 65%, #182838 66% 83%, #050b12 84% 100%);
+  box-shadow:
+    0 0 0 5px rgba(3, 10, 18, 0.9),
+    0 0 0 7px rgba(174, 189, 203, 0.3),
+    inset 0 0 0 8px #07111c,
+    0 22px 30px rgba(0, 0, 0, 0.54);
+}
+
+.turntable-assembly .platter-inner-ring {
+  position: absolute;
+  z-index: 1;
+  inset: 7%;
+  border: 1px solid rgba(197, 213, 228, 0.28);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.48), 0 0 12px rgba(80, 151, 217, 0.16);
+  pointer-events: none;
+}
+
+.turntable-assembly .expanded-vinyl-disc,
+.turntable-assembly .expanded-vinyl-disc.is-playing,
+.turntable-assembly .expanded-vinyl-disc.vinyl-playing,
+.turntable-assembly .expanded-vinyl-wrap.is-playing .expanded-vinyl-disc,
+.turntable-assembly .expanded-vinyl-wrap.vinyl-playing .expanded-vinyl-disc,
+.turntable-assembly .expanded-vinyl-wrap.turntable-playing .expanded-vinyl-disc,
+.turntable-assembly.expanded-player-card.turntable-playing .expanded-vinyl-disc {
+  z-index: 2;
+  animation: none !important;
+  transform: translate3d(0, 0, 4px) rotateZ(var(--vinyl-rotation));
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  will-change: transform;
+  background:
+    repeating-radial-gradient(circle at center, transparent 0 4px, rgba(182, 213, 241, 0.055) 4.5px 5.2px, transparent 5.7px 9px),
+    conic-gradient(from 22deg, #01040a 0 8%, #172435 15%, #02050b 24%, #101d2c 35%, #010308 47%, #1b2b3d 57%, #02050a 72%, #111d2b 84%, #01040a 100%);
+  box-shadow: inset 0 0 48px rgba(0, 0, 0, 0.82), 0 12px 19px rgba(0, 0, 0, 0.48);
+}
+
+.turntable-assembly .expanded-vinyl-sheen {
+  background: conic-gradient(from 18deg, transparent 0 12%, rgba(111, 176, 231, 0.16) 17%, transparent 24% 54%, rgba(230, 188, 148, 0.11) 61%, transparent 69%);
+  mix-blend-mode: screen;
+  opacity: 0.62;
+}
+
+.turntable-assembly .expanded-vinyl-label {
+  overflow: hidden;
+  border: 1px solid rgba(246, 223, 181, 0.52);
+  background: #17253a;
+  box-shadow: 0 0 0 4px #050b12, 0 0 0 5px rgba(214, 169, 128, 0.5), 0 7px 16px rgba(0, 0, 0, 0.52);
+}
+
+.turntable-assembly .record-spindle {
+  width: clamp(7px, 1vw, 12px);
+  height: clamp(7px, 1vw, 12px);
+  z-index: 5;
+  border-color: rgba(255, 255, 255, 0.9);
+  background: radial-gradient(circle at 32% 25%, #fff 0 18%, #c9d2da 22%, #6d7b87 52%, #17222c 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(214, 169, 128, 0.2);
+}
+
+.tonearm-assembly {
+  position: absolute;
+  z-index: 5;
+  top: 13%;
+  left: 48%;
+  width: 25%;
+  aspect-ratio: 1 / 1;
+  transform: translateZ(22px);
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.tonearm-moving-group {
+  position: absolute;
+  inset: 0;
+  transform: rotate(1deg) translateZ(8px);
+  transform-origin: 76% 23%;
+  transform-style: preserve-3d;
+  transition: transform 900ms cubic-bezier(0.42, 0, 0.2, 1), filter 900ms ease-in-out;
+  filter: drop-shadow(0 7px 5px rgba(0, 0, 0, 0.48));
+}
+
+.turntable-assembly[data-playback-state="playing"] .tonearm-moving-group,
+.turntable-assembly:has([data-playback-state="playing"]) .tonearm-moving-group {
+  transform: rotate(-20deg) translateZ(1px);
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.42));
+}
+
+.turntable-assembly[data-playback-state="paused"] .tonearm-moving-group,
+.turntable-assembly:has([data-playback-state="paused"]) .tonearm-moving-group {
+  transform: rotate(-20deg) translateZ(10px);
+}
+
+.tonearm-pivot {
+  position: absolute;
+  z-index: 4;
+  left: 66%;
+  top: 13%;
+  width: 21%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(229, 238, 246, 0.54);
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #e4ebf0, #7d8c98 32%, #263746 62%, #070d14 67%);
+  box-shadow: 0 0 0 5px #07111d, 0 0 0 7px rgba(214, 169, 128, 0.46), 0 10px 14px rgba(0, 0, 0, 0.5);
+}
+
+.tonearm-pivot i {
+  position: absolute;
+  inset: 30%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #fff, #aab7c1 45%, #354653 100%);
+}
+
+.tonearm-counterweight {
+  position: absolute;
+  z-index: 3;
+  left: 77%;
+  top: 4%;
+  width: 18%;
+  height: 12%;
+  border: 1px solid rgba(219, 230, 239, 0.52);
+  border-radius: 28%;
+  background: repeating-linear-gradient(90deg, #243443 0 7%, #9baab6 8% 11%, #344654 12% 20%);
+  box-shadow: inset 3px 0 5px rgba(255, 255, 255, 0.2), 0 5px 8px rgba(0, 0, 0, 0.45);
+  transform: rotate(-48deg);
+}
+
+.tonearm-wand {
+  position: absolute;
+  z-index: 2;
+  right: 25%;
+  top: 21%;
+  width: 72%;
+  height: 4.2%;
+  border: 1px solid rgba(239, 243, 246, 0.68);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f0f3f5 0%, #7f909c 42%, #314451 62%, #bdc8cf 100%);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.7), 0 3px 5px rgba(0, 0, 0, 0.55);
+  transform: rotate(-40deg);
+  transform-origin: 100% 50%;
+}
+
+.tonearm-headshell {
+  position: absolute;
+  z-index: 4;
+  left: 8%;
+  top: 62%;
+  width: 20%;
+  height: 10%;
+  border: 1px solid rgba(231, 236, 240, 0.45);
+  border-radius: 45% 18% 18% 45%;
+  background: linear-gradient(160deg, #bac6ce, #344754 62%, #121c24);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.48);
+  transform: rotate(-34deg);
+}
+
+.tonearm-headshell i {
+  position: absolute;
+  left: 8%;
+  bottom: -38%;
+  width: 42%;
+  height: 42%;
+  border-radius: 2px 2px 50% 50%;
+  background: linear-gradient(90deg, #8a482f, var(--rose-gold));
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.45);
+}
+
+.tonearm-rest {
+  position: absolute;
+  z-index: 1;
+  right: 1%;
+  top: 48%;
+  width: 8%;
+  height: 22%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #152431, #a9b6bf 48%, #2d3d49);
+  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
+}
+
+.deck-ambient-light {
+  position: absolute;
+  z-index: 2;
+  left: 13%;
+  top: 11%;
+  width: 45%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(66, 148, 224, 0.13), transparent 67%);
+  filter: blur(10px);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.turntable-assembly:has([data-playback-state="playing"]) .deck-ambient-light {
+  animation: deck-reflection-drift 5s ease-in-out infinite alternate;
+}
+
+@keyframes deck-reflection-drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(0.96); opacity: 0.55; }
+  to { transform: translate3d(3%, 1%, 0) scale(1.05); opacity: 0.82; }
+}
+
+@media (max-width: 700px) {
+  .turntable-assembly { --platter-left: 9%; --platter-top: 18%; --platter-size: 43%; }
+  .tonearm-assembly { top: 14%; left: 48%; width: 30%; }
+  .turntable-assembly .console-turntable { left: var(--platter-left); top: var(--platter-top); width: var(--platter-size); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .turntable-assembly .expanded-vinyl-disc { will-change: auto; }
+  .tonearm-moving-group { transition-duration: 1ms; }
+  .turntable-assembly:has([data-playback-state="playing"]) .deck-ambient-light { animation: none; }
+}
+
+@media (max-width: 700px) {
+  .turntable-assembly { aspect-ratio: 4 / 3; }
+  .turntable-assembly .console-turntable { left: 7%; top: 17%; width: 45%; }
+  .tonearm-assembly { top: 10%; left: 50%; width: 29%; }
+  .turntable-assembly .console-now-playing { right: 4%; bottom: 7%; width: 43%; }
+}

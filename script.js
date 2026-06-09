@@ -5841,6 +5841,12 @@ if (musicPlayers.length) {
   let currentLyricsLrcPath = '';
   let isExpandedSeekingWithPointer = false;
   let isVinylPlaying = false;
+  let vinylRotation = 0;
+  let vinylVelocity = 0;
+  let vinylAnimationFrame = 0;
+  let vinylLastFrameTime = 0;
+  const vinylPlaybackSpeed = 24;
+  const vinylDeceleration = 11;
   const lyricsCache = new Map();
   const lyricsOffsets = {
     consolation: 0,
@@ -8132,25 +8138,68 @@ if (musicPlayers.length) {
     window.setInterval(render, 1000);
   };
 
-  const syncVinylExperience = (isPlaying) => {
+  const renderVinylRotation = () => {
+    const rotationValue = `${vinylRotation.toFixed(3)}deg`;
+    vinylStages.forEach((stage) => stage.style.setProperty('--vinyl-rotation', rotationValue));
+    vinylDiscs.forEach((disc) => disc.style.setProperty('--vinyl-rotation', rotationValue));
+  };
+
+  const animateVinylRotation = (frameTime) => {
+    const elapsed = vinylLastFrameTime ? Math.min((frameTime - vinylLastFrameTime) / 1000, 0.05) : 0;
+    vinylLastFrameTime = frameTime;
+    const targetVelocity = isVinylPlaying && !reduceMotion ? vinylPlaybackSpeed : 0;
+
+    if (vinylVelocity < targetVelocity) {
+      vinylVelocity = Math.min(targetVelocity, vinylVelocity + vinylDeceleration * 1.8 * elapsed);
+    } else if (vinylVelocity > targetVelocity) {
+      vinylVelocity = Math.max(targetVelocity, vinylVelocity - vinylDeceleration * elapsed);
+    }
+
+    if (vinylVelocity > 0.01) {
+      vinylRotation = (vinylRotation + vinylVelocity * elapsed) % 360;
+      renderVinylRotation();
+    } else {
+      vinylVelocity = 0;
+    }
+
+    if (isVinylPlaying || vinylVelocity > 0) {
+      vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
+    } else {
+      vinylAnimationFrame = 0;
+      vinylLastFrameTime = 0;
+    }
+  };
+
+  const ensureVinylAnimation = () => {
+    if (!vinylAnimationFrame && (isVinylPlaying || vinylVelocity > 0)) {
+      vinylLastFrameTime = 0;
+      vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
+    }
+  };
+
+  const syncVinylExperience = (isPlaying, playbackState = null) => {
     const shouldRotate = Boolean(isPlaying);
+    const state = playbackState || (shouldRotate ? 'playing' : activePlayer ? 'paused' : 'ready');
     isVinylPlaying = shouldRotate;
 
     vinylStages.forEach((stage) => {
       stage.classList.toggle('is-playing', shouldRotate);
       stage.classList.toggle('vinyl-playing', shouldRotate);
       stage.classList.toggle('turntable-playing', shouldRotate);
+      stage.dataset.playbackState = state;
+      stage.closest('.turntable-assembly')?.setAttribute('data-playback-state', state);
     });
 
     vinylDiscs.forEach((disc) => {
       disc.classList.toggle('is-playing', shouldRotate);
       disc.classList.toggle('vinyl-playing', shouldRotate);
-      disc.style.animationPlayState = shouldRotate ? 'running' : 'paused';
-      disc.style.webkitAnimationPlayState = shouldRotate ? 'running' : 'paused';
+      disc.style.animationPlayState = 'paused';
+      disc.style.webkitAnimationPlayState = 'paused';
     });
 
     expandedPlayerCard?.classList.toggle('is-playing', shouldRotate);
     expandedPlayerCard?.classList.toggle('turntable-playing', shouldRotate);
+    ensureVinylAnimation();
   };
 
   setupVinylDebugPanel();
@@ -8783,6 +8832,7 @@ if (musicPlayers.length) {
         }
 
         syncTransportButtons(audio);
+        syncVinylExperience(false, 'ended');
 
         if (shouldAdvance) {
           resetMiniPlayer();
