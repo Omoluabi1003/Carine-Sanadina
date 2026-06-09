@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-09-app-wide-i18n';
+const APP_VERSION = 'carine-site-2026-06-09-lyrics-sources';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3777,6 +3777,19 @@ const ensureRequiredFeatureTranslations = () => {
 };
 ensureRequiredFeatureTranslations();
 
+const lyricsModeTranslationAdditions = {
+  en: { 'lyrics.syncedLyrics': 'Synced lyrics', 'lyrics.staticLyrics': 'Static lyrics', 'lyrics.syncedComingSoon': 'Synced lyrics unavailable' },
+  fr: { 'lyrics.syncedLyrics': 'Paroles synchronisées', 'lyrics.staticLyrics': 'Paroles statiques', 'lyrics.syncedComingSoon': 'Paroles synchronisées indisponibles' },
+  ln: { 'lyrics.syncedLyrics': 'Maloba oyo elandaka nzembo', 'lyrics.staticLyrics': 'Maloba ya loyembo', 'lyrics.syncedComingSoon': 'Maloba oyo elandaka nzembo ezali te' },
+  es: { 'lyrics.syncedLyrics': 'Letra sincronizada', 'lyrics.staticLyrics': 'Letra estática', 'lyrics.syncedComingSoon': 'Letra sincronizada no disponible' },
+  sw: { 'lyrics.syncedLyrics': 'Mashairi yaliyosawazishwa', 'lyrics.staticLyrics': 'Mashairi kamili', 'lyrics.syncedComingSoon': 'Mashairi yaliyosawazishwa hayapatikani' },
+  yo: { 'lyrics.syncedLyrics': 'Ọ̀rọ̀ orin tó ń tẹ̀lé àkókò', 'lyrics.staticLyrics': 'Ọ̀rọ̀ orin kíkún', 'lyrics.syncedComingSoon': 'Ọ̀rọ̀ orin tó ń tẹ̀lé àkókò kò sí' },
+  de: { 'lyrics.syncedLyrics': 'Synchronisierte Lyrics', 'lyrics.staticLyrics': 'Statischer Liedtext', 'lyrics.syncedComingSoon': 'Synchronisierte Lyrics nicht verfügbar' },
+  ar: { 'lyrics.syncedLyrics': 'كلمات متزامنة', 'lyrics.staticLyrics': 'كلمات ثابتة', 'lyrics.syncedComingSoon': 'الكلمات المتزامنة غير متاحة' },
+  'zh-CN': { 'lyrics.syncedLyrics': '同步歌词', 'lyrics.staticLyrics': '静态歌词', 'lyrics.syncedComingSoon': '暂无同步歌词' }
+};
+mergeTranslationAdditions(lyricsModeTranslationAdditions, 'lyrics mode translation additions');
+
 const ensureCompleteTrackTranslations = () => {
   const officialTrackKeys = ['title'];
   Object.entries(translations).forEach(([language, dictionary]) => {
@@ -4392,8 +4405,9 @@ const CARINE_MUSIC_PLAYLIST = [
     description: 'A joyful Afropop celebration of purpose, hustle, and the reason behind every season of growth.',
     coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/D60D546C-83C3-401A-8C56-3B48FD5022E0.png',
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Reason.mp3',
-    lyrics: '',
-    // TODO: Create /lyrics/reason.lrc when timed lyrics are available.
+    lyrics: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Reason.txt',
+    // Future timed lyrics path: /lyrics/reason.lrc
+    // Keep lyricsLrc empty until a genuinely synchronized file is available.
     lyricsLrc: '',
     about: 'Reason captures Carine Sanadina’s vibrant message of purpose, movement, and gratitude. It blends everyday hustle with celebratory energy, reminding listeners that every step, every dance, and every season of growth carries meaning.',
     credits: 'Artist: Carine Sanadina\nProduced by Omoluabi Productions\nPresented by Omoluabi Productions',
@@ -4412,8 +4426,9 @@ const CARINE_MUSIC_PLAYLIST = [
     description: 'A Lingala worship anthem celebrating God’s glory, majesty, and eternal praise through heartfelt adoration.',
     coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Halleluyah%20Cover.png',
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Hallelujah.mp3',
-    lyrics: '',
-    // TODO: Add /lyrics/halleluyah.lrc when synchronized lyrics are available.
+    lyrics: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Halleluyah.txt',
+    // Future timed lyrics path: /lyrics/halleluyah.lrc
+    // Keep lyricsLrc empty until a genuinely synchronized file is available.
     lyricsLrc: '',
     lyricsFallbackKey: 'tracks.halleluyah.lyricsFallback',
     about: 'Halleluyah is a faith-filled Lingala worship song that exalts God through praise, gratitude, and reverence. Drawing inspiration from heavenly worship and the language of adoration, the song invites listeners into an atmosphere of spiritual reflection, joy, and devotion.',
@@ -5809,11 +5824,13 @@ if (musicPlayers.length) {
   const lyricsMoreCredits = document.querySelector('[data-lyrics-more-credits]');
   const lyricsTabs = Array.from(document.querySelectorAll('[data-lyrics-tab]'));
   const lyricsExpandToggle = document.querySelector('[data-lyrics-expand]');
+  const lyricsModeLabel = document.querySelector('[data-lyrics-mode-label]');
   let activeLyricsTab = 'lyrics';
   let activeTrackId = '';
   let activeTrack = null;
   let lyricsLoadToken = 0;
   let loadedLyricsPath = '';
+  let loadedLyricsTrackId = '';
   const buttonListenerStatus = {};
   let isLyricsExpanded = false;
   let isLyricsMoreOpen = false;
@@ -5838,12 +5855,6 @@ if (musicPlayers.length) {
     wonderful: 'wonderful',
     womanifesto: 'womanifesto',
     'paranoia-persecutive': 'paranoiaPersecutive'
-  };
-  const lyricsSourceMap = {
-    consolation: '/lyrics/consolation.lrc',
-    gentillesse: '/lyrics/la-gentillesse.lrc',
-    wonderful: '/lyrics/wonderful.lrc',
-    womanifesto: '/lyrics/womanifesto.lrc'
   };
   let lyricsAnimationFrame = 0;
   let lastLyricsDiagnosticsTime = 0;
@@ -6260,6 +6271,25 @@ if (musicPlayers.length) {
     if (activePlayer && activeLyricsTab === 'lyrics') updateActiveLyric(getAudio(activePlayer));
   };
 
+  const hasLyricsFileExtension = (path, extension) => {
+    if (!path) return false;
+    try {
+      return new URL(path, window.location.href).pathname.toLowerCase().endsWith(extension);
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const setLyricsModeLabel = (mode = 'unavailable') => {
+    if (!lyricsModeLabel) return;
+    const isTimed = mode === 'timed';
+    const isStatic = mode === 'static';
+    lyricsModeLabel.hidden = !isTimed && !isStatic;
+    lyricsModeLabel.dataset.lyricsMode = mode;
+    lyricsModeLabel.textContent = isTimed ? t('lyrics.syncedLyrics', 'Synced lyrics') : t('lyrics.staticLyrics', 'Static lyrics');
+    lyricsModeLabel.title = isStatic ? t('lyrics.syncedComingSoon', 'Synced lyrics unavailable') : '';
+  };
+
   const fetchCachedText = async (path) => {
     if (!path) return '';
     const resolvedPath = resolveSiteAssetPath(path);
@@ -6292,6 +6322,7 @@ if (musicPlayers.length) {
       .map((entry, index) => ({ index, time: entry.time, endTime: entry.endTime, type: entry.type || 'line', text: entry.text }))
       .filter((entry) => entry.type === 'line');
     if (lyricsScroll) lyricsScroll.dataset.lyricsMode = 'timed';
+    setLyricsModeLabel('timed');
     renderLyrics();
     logLyricsDiagnostics('loaded', {
       activeTrackId: player?.dataset.trackId || '',
@@ -6307,6 +6338,7 @@ if (musicPlayers.length) {
     lyricEntries = parseLyricText(lyricsText);
     lyricTiming = [];
     if (lyricsScroll) lyricsScroll.dataset.lyricsMode = 'plain';
+    setLyricsModeLabel('static');
     renderLyrics();
   };
 
@@ -6328,9 +6360,20 @@ if (musicPlayers.length) {
     const nextTimingIndex = lyricTiming.findIndex((entry) => entry.index === activeLyricIndex) + 1;
     const nextTiming = nextTimingIndex > 0 ? lyricTiming[nextTimingIndex] : null;
 
+    const selectedTrack = MUSIC_TRACKS_BY_ID.get(activeTrackId) || null;
+    const lyricsMode = lyricTiming.length ? 'timed' : lyricEntries.length ? 'static' : 'unavailable';
+
     return {
-      activeTrackId: player?.dataset.trackId || '',
-      activeTrackTitle: player ? getTrackTitle(player) : '',
+      activeTrackId,
+      activeTrackTitle: selectedTrack?.title || (activePlayer ? getTrackTitle(activePlayer) : ''),
+      lyricsMode,
+      lyricsPath: selectedTrack?.lyricsPath || '',
+      staticLyricsPath: selectedTrack?.staticLyricsPath || '',
+      loadedLyricsTrackId,
+      lyricsLoadToken,
+      parsedLineCount: lyricEntries.length,
+      isTimedLyrics: lyricsMode === 'timed',
+      isStaticLyrics: lyricsMode === 'static',
       audioCurrentTime: roundLyricsTime(currentTime),
       effectiveTime: roundLyricsTime(effectiveTime),
       activeLyricIndex,
@@ -6344,7 +6387,6 @@ if (musicPlayers.length) {
       nextLineStartTime: nextTiming ? roundLyricsTime(nextTiming.time) : null,
       activeAudioExists: Boolean(audio),
       activeAudioMatchesTrack: Boolean(audio && player && audio === getAudio(player)),
-      lyricsMode: lyricTiming.length ? 'timed' : 'static',
       playbackState: !audio ? 'no-audio' : audio.ended ? 'ended' : audio.paused ? 'paused' : 'playing',
       syncEngineRunning: Boolean(lyricsAnimationFrame),
       lastScrollTime: lastLyricsScrollTime || null,
@@ -6423,32 +6465,39 @@ if (musicPlayers.length) {
     const requestedTrackId = player.dataset.trackId || '';
     const requestToken = lyricsLoadToken;
     const track = MUSIC_TRACKS_BY_ID.get(requestedTrackId);
+    const isCurrentRequest = () => requestToken === lyricsLoadToken
+      && activeTrackId === requestedTrackId
+      && currentLyricsPlayer === player;
+
     currentLyricsPlayer = player;
     currentLyricsLrcPath = '';
     loadedLyricsPath = '';
+    loadedLyricsTrackId = '';
     stopLyricsAnimationLoop();
     activeLyricIndex = -1;
     lyricEntries = [];
     lyricTiming = [];
+    setLyricsModeLabel('unavailable');
     setLyricsMessage(t('lyrics.loading', 'Loading lyrics…'));
 
-    const mappedLrcPath = lyricsSourceMap[requestedTrackId] || '';
-    const lrcPath = mappedLrcPath || track?.lyricsPath || player.dataset.trackLyricsLrc || '';
-    if (lrcPath) {
+    const lrcPath = track?.lyricsPath || '';
+    if (hasLyricsFileExtension(lrcPath, '.lrc')) {
       try {
         const lrcLyrics = parseLrcText(await fetchCachedText(lrcPath));
-        if (requestToken !== lyricsLoadToken || activeTrackId !== requestedTrackId || currentLyricsPlayer !== player) return;
+        if (!isCurrentRequest()) return;
         if (lrcLyrics.length) {
           currentLyricsLrcPath = lrcPath;
           loadedLyricsPath = lrcPath;
+          loadedLyricsTrackId = requestedTrackId;
           applyTimedLyrics(lrcLyrics, player, lrcPath);
           updateActiveLyric(getAudio(player), { forceScroll: true, event: 'load' });
           startLyricsAnimationLoop(getAudio(player));
           return;
         }
       } catch (error) {
+        if (!isCurrentRequest()) return;
         logLyricsDiagnostics('load-failed', {
-          activeTrackId: player.dataset.trackId || '',
+          activeTrackId: requestedTrackId,
           activeTrackTitle: getTrackTitle(player),
           loadedLrcFile: lrcPath,
           message: error?.message || String(error)
@@ -6456,24 +6505,28 @@ if (musicPlayers.length) {
       }
     }
 
-    const lyricsPath = track?.staticLyricsPath || player.dataset.trackLyrics || '';
-    if (!resolveSiteAssetPath(lyricsPath)) {
+    if (!isCurrentRequest()) return;
+    const lyricsPath = track?.staticLyricsPath || '';
+    if (!hasLyricsFileExtension(lyricsPath, '.txt')) {
       lyricEntries = [];
       lyricTiming = [];
-      setLyricsMessage(t(track?.lyricsFallbackKey || 'lyrics.unavailable', translate('lyrics.unavailable')));
+      setLyricsModeLabel('unavailable');
+      setLyricsMessage(t(track?.lyricsFallbackKey || 'lyrics.noLyricsForTrack', translate('lyrics.unavailable')));
       return;
     }
 
     try {
       const fallbackLyrics = await fetchCachedText(lyricsPath);
-      if (requestToken !== lyricsLoadToken || activeTrackId !== requestedTrackId || currentLyricsPlayer !== player) return;
+      if (!isCurrentRequest()) return;
       loadedLyricsPath = lyricsPath;
+      loadedLyricsTrackId = requestedTrackId;
       applyFallbackLyrics(fallbackLyrics);
     } catch (error) {
-      if (requestToken !== lyricsLoadToken || activeTrackId !== requestedTrackId || currentLyricsPlayer !== player) return;
+      if (!isCurrentRequest()) return;
       lyricEntries = [];
       lyricTiming = [];
-      setLyricsMessage(t(track?.lyricsFallbackKey || 'lyrics.unavailable', translate('lyrics.unavailable')));
+      setLyricsModeLabel('unavailable');
+      setLyricsMessage(t(track?.lyricsFallbackKey || 'lyrics.noLyricsForTrack', translate('lyrics.unavailable')));
     }
   };
 
@@ -6674,9 +6727,14 @@ if (musicPlayers.length) {
     if (trackChanged) {
       lyricsLoadToken += 1;
       currentLyricsPlayer = null;
+      currentLyricsLrcPath = '';
       loadedLyricsPath = '';
+      loadedLyricsTrackId = '';
+      stopLyricsAnimationLoop();
+      activeLyricIndex = -1;
       lyricEntries = [];
       lyricTiming = [];
+      setLyricsModeLabel('unavailable');
       setLyricsMessage(activeTrack ? t('lyrics.loading', 'Loading lyrics…') : translate('lyrics.selectTrack'));
     }
     musicPlayers.forEach((track) => track.classList.toggle('is-active', track === player));
@@ -9188,6 +9246,7 @@ if (musicPlayers.length) {
 
   window.addEventListener('carine:languagechange', () => {
     updateCommandButtons();
+    setLyricsModeLabel(lyricTiming.length ? 'timed' : lyricEntries.length ? 'static' : 'unavailable');
     if (activePlayer) {
       syncStage(activePlayer);
       renderTrackInfo(activePlayer);

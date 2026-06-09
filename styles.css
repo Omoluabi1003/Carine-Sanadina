@@ -3880,6 +3880,27 @@ body.mini-player-active .guide-panel {
   background: rgba(255, 248, 238, 0.075);
 }
 
+.lyrics-mode-label {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  border-radius: 999px;
+  color: rgba(234, 242, 255, 0.82);
+  background: rgba(8, 17, 32, 0.52);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.lyrics-mode-label[data-lyrics-mode="timed"] {
+  border-color: rgba(234, 211, 162, 0.34);
+  color: var(--gold-soft);
+}
+
+.lyrics-mode-label[hidden] { display: none; }
+
 .lyrics-expand-toggle {
   flex: 0 0 auto;
   min-height: 42px;
