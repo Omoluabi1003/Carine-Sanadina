@@ -10,16 +10,45 @@ const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const legalHtml = fs.readFileSync(path.join(root, 'legal/index.html'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
 
-const readTranslations = () => {
-  const start = script.indexOf('const translations = {}');
-  const end = script.indexOf('const supportedLanguages');
-  assert.notEqual(start, -1);
-  assert.notEqual(end, -1);
-  const context = {};
+const createI18nContext = () => {
+  const translationsStart = script.indexOf('const translations = {}');
+  const supportedLanguagesStart = script.indexOf('const supportedLanguages');
+  const auditStart = script.indexOf('const TRANSLATION_AUDIT_ALLOWED_TEXT');
+  const auditEnd = script.indexOf('const getAuditSelector');
+  assert.notEqual(translationsStart, -1);
+  assert.notEqual(supportedLanguagesStart, -1);
+  assert.notEqual(auditStart, -1);
+  assert.notEqual(auditEnd, -1);
+  const warnings = [];
+  const context = {
+    window: {
+      console: {
+        groupCollapsed() {},
+        groupEnd() {},
+        info() {},
+        table() {},
+        warn(...args) { warnings.push(args); }
+      }
+    },
+    console: { warn(...args) { warnings.push(args); } }
+  };
   vm.createContext(context);
-  vm.runInContext(`const DEFAULT_LANGUAGE = 'en';\n${script.slice(start, end)}\nthis.translations = translations;`, context);
-  return context.translations;
+  vm.runInContext(`
+    const DEFAULT_LANGUAGE = 'en';
+    ${script.slice(translationsStart, supportedLanguagesStart)}
+    const supportedLanguages = ['en', 'fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN'];
+    let currentLanguage = DEFAULT_LANGUAGE;
+    ${script.slice(auditStart, auditEnd)}
+    this.translations = translations;
+    this.mergeTranslationAdditions = mergeTranslationAdditions;
+    this.listMissingTranslations = listMissingTranslations;
+    this.auditEnglishDictionary = auditEnglishDictionary;
+  `, context);
+  context.warnings = warnings;
+  return context;
 };
+
+const readTranslations = () => createI18nContext().translations;
 
 test('every supported language contains every English translation key', () => {
   const translations = readTranslations();
@@ -28,7 +57,66 @@ test('every supported language contains every English translation key', () => {
   const englishKeys = Object.keys(translations.en);
   for (const language of expectedLanguages) {
     const missing = englishKeys.filter((key) => !(key in translations[language]) || translations[language][key] === '');
+    const extra = Object.keys(translations[language]).filter((key) => !(key in translations.en));
     assert.deepEqual(missing, [], `${language} is missing translations: ${missing.join(', ')}`);
+    assert.deepEqual(extra, [], `${language} has extra translations: ${extra.join(', ')}`);
+  }
+});
+
+test('English dictionary is clean and the contamination audit catches known scripts and terms', () => {
+  const context = createI18nContext();
+  const cleanReport = context.auditEnglishDictionary();
+  assert.equal(cleanReport.warnings.length, 0);
+  assert.equal(context.translations.en['tracks.paranoia.playLabel'], 'Play Paranoïa Persécutive');
+  assert.equal(context.translations.yo['tracks.paranoia.playLabel'], 'Mu Paranoïa Persécutive ṣiṣẹ́');
+
+  const contaminatedReport = context.auditEnglishDictionary({
+    yoruba: 'Mu orin ṣiṣẹ́ láti ọwọ́ Carine',
+    arabic: 'تشغيل',
+    chinese: '播放'
+  });
+  assert.equal(contaminatedReport.warnings.some(({ type }) => type === 'Yoruba term'), true);
+  assert.equal(contaminatedReport.warnings.some(({ type }) => type === 'Arabic script'), true);
+  assert.equal(contaminatedReport.warnings.some(({ type }) => type === 'Chinese character'), true);
+});
+
+test('safe translation merge skips unknown languages and invalid dictionaries without throwing', () => {
+  const context = createI18nContext();
+  const report = context.mergeTranslationAdditions({ xx: { greeting: 'Hello' }, fr: null }, 'test additions');
+  assert.deepEqual([...report.merged], []);
+  assert.deepEqual([...report.skippedUnknownLanguages], ['xx']);
+  assert.deepEqual([...report.skippedInvalidDictionaries], ['fr']);
+  assert.equal(context.warnings.length >= 2, true);
+});
+
+test('missing translation diagnostics safely report absent dictionaries, extra keys, and totals', () => {
+  const context = createI18nContext();
+  delete context.translations.de;
+  context.translations.fr['test.extra'] = 'supplémentaire';
+  const report = context.listMissingTranslations();
+  assert.equal(report.de.dictionaryExists, false);
+  assert.equal(report.de.missing.length, report.de.englishKeyCount);
+  assert.deepEqual([...report.fr.extra], ['test.extra']);
+  assert.equal(report.en.totalKeys, report.en.englishKeyCount);
+});
+
+test('recent dynamic features have translation keys in every supported language', () => {
+  const translations = readTranslations();
+  const requiredKeys = [
+    'videos.title', 'videos.subtitle', 'videos.openDrawer', 'videos.watch', 'videos.close', 'videos.openOnYouTube',
+    'videos.channel', 'videos.moreComingSoon', 'videos.unavailable', 'videos.loading', 'music.playlist',
+    'music.playlistLabel', 'music.time', 'music.duration', 'playlist.close', 'playlist.nowPlaying',
+    'playlist.selectTrack', 'player.expand', 'player.collapse', 'player.nowPlaying', 'player.ready',
+    'player.playing', 'player.paused', 'player.previous', 'player.next', 'player.shuffle', 'player.repeatOff',
+    'player.repeatAll', 'player.repeatOne', 'lyrics.label', 'lyrics.expand', 'lyrics.collapse', 'lyrics.loading',
+    'lyrics.unavailable', 'lyrics.syncedComingSoon', 'lyrics.staticLyrics', 'lyrics.noLyricsForTrack',
+    'guide.launcher', 'guide.title', 'guide.placeholder', 'guide.send', 'guide.close', 'guide.suggestions',
+    'guide.fallback', 'guide.booking', 'install.title', 'install.body', 'install.button', 'install.later',
+    'install.iosInstruction', 'install.alreadyInstalled'
+  ];
+  for (const [language, dictionary] of Object.entries(translations)) {
+    const missing = requiredKeys.filter((key) => !(key in dictionary) || dictionary[key] === '');
+    assert.deepEqual(missing, [], `${language} is missing recent-feature translations: ${missing.join(', ')}`);
   }
 });
 
@@ -36,8 +124,11 @@ test('dynamic translation pipeline exposes diagnostics and refresh hooks', () =>
   for (const contract of [
     'window.auditTranslations = auditTranslations',
     'window.listMissingTranslations = listMissingTranslations',
+    'window.auditEnglishDictionary = auditEnglishDictionary',
+    'window.refreshLocalizedUI = refreshLocalizedUI',
     'window.forceTranslateApp = () =>',
     "window.dispatchEvent(new CustomEvent('carine:languagechange'",
+    'const refreshLocalizedUI = (language = currentLanguage) =>',
     'refreshPlaylistTranslationData();',
     "document.documentElement.classList.toggle('is-rtl', nextLanguage === 'ar')"
   ]) {
