@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-09-lyrics-sources';
+const APP_VERSION = 'carine-site-2026-06-09-ios-vinyl-rotation';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -8140,8 +8140,13 @@ if (musicPlayers.length) {
 
   const renderVinylRotation = () => {
     const rotationValue = `${vinylRotation.toFixed(3)}deg`;
+    const discTransform = `translate3d(0, 0, 4px) rotateZ(${rotationValue})`;
     vinylStages.forEach((stage) => stage.style.setProperty('--vinyl-rotation', rotationValue));
-    vinylDiscs.forEach((disc) => disc.style.setProperty('--vinyl-rotation', rotationValue));
+    vinylDiscs.forEach((disc) => {
+      disc.style.setProperty('--vinyl-rotation', rotationValue);
+      disc.style.transform = discTransform;
+      disc.style.webkitTransform = discTransform;
+    });
   };
 
   const animateVinylRotation = (frameTime) => {

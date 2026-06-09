@@ -8943,8 +8943,11 @@ body.video-overlay-open {
 .turntable-assembly.expanded-player-card.turntable-playing .expanded-vinyl-disc {
   z-index: 2;
   animation: none !important;
+  -webkit-transform: translate3d(0, 0, 4px) rotateZ(var(--vinyl-rotation));
   transform: translate3d(0, 0, 4px) rotateZ(var(--vinyl-rotation));
+  -webkit-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   will-change: transform;
   background:
