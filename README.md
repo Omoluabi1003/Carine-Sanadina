@@ -1,5 +1,32 @@
 # Carine-Sanadina
 
+## Local development
+
+This project is a dependency-free static site. Its automated tests use Node.js's built-in test runner; it does not require Playwright or downloaded browser binaries.
+
+```sh
+npm install
+npm run lint
+npm run build
+npm run test
+```
+
+Serve the production build from `dist/` with any static HTTP server. For example:
+
+```sh
+python3 -m http.server 4173 --directory dist
+```
+
+### npm 11 proxy warning
+
+If npm reports `Unknown env config "http-proxy"`, remove the legacy `npm_config_http_proxy` environment variable before invoking npm. Standard `HTTP_PROXY`, `HTTPS_PROXY`, and npm's supported `npm_config_proxy` / `npm_config_https_proxy` settings can remain configured.
+
+```sh
+unset npm_config_http_proxy
+```
+
+The warning comes from the invoking shell or CI environment, not from this repository; there is no project `.npmrc` defining `http-proxy`.
+
 ## Deployment and cache policy
 
 - Vercel builds this static site with `npm run build` and serves the generated `dist/` directory.
