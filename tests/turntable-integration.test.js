@@ -17,12 +17,13 @@ test('turntable hardware is integrated inside one deck assembly', () => {
   assert.match(assembly, /class="tonearm-assembly"[^>]*data-tonearm/);
   assert.match(assembly, /class="tonearm-counterweight"/);
   assert.match(assembly, /class="tonearm-headshell"/);
+  assert.doesNotMatch(assembly, /class="tonearm-rest"/);
   assert.match(assembly, /class="deck-ambient-light"/);
 });
 
 test('turntable geometry remains deck-relative and circular in layout', () => {
   assert.match(css, /\.turntable-assembly\s*\{[\s\S]*?perspective:\s*1200px/);
-  assert.match(css, /\.tonearm-assembly\s*\{[\s\S]*?position:\s*absolute/);
+  assert.match(css, /\.tonearm-assembly\s*\{[\s\S]*?position:\s*absolute[\s\S]*?left:\s*42\.5%/);
   assert.match(css, /\.turntable-assembly \.expanded-vinyl-disc\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/);
   assert.doesNotMatch(css, /\.tonearm-assembly\s*\{[^}]*\b(?:vw|vh|dvw|dvh)\b/);
   assert.match(css, /\.turntable-assembly \.console-turntable::before\s*\{[\s\S]*?transform:\s*translateZ\(-8px\)/);
