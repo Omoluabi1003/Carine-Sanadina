@@ -9,6 +9,29 @@ const PLAYLIST_VERSION = APP_VERSION;
 
 const translations = {};
 
+function mergeTranslationAdditions(additions, label = 'translation additions') {
+  const report = { merged: [], skippedUnknownLanguages: [], skippedInvalidDictionaries: [] };
+
+  Object.entries(additions || {}).forEach(([language, dictionary]) => {
+    if (!translations[language]) {
+      report.skippedUnknownLanguages.push(language);
+      console.warn(`[i18n] Skipping ${label}: unknown language`, language);
+      return;
+    }
+
+    if (!dictionary || typeof dictionary !== 'object' || Array.isArray(dictionary)) {
+      report.skippedInvalidDictionaries.push(language);
+      console.warn(`[i18n] Skipping ${label}: invalid dictionary`, language);
+      return;
+    }
+
+    Object.assign(translations[language], dictionary);
+    report.merged.push(language);
+  });
+
+  return report;
+}
+
 translations.en = {
   'html.lang': 'en',
   'meta.title': 'Carine Sanadina | Author, Survivor Advocate & Healing Voice | Jacksonville, FL',
@@ -123,7 +146,7 @@ translations.en = {
   'tracks.paranoia.shortDescription': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
   'tracks.paranoia.description': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
   'paranoiaPersecutiveSynopsis': 'A cinematic reflection on intuition, vigilance, and spiritual discernment.',
-  'tracks.paranoia.playLabel': 'Mu Paranoïa Persécutive ṣiṣẹ́',
+  'tracks.paranoia.playLabel': 'Play Paranoïa Persécutive',
   'tracks.reason.title': 'Reason',
   'tracks.reason.audioLabel': 'Reason by Carine Sanadina',
   'tracks.reason.coverAlt': 'Reason cover art',
@@ -1106,7 +1129,7 @@ translations.yo = {
   "tracks.paranoia.shortDescription": "Orin Faransé sinimátíkì nipa ìmọ̀lára inú, aabo, ati ìṣọ́ra ìwalaaye, nibiti ìṣọ́ra di ìkìlọ̀ ati ọgbọn.",
   "tracks.paranoia.description": "Orin Faransé sinimátíkì nipa ìmọ̀lára inú, aabo, ati ìṣọ́ra ìwalaaye, nibiti ìṣọ́ra di ìkìlọ̀ ati ọgbọn.",
   "paranoiaPersecutiveSynopsis": "Ìrònú alárinká nípa ìmọ̀ inú, ìṣọ́ra àti ìmòye ẹ̀mí.",
-  "tracks.paranoia.playLabel": "Play Paranoïa Persécutive",
+  "tracks.paranoia.playLabel": "Mu Paranoïa Persécutive ṣiṣẹ́",
   "mini.label": "Ẹrọ orin mini lọwọlọwọ",
   "mini.noTrack": "Ko si orin ti o yan",
   "mini.toggleLabel": "Ṣiṣẹ tabi da duro orin lọwọlọwọ",
@@ -1330,11 +1353,7 @@ premiumExperienceTranslations.yo = {
   'press.kicker': 'Ohun elo atẹjade', 'bio.title': 'Ìtàn kukuru fún mídia', 'speaking.title': 'Àwọn koko ọrọ sisọ', 'inquiry.title': 'Ìbéèrè ìfọwọ́sowọ́pọ̀', 'inquiry.cta': 'Bẹrẹ ìbéèrè'
 };
 
-Object.entries(premiumExperienceTranslations).forEach(([language, dictionary]) => {
-  if (translations[language]) {
-    Object.assign(translations[language], dictionary);
-  }
-});
+mergeTranslationAdditions(premiumExperienceTranslations, 'premium experience translations');
 
 
 const fullSiteTranslationAdditions = {
@@ -1532,11 +1551,7 @@ const fullSiteTranslationAdditions = {
   }
 };
 
-Object.entries(fullSiteTranslationAdditions).forEach(([language, dictionary]) => {
-  if (translations[language]) {
-    Object.assign(translations[language], dictionary);
-  }
-});
+mergeTranslationAdditions(fullSiteTranslationAdditions, 'full-site translation additions');
 
 
 
@@ -1751,11 +1766,7 @@ const completeTranslationOverrides = {
   }
 };
 
-Object.entries(completeTranslationOverrides).forEach(([language, dictionary]) => {
-  if (translations[language]) {
-    Object.assign(translations[language], dictionary);
-  }
-});
+mergeTranslationAdditions(completeTranslationOverrides, 'complete translation overrides');
 
 Object.entries(translations).forEach(([language, dictionary]) => {
   const sharedDefaults = {
@@ -1851,9 +1862,7 @@ const localizedGuideLabels = {
   }
 };
 
-Object.entries(localizedGuideLabels).forEach(([language, labels]) => {
-  if (translations[language]) Object.assign(translations[language], labels);
-});
+mergeTranslationAdditions(localizedGuideLabels, 'localized guide labels');
 
 
 const finalTranslationAuditOverrides = {
@@ -2248,9 +2257,7 @@ const finalTranslationAuditOverrides = {
   }
 };
 
-Object.entries(finalTranslationAuditOverrides).forEach(([language, dictionary]) => {
-  if (translations[language]) Object.assign(translations[language], dictionary);
-});
+mergeTranslationAdditions(finalTranslationAuditOverrides, 'final translation audit overrides');
 
 
 const reflectionAdvocacyAuditTranslations = {
@@ -2308,9 +2315,7 @@ const reflectionAdvocacyAuditTranslations = {
   }
 };
 
-Object.entries(reflectionAdvocacyAuditTranslations).forEach(([language, dictionary]) => {
-  if (translations[language]) Object.assign(translations[language], dictionary);
-});
+mergeTranslationAdditions(reflectionAdvocacyAuditTranslations, 'reflection advocacy translations');
 
 const extendedLanguageTranslations = {
   de: {
@@ -3363,9 +3368,7 @@ Object.values(translations).forEach((dictionary) => {
   dictionary['language.name.zh-CN'] = '中文';
   delete dictionary['language.name.zh'];
 });
-Object.entries(i18nHardeningTranslations).forEach(([language, dictionary]) => {
-  if (translations[language]) Object.assign(translations[language], dictionary);
-});
+mergeTranslationAdditions(i18nHardeningTranslations, 'i18n hardening translations');
 
 
 const finalTranslationCoverageOverrides = {
@@ -3475,9 +3478,7 @@ const finalTranslationCoverageOverrides = {
   }
 };
 
-Object.entries(finalTranslationCoverageOverrides).forEach(([language, dictionary]) => {
-  if (translations[language]) Object.assign(translations[language], dictionary);
-});
+mergeTranslationAdditions(finalTranslationCoverageOverrides, 'final translation coverage overrides');
 
 const audioConsoleTranslations = {
   en: { 'console.label': 'Carine Sanadina luxury audio console', 'console.ready': 'Ready', 'console.playing': 'Playing', 'console.paused': 'Paused', 'console.previous': 'Previous track', 'console.closePlaylist': 'Close playlist', 'console.collection': 'Listening collection', 'console.selectSynopsis': 'Select a song to begin a healing-centered listening experience.' },
@@ -3491,9 +3492,7 @@ const audioConsoleTranslations = {
   'zh-CN': { 'console.label': 'Carine Sanadina 豪华音频控制台', 'console.ready': '就绪', 'console.playing': '播放中', 'console.paused': '已暂停', 'console.previous': '上一首', 'console.closePlaylist': '关闭播放列表', 'console.collection': '聆听精选', 'console.selectSynopsis': '选择一首歌曲，开启以疗愈为中心的聆听体验。' }
 };
 
-Object.entries(audioConsoleTranslations).forEach(([language, dictionary]) => {
-  if (translations[language]) Object.assign(translations[language], dictionary);
-});
+mergeTranslationAdditions(audioConsoleTranslations, 'audio console translations');
 
 const halleluyahTranslations = {
   en: {
@@ -3559,27 +3558,10 @@ const halleluyahTranslations = {
     'halleluyahSynopsis': '一首林加拉语敬拜赞歌，以真挚敬拜颂扬上帝的荣耀、威严与永恒赞美。',
     'tracks.halleluyah.credits': '艺人：Carine Sanadina\n语言：Lingala\n制作：Omoluabi Productions\n呈现：Omoluabi Productions'
   },
-  'videos.kicker': 'YouTube',
-  'videos.heading': 'Àwọn Fídíò',
-  'videos.subtitle': 'Wo orin, ìrònú àti iṣẹ́ àtinúdá Carine Sanadina láì fi ojúlé náà sílẹ̀.',
-  'videos.watch': 'Wo Fídíò',
-  'videos.close': 'Pa Fídíò',
-  'videos.openYoutube': 'Ṣí lórí YouTube',
-  'videos.visitChannel': 'Ṣàbẹ̀wò sí ikanni YouTube Carine',
-  'videos.shortChannel': 'Ikanni YouTube',
-  'videos.channelAccessDescription': 'Wo àwọn fídíò, orin, ìrònú àti iṣẹ́ ẹ̀dá Carine Sanadina.',
-  'videos.more': 'Àwọn fídíò míì',
-  'videos.comingSoon': 'Àwọn fídíò míì ń bọ̀ láìpẹ́.',
-  'videos.channelTitle': 'Carine Sanadina lórí YouTube',
-  'videos.channelDescription': 'Àyè inú ojúlé fún orin, ìrònú àti iṣẹ́ fídíò àtinúdá Carine.',
-  'videos.placeholder': 'Àwọn fídíò tuntun yóò hàn níbí nígbà tí a bá fìdí ID YouTube wọn múlẹ̀.',
-  'videos.modalLabel': 'Ẹ̀rọ fídíò Carine Sanadina',
-  'videos.category': 'Orin • Ìrònú • Àtinúdá',
+
 };
 
-Object.entries(halleluyahTranslations).forEach(([language, dictionary]) => {
-  if (translations[language]) Object.assign(translations[language], dictionary);
-});
+mergeTranslationAdditions(halleluyahTranslations, 'Halleluyah translations');
 
 const appWideTranslationAdditions = {
   en: {
@@ -3667,9 +3649,7 @@ const appWideTranslationAdditions = {
   }
 };
 
-Object.entries(appWideTranslationAdditions).forEach(([language, dictionary]) => {
-  if (translations[language]) Object.assign(translations[language], dictionary);
-});
+mergeTranslationAdditions(appWideTranslationAdditions, 'app-wide translation additions');
 
 const lateVisibleTranslationFixes = {
   de: {
@@ -3695,7 +3675,7 @@ const lateVisibleTranslationFixes = {
     'footer.credit': '网站构思、设计与数字展示由 Omoluabi Productions 完成；该创意项目由 ETL GIS Consulting LLC 运营。', 'press.books.body': 'Carine 的书写涉及隐秘虐待、有毒关系、信仰、希望，以及危机后的恢复。', 'press.music.body': 'Consolation、La Gentillesse、Wonderful、Womanifesto、Paranoïa Persécutive、Reason 和 Halleluyah 共同呈现 Carine 以疗愈为中心的艺术窗口。', 'reflection.sunshine.excerpt': '关于在道路漫长、沉重且不确定时仍选择希望的感悟。', 'reflection.kindness.excerpt': '关于把善意视为力量、界限与日常疗愈实践的感悟。'
   }
 };
-Object.entries(lateVisibleTranslationFixes).forEach(([language, dictionary]) => Object.assign(translations[language], dictionary));
+mergeTranslationAdditions(lateVisibleTranslationFixes, 'late visible translation fixes');
 
 const localizedAssetTemplates = {
   de: { audio: '{title} von Carine Sanadina', cover: 'Cover von {title}', fallback: 'Das Cover von {title} ist vorübergehend nicht verfügbar.', play: '{title} abspielen', bookCover: 'Buchcover von {title} von Carine Sanadina' },
@@ -3748,7 +3728,54 @@ const finalTrackTranslationAdditions = {
     'tracks.halleluyah.audioLabel': 'Carine Sanadina 演唱的 Halleluyah', 'tracks.halleluyah.coverAlt': 'Halleluyah 封面', 'tracks.halleluyah.fallback': 'Halleluyah 封面暂时无法显示。', 'tracks.halleluyah.number': '曲目 07', 'tracks.halleluyah.playLabel': '播放 Halleluyah', 'tracks.halleluyah.lyricsFallback': '同步歌词即将上线。'
   }
 };
-Object.entries(finalTrackTranslationAdditions).forEach(([language, dictionary]) => Object.assign(translations[language], dictionary));
+mergeTranslationAdditions(finalTrackTranslationAdditions, 'final track translation additions');
+
+const requiredFeatureTranslationAliases = {
+  'videos.title': 'videos.heading',
+  'videos.openDrawer': 'videos.heading',
+  'videos.openOnYouTube': 'videos.openYoutube',
+  'videos.channel': 'videos.shortChannel',
+  'videos.moreComingSoon': 'videos.comingSoon',
+  'videos.unavailable': 'videos.placeholder',
+  'videos.loading': 'lyrics.loading',
+  'playlist.close': 'console.closePlaylist',
+  'playlist.nowPlaying': 'music.nowPlaying',
+  'playlist.selectTrack': 'lyrics.selectTrack',
+  'player.expand': 'mini.expand',
+  'player.collapse': 'mini.close',
+  'player.nowPlaying': 'music.nowPlaying',
+  'player.ready': 'console.ready',
+  'player.playing': 'console.playing',
+  'player.paused': 'console.paused',
+  'player.previous': 'console.previous',
+  'player.next': 'music.nextTrack',
+  'player.shuffle': 'music.shuffle',
+  'player.repeatOff': 'music.repeatOff',
+  'player.repeatAll': 'music.repeatAll',
+  'player.repeatOne': 'music.repeatOne',
+  'lyrics.label': 'lyrics.tab.lyrics',
+  'lyrics.syncedComingSoon': 'tracks.halleluyah.lyricsFallback',
+  'lyrics.staticLyrics': 'lyrics.tab.lyrics',
+  'lyrics.noLyricsForTrack': 'lyrics.unavailable',
+  'guide.suggestions': 'guide.startersTitle',
+  'guide.fallback': 'guide.answer.unsure',
+  'guide.booking': 'guide.answer.booking',
+  'install.title': 'pwa.instructionsTitle',
+  'install.body': 'pwa.installText',
+  'install.button': 'pwa.installButton',
+  'install.later': 'pwa.maybeLater',
+  'install.iosInstruction': 'pwa.iosInstructions',
+  'install.alreadyInstalled': 'pwa.fallbackHint'
+};
+
+const ensureRequiredFeatureTranslations = () => {
+  Object.values(translations).forEach((dictionary) => {
+    Object.entries(requiredFeatureTranslationAliases).forEach(([requiredKey, sourceKey]) => {
+      if (!(requiredKey in dictionary) && sourceKey in dictionary) dictionary[requiredKey] = dictionary[sourceKey];
+    });
+  });
+};
+ensureRequiredFeatureTranslations();
 
 const ensureCompleteTrackTranslations = () => {
   const officialTrackKeys = ['title'];
@@ -3764,7 +3791,7 @@ const ensureCompleteTrackTranslations = () => {
 };
 ensureCompleteTrackTranslations();
 
-const supportedLanguages = Object.keys(translations);
+const supportedLanguages = ['en', 'fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN'];
 let currentLanguage = DEFAULT_LANGUAGE;
 
 const isDevelopmentHost = () => ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
@@ -3839,30 +3866,70 @@ const TRANSLATION_AUDIT_ALLOWED_TEXT = [
 const isAllowedTranslationAuditText = (value = '') => TRANSLATION_AUDIT_ALLOWED_TEXT.includes(String(value).trim());
 
 const listMissingTranslations = () => {
-  const englishKeys = Object.keys(translations[DEFAULT_LANGUAGE] || {}).sort();
+  const englishDictionary = translations[DEFAULT_LANGUAGE] || {};
+  const englishKeys = Object.keys(englishDictionary).sort();
   const report = supportedLanguages.reduce((summary, language) => {
-    if (language === DEFAULT_LANGUAGE) return summary;
-    const dictionary = translations[language] || {};
+    const dictionaryExists = Boolean(translations[language] && typeof translations[language] === 'object');
+    const dictionary = dictionaryExists ? translations[language] : {};
+    const dictionaryKeys = Object.keys(dictionary).sort();
     const missing = englishKeys.filter((key) => !(key in dictionary) || dictionary[key] === '');
-    const englishFallbacks = englishKeys.filter((key) => (
-      dictionary[key] === translations[DEFAULT_LANGUAGE][key]
+    const extra = dictionaryKeys.filter((key) => !(key in englishDictionary));
+    const englishFallbacks = language === DEFAULT_LANGUAGE ? [] : englishKeys.filter((key) => (
+      dictionary[key] === englishDictionary[key]
       && !isAllowedTranslationAuditText(String(dictionary[key] || ''))
       && key !== 'html.lang'
       && !key.startsWith('language.name.')
     ));
-    summary[language] = { missing, englishFallbacks };
+    summary[language] = {
+      dictionaryExists,
+      totalKeys: dictionaryKeys.length,
+      englishKeyCount: englishKeys.length,
+      missing,
+      extra,
+      englishFallbacks
+    };
     return summary;
   }, {});
 
-  window.console?.groupCollapsed?.('[i18n] Missing translation audit');
+  window.console?.groupCollapsed?.('[i18n] Translation dictionary coverage');
   window.console?.table?.(Object.entries(report).map(([language, result]) => ({
     language,
+    dictionaryExists: result.dictionaryExists,
+    totalKeys: result.totalKeys,
+    englishKeyCount: result.englishKeyCount,
     missing: result.missing.length,
+    extra: result.extra.length,
     englishFallbacks: result.englishFallbacks.length
   })));
   window.console?.info?.(report);
   window.console?.groupEnd?.();
   return report;
+};
+
+const ENGLISH_CONTAMINATION_CHECKS = [
+  { type: 'Yoruba term', pattern: /(?<![\p{L}\p{M}])(ṣiṣẹ́?|láti|ọwọ́?|orin|àwòrán)(?![\p{L}\p{M}])/iu },
+  { type: 'Arabic script', pattern: /[\u0600-\u06ff]/u },
+  { type: 'Chinese character', pattern: /[\u3400-\u4dbf\u4e00-\u9fff]/u }
+];
+
+const auditEnglishDictionary = (dictionary = translations[DEFAULT_LANGUAGE] || {}) => {
+  const warnings = Object.entries(dictionary).flatMap(([key, value]) => {
+    if (key.startsWith('language.name.')) return [];
+    const text = String(value ?? '');
+    return ENGLISH_CONTAMINATION_CHECKS
+      .filter(({ pattern }) => pattern.test(text))
+      .map(({ type }) => ({ key, value: text, type }));
+  });
+
+  if (warnings.length) {
+    window.console?.groupCollapsed?.(`[i18n] English dictionary contamination warnings (${warnings.length})`);
+    warnings.forEach((warning) => window.console?.warn?.('[i18n] Possible non-English English value', warning));
+    window.console?.groupEnd?.();
+  } else {
+    window.console?.info?.('[i18n] English dictionary contamination audit passed.');
+  }
+
+  return { totalKeys: Object.keys(dictionary).length, warnings };
 };
 
 const getAuditSelector = (element) => {
@@ -3880,6 +3947,7 @@ const isAuditElementVisible = (element) => {
 
 const auditTranslations = () => {
   const missingTranslations = listMissingTranslations();
+  const englishContamination = auditEnglishDictionary();
   const allVisibleElements = Array.from(document.body?.querySelectorAll('*') || []).filter(isAuditElementVisible);
   const elementsWithoutTranslationKeys = allVisibleElements.flatMap((element) => Array.from(element.childNodes || [])
     .filter((node) => node.nodeType === Node.TEXT_NODE)
@@ -3940,7 +4008,8 @@ const auditTranslations = () => {
     hardcodedTitleAttributes: attributeAudit('title', 'i18nTitle'),
     hardcodedAltText: attributeAudit('alt', 'i18nAlt'),
     dynamicLabelsNotRefreshed,
-    missingTranslations
+    missingTranslations,
+    englishContamination
   };
 
   window.console?.groupCollapsed?.(`[i18n] Translation coverage audit: ${currentLanguage}`);
@@ -3950,6 +4019,7 @@ const auditTranslations = () => {
 };
 
 window.listMissingTranslations = listMissingTranslations;
+window.auditEnglishDictionary = auditEnglishDictionary;
 window.auditTranslations = auditTranslations;
 
 const applyTranslations = (language) => {
@@ -4026,18 +4096,27 @@ const renderLocalizedContent = (language) => {
   window.dispatchEvent(new CustomEvent('carine:languagechange', { detail: { language: nextLanguage } }));
 };
 
+const refreshLocalizedUI = (language = currentLanguage) => {
+  const nextLanguage = applyTranslations(language);
+
+  // Static data-i18n content and accessibility attributes are updated above. Playlist
+  // translation data is rebuilt directly; the language-change event refreshes the
+  // component renderers registered by reflections, music/lyrics, the expanded player,
+  // About/Credits panels, visualization controls, YouTube, the guide, PWA, and splash UI.
+  refreshPlaylistTranslationData();
+  renderLocalizedContent(nextLanguage);
+  return nextLanguage;
+};
+
 const applyLanguage = (language) => {
   const nextLanguage = normalizeLanguage(language);
   storeLanguage(nextLanguage);
-  applyTranslations(nextLanguage);
-  refreshPlaylistTranslationData();
-  renderLocalizedContent(nextLanguage);
+  return refreshLocalizedUI(nextLanguage);
 };
 
+window.refreshLocalizedUI = refreshLocalizedUI;
 window.forceTranslateApp = () => {
-  applyTranslations(currentLanguage);
-  refreshPlaylistTranslationData();
-  renderLocalizedContent(currentLanguage);
+  refreshLocalizedUI(currentLanguage);
   return auditTranslations();
 };
 
