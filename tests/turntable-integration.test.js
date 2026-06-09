@@ -31,6 +31,16 @@ test('turntable geometry remains deck-relative and circular in layout', () => {
   assert.match(css, /data-playback-state="playing"[\s\S]*?\.tonearm-moving-group\s*\{[\s\S]*?rotate\(18deg\)/);
 });
 
+test('every track fills the same vinyl label area', () => {
+  const vinylArtworkRule = css.match(/\.direct-drive-deck \.expanded-vinyl-label \.mobile-player-cover\s*\{([\s\S]*?)\}/)?.[1] || '';
+
+  assert.match(vinylArtworkRule, /width:\s*100%/);
+  assert.match(vinylArtworkRule, /height:\s*100%/);
+  assert.match(vinylArtworkRule, /padding:\s*0/);
+  assert.match(vinylArtworkRule, /object-fit:\s*cover/);
+  assert.match(vinylArtworkRule, /object-position:\s*center center/);
+});
+
 test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states', () => {
   assert.match(script, /requestAnimationFrame\(animateVinylRotation\)/);
   assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
