@@ -25,6 +25,9 @@ test('turntable geometry remains deck-relative and circular in layout', () => {
   assert.match(css, /\.tonearm-assembly\s*\{[\s\S]*?position:\s*absolute/);
   assert.match(css, /\.turntable-assembly \.expanded-vinyl-disc\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/);
   assert.doesNotMatch(css, /\.tonearm-assembly\s*\{[^}]*\b(?:vw|vh|dvw|dvh)\b/);
+  assert.match(css, /\.turntable-assembly \.console-turntable::before\s*\{[\s\S]*?transform:\s*translateZ\(-8px\)/);
+  assert.doesNotMatch(css, /\.turntable-assembly \.console-turntable\s*\{[^}]*rotateX\(/);
+  assert.match(css, /data-playback-state="playing"[\s\S]*?\.tonearm-moving-group\s*\{[\s\S]*?rotate\(18deg\)/);
 });
 
 test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states', () => {
