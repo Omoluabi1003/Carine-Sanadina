@@ -8978,8 +8978,8 @@ body.video-overlay-open {
 .tonearm-assembly {
   position: absolute;
   z-index: 5;
-  top: 13%;
-  left: 48%;
+  top: 15%;
+  left: 42.5%;
   width: 25%;
   aspect-ratio: 1 / 1;
   transform: translateZ(22px);
@@ -9073,26 +9073,15 @@ body.video-overlay-open {
 
 .tonearm-headshell i {
   position: absolute;
-  left: 8%;
-  bottom: -38%;
-  width: 42%;
-  height: 42%;
-  border-radius: 2px 2px 50% 50%;
-  background: linear-gradient(90deg, #8a482f, var(--rose-gold));
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.45);
+  left: 12%;
+  bottom: -22%;
+  width: 34%;
+  height: 28%;
+  border-radius: 1px 1px 55% 55%;
+  background: linear-gradient(90deg, #151b20, #59646b 72%, #b98562);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
-.tonearm-rest {
-  position: absolute;
-  z-index: 1;
-  right: 1%;
-  top: 48%;
-  width: 8%;
-  height: 22%;
-  border-radius: 5px;
-  background: linear-gradient(90deg, #152431, #a9b6bf 48%, #2d3d49);
-  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
-}
 
 .deck-ambient-light {
   position: absolute;
@@ -9119,7 +9108,7 @@ body.video-overlay-open {
 
 @media (max-width: 700px) {
   .turntable-assembly { --platter-left: 9%; --platter-top: 18%; --platter-size: 43%; }
-  .tonearm-assembly { top: 14%; left: 48%; width: 30%; }
+  .tonearm-assembly { top: 16%; left: 40%; width: 30%; }
   .turntable-assembly .console-turntable { left: var(--platter-left); top: var(--platter-top); width: var(--platter-size); }
 }
 
@@ -9132,6 +9121,6 @@ body.video-overlay-open {
 @media (max-width: 700px) {
   .turntable-assembly { aspect-ratio: 4 / 3; }
   .turntable-assembly .console-turntable { left: 7%; top: 17%; width: 45%; }
-  .tonearm-assembly { top: 10%; left: 50%; width: 29%; }
+  .tonearm-assembly { top: 13%; left: 40.5%; width: 29%; }
   .turntable-assembly .console-now-playing { right: 4%; bottom: 7%; width: 43%; }
 }
