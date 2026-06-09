@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-07-fair-shuffle-videos';
+const APP_VERSION = 'carine-site-2026-06-09-app-wide-i18n';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -123,7 +123,7 @@ translations.en = {
   'tracks.paranoia.shortDescription': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
   'tracks.paranoia.description': 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
   'paranoiaPersecutiveSynopsis': 'A cinematic reflection on intuition, vigilance, and spiritual discernment.',
-  'tracks.paranoia.playLabel': 'Play Paranoïa Persécutive',
+  'tracks.paranoia.playLabel': 'Mu Paranoïa Persécutive ṣiṣẹ́',
   'tracks.reason.title': 'Reason',
   'tracks.reason.audioLabel': 'Reason by Carine Sanadina',
   'tracks.reason.coverAlt': 'Reason cover art',
@@ -3581,6 +3581,189 @@ Object.entries(halleluyahTranslations).forEach(([language, dictionary]) => {
   if (translations[language]) Object.assign(translations[language], dictionary);
 });
 
+const appWideTranslationAdditions = {
+  en: {
+    'brand.logoAlt': 'Carine Sanadina logo',
+    'lyrics.loading': 'Loading lyrics…',
+    'videos.iframeTitle': '{title} — YouTube video player',
+    'videos.cardDescription': 'Watch Carine Sanadina’s official creative work inside the website.',
+    'guide.answer.biography': 'Carine Sanadina is a Congolese-born, Jacksonville-based healthcare professional, author, artist, survivor advocate, and emotional wellness voice. Her work transforms lived pain into healing-centered literature, music, and inspiration rooted in faith, resilience, motherhood, immigrant experience, survival, and restoration.',
+    'guide.answer.bookPain': 'Start with The Pain Nobody Saw: A Hidden Story of Abuse and Survival for Carine’s hidden-abuse, survival, and healing-centered testimony.',
+    'guide.answer.bookToxic': 'For toxic relationships, start with If It’s Red, It’s Toxic. It centers red flags, emotional clarity, self-worth, and protecting your peace.',
+    'guide.answer.bookSunshine': 'For faith, hope, and restoration, start with The Road to Sunshine: A Journey of Struggles, Faith and Hope.',
+    'guide.answer.bookStorm': 'Choose After The Storm for recovery after hardship, peace after survival, and renewed possibility.',
+    'guide.answer.bookGeneral': 'Start with The Pain Nobody Saw for survival, If It’s Red, It’s Toxic for red flags, The Road to Sunshine for faith and hope, or After The Storm for recovery after hardship.',
+    'guide.answer.consolation': 'Consolation is about comfort, encouragement, faith, and emotional restoration.',
+    'guide.answer.gentillesse': 'La Gentillesse centers kindness, compassion, healing, and human connection.',
+    'guide.answer.wonderful': 'Wonderful is a praise-filled song of gratitude and God’s goodness.',
+    'guide.answer.womanifesto': 'Womanifesto is a Soukous, Rumba, and Makossa Gospel anthem about feminine resilience, healing, grace, victory, faith, identity, and restoration.',
+    'guide.answer.musicGeneral': 'Carine’s featured music includes Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason, and Halleluyah.',
+    'guide.answer.advocacy': 'Carine advocates for domestic violence awareness, emotional healing, survivor empowerment, women’s self-worth, faith-centered restoration, toxic relationship recovery, and human-centered care.',
+    'guide.answer.booking': 'Use the contact section to request speaking, media, music collaboration, or advocacy conversations. Every booking requires a separate written agreement.',
+    'guide.answer.navigation': 'Use the site navigation to explore Music, Books, About, Reflections, Press Kit, and Contact. For invitations or media, choose Contact.',
+    'guide.answer.faith': 'Carine’s voice is warm, faith-centered, and restoration-oriented, with a focus on emotional healing, resilient self-worth, survivor dignity, women’s empowerment, motherhood, and hope after pain.',
+    'guide.answer.safety': 'I’m sorry you may be facing something urgent. If anyone is in immediate danger, contact local emergency services or a trusted professional now. This guide cannot replace professional, legal, medical, or crisis support.',
+    'guide.answer.unsure': 'I can share information available on Carine’s website, but this detail may need confirmation through the contact section.'
+  },
+  fr: {
+    'brand.logoAlt': 'Logo de Carine Sanadina', 'lyrics.loading': 'Chargement des paroles…', 'tracks.reason.audioLabel': 'Reason par Carine Sanadina', 'tracks.reason.coverAlt': 'Pochette de Reason', 'tracks.reason.fallback': 'La pochette de Reason est temporairement indisponible.', 'tracks.reason.number': 'Piste 06', 'tracks.reason.description': 'Une célébration Afropop joyeuse du sens, de l’effort et de chaque saison de croissance.', 'tracks.reason.about': 'Reason porte le message vibrant de Carine Sanadina sur le sens, le mouvement et la gratitude, en rappelant que chaque pas et chaque saison de croissance ont une raison d’être.', 'reasonSynopsis': 'Une célébration Afropop joyeuse du sens, de l’effort et de la croissance.', 'tracks.reason.credits': 'Artiste : Carine Sanadina\nProduit par Omoluabi Productions\nPrésenté par Omoluabi Productions', 'tracks.reason.playLabel': 'Lire Reason', 'videos.iframeTitle': '{title} — lecteur vidéo YouTube', 'videos.cardDescription': 'Regardez l’œuvre créative officielle de Carine Sanadina directement sur le site.',
+    'guide.answer.biography': 'Née au Congo et basée à Jacksonville, Carine Sanadina est professionnelle de santé, autrice, artiste, défenseure des survivantes et voix du bien-être émotionnel. Son travail transforme la douleur vécue en littérature, musique et inspiration centrées sur la guérison.',
+    'guide.answer.bookPain': 'Commencez par The Pain Nobody Saw pour son témoignage sur les abus cachés, la survie et la guérison.', 'guide.answer.bookToxic': 'Pour les relations toxiques, commencez par If It’s Red, It’s Toxic, consacré aux signaux d’alerte, à la clarté émotionnelle et à l’estime de soi.', 'guide.answer.bookSunshine': 'Pour la foi, l’espoir et la restauration, commencez par The Road to Sunshine.', 'guide.answer.bookStorm': 'Choisissez After The Storm pour la reconstruction après l’épreuve et la paix après la survie.', 'guide.answer.bookGeneral': 'Commencez par The Pain Nobody Saw pour la survie, If It’s Red, It’s Toxic pour les signaux d’alerte, The Road to Sunshine pour la foi, ou After The Storm pour la reconstruction.',
+    'guide.answer.consolation': 'Consolation parle de réconfort, d’encouragement, de foi et de restauration émotionnelle.', 'guide.answer.gentillesse': 'La Gentillesse célèbre la bonté, la compassion, la guérison et le lien humain.', 'guide.answer.wonderful': 'Wonderful est un chant de louange rempli de gratitude pour la bonté de Dieu.', 'guide.answer.womanifesto': 'Womanifesto est un hymne gospel Soukous, Rumba et Makossa sur la résilience féminine, la guérison, la grâce, la victoire et la foi.', 'guide.answer.musicGeneral': 'La musique présentée comprend Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason et Halleluyah.',
+    'guide.answer.advocacy': 'Carine défend la sensibilisation aux violences domestiques, la guérison émotionnelle, l’autonomie des survivantes, l’estime de soi des femmes et la restauration ancrée dans la foi.', 'guide.answer.booking': 'Utilisez la section Contact pour demander une intervention, une interview, une collaboration musicale ou un échange autour du plaidoyer. Toute réservation exige un accord écrit distinct.', 'guide.answer.navigation': 'Utilisez la navigation pour découvrir la musique, les livres, la présentation, les réflexions, le dossier de presse et le contact.', 'guide.answer.faith': 'La voix de Carine est chaleureuse, ancrée dans la foi et tournée vers la restauration, la dignité des survivantes et l’espoir après la douleur.', 'guide.answer.safety': 'Je suis désolé que vous traversiez peut-être une urgence. Si une personne est en danger immédiat, contactez maintenant les services d’urgence locaux ou un professionnel de confiance.', 'guide.answer.unsure': 'Je peux partager les informations disponibles sur le site de Carine, mais ce détail devra peut-être être confirmé via la section Contact.'
+  },
+  es: {
+    'brand.logoAlt': 'Logotipo de Carine Sanadina', 'lyrics.loading': 'Cargando la letra…', 'tracks.reason.audioLabel': 'Reason de Carine Sanadina', 'tracks.reason.coverAlt': 'Portada de Reason', 'tracks.reason.fallback': 'La portada de Reason no está disponible temporalmente.', 'tracks.reason.number': 'Pista 06', 'tracks.reason.description': 'Una alegre celebración Afropop del propósito, el esfuerzo y cada etapa de crecimiento.', 'tracks.reason.about': 'Reason transmite el mensaje vibrante de Carine Sanadina sobre propósito, movimiento y gratitud, recordando que cada paso y cada etapa de crecimiento tienen sentido.', 'reasonSynopsis': 'Una alegre celebración Afropop del propósito, el esfuerzo y el crecimiento.', 'tracks.reason.credits': 'Artista: Carine Sanadina\nProducido por Omoluabi Productions\nPresentado por Omoluabi Productions', 'tracks.reason.playLabel': 'Reproducir Reason', 'videos.iframeTitle': '{title} — reproductor de video de YouTube', 'videos.cardDescription': 'Mira la obra creativa oficial de Carine Sanadina dentro del sitio web.',
+    'guide.answer.biography': 'Carine Sanadina nació en el Congo y vive en Jacksonville. Es profesional de la salud, autora, artista, defensora de sobrevivientes y voz del bienestar emocional. Su trabajo transforma el dolor vivido en literatura, música e inspiración centradas en la sanación.',
+    'guide.answer.bookPain': 'Comienza con The Pain Nobody Saw para conocer su testimonio sobre abuso oculto, supervivencia y sanación.', 'guide.answer.bookToxic': 'Para relaciones tóxicas, comienza con If It’s Red, It’s Toxic, sobre señales de alerta, claridad emocional y autoestima.', 'guide.answer.bookSunshine': 'Para fe, esperanza y restauración, comienza con The Road to Sunshine.', 'guide.answer.bookStorm': 'Elige After The Storm para la recuperación tras la adversidad y la paz después de sobrevivir.', 'guide.answer.bookGeneral': 'Empieza con The Pain Nobody Saw para supervivencia, If It’s Red, It’s Toxic para señales de alerta, The Road to Sunshine para fe, o After The Storm para recuperación.',
+    'guide.answer.consolation': 'Consolation trata del consuelo, el ánimo, la fe y la restauración emocional.', 'guide.answer.gentillesse': 'La Gentillesse se centra en la bondad, la compasión, la sanación y la conexión humana.', 'guide.answer.wonderful': 'Wonderful es una canción de alabanza y gratitud por la bondad de Dios.', 'guide.answer.womanifesto': 'Womanifesto es un himno góspel Soukous, Rumba y Makossa sobre resiliencia femenina, sanación, gracia, victoria y fe.', 'guide.answer.musicGeneral': 'La música destacada incluye Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason y Halleluyah.',
+    'guide.answer.advocacy': 'Carine promueve la conciencia sobre la violencia doméstica, la sanación emocional, el empoderamiento de sobrevivientes, la autoestima de las mujeres y la restauración basada en la fe.', 'guide.answer.booking': 'Usa la sección Contacto para solicitar charlas, entrevistas, colaboraciones musicales o conversaciones de defensa. Toda reserva requiere un acuerdo escrito aparte.', 'guide.answer.navigation': 'Usa la navegación para explorar Música, Libros, Acerca de, Reflexiones, Kit de prensa y Contacto.', 'guide.answer.faith': 'La voz de Carine es cálida, centrada en la fe y orientada a la restauración, la dignidad de sobrevivientes y la esperanza después del dolor.', 'guide.answer.safety': 'Siento que puedas estar ante una urgencia. Si alguien está en peligro inmediato, contacta ahora a los servicios de emergencia locales o a un profesional de confianza.', 'guide.answer.unsure': 'Puedo compartir la información disponible en el sitio de Carine, pero quizá sea necesario confirmar este detalle mediante Contacto.'
+  },
+  ln: {
+    'brand.logoAlt': 'Logo ya Carine Sanadina', 'lyrics.loading': 'Maloba ya loyembo ezali kokɔta…', 'videos.iframeTitle': '{title} — lecteur vidéo ya YouTube', 'videos.cardDescription': 'Tala mosala ya bokeli ya Carine Sanadina na kati ya site.',
+    'guide.answer.biography': 'Carine Sanadina abotamaki na Congo mpe afandaka na Jacksonville. Azali mosali ya bokolongono, mokomi, moyembi, mobateli ya babiki mpe mongongo ya bolamu ya mayoki. Mosala na ye ebongolaka mpasi na mikanda, miziki mpe elikya ya kobika.',
+    'guide.answer.bookPain': 'Banda na The Pain Nobody Saw mpo na litatoli ya pasi ebombami, kobika mpe kobikisama.', 'guide.answer.bookToxic': 'Mpo na boyokani ya mabe, banda na If It’s Red, It’s Toxic, oyo elobeli bilembo ya likama mpe motuya na yo.', 'guide.answer.bookSunshine': 'Mpo na kondima, elikya mpe kozongisama, banda na The Road to Sunshine.', 'guide.answer.bookStorm': 'Pona After The Storm mpo na kobika nsima ya mikakatano mpe kozwa kimya.', 'guide.answer.bookGeneral': 'Banda na The Pain Nobody Saw mpo na kobika, If It’s Red, It’s Toxic mpo na bilembo ya likama, The Road to Sunshine mpo na kondima, to After The Storm mpo na kozonga malamu.',
+    'guide.answer.consolation': 'Consolation elobeli libondisi, mpiko, kondima mpe kobikisama ya motema.', 'guide.answer.gentillesse': 'La Gentillesse elobeli boboto, mawa, kobikisama mpe boyokani ya bato.', 'guide.answer.wonderful': 'Wonderful ezali loyembo ya masanzoli mpe botondi mpo na bolamu ya Nzambe.', 'guide.answer.womanifesto': 'Womanifesto ezali loyembo ya gospel Soukous, Rumba mpe Makossa oyo ekumisaka makasi ya basi, kobikisama, ngolu mpe kondima.', 'guide.answer.musicGeneral': 'Miziki oyo ezali awa ezali Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason mpe Halleluyah.',
+    'guide.answer.advocacy': 'Carine asungaka boyebi ya mobulu na libota, kobikisama ya mayoki, makasi ya babiki, motuya ya basi mpe kozongisama na kondima.', 'guide.answer.booking': 'Salelá eteni ya Contact mpo na kosenga diskur, media, collaboration ya miziki to lisolo ya advocacy. Booking nyonso esengaka boyokani ekomami.', 'guide.answer.navigation': 'Salelá menu mpo na kotala Miziki, Mikanda, About, Reflections, Press Kit mpe Contact.', 'guide.answer.faith': 'Mongongo ya Carine etondi na boboto, kondima, kozongisama, lokumu ya babiki mpe elikya nsima ya mpasi.', 'guide.answer.safety': 'Nazali na mawa soki ozali na likama ya mbala moko. Benga service ya urgence ya esika ozali to moto ya mosala oyo otyelaka motema sikoyo.', 'guide.answer.unsure': 'Nakoki kokabola makambo oyo ezali na site ya Carine, kasi ekoki kosenga kondimisa yango na eteni ya Contact.'
+  },
+  sw: {
+    'brand.logoAlt': 'Nembo ya Carine Sanadina', 'lyrics.loading': 'Mashairi yanapakiwa…', 'videos.iframeTitle': '{title} — kicheza video cha YouTube', 'videos.cardDescription': 'Tazama kazi rasmi ya ubunifu ya Carine Sanadina ndani ya tovuti.',
+    'guide.answer.biography': 'Carine Sanadina alizaliwa Kongo na anaishi Jacksonville. Ni mtaalamu wa afya, mwandishi, msanii, mtetezi wa walionusurika na sauti ya ustawi wa kihisia. Kazi yake hubadilisha maumivu kuwa fasihi, muziki na msukumo unaolenga uponyaji.',
+    'guide.answer.bookPain': 'Anza na The Pain Nobody Saw kwa ushuhuda kuhusu unyanyasaji uliofichika, kunusurika na uponyaji.', 'guide.answer.bookToxic': 'Kwa mahusiano yenye sumu, anza na If It’s Red, It’s Toxic kuhusu ishara hatari, uwazi wa kihisia na kujithamini.', 'guide.answer.bookSunshine': 'Kwa imani, tumaini na urejesho, anza na The Road to Sunshine.', 'guide.answer.bookStorm': 'Chagua After The Storm kwa kupona baada ya shida na amani baada ya kunusurika.', 'guide.answer.bookGeneral': 'Anza na The Pain Nobody Saw kwa kunusurika, If It’s Red, It’s Toxic kwa ishara hatari, The Road to Sunshine kwa imani, au After The Storm kwa kupona.',
+    'guide.answer.consolation': 'Consolation inahusu faraja, moyo, imani na urejesho wa kihisia.', 'guide.answer.gentillesse': 'La Gentillesse inahusu wema, huruma, uponyaji na uhusiano wa kibinadamu.', 'guide.answer.wonderful': 'Wonderful ni wimbo wa sifa na shukrani kwa wema wa Mungu.', 'guide.answer.womanifesto': 'Womanifesto ni wimbo wa injili wa Soukous, Rumba na Makossa kuhusu uimara wa wanawake, uponyaji, neema, ushindi na imani.', 'guide.answer.musicGeneral': 'Muziki ulioangaziwa ni Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason na Halleluyah.',
+    'guide.answer.advocacy': 'Carine anatetea uelewa wa ukatili wa nyumbani, uponyaji wa kihisia, uwezeshaji wa walionusurika, kujithamini kwa wanawake na urejesho unaotegemea imani.', 'guide.answer.booking': 'Tumia sehemu ya Mawasiliano kuomba hotuba, mahojiano, ushirikiano wa muziki au mazungumzo ya utetezi. Kila nafasi inahitaji makubaliano tofauti ya maandishi.', 'guide.answer.navigation': 'Tumia menyu kutazama Muziki, Vitabu, Kuhusu, Tafakari, Seti ya Vyombo vya Habari na Mawasiliano.', 'guide.answer.faith': 'Sauti ya Carine ni ya joto, yenye imani na urejesho, ikisisitiza heshima ya walionusurika na tumaini baada ya maumivu.', 'guide.answer.safety': 'Samahani ikiwa unakabiliwa na hali ya dharura. Ikiwa mtu yuko hatarini sasa, wasiliana na huduma za dharura za eneo lako au mtaalamu unayemwamini.', 'guide.answer.unsure': 'Naweza kushiriki taarifa zilizo kwenye tovuti ya Carine, lakini maelezo haya yanaweza kuhitaji kuthibitishwa kupitia Mawasiliano.'
+  },
+  yo: {
+    'brand.logoAlt': 'Àmì Carine Sanadina', 'lyrics.loading': 'Ọ̀rọ̀ orin ń wọlé…', 'videos.iframeTitle': '{title} — ẹrọ fídíò YouTube', 'videos.cardDescription': 'Wo iṣẹ́ ẹ̀dá Carine Sanadina tó jẹ́ ti òṣìṣẹ́ lórí ojúlé náà.',
+    'guide.answer.biography': 'A bí Carine Sanadina ní Congo, ó sì ń gbé ní Jacksonville. Ó jẹ́ òṣìṣẹ́ ìlera, òǹkọ̀wé, olórin, alágbàwí àwọn olùlàájá àti ohùn fún àlàáfíà ọkàn. Iṣẹ́ rẹ̀ ń sọ ìrora di ìwé, orin àti ìmísí tó dojú kọ ìwòsàn.',
+    'guide.answer.bookPain': 'Bẹ̀rẹ̀ pẹ̀lú The Pain Nobody Saw fún ẹ̀rí nípa ìwà ipá tó farapamọ́, ìwalaaye àti ìwòsàn.', 'guide.answer.bookToxic': 'Fún ìbáṣepọ̀ olóró, bẹ̀rẹ̀ pẹ̀lú If It’s Red, It’s Toxic nípa àmì ewu, ìmòye ọkàn àti iyì ara ẹni.', 'guide.answer.bookSunshine': 'Fún ìgbàgbọ́, ìrètí àti ìmúpadàbọ̀sípò, bẹ̀rẹ̀ pẹ̀lú The Road to Sunshine.', 'guide.answer.bookStorm': 'Yan After The Storm fún ìmúláradá lẹ́yìn ìṣòro àti àlàáfíà lẹ́yìn ìwalaaye.', 'guide.answer.bookGeneral': 'Bẹ̀rẹ̀ pẹ̀lú The Pain Nobody Saw fún ìwalaaye, If It’s Red, It’s Toxic fún àmì ewu, The Road to Sunshine fún ìgbàgbọ́, tàbí After The Storm fún ìmúláradá.',
+    'guide.answer.consolation': 'Consolation jẹ́ nípa ìtùnú, ìgboyà, ìgbàgbọ́ àti ìmúpadàbọ̀sípò ọkàn.', 'guide.answer.gentillesse': 'La Gentillesse dojú kọ inú rere, àánú, ìwòsàn àti ìbáṣepọ̀ ènìyàn.', 'guide.answer.wonderful': 'Wonderful jẹ́ orin ìyìn àti ọpẹ́ fún oore Ọlọ́run.', 'guide.answer.womanifesto': 'Womanifesto jẹ́ orin gospel Soukous, Rumba àti Makossa nípa agbára obìnrin, ìwòsàn, oore-ọ̀fẹ́, ìṣẹ́gun àti ìgbàgbọ́.', 'guide.answer.musicGeneral': 'Àwọn orin tó wà níbí ni Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason àti Halleluyah.',
+    'guide.answer.advocacy': 'Carine ń gbèjà ìmọ̀ nípa ìwà ipá inú ilé, ìwòsàn ọkàn, agbára àwọn olùlàájá, iyì ara obìnrin àti ìmúpadàbọ̀sípò tó dá lórí ìgbàgbọ́.', 'guide.answer.booking': 'Lo abala Contact láti béèrè fún ọ̀rọ̀ sísọ, mídia, ìfọwọ́sowọ́pọ̀ orin tàbí ìjíròrò alágbàwí. Gbogbo ìpè nílò àdéhùn míì tí a kọ.', 'guide.answer.navigation': 'Lo àkojọ ojúlé láti wo Orin, Àwọn Ìwé, Nípa, Àwọn Ìrònú, Ohun elo atẹjade àti Contact.', 'guide.answer.faith': 'Ohùn Carine rọrùn, ó dá lórí ìgbàgbọ́ àti ìmúpadàbọ̀sípò, pẹ̀lú iyì àwọn olùlàájá àti ìrètí lẹ́yìn ìrora.', 'guide.answer.safety': 'Ó bà mí nínú bí o bá wà nínú ewu pajawiri. Bí ẹnikẹ́ni bá wà nínú ewu lẹ́sẹ̀kẹsẹ̀, pe iṣẹ́ pajawiri agbègbè tàbí amọ̀ja tí o gbẹ́kẹ̀ lé.', 'guide.answer.unsure': 'Mo lè pín ìmọ̀ tó wà lórí ojúlé Carine, ṣùgbọ́n ó lè yẹ kí a jẹ́rìí sí ẹ̀kúnrẹ́rẹ́ yìí ní abala Contact.',
+    'videos.kicker': 'YouTube', 'videos.heading': 'Àwọn Fídíò', 'videos.subtitle': 'Wo orin, ìrònú àti iṣẹ́ àtinúdá Carine Sanadina láì fi ojúlé náà sílẹ̀.', 'videos.watch': 'Wo Fídíò', 'videos.close': 'Pa Fídíò', 'videos.openYoutube': 'Ṣí lórí YouTube', 'videos.visitChannel': 'Ṣàbẹ̀wò sí ikanni YouTube Carine', 'videos.shortChannel': 'Ikanni YouTube', 'videos.channelAccessDescription': 'Wo àwọn fídíò, orin, ìrònú àti iṣẹ́ ẹ̀dá Carine Sanadina.', 'videos.more': 'Àwọn fídíò míì', 'videos.comingSoon': 'Àwọn fídíò míì ń bọ̀ láìpẹ́.', 'videos.channelTitle': 'Carine Sanadina lórí YouTube', 'videos.channelDescription': 'Àyè inú ojúlé fún orin, ìrònú àti iṣẹ́ fídíò àtinúdá Carine.', 'videos.placeholder': 'Àwọn fídíò tuntun yóò hàn níbí nígbà tí a bá fìdí ID YouTube wọn múlẹ̀.', 'videos.modalLabel': 'Ẹ̀rọ fídíò Carine Sanadina', 'videos.category': 'Orin • Ìrònú • Àtinúdá'
+  },
+  de: {
+    'brand.logoAlt': 'Logo von Carine Sanadina', 'lyrics.loading': 'Liedtext wird geladen…', 'videos.iframeTitle': '{title} — YouTube-Videoplayer', 'videos.cardDescription': 'Sehen Sie Carine Sanadinas offizielles kreatives Werk direkt auf der Website.',
+    'guide.answer.biography': 'Carine Sanadina wurde im Kongo geboren und lebt in Jacksonville. Sie ist Gesundheitsfachkraft, Autorin, Künstlerin, Fürsprecherin für Überlebende und Stimme für emotionales Wohlbefinden. Ihre Arbeit verwandelt erlebten Schmerz in heilungsorientierte Literatur, Musik und Inspiration.',
+    'guide.answer.bookPain': 'Beginnen Sie mit The Pain Nobody Saw für Carines Zeugnis über verborgenen Missbrauch, Überleben und Heilung.', 'guide.answer.bookToxic': 'Bei toxischen Beziehungen beginnen Sie mit If It’s Red, It’s Toxic über Warnzeichen, emotionale Klarheit und Selbstwert.', 'guide.answer.bookSunshine': 'Für Glaube, Hoffnung und Wiederherstellung beginnen Sie mit The Road to Sunshine.', 'guide.answer.bookStorm': 'Wählen Sie After The Storm für Genesung nach schweren Zeiten und Frieden nach dem Überleben.', 'guide.answer.bookGeneral': 'Beginnen Sie mit The Pain Nobody Saw für Überleben, If It’s Red, It’s Toxic für Warnzeichen, The Road to Sunshine für Glauben oder After The Storm für Genesung.',
+    'guide.answer.consolation': 'Consolation handelt von Trost, Ermutigung, Glauben und emotionaler Wiederherstellung.', 'guide.answer.gentillesse': 'La Gentillesse steht für Freundlichkeit, Mitgefühl, Heilung und menschliche Verbundenheit.', 'guide.answer.wonderful': 'Wonderful ist ein Loblied voller Dankbarkeit für Gottes Güte.', 'guide.answer.womanifesto': 'Womanifesto ist eine Soukous-, Rumba- und Makossa-Gospelhymne über weibliche Widerstandskraft, Heilung, Gnade, Sieg und Glauben.', 'guide.answer.musicGeneral': 'Die vorgestellte Musik umfasst Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason und Halleluyah.',
+    'guide.answer.advocacy': 'Carine setzt sich für Bewusstsein für häusliche Gewalt, emotionale Heilung, Stärkung Überlebender, den Selbstwert von Frauen und glaubensbasierte Wiederherstellung ein.', 'guide.answer.booking': 'Nutzen Sie Kontakt für Anfragen zu Vorträgen, Medien, Musikkooperationen oder Interessenvertretung. Jede Buchung erfordert eine separate schriftliche Vereinbarung.', 'guide.answer.navigation': 'Über die Navigation finden Sie Musik, Bücher, Über Carine, Reflexionen, Pressemappe und Kontakt.', 'guide.answer.faith': 'Carines Stimme ist warm, glaubenszentriert und auf Wiederherstellung, die Würde Überlebender und Hoffnung nach Schmerz ausgerichtet.', 'guide.answer.safety': 'Es tut mir leid, wenn Sie sich in einer akuten Notlage befinden. Bei unmittelbarer Gefahr kontaktieren Sie jetzt den örtlichen Notdienst oder eine vertrauenswürdige Fachkraft.', 'guide.answer.unsure': 'Ich kann Informationen von Carines Website teilen; dieses Detail muss jedoch möglicherweise über Kontakt bestätigt werden.',
+    'videos.kicker': 'YouTube', 'videos.heading': 'Videos', 'videos.subtitle': 'Erleben Sie Carine Sanadinas Musik, Reflexionen und kreatives Werk, ohne die Website zu verlassen.', 'videos.watch': 'Video ansehen', 'videos.close': 'Video schließen', 'videos.openYoutube': 'Auf YouTube öffnen', 'videos.visitChannel': 'Carines YouTube-Kanal besuchen', 'videos.shortChannel': 'YouTube-Kanal', 'videos.channelAccessDescription': 'Sehen Sie Carine Sanadinas Videos, Musik, Reflexionen und kreatives Werk.', 'videos.more': 'Weitere Videos', 'videos.comingSoon': 'Weitere Videos folgen bald.', 'videos.channelTitle': 'Carine Sanadina auf YouTube', 'videos.channelDescription': 'Ein Bereich auf der Website für Carines Musik, Reflexionen und kreative Videos.', 'videos.placeholder': 'Neue Videos erscheinen hier, sobald ihre offiziellen YouTube-IDs bestätigt sind.', 'videos.modalLabel': 'Videoplayer von Carine Sanadina', 'videos.category': 'Musik • Reflexion • Kreativität'
+  },
+  ar: {
+    'brand.logoAlt': 'شعار Carine Sanadina', 'lyrics.loading': 'جارٍ تحميل الكلمات…', 'videos.iframeTitle': '{title} — مشغل فيديو YouTube', 'videos.cardDescription': 'شاهد العمل الإبداعي الرسمي لـ Carine Sanadina داخل الموقع.',
+    'guide.answer.biography': 'وُلدت Carine Sanadina في الكونغو وتقيم في جاكسونفيل. وهي متخصصة في الرعاية الصحية وكاتبة وفنانة ومناصرة للناجيات وصوت للعافية العاطفية. يحوّل عملها الألم المعاش إلى أدب وموسيقى وإلهام يتمحور حول الشفاء.',
+    'guide.answer.bookPain': 'ابدأ بكتاب The Pain Nobody Saw للتعرّف إلى شهادتها عن الإساءة الخفية والنجاة والشفاء.', 'guide.answer.bookToxic': 'للعلاقات السامة، ابدأ بكتاب If It’s Red, It’s Toxic عن علامات الخطر والوضوح العاطفي وتقدير الذات.', 'guide.answer.bookSunshine': 'للإيمان والأمل والاستعادة، ابدأ بكتاب The Road to Sunshine.', 'guide.answer.bookStorm': 'اختر After The Storm للتعافي بعد الشدائد والسلام بعد النجاة.', 'guide.answer.bookGeneral': 'ابدأ بـ The Pain Nobody Saw للنجاة، أو If It’s Red, It’s Toxic لعلامات الخطر، أو The Road to Sunshine للإيمان، أو After The Storm للتعافي.',
+    'guide.answer.consolation': 'تتناول Consolation الراحة والتشجيع والإيمان والاستعادة العاطفية.', 'guide.answer.gentillesse': 'تتمحور La Gentillesse حول اللطف والرحمة والشفاء والتواصل الإنساني.', 'guide.answer.wonderful': 'Wonderful أغنية تسبيح وامتنان لصلاح الله.', 'guide.answer.womanifesto': 'Womanifesto ترنيمة غوسبل بأساليب السوكوس والرومبا والماكوسا عن صمود المرأة والشفاء والنعمة والنصر والإيمان.', 'guide.answer.musicGeneral': 'تشمل الموسيقى المعروضة Consolation وLa Gentillesse وWonderful وWomanifesto وParanoïa Persécutive وReason وHalleluyah.',
+    'guide.answer.advocacy': 'تناصِر Carine التوعية بالعنف المنزلي والشفاء العاطفي وتمكين الناجيات وتقدير المرأة لذاتها والاستعادة القائمة على الإيمان.', 'guide.answer.booking': 'استخدم قسم الاتصال لطلبات التحدث أو الإعلام أو التعاون الموسيقي أو حوارات المناصرة. كل حجز يتطلب اتفاقاً كتابياً منفصلاً.', 'guide.answer.navigation': 'استخدم التنقل لاستكشاف الموسيقى والكتب ونبذة عن Carine والتأملات والملف الصحفي والاتصال.', 'guide.answer.faith': 'صوت Carine دافئ ومرتكز على الإيمان والاستعادة وكرامة الناجيات والأمل بعد الألم.', 'guide.answer.safety': 'يؤسفني أنك قد تواجه حالة عاجلة. إذا كان أي شخص في خطر فوري، فاتصل الآن بخدمات الطوارئ المحلية أو بمتخصص موثوق.', 'guide.answer.unsure': 'يمكنني مشاركة المعلومات المتاحة على موقع Carine، لكن قد يلزم تأكيد هذه التفاصيل عبر قسم الاتصال.',
+    'videos.kicker': 'YouTube', 'videos.heading': 'الفيديوهات', 'videos.subtitle': 'شاهد موسيقى Carine Sanadina وتأملاتها وأعمالها الإبداعية من دون مغادرة الموقع.', 'videos.watch': 'شاهد الفيديو', 'videos.close': 'أغلق الفيديو', 'videos.openYoutube': 'افتح على YouTube', 'videos.visitChannel': 'زر قناة Carine على YouTube', 'videos.shortChannel': 'قناة YouTube', 'videos.channelAccessDescription': 'شاهد فيديوهات Carine Sanadina وموسيقاها وتأملاتها وأعمالها الإبداعية.', 'videos.more': 'المزيد من الفيديوهات', 'videos.comingSoon': 'المزيد من الفيديوهات قريباً.', 'videos.channelTitle': 'Carine Sanadina على YouTube', 'videos.channelDescription': 'مساحة داخل الموقع لموسيقى Carine وتأملاتها وفيديوهاتها الإبداعية.', 'videos.placeholder': 'ستظهر الفيديوهات الجديدة هنا بعد تأكيد معرّفات YouTube الرسمية.', 'videos.modalLabel': 'مشغل فيديو Carine Sanadina', 'videos.category': 'موسيقى • تأمل • إبداع'
+  },
+  'zh-CN': {
+    'brand.logoAlt': 'Carine Sanadina 标志', 'lyrics.loading': '正在加载歌词…', 'videos.iframeTitle': '{title} — YouTube 视频播放器', 'videos.cardDescription': '在网站内观看 Carine Sanadina 的官方创意作品。',
+    'guide.answer.biography': 'Carine Sanadina 出生于刚果，现居杰克逊维尔。她是医疗专业人士、作家、艺术家、幸存者倡导者和情绪健康发声者。她的工作把亲历的痛苦转化为以疗愈为中心的文学、音乐与鼓舞。',
+    'guide.answer.bookPain': '若想了解她关于隐秘虐待、幸存与疗愈的见证，请从 The Pain Nobody Saw 开始。', 'guide.answer.bookToxic': '若关注有毒关系，请从 If It’s Red, It’s Toxic 开始；它讨论危险信号、情绪清晰度与自我价值。', 'guide.answer.bookSunshine': '若关注信仰、希望与修复，请从 The Road to Sunshine 开始。', 'guide.answer.bookStorm': '若关注困境后的恢复与幸存后的平安，请选择 After The Storm。', 'guide.answer.bookGeneral': '关于幸存可读 The Pain Nobody Saw，关于危险信号可读 If It’s Red, It’s Toxic，关于信仰可读 The Road to Sunshine，关于恢复可读 After The Storm。',
+    'guide.answer.consolation': 'Consolation 讲述安慰、鼓励、信仰与情绪修复。', 'guide.answer.gentillesse': 'La Gentillesse 聚焦善意、怜悯、疗愈与人与人之间的连接。', 'guide.answer.wonderful': 'Wonderful 是一首为上帝的良善献上感恩的赞美之歌。', 'guide.answer.womanifesto': 'Womanifesto 是一首融合 Soukous、Rumba 与 Makossa 的福音赞歌，歌颂女性韧性、疗愈、恩典、得胜与信仰。', 'guide.answer.musicGeneral': '精选音乐包括 Consolation、La Gentillesse、Wonderful、Womanifesto、Paranoïa Persécutive、Reason 和 Halleluyah。',
+    'guide.answer.advocacy': 'Carine 倡导家庭暴力意识、情绪疗愈、幸存者赋能、女性自我价值，以及以信仰为根基的修复。', 'guide.answer.booking': '请通过“联系”部分提出演讲、媒体、音乐合作或倡导交流请求。所有预约都需要另行签署书面协议。', 'guide.answer.navigation': '使用网站导航浏览音乐、书籍、关于 Carine、感悟、媒体资料和联系信息。', 'guide.answer.faith': 'Carine 的声音温暖、以信仰和修复为中心，关注幸存者尊严与痛苦之后的希望。', 'guide.answer.safety': '如果您正面临紧急情况，我很遗憾。若有人处于即时危险中，请立即联系当地紧急服务或可信赖的专业人士。', 'guide.answer.unsure': '我可以分享 Carine 网站上的信息，但这一细节可能需要通过“联系”部分确认。',
+    'videos.kicker': 'YouTube', 'videos.heading': '视频', 'videos.subtitle': '无需离开网站，即可观看 Carine Sanadina 的音乐、感悟与创意作品。', 'videos.watch': '观看视频', 'videos.close': '关闭视频', 'videos.openYoutube': '在 YouTube 打开', 'videos.visitChannel': '访问 Carine 的 YouTube 频道', 'videos.shortChannel': 'YouTube 频道', 'videos.channelAccessDescription': '观看 Carine Sanadina 的视频、音乐、感悟与创意作品。', 'videos.more': '更多视频', 'videos.comingSoon': '更多视频即将上线。', 'videos.channelTitle': 'YouTube 上的 Carine Sanadina', 'videos.channelDescription': '站内展示 Carine 音乐、感悟与创意视频的专属空间。', 'videos.placeholder': '确认官方 YouTube ID 后，新视频会显示在这里。', 'videos.modalLabel': 'Carine Sanadina 视频播放器', 'videos.category': '音乐 • 感悟 • 创意'
+  }
+};
+
+Object.entries(appWideTranslationAdditions).forEach(([language, dictionary]) => {
+  if (translations[language]) Object.assign(translations[language], dictionary);
+});
+
+const lateVisibleTranslationFixes = {
+  de: {
+    'portrait.figureLabel': 'Offizielles Porträt von Carine Sanadina', 'portrait.alt': 'Offizielles Porträt von Carine Sanadina', 'portrait.fallback': 'Das offizielle Porträt von Carine Sanadina ist vorübergehend nicht verfügbar.', 'portrait.caption': 'Offizielles Porträt von Carine Sanadina — heilungsorientierte Geschichten mit Mut, Glauben und Wiederherstellung.', 'about.keyFacts': 'Kurzprofil: Carine Sanadina wirkt von Jacksonville, Florida, aus als Gesundheitsfachkraft, Autorin, Künstlerin, Fürsprecherin für Überlebende und Stimme für emotionales Wohlbefinden.',
+    'books.pain.kicker': 'Memoiren', 'books.toxic.kicker': 'Beziehungsbewusstsein',
+    'tracks.reason.number': 'Titel 06', 'tracks.reason.description': 'Eine fröhliche Afropop-Feier von Sinn, Einsatz und der Bedeutung jeder Wachstumsphase.', 'tracks.reason.about': 'Reason vermittelt Carine Sanadinas lebendige Botschaft von Sinn, Bewegung und Dankbarkeit und erinnert daran, dass jeder Schritt und jede Wachstumsphase Bedeutung trägt.', 'reasonSynopsis': 'Eine fröhliche Afropop-Feier von Sinn, Einsatz und Wachstum.', 'tracks.reason.credits': 'Künstlerin: Carine Sanadina\nProduziert von Omoluabi Productions\nPräsentiert von Omoluabi Productions',
+    'legal.metaTitle': 'Rechtliches / Bedingungen | Carine Sanadina', 'legal.metaDescription': 'Rechtliche Hinweise, Eigentumsangaben und Nutzungsbedingungen für die Website von Carine Sanadina.', 'legal.metaOgDescription': 'Lesen Sie die rechtlichen Hinweise, Eigentumsangaben und Nutzungsbedingungen der Website.', 'legal.intro': 'Diese Seite erläutert Eigentum, zulässige Nutzung, Rechte an kreativen Materialien und die Rolle der Organisationen, die diese digitale Präsentation unterstützen.', 'legal.ownership.body': 'Diese Website und ihre digitale Präsentation werden von ETL GIS Consulting LLC betrieben. Omoluabi Productions ist eine kreative Projektmarke unter ETL GIS Consulting LLC und wird hier nicht als eigenständige eingetragene juristische Person dargestellt.', 'legal.ip.body': 'Layout, visuelles System, Code, Präsentation und kreative Leitung dürfen ohne schriftliche Genehmigung von ETL GIS Consulting LLC oder dem jeweiligen Rechteinhaber nicht kopiert, verändert, weitergegeben oder kommerziell genutzt werden. Rechte Dritter verbleiben bei ihren Eigentümern.', 'legal.artist.body': 'Carine Sanadina behält, soweit anwendbar, die Rechte an ihrer persönlichen Identität, autorisierten Darstellung, ihren Büchern, ihrer Musik, ihrer Lebensgeschichte und ihren künstlerischen Materialien.', 'legal.noAgency.body': 'Diese Website begründet ohne gesonderte schriftliche Vereinbarung kein Agentur-, Management-, Verlags-, Label-, Arbeits-, Partnerschafts- oder Vertretungsverhältnis zwischen Carine Sanadina, Omoluabi Productions und ETL GIS Consulting LLC.', 'legal.liability.body': 'Die Website dient als werbliche und informative digitale Präsentation. ETL GIS Consulting LLC kann Inhalte aktualisieren, entfernen, überarbeiten, aussetzen oder einstellen und haftet im gesetzlich zulässigen Umfang nicht für indirekte oder zufällige Folgen der Nutzung.', 'legal.entity.body': 'ETL GIS Consulting LLC ist die eingetragene juristische Person für Betrieb und Kontrolle der Website. Omoluabi Productions ist eine unter ihr geführte kreative Medienprojektmarke und keine hier separat dargestellte juristische Person.', 'offline.metaTitle': 'Offline | Carine Sanadina', 'music.visualizerToggleLabel': 'Visualisierung'
+  },
+  ar: {
+    'meta.ogTitle': 'Carine Sanadina | كاتبة ومناصرة للناجيات وصوت للشفاء', 'meta.ogDescription': 'اكتشف كتب Carine Sanadina وموسيقاها وتأملاتها ومناصرتها المتجذرة في الإيمان والصمود والاستعادة العاطفية.', 'meta.twitterDescription': 'كاتبة وفنانة ومناصرة للناجيات تصنع كتباً وموسيقى وتأملات عن الإيمان والاستعادة والصمود.',
+    'portrait.figureLabel': 'الصورة الرسمية لـ Carine Sanadina', 'portrait.alt': 'الصورة الرسمية لـ Carine Sanadina', 'portrait.fallback': 'الصورة الرسمية لـ Carine Sanadina غير متاحة مؤقتاً.', 'portrait.caption': 'الصورة الرسمية لـ Carine Sanadina — قصص تتمحور حول الشفاء بالشجاعة والإيمان والاستعادة.', 'about.keyFacts': 'نبذة: تعمل Carine Sanadina من جاكسونفيل بفلوريدا بصفتها متخصصة في الرعاية الصحية وكاتبة وفنانة ومناصرة للناجيات وصوتاً للعافية العاطفية.',
+    'books.pain.kicker': 'مذكرات', 'books.toxic.kicker': 'وعي بالعلاقات',
+    'tracks.reason.number': 'المسار 06', 'tracks.reason.description': 'احتفال أفروبوب مبهج بالغاية والسعي والمعنى الكامن في كل موسم من مواسم النمو.', 'tracks.reason.about': 'تنقل Reason رسالة Carine Sanadina النابضة بالحياة عن الغاية والحركة والامتنان، وتذكّر بأن لكل خطوة وكل موسم نمو معنى.', 'reasonSynopsis': 'احتفال أفروبوب مبهج بالغاية والسعي والنمو.', 'tracks.reason.credits': 'الفنانة: Carine Sanadina\nإنتاج Omoluabi Productions\nتقديم Omoluabi Productions',
+    'legal.metaTitle': 'الشؤون القانونية / الشروط | Carine Sanadina', 'legal.metaDescription': 'إشعارات قانونية وبيانات الملكية وشروط استخدام موقع Carine Sanadina.', 'legal.metaOgDescription': 'اطّلع على الإشعارات القانونية والملكية وشروط استخدام الموقع.', 'legal.intro': 'توضح هذه الصفحة الملكية والاستخدام المسموح وحقوق المواد الإبداعية وأدوار الجهات الداعمة لهذا العرض الرقمي.', 'legal.ownership.body': 'تدير ETL GIS Consulting LLC هذا الموقع وعرضه الرقمي. وتعمل Omoluabi Productions كعلامة لمشروع إبداعي تحت ETL GIS Consulting LLC، ولا تُعرض هنا ككيان قانوني مسجل مستقل.', 'legal.ip.body': 'لا يجوز نسخ تخطيط الموقع أو نظامه البصري أو شفرته أو عرضه أو توجيهه الإبداعي أو تعديله أو إعادة توزيعه أو استغلاله تجارياً دون إذن كتابي من ETL GIS Consulting LLC أو صاحب الحق المعني. وتبقى حقوق الأطراف الثالثة لأصحابها.', 'legal.artist.body': 'تحتفظ Carine Sanadina، حيثما ينطبق، بحقوق هويتها الشخصية وصورتها المعتمدة وكتبها وموسيقاها وقصتها الحياتية وموادها الفنية.', 'legal.noAgency.body': 'لا ينشئ هذا الموقع أي علاقة وكالة أو إدارة أو نشر أو علامة تسجيل أو توظيف أو شراكة أو تمثيل قانوني بين Carine Sanadina وOmoluabi Productions وETL GIS Consulting LLC إلا بموجب اتفاق كتابي منفصل.', 'legal.liability.body': 'يُقدَّم الموقع كعرض رقمي ترويجي ومعلوماتي. ويجوز لـ ETL GIS Consulting LLC تحديث أي جزء أو إزالته أو مراجعته أو تعليقه أو إيقافه، ولا تتحمل، في الحدود التي يسمح بها القانون، المسؤولية عن النتائج غير المباشرة أو العرضية للاستخدام.', 'legal.entity.body': 'ETL GIS Consulting LLC هي الكيان القانوني المسجل المرتبط بتشغيل الموقع والتحكم فيه. أما Omoluabi Productions فهي علامة لمشروع إبداعي وإعلامي تعمل تحتها وليست كياناً قانونياً منفصلاً معروضاً هنا.',
+    'footer.credit': 'تصور الموقع وتصميمه وعرضه الرقمي من Omoluabi Productions، وهو مشروع إبداعي تديره ETL GIS Consulting LLC.', 'press.books.body': 'تتناول كتب Carine الإساءة الخفية والعلاقات السامة والإيمان والأمل والتعافي بعد الأزمات.', 'press.music.body': 'تقدم Consolation وLa Gentillesse وWonderful وWomanifesto وParanoïa Persécutive وReason وHalleluyah نافذة موسيقية رقيقة على فن Carine المتمحور حول الشفاء.', 'reflection.sunshine.excerpt': 'تأمل في اختيار الأمل عندما يبدو الطريق طويلاً وثقيلاً وغير مؤكد.', 'reflection.kindness.excerpt': 'تأمل في اللطف باعتباره قوة وحدوداً وممارسة يومية للشفاء.'
+  },
+  'zh-CN': {
+    'meta.ogTitle': 'Carine Sanadina｜作家、幸存者倡导者与疗愈之声', 'meta.ogDescription': '探索 Carine Sanadina 以信仰、韧性与情绪修复为根基的书籍、音乐、感悟与倡导工作。', 'meta.twitterDescription': '一位创作信仰、修复与韧性主题书籍、音乐和感悟的作家、艺术家与幸存者倡导者。',
+    'portrait.figureLabel': 'Carine Sanadina 官方肖像', 'portrait.alt': 'Carine Sanadina 官方肖像', 'portrait.fallback': 'Carine Sanadina 官方肖像暂时无法显示。', 'portrait.caption': 'Carine Sanadina 官方肖像——以勇气、信仰与修复讲述疗愈故事。', 'about.keyFacts': '简介：Carine Sanadina 常驻佛罗里达州杰克逊维尔，是医疗专业人士、作家、艺术家、幸存者倡导者和情绪健康发声者。',
+    'books.pain.kicker': '回忆录', 'books.toxic.kicker': '关系觉察',
+    'tracks.reason.number': '曲目 06', 'tracks.reason.description': '一首欢快的 Afropop 作品，歌颂目标、奋斗以及每个成长季节的意义。', 'tracks.reason.about': 'Reason 传递 Carine Sanadina 关于目标、行动与感恩的活力信息，提醒听众每一步与每个成长季节都有意义。', 'reasonSynopsis': '一首歌颂目标、奋斗与成长的欢快 Afropop 作品。', 'tracks.reason.credits': '艺人：Carine Sanadina\n制作：Omoluabi Productions\n呈现：Omoluabi Productions',
+    'legal.metaTitle': '法律声明 / 条款｜Carine Sanadina', 'legal.metaDescription': 'Carine Sanadina 网站的法律声明、所有权信息与使用条款。', 'legal.metaOgDescription': '查看本网站的法律声明、所有权信息与使用条款。', 'legal.intro': '本页说明本数字展示的所有权、允许用途、创意材料权利以及支持机构的角色。', 'legal.ownership.body': '本网站及其数字展示由 ETL GIS Consulting LLC 运营。Omoluabi Productions 是其旗下的创意项目品牌，本网站不将其表述为独立注册的法律实体。', 'legal.ip.body': '未经 ETL GIS Consulting LLC 或相关权利人书面许可，不得复制、修改、再分发或商业利用网站布局、视觉系统、代码、展示方式或创意指导。第三方权利归各自所有者所有。', 'legal.artist.body': '在适用范围内，Carine Sanadina 保留其个人身份、授权形象、书籍、音乐、生平故事及艺术相关材料的权利。', 'legal.noAgency.body': '除非另有独立书面协议，本网站不会在 Carine Sanadina、Omoluabi Productions 与 ETL GIS Consulting LLC 之间建立代理、管理、出版、唱片、雇佣、合作或法律代表关系。', 'legal.liability.body': '本网站作为宣传与信息性数字展示提供。ETL GIS Consulting LLC 可更新、删除、修订、暂停或终止任何部分，并在法律允许范围内不对使用产生的间接或附带后果承担责任。', 'legal.entity.body': 'ETL GIS Consulting LLC 是与网站运营和控制相关的注册法律实体。Omoluabi Productions 是其旗下的创意与媒体项目品牌，并非本网站所表述的独立法律实体。',
+    'footer.credit': '网站构思、设计与数字展示由 Omoluabi Productions 完成；该创意项目由 ETL GIS Consulting LLC 运营。', 'press.books.body': 'Carine 的书写涉及隐秘虐待、有毒关系、信仰、希望，以及危机后的恢复。', 'press.music.body': 'Consolation、La Gentillesse、Wonderful、Womanifesto、Paranoïa Persécutive、Reason 和 Halleluyah 共同呈现 Carine 以疗愈为中心的艺术窗口。', 'reflection.sunshine.excerpt': '关于在道路漫长、沉重且不确定时仍选择希望的感悟。', 'reflection.kindness.excerpt': '关于把善意视为力量、界限与日常疗愈实践的感悟。'
+  }
+};
+Object.entries(lateVisibleTranslationFixes).forEach(([language, dictionary]) => Object.assign(translations[language], dictionary));
+
+const localizedAssetTemplates = {
+  de: { audio: '{title} von Carine Sanadina', cover: 'Cover von {title}', fallback: 'Das Cover von {title} ist vorübergehend nicht verfügbar.', play: '{title} abspielen', bookCover: 'Buchcover von {title} von Carine Sanadina' },
+  ar: { audio: '{title} بصوت Carine Sanadina', cover: 'غلاف {title}', fallback: 'غلاف {title} غير متاح مؤقتاً.', play: 'تشغيل {title}', bookCover: 'غلاف كتاب {title} لـ Carine Sanadina' },
+  'zh-CN': { audio: 'Carine Sanadina 演唱的 {title}', cover: '{title} 封面', fallback: '{title} 封面暂时无法显示。', play: '播放 {title}', bookCover: 'Carine Sanadina 著作 {title} 的封面' }
+};
+Object.entries(localizedAssetTemplates).forEach(([language, templates]) => {
+  const dictionary = translations[language];
+  ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia', 'reason', 'halleluyah'].forEach((id) => {
+    const prefix = `tracks.${id}`;
+    const title = dictionary[`${prefix}.title`] || translations.en[`${prefix}.title`];
+    dictionary[`${prefix}.audioLabel`] = templates.audio.replace('{title}', title);
+    dictionary[`${prefix}.coverAlt`] = templates.cover.replace('{title}', title);
+    dictionary[`${prefix}.fallback`] = templates.fallback.replace('{title}', title);
+    dictionary[`${prefix}.playLabel`] = templates.play.replace('{title}', title);
+  });
+  ['pain', 'toxic', 'sunshine', 'storm'].forEach((id) => {
+    const prefix = `books.${id}`;
+    const title = dictionary[`${prefix}.coverTitle`] || translations.en[`${prefix}.coverTitle`];
+    dictionary[`${prefix}.coverLabel`] = templates.bookCover.replace('{title}', title);
+  });
+});
+
+const finalTrackTranslationAdditions = {
+  fr: {
+    'tracks.halleluyah.audioLabel': 'Halleluyah par Carine Sanadina', 'tracks.halleluyah.coverAlt': 'Pochette de Halleluyah', 'tracks.halleluyah.fallback': 'La pochette de Halleluyah est temporairement indisponible.', 'tracks.halleluyah.number': 'Piste 07', 'tracks.halleluyah.playLabel': 'Lire Halleluyah'
+  },
+  es: {
+    'tracks.halleluyah.audioLabel': 'Halleluyah de Carine Sanadina', 'tracks.halleluyah.coverAlt': 'Portada de Halleluyah', 'tracks.halleluyah.fallback': 'La portada de Halleluyah no está disponible temporalmente.', 'tracks.halleluyah.number': 'Pista 07', 'tracks.halleluyah.playLabel': 'Reproducir Halleluyah', 'tracks.halleluyah.lyricsFallback': 'La letra sincronizada estará disponible pronto.'
+  },
+  ln: {
+    'tracks.reason.audioLabel': 'Reason ya Carine Sanadina', 'tracks.reason.coverAlt': 'Elilingi ya Reason', 'tracks.reason.fallback': 'Elilingi ya Reason ezali te mpo na mwa ntango.', 'tracks.reason.number': 'Loyembo 06', 'tracks.reason.description': 'Fɛti ya Afropop ya ntina, mosala mpe ntina ya eleko nyonso ya bokoli.', 'tracks.reason.about': 'Reason ememaka nsango ya esengo ya Carine Sanadina mpo na ntina, kotambola mpe botondi; eteyaka ete litambe nyonso mpe eleko nyonso ezali na ndimbola.', 'reasonSynopsis': 'Fɛti ya Afropop ya ntina, mosala mpe bokoli.', 'tracks.reason.credits': 'Moyembi: Carine Sanadina\nEbimisami na Omoluabi Productions\nElakisami na Omoluabi Productions', 'tracks.reason.playLabel': 'Beta Reason',
+    'tracks.halleluyah.audioLabel': 'Halleluyah ya Carine Sanadina', 'tracks.halleluyah.coverAlt': 'Elilingi ya Halleluyah', 'tracks.halleluyah.fallback': 'Elilingi ya Halleluyah ezali te mpo na mwa ntango.', 'tracks.halleluyah.number': 'Loyembo 07', 'tracks.halleluyah.playLabel': 'Beta Halleluyah'
+  },
+  sw: {
+    'tracks.reason.audioLabel': 'Reason ya Carine Sanadina', 'tracks.reason.coverAlt': 'Jalada la Reason', 'tracks.reason.fallback': 'Jalada la Reason halipatikani kwa muda.', 'tracks.reason.number': 'Wimbo 06', 'tracks.reason.description': 'Sherehe ya Afropop kuhusu kusudi, juhudi na maana ya kila msimu wa ukuaji.', 'tracks.reason.about': 'Reason hubeba ujumbe changamfu wa Carine Sanadina kuhusu kusudi, mwendo na shukrani, ikikumbusha kuwa kila hatua na kila msimu wa ukuaji una maana.', 'reasonSynopsis': 'Sherehe ya Afropop kuhusu kusudi, juhudi na ukuaji.', 'tracks.reason.credits': 'Msanii: Carine Sanadina\nImetayarishwa na Omoluabi Productions\nImewasilishwa na Omoluabi Productions', 'tracks.reason.playLabel': 'Cheza Reason',
+    'tracks.halleluyah.audioLabel': 'Halleluyah ya Carine Sanadina', 'tracks.halleluyah.coverAlt': 'Jalada la Halleluyah', 'tracks.halleluyah.fallback': 'Jalada la Halleluyah halipatikani kwa muda.', 'tracks.halleluyah.number': 'Wimbo 07', 'tracks.halleluyah.playLabel': 'Cheza Halleluyah', 'tracks.halleluyah.lyricsFallback': 'Maneno yaliyosawazishwa yanakuja hivi karibuni.'
+  },
+  yo: {
+    'tracks.reason.audioLabel': 'Reason láti ọwọ́ Carine Sanadina', 'tracks.reason.coverAlt': 'Àwòrán ìderí Reason', 'tracks.reason.fallback': 'Àwòrán ìderí Reason kò sí fún ìgbà díẹ̀.', 'tracks.reason.number': 'Orin 06', 'tracks.reason.description': 'Ayẹyẹ Afropop tó kún fún ayọ̀ nípa ìdí, iṣẹ́ takuntakun àti ìtumọ̀ gbogbo àsìkò ìdàgbàsókè.', 'tracks.reason.about': 'Reason gbé ìránṣẹ́ aláyọ̀ Carine Sanadina nípa ìdí, ìrìn àti ọpẹ́, ó sì rántí wa pé gbogbo ìgbésẹ̀ àti àsìkò ìdàgbàsókè ní ìtumọ̀.', 'reasonSynopsis': 'Ayẹyẹ Afropop nípa ìdí, iṣẹ́ takuntakun àti ìdàgbàsókè.', 'tracks.reason.credits': 'Olórin: Carine Sanadina\nOmoluabi Productions ló ṣe é\nOmoluabi Productions ló gbé e kalẹ̀', 'tracks.reason.playLabel': 'Mu Reason ṣiṣẹ́',
+    'tracks.halleluyah.audioLabel': 'Halleluyah láti ọwọ́ Carine Sanadina', 'tracks.halleluyah.coverAlt': 'Àwòrán ìderí Halleluyah', 'tracks.halleluyah.fallback': 'Àwòrán ìderí Halleluyah kò sí fún ìgbà díẹ̀.', 'tracks.halleluyah.number': 'Orin 07', 'tracks.halleluyah.playLabel': 'Mu Halleluyah ṣiṣẹ́', 'tracks.halleluyah.lyricsFallback': 'Ọ̀rọ̀ orin tó bá àkókò mu ń bọ̀ láìpẹ́.'
+  },
+  de: {
+    'tracks.halleluyah.audioLabel': 'Halleluyah von Carine Sanadina', 'tracks.halleluyah.coverAlt': 'Cover von Halleluyah', 'tracks.halleluyah.fallback': 'Das Cover von Halleluyah ist vorübergehend nicht verfügbar.', 'tracks.halleluyah.number': 'Titel 07', 'tracks.halleluyah.playLabel': 'Halleluyah abspielen', 'tracks.halleluyah.lyricsFallback': 'Synchronisierte Liedtexte folgen in Kürze.'
+  },
+  ar: {
+    'tracks.halleluyah.audioLabel': 'Halleluyah بصوت Carine Sanadina', 'tracks.halleluyah.coverAlt': 'غلاف Halleluyah', 'tracks.halleluyah.fallback': 'غلاف Halleluyah غير متاح مؤقتاً.', 'tracks.halleluyah.number': 'المسار 07', 'tracks.halleluyah.playLabel': 'تشغيل Halleluyah', 'tracks.halleluyah.lyricsFallback': 'الكلمات المتزامنة ستتوفر قريباً.'
+  },
+  'zh-CN': {
+    'tracks.halleluyah.audioLabel': 'Carine Sanadina 演唱的 Halleluyah', 'tracks.halleluyah.coverAlt': 'Halleluyah 封面', 'tracks.halleluyah.fallback': 'Halleluyah 封面暂时无法显示。', 'tracks.halleluyah.number': '曲目 07', 'tracks.halleluyah.playLabel': '播放 Halleluyah', 'tracks.halleluyah.lyricsFallback': '同步歌词即将上线。'
+  }
+};
+Object.entries(finalTrackTranslationAdditions).forEach(([language, dictionary]) => Object.assign(translations[language], dictionary));
+
+const ensureCompleteTrackTranslations = () => {
+  const officialTrackKeys = ['title'];
+  Object.entries(translations).forEach(([language, dictionary]) => {
+    if (language === DEFAULT_LANGUAGE) return;
+    ['tracks.halleluyah', 'tracks.reason'].forEach((prefix) => {
+      officialTrackKeys.forEach((suffix) => {
+        const key = `${prefix}.${suffix}`;
+        if (!(key in dictionary) && key in translations[DEFAULT_LANGUAGE]) dictionary[key] = translations[DEFAULT_LANGUAGE][key];
+      });
+    });
+  });
+};
+ensureCompleteTrackTranslations();
+
 const supportedLanguages = Object.keys(translations);
 let currentLanguage = DEFAULT_LANGUAGE;
 
@@ -3653,21 +3836,20 @@ const TRANSLATION_AUDIT_ALLOWED_TEXT = [
   'Halleluyah'
 ];
 
-const isAllowedTranslationAuditText = (value = '') => TRANSLATION_AUDIT_ALLOWED_TEXT.some((allowedText) => value.includes(allowedText));
+const isAllowedTranslationAuditText = (value = '') => TRANSLATION_AUDIT_ALLOWED_TEXT.includes(String(value).trim());
 
 const listMissingTranslations = () => {
   const englishKeys = Object.keys(translations[DEFAULT_LANGUAGE] || {}).sort();
   const report = supportedLanguages.reduce((summary, language) => {
     if (language === DEFAULT_LANGUAGE) return summary;
     const dictionary = translations[language] || {};
-    const missing = englishKeys.filter((key) => !(key in dictionary));
+    const missing = englishKeys.filter((key) => !(key in dictionary) || dictionary[key] === '');
     const englishFallbacks = englishKeys.filter((key) => (
       dictionary[key] === translations[DEFAULT_LANGUAGE][key]
       && !isAllowedTranslationAuditText(String(dictionary[key] || ''))
       && key !== 'html.lang'
       && !key.startsWith('language.name.')
     ));
-
     summary[language] = { missing, englishFallbacks };
     return summary;
   }, {});
@@ -3683,41 +3865,85 @@ const listMissingTranslations = () => {
   return report;
 };
 
-const auditTranslations = () => {
-  const missing = listMissingTranslations();
-  const visibleText = Array.from(document.body?.querySelectorAll('*') || [])
-    .filter((element) => {
-      const tagName = element.tagName?.toLowerCase();
-      if (['script', 'style', 'template', 'svg', 'path'].includes(tagName)) return false;
-      if (element.closest('[hidden], [aria-hidden="true"]')) return false;
-      return Boolean(element.childNodes?.length);
-    })
-    .flatMap((element) => Array.from(element.childNodes)
-      .filter((node) => node.nodeType === Node.TEXT_NODE)
-      .map((node) => ({ element, text: node.textContent.trim().replace(/\s+/g, ' ') }))
-      .filter(({ text }) => text && !isAllowedTranslationAuditText(text))
-      .filter(({ element }) => !element.closest('[data-i18n], [data-i18n-html]'))
-    );
+const getAuditSelector = (element) => {
+  if (!element) return '';
+  if (element.id) return `#${element.id}`;
+  const classes = typeof element.className === 'string' ? element.className.trim().replace(/\s+/g, '.') : '';
+  return `${element.tagName?.toLowerCase() || 'element'}${classes ? `.${classes}` : ''}`;
+};
 
-  const untranslatedEnglish = currentLanguage === DEFAULT_LANGUAGE ? [] : Array.from(document.querySelectorAll('[data-i18n], [data-i18n-placeholder], [data-i18n-aria-label], [data-i18n-title], [data-i18n-alt]'))
-    .map((element) => {
-      const keys = [element.dataset.i18n, element.dataset.i18nPlaceholder, element.dataset.i18nAriaLabel, element.dataset.i18nTitle, element.dataset.i18nAlt].filter(Boolean);
-      return keys.map((key) => ({ key, value: translations[currentLanguage]?.[key], english: translations[DEFAULT_LANGUAGE]?.[key] }));
-    })
-    .flat()
-    .filter(({ value, english }) => value && english && value === english && !isAllowedTranslationAuditText(String(value)));
+const isAuditElementVisible = (element) => {
+  if (!element || element.closest('[hidden], [aria-hidden="true"]')) return false;
+  const style = window.getComputedStyle?.(element);
+  return !style || (style.display !== 'none' && style.visibility !== 'hidden');
+};
+
+const auditTranslations = () => {
+  const missingTranslations = listMissingTranslations();
+  const allVisibleElements = Array.from(document.body?.querySelectorAll('*') || []).filter(isAuditElementVisible);
+  const elementsWithoutTranslationKeys = allVisibleElements.flatMap((element) => Array.from(element.childNodes || [])
+    .filter((node) => node.nodeType === Node.TEXT_NODE)
+    .map((node) => node.textContent.trim().replace(/\s+/g, ' '))
+    .filter((text) => text && /[A-Za-zÀ-ÿ]/.test(text) && !isAllowedTranslationAuditText(text))
+    .filter(() => !element.closest('[data-i18n], [data-i18n-html]'))
+    .map((text) => ({ selector: getAuditSelector(element), text }))
+  );
+
+  const attributeAudit = (attribute, datasetKey) => allVisibleElements
+    .filter((element) => element.hasAttribute(attribute) && !element.dataset[datasetKey] && !(attribute === 'title' && element.dataset.i18nTitleTemplate))
+    .map((element) => ({ selector: getAuditSelector(element), value: element.getAttribute(attribute) }))
+    .filter(({ value }) => value && /[A-Za-zÀ-ÿ]/.test(value) && !isAllowedTranslationAuditText(value));
+
+  const keyedElements = Array.from(document.querySelectorAll('[data-i18n], [data-i18n-placeholder], [data-i18n-aria-label], [data-i18n-title], [data-i18n-title-template], [data-i18n-alt], [data-i18n-attr]'));
+  const missingTranslationKeys = keyedElements.flatMap((element) => {
+    const keys = [element.dataset.i18n, element.dataset.i18nPlaceholder, element.dataset.i18nAriaLabel, element.dataset.i18nTitle, element.dataset.i18nTitleTemplate, element.dataset.i18nAlt]
+      .filter(Boolean);
+    if (element.dataset.i18nAttr) {
+      element.dataset.i18nAttr.split(';').forEach((pair) => keys.push(pair.split(':')[1]?.trim()));
+    }
+    return keys.filter(Boolean).filter((key) => !(key in (translations[currentLanguage] || {})) && !(key in (translations[DEFAULT_LANGUAGE] || {})))
+      .map((key) => ({ selector: getAuditSelector(element), key }));
+  });
+
+  const visibleEnglishStrings = currentLanguage === DEFAULT_LANGUAGE ? [] : keyedElements.flatMap((element) => {
+    const entries = [
+      [element.dataset.i18n, element.textContent?.trim()],
+      [element.dataset.i18nPlaceholder, element.getAttribute('placeholder')],
+      [element.dataset.i18nAriaLabel, element.getAttribute('aria-label')],
+      [element.dataset.i18nTitle, element.getAttribute('title')],
+      [element.dataset.i18nAlt, element.getAttribute('alt')]
+    ];
+    return entries.filter(([key, value]) => key && value && translations[DEFAULT_LANGUAGE]?.[key] === value && !isAllowedTranslationAuditText(value))
+      .map(([key, value]) => ({ selector: getAuditSelector(element), key, value }));
+  });
+
+  const dynamicLabelsNotRefreshed = keyedElements.flatMap((element) => {
+    const checks = [
+      [element.dataset.i18n, 'textContent', element.textContent?.trim()],
+      [element.dataset.i18nPlaceholder, 'placeholder', element.getAttribute('placeholder')],
+      [element.dataset.i18nAriaLabel, 'aria-label', element.getAttribute('aria-label')],
+      [element.dataset.i18nTitle, 'title', element.getAttribute('title')],
+      [element.dataset.i18nAlt, 'alt', element.getAttribute('alt')],
+      [element.dataset.i18nTitleTemplate, 'title', element.getAttribute('title'), translateTemplate(element.dataset.i18nTitleTemplate || '', { title: element.dataset.videoTitle || 'Carine Sanadina' })]
+    ];
+    return checks.filter(([key, , value, templateExpected]) => key && value !== (templateExpected || translate(key)))
+      .map(([key, target, value, templateExpected]) => ({ selector: getAuditSelector(element), key, target, expected: templateExpected || translate(key), actual: value }));
+  });
 
   const report = {
-    language: currentLanguage,
-    missing,
-    hardcodedVisibleText: visibleText.map(({ element, text }) => ({
-      text,
-      selector: element.id ? `#${element.id}` : element.className ? `${element.tagName.toLowerCase()}.${String(element.className).trim().replace(/\s+/g, '.')}` : element.tagName.toLowerCase()
-    })),
-    untranslatedEnglish
+    currentLanguage,
+    visibleEnglishStrings,
+    elementsWithoutTranslationKeys,
+    missingTranslationKeys,
+    hardcodedAriaLabels: attributeAudit('aria-label', 'i18nAriaLabel'),
+    hardcodedPlaceholders: attributeAudit('placeholder', 'i18nPlaceholder'),
+    hardcodedTitleAttributes: attributeAudit('title', 'i18nTitle'),
+    hardcodedAltText: attributeAudit('alt', 'i18nAlt'),
+    dynamicLabelsNotRefreshed,
+    missingTranslations
   };
 
-  window.console?.groupCollapsed?.('[i18n] Translation coverage audit');
+  window.console?.groupCollapsed?.(`[i18n] Translation coverage audit: ${currentLanguage}`);
   window.console?.info?.(report);
   window.console?.groupEnd?.();
   return report;
@@ -3743,6 +3969,10 @@ const applyTranslations = (language) => {
 
   document.querySelectorAll('[data-i18n-html]').forEach((element) => {
     element.innerHTML = t(element.dataset.i18nHtml, element.innerHTML, nextLanguage);
+  });
+
+  document.querySelectorAll('[data-i18n-title-template]').forEach((element) => {
+    element.title = translateTemplate(element.dataset.i18nTitleTemplate, { title: element.dataset.videoTitle || 'Carine Sanadina' }, nextLanguage);
   });
 
   document.querySelectorAll('[data-i18n-attr]').forEach((element) => {
@@ -3800,7 +4030,15 @@ const applyLanguage = (language) => {
   const nextLanguage = normalizeLanguage(language);
   storeLanguage(nextLanguage);
   applyTranslations(nextLanguage);
+  refreshPlaylistTranslationData();
   renderLocalizedContent(nextLanguage);
+};
+
+window.forceTranslateApp = () => {
+  applyTranslations(currentLanguage);
+  refreshPlaylistTranslationData();
+  renderLocalizedContent(currentLanguage);
+  return auditTranslations();
 };
 
 const languageSwitchers = document.querySelectorAll('.language-switcher');
@@ -4193,6 +4431,20 @@ const renderExpandedTrackOption = (track) => {
           <span class="expanded-track-option__indicator equalizer" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
         </button>
       `;
+};
+
+const refreshPlaylistTranslationData = () => {
+  document.querySelectorAll('[data-audio-player][data-track-translation-key]').forEach((player) => {
+    const trackKey = player.dataset.trackTranslationKey;
+    const synopsisKey = CARINE_MUSIC_PLAYLIST.find((track) => track.translationKey === trackKey)?.synopsisKey;
+    player.dataset.trackDescription = translate(`${trackKey}.description`);
+    player.dataset.trackAbout = translate(`${trackKey}.about`);
+    player.dataset.trackCredits = translate(`${trackKey}.credits`);
+    if (synopsisKey) {
+      const synopsis = player.querySelector(`[data-i18n="${synopsisKey}"]`);
+      if (synopsis) synopsis.textContent = translate(synopsisKey);
+    }
+  });
 };
 
 const renderCarinePlaylist = () => {
@@ -5205,40 +5457,30 @@ const initializeGuideAssistant = () => {
   const input = widget.querySelector('[data-guide-input]');
   const starters = Array.from(widget.querySelectorAll('[data-guide-starter]'));
 
+  const answer = (key) => ({ key, text: translate(key) });
+
   const knowledgeBase = {
-    biography: 'Carine Sanadina is Congolese-born and Jacksonville-based. She is a healthcare professional, author, artist, survivor advocate, and emotional wellness voice whose work transforms lived pain into healing-centered literature, music, and inspiration. Her message often carries faith, resilience, motherhood, immigrant experience, survival, and restoration.',
+    biography: 'guide.answer.biography',
     books: {
-      pain: {
-        title: 'The Pain Nobody Saw: A Hidden Story of Abuse and Survival',
-        themes: ['hidden abuse', 'survival', 'healing', 'silent pain', 'domestic violence'],
-        response: 'Start with The Pain Nobody Saw: A Hidden Story of Abuse and Survival if you want Carine’s hidden-abuse, survival, and healing-centered testimony. It gives language to pain that was often unseen.'
-      },
-      toxic: {
-        title: 'If It’s Red, It’s Toxic',
-        themes: ['toxic relationships', 'red flags', 'emotional clarity', 'self-worth'],
-        response: 'For toxic relationships, start with If It’s Red, It’s Toxic. It centers red flags, emotional clarity, self-worth, and the courage to protect your peace.'
-      },
-      sunshine: {
-        title: 'The Road to Sunshine: A Journey of Struggles, Faith and Hope',
-        themes: ['struggle', 'faith', 'hope', 'restoration', 'resilience'],
-        response: 'For faith, hope, and restoration, The Road to Sunshine: A Journey of Struggles, Faith and Hope is the best starting point. It speaks to resilience while walking through difficulty.'
-      },
-      storm: {
-        title: 'After The Storm',
-        themes: ['recovery', 'survival after hardship', 'healing beyond the storm'],
-        response: 'Choose After The Storm if your question is about recovery after hardship — healing beyond the storm, peace after survival, and renewed possibility.'
-      }
+      pain: { title: 'The Pain Nobody Saw: A Hidden Story of Abuse and Survival', response: 'guide.answer.bookPain' },
+      toxic: { title: 'If It’s Red, It’s Toxic', response: 'guide.answer.bookToxic' },
+      sunshine: { title: 'The Road to Sunshine: A Journey of Struggles, Faith and Hope', response: 'guide.answer.bookSunshine' },
+      storm: { title: 'After The Storm', response: 'guide.answer.bookStorm' },
+      general: 'guide.answer.bookGeneral'
     },
     music: {
-      consolation: 'Consolation is about comfort, encouragement, faith, and emotional restoration — a gentle song for the heart that needs reassurance.',
-      gentillesse: 'La Gentillesse centers kindness, compassion, healing, and human connection.',
-      wonderful: 'Wonderful is a praise-filled song of gratitude and God’s goodness.',
-      womanifesto: 'Womanifesto is a Soukous • Rumba • Makossa Gospel anthem about feminine resilience, healing, grace, victory, faith, identity, and restoration.'
+      consolation: 'guide.answer.consolation',
+      gentillesse: 'guide.answer.gentillesse',
+      wonderful: 'guide.answer.wonderful',
+      womanifesto: 'guide.answer.womanifesto',
+      general: 'guide.answer.musicGeneral'
     },
-    advocacy: 'Carine advocates for domestic violence awareness, emotional healing, survivor empowerment, women’s self-worth, faith-centered restoration, toxic relationship recovery, and human-centered care.',
-    booking: 'You may use the contact or booking section to request speaking, media, music collaboration, or advocacy-related conversations.',
-    navigation: 'Use the site navigation to explore Music, Books/Author Spotlight, About, Advocacy/Focus Areas, Reflections, or Contact. For invitations or media, the Contact section is the best next step.',
-    unsure: 'I can speak from the information available on Carine’s website, but this detail may need confirmation through the contact section.'
+    advocacy: 'guide.answer.advocacy',
+    booking: 'guide.answer.booking',
+    navigation: 'guide.answer.navigation',
+    faith: 'guide.answer.faith',
+    safety: 'guide.answer.safety',
+    unsure: 'guide.answer.unsure'
   };
 
   const containsAny = (text, words) => words.some((word) => text.includes(word));
@@ -5250,46 +5492,44 @@ const initializeGuideAssistant = () => {
     return containsAny(text, emergencySignals);
   };
 
-  const addMessage = (text, sender = 'bot') => {
+  const addMessage = (message, sender = 'bot') => {
     const bubble = document.createElement('div');
+    const localizedMessage = typeof message === 'object' && message ? message : { text: String(message || '') };
     bubble.className = `guide-message guide-message--${sender}`;
-    bubble.textContent = text;
+    bubble.textContent = localizedMessage.text;
+    if (sender === 'bot' && localizedMessage.key) bubble.dataset.guideResponseKey = localizedMessage.key;
     messages.appendChild(bubble);
     messages.scrollTop = messages.scrollHeight;
   };
 
   const recommendBook = (normalized) => {
-    if (containsAny(normalized, ['toxic', 'red flag', 'red flags', 'relationship', 'manipulation', 'self-worth', 'worth'])) return knowledgeBase.books.toxic.response;
-    if (containsAny(normalized, ['hope', 'faith', 'restoration', 'sunshine', 'resilience', 'struggle'])) return knowledgeBase.books.sunshine.response;
-    if (containsAny(normalized, ['storm', 'after hardship', 'hardship', 'recovery', 'recover', 'beyond survival'])) return knowledgeBase.books.storm.response;
-    if (containsAny(normalized, ['abuse', 'survival', 'survivor', 'domestic violence', 'hidden pain', 'pain nobody saw'])) return knowledgeBase.books.pain.response;
-    return `${knowledgeBase.books.pain.response} If your focus is red flags, choose ${knowledgeBase.books.toxic.title}; for faith and hope, choose ${knowledgeBase.books.sunshine.title}; for recovery after hardship, choose ${knowledgeBase.books.storm.title}.`;
+    if (containsAny(normalized, ['toxic', 'red flag', 'red flags', 'relationship', 'manipulation', 'self-worth', 'worth'])) return answer(knowledgeBase.books.toxic.response);
+    if (containsAny(normalized, ['hope', 'faith', 'restoration', 'sunshine', 'resilience', 'struggle'])) return answer(knowledgeBase.books.sunshine.response);
+    if (containsAny(normalized, ['storm', 'after hardship', 'hardship', 'recovery', 'recover', 'beyond survival'])) return answer(knowledgeBase.books.storm.response);
+    if (containsAny(normalized, ['abuse', 'survival', 'survivor', 'domestic violence', 'hidden pain', 'pain nobody saw'])) return answer(knowledgeBase.books.pain.response);
+    return answer(knowledgeBase.books.general);
   };
 
   const recommendSong = (normalized) => {
-    if (containsAny(normalized, ['womanifesto', 'women', 'woman', 'female', 'feminine', 'identity', 'victory'])) return knowledgeBase.music.womanifesto;
-    if (containsAny(normalized, ['kindness', 'gentillesse', 'compassion'])) return knowledgeBase.music.gentillesse;
-    if (containsAny(normalized, ['gratitude', 'praise', 'wonderful', 'goodness'])) return knowledgeBase.music.wonderful;
-    if (containsAny(normalized, ['comfort', 'consolation', 'encouragement', 'restoration'])) return knowledgeBase.music.consolation;
-    return `Carine’s featured music includes Consolation, La Gentillesse, Wonderful, and Womanifesto. ${knowledgeBase.music.womanifesto}`;
+    if (containsAny(normalized, ['womanifesto', 'women', 'woman', 'female', 'feminine', 'identity', 'victory'])) return answer(knowledgeBase.music.womanifesto);
+    if (containsAny(normalized, ['kindness', 'gentillesse', 'compassion'])) return answer(knowledgeBase.music.gentillesse);
+    if (containsAny(normalized, ['gratitude', 'praise', 'wonderful', 'goodness'])) return answer(knowledgeBase.music.wonderful);
+    if (containsAny(normalized, ['comfort', 'consolation', 'encouragement', 'restoration'])) return answer(knowledgeBase.music.consolation);
+    return answer(knowledgeBase.music.general);
   };
 
   const answerQuestion = (question) => {
     const normalized = question.toLowerCase();
-    if (isImmediateSafetyConcern(normalized)) {
-      return 'I’m sorry you may be facing something urgent. If you or someone else is in immediate danger, please contact local emergency services now or reach a trusted professional immediately. This guide can share information about Carine’s work, but it cannot replace professional, legal, medical, or crisis support.';
-    }
+    if (isImmediateSafetyConcern(normalized)) return answer(knowledgeBase.safety);
     if (containsAny(normalized, ['book', 'read', 'start with', 'recommend', 'which one'])) return recommendBook(normalized);
-    if (containsAny(normalized, ['womanifesto'])) return knowledgeBase.music.womanifesto;
+    if (containsAny(normalized, ['womanifesto'])) return answer(knowledgeBase.music.womanifesto);
     if (containsAny(normalized, ['music', 'song', 'track', 'listen', 'consolation', 'gentillesse', 'wonderful', 'kindness', 'praise', 'gratitude', 'comfort'])) return recommendSong(normalized);
-    if (containsAny(normalized, ['advocacy', 'advocate', 'mission', 'domestic violence', 'empowerment', 'self-worth', 'healing', 'toxic relationship', 'human-centered care'])) return knowledgeBase.advocacy;
-    if (containsAny(normalized, ['invite', 'speak', 'speaking', 'booking', 'media', 'interview', 'collaboration', 'contact'])) return knowledgeBase.booking;
-    if (containsAny(normalized, ['where', 'navigate', 'navigation', 'find', 'section', 'page', 'website'])) return knowledgeBase.navigation;
-    if (containsAny(normalized, ['story', 'bio', 'biography', 'background', 'healthcare', 'jacksonville', 'congolese', 'immigrant', 'refugee', 'motherhood', 'survivor', 'author', 'artist', 'carine'])) return knowledgeBase.biography;
-    if (containsAny(normalized, ['faith', 'resilience', 'restoration', 'emotional wellness', 'women'])) {
-      return 'Carine’s voice is warm, faith-centered, and restoration-oriented. Across her books, music, and advocacy, she speaks about emotional healing, resilient self-worth, survivor dignity, women’s empowerment, motherhood, and hope after pain.';
-    }
-    return knowledgeBase.unsure;
+    if (containsAny(normalized, ['advocacy', 'advocate', 'mission', 'domestic violence', 'empowerment', 'self-worth', 'healing', 'toxic relationship', 'human-centered care'])) return answer(knowledgeBase.advocacy);
+    if (containsAny(normalized, ['invite', 'speak', 'speaking', 'booking', 'media', 'interview', 'collaboration', 'contact'])) return answer(knowledgeBase.booking);
+    if (containsAny(normalized, ['where', 'navigate', 'navigation', 'find', 'section', 'page', 'website'])) return answer(knowledgeBase.navigation);
+    if (containsAny(normalized, ['story', 'bio', 'biography', 'background', 'healthcare', 'jacksonville', 'congolese', 'immigrant', 'refugee', 'motherhood', 'survivor', 'author', 'artist', 'carine'])) return answer(knowledgeBase.biography);
+    if (containsAny(normalized, ['faith', 'resilience', 'restoration', 'emotional wellness', 'women'])) return answer(knowledgeBase.faith);
+    return answer(knowledgeBase.unsure);
   };
 
   const submitQuestion = (question) => {
@@ -5307,7 +5547,7 @@ const initializeGuideAssistant = () => {
     panel.setAttribute('aria-modal', String(isOpen));
     if (isOpen) {
       if (!messages.dataset.initialized) {
-        addMessage(t('guide.welcome', 'Welcome. I’m Carine’s Guide — a compact guide to her story, books, music, advocacy, and healing-centered mission. How may I help you explore?'));
+        addMessage(answer('guide.welcome'));
         messages.dataset.initialized = 'true';
       }
       window.setTimeout(() => input.focus({ preventScroll: true }), 50);
@@ -5329,6 +5569,12 @@ const initializeGuideAssistant = () => {
   document.addEventListener('pointerdown', (event) => {
     if (panel.hidden || widget.contains(event.target)) return;
     setOpen(false);
+  });
+
+  window.addEventListener('carine:languagechange', () => {
+    messages.querySelectorAll('[data-guide-response-key]').forEach((bubble) => {
+      bubble.textContent = translate(bubble.dataset.guideResponseKey);
+    });
   });
 };
 initializeReflections();
@@ -5653,10 +5899,13 @@ if (musicPlayers.length) {
   };
 
   const updateCommandButtons = () => {
-    const shuffleLabel = translate(shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle');
+    const shuffleLabelKey = shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle';
+    const shuffleLabel = translate(shuffleLabelKey);
     [shuffleButton, mobileShuffle, miniShuffle].forEach((button) => {
       if (!button) return;
       button.setAttribute('aria-pressed', String(shuffleEnabled));
+      button.dataset.i18nAriaLabel = shuffleLabelKey;
+      button.dataset.i18nTitle = shuffleLabelKey;
       setAccessibleControlLabel(button, shuffleLabel);
       if (!button.querySelector('.control-icon, svg')) button.textContent = shuffleLabel;
       button.classList.toggle('is-active', shuffleEnabled);
@@ -5667,6 +5916,8 @@ if (musicPlayers.length) {
     [repeatButton, mobileRepeat, miniRepeat].forEach((button) => {
       if (!button) return;
       button.dataset.repeatMode = repeatMode;
+      button.dataset.i18nAriaLabel = repeatLabelKey;
+      button.dataset.i18nTitle = repeatLabelKey;
       button.setAttribute('aria-pressed', String(repeatMode !== 'off'));
       setAccessibleControlLabel(button, repeatLabel);
       if (!button.querySelector('.control-icon, svg')) button.textContent = repeatLabel;
@@ -7779,6 +8030,9 @@ if (musicPlayers.length) {
         ? '<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>'
         : '<svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7V5z"/></svg>';
     }
+    const labelKey = isPlaying ? 'audio.pause' : 'audio.play';
+    button.dataset.i18nAriaLabel = labelKey;
+    button.dataset.i18nTitle = labelKey;
     button.classList.toggle('is-playing', isPlaying);
     button.setAttribute('aria-label', label);
     button.setAttribute('title', label);
@@ -8797,6 +9051,9 @@ if (musicPlayers.length) {
     [miniExpand, playerExpand].forEach((button) => button?.setAttribute('aria-expanded', String(isOpen)));
     if (playerExpand) {
       const label = isOpen ? translate('mini.close') : translate('mini.expand');
+      const labelKey = isOpen ? 'mini.close' : 'mini.expand';
+      playerExpand.dataset.i18nAriaLabel = labelKey;
+      playerExpand.dataset.i18nTitle = labelKey;
       playerExpand.setAttribute('aria-label', label);
       playerExpand.setAttribute('title', label);
       playerExpand.classList.toggle('is-active', isOpen);
@@ -9040,7 +9297,7 @@ const renderVideoCards = () => {
       <div class="video-card__body">
         <p class="video-card__category">${escapeVideoText(translate('videos.category'))}</p>
         <h3><button class="video-card__title" type="button" data-video-open="${videoKey}">${escapeVideoText(video.title)}</button></h3>
-        <p>${escapeVideoText(video.description)}</p>
+        <p>${escapeVideoText(translate('videos.cardDescription'))}</p>
         <button class="button button-primary video-card__button" type="button" data-video-open="${videoKey}" aria-label="${openLabel}">${escapeVideoText(translate('videos.watch'))}</button>
       </div>
     </article>`;
@@ -9123,10 +9380,11 @@ const openVideoModal = (video) => {
   lastSelectedVideoId = videoId;
   closeVideosDrawer({ returnFocus: false });
   if (videoModalTitle) videoModalTitle.textContent = video.title;
-  if (videoModalDescription) videoModalDescription.textContent = video.description;
+  if (videoModalDescription) videoModalDescription.textContent = translate('videos.cardDescription');
   pauseMusicForVideo();
   if (videoPlaceholder) videoPlaceholder.hidden = true;
-  videoIframe.title = `${video.title} — YouTube video player`;
+  videoIframe.dataset.videoTitle = video.title;
+  videoIframe.title = translateTemplate('videos.iframeTitle', { title: video.title });
   videoIframe.src = getYouTubeEmbedUrl(videoId);
   videoIframe.hidden = false;
   videoModal.hidden = false;
@@ -9199,7 +9457,13 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-window.addEventListener('carine:languagechange', renderVideoCards);
+window.addEventListener('carine:languagechange', () => {
+  renderVideoCards();
+  if (activeVideo && videoModal && !videoModal.hidden) {
+    if (videoModalDescription) videoModalDescription.textContent = translate('videos.cardDescription');
+    if (videoIframe) videoIframe.title = translateTemplate('videos.iframeTitle', { title: activeVideo.title });
+  }
+});
 
 const describeElement = (element) => {
   if (!element) return null;
