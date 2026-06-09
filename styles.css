@@ -7565,7 +7565,17 @@ body.expanded-player-open .guide-widget { opacity: 0; visibility: hidden; pointe
 }
 
 .direct-drive-deck .expanded-vinyl-label::after { display: none; }
-.direct-drive-deck .mobile-player-cover { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+/* The record label must occupy the same diameter for every track.
+   This intentionally overrides per-track `contain` padding used by non-vinyl artwork. */
+.direct-drive-deck .expanded-vinyl-label .mobile-player-cover {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center center;
+}
 
 .record-spindle {
   position: absolute;
