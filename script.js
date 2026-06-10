@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-10-android-audio-playback';
+const APP_VERSION = 'carine-site-2026-06-10-after-the-storm-cover';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 

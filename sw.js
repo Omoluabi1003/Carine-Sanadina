@@ -1,6 +1,6 @@
-const APP_VERSION = 'carine-site-2026-06-09-ios-vinyl-rotation';
+const APP_VERSION = 'carine-site-2026-06-10-after-the-storm-cover';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v11-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v12-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
