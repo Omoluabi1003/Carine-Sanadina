@@ -63,6 +63,18 @@ test('every supported language contains every English translation key', () => {
   }
 });
 
+test('developer attribution remains visible and localized in every supported language', () => {
+  const translations = readTranslations();
+  assert.match(indexHtml, /<p data-i18n="footer\.credit">[^<]*Omoluabi Productions[^<]*ETL GIS Consulting LLC[^<]*<\/p>/);
+
+  for (const [language, dictionary] of Object.entries(translations)) {
+    const credit = dictionary['footer.credit'];
+    assert.equal(typeof credit, 'string', `${language} is missing the developer attribution`);
+    assert.match(credit, /Omoluabi/i, `${language} omits the creative production identity`);
+    assert.match(credit, /ETL GIS Consulting LLC/, `${language} omits the operating legal entity`);
+  }
+});
+
 test('English dictionary is clean and the contamination audit catches known scripts and terms', () => {
   const context = createI18nContext();
   const cleanReport = context.auditEnglishDictionary();
