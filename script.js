@@ -3804,6 +3804,73 @@ const ensureCompleteTrackTranslations = () => {
 };
 ensureCompleteTrackTranslations();
 
+const developerPresenceTranslations = {
+  en: {
+    'developer.inquiryLabel': 'Website & technology inquiries',
+    'developer.inquiryText': 'For website, AI, GIS, automation, or digital modernization inquiries, contact ETL GIS Consulting LLC.',
+    'footer.developerCredit': 'Website design, development, and digital experience by',
+    'legal.developer.title': 'Development and Technical Implementation',
+    'legal.developer.body': 'ETL GIS Consulting LLC provides the website platform, digital presentation, development, and technical implementation for this project.'
+  },
+  fr: {
+    'developer.inquiryLabel': 'Demandes concernant les sites web et la technologie',
+    'developer.inquiryText': 'Pour toute demande concernant un site web, l’IA, les SIG, l’automatisation ou la modernisation numérique, contactez ETL GIS Consulting LLC.',
+    'footer.developerCredit': 'Conception, développement et expérience numérique du site par',
+    'legal.developer.title': 'Développement et mise en œuvre technique',
+    'legal.developer.body': 'ETL GIS Consulting LLC fournit la plateforme du site, la présentation numérique, le développement et la mise en œuvre technique de ce projet.'
+  },
+  ln: {
+    'developer.inquiryLabel': 'Mituna ya site internet mpe tekiniki',
+    'developer.inquiryText': 'Mpo na mituna ya site internet, AI, GIS, automatisation to modernisation numérique, solola na ETL GIS Consulting LLC.',
+    'footer.developerCredit': 'Design, développement mpe expérience numérique ya site esalemi na',
+    'legal.developer.title': 'Développement mpe bosaleli ya tekiniki',
+    'legal.developer.body': 'ETL GIS Consulting LLC epesaka plateforme ya site internet, présentation numérique, développement mpe bosaleli ya tekiniki mpo na projet oyo.'
+  },
+  es: {
+    'developer.inquiryLabel': 'Consultas sobre sitios web y tecnología',
+    'developer.inquiryText': 'Para consultas sobre sitios web, IA, SIG, automatización o modernización digital, contacte a ETL GIS Consulting LLC.',
+    'footer.developerCredit': 'Diseño, desarrollo y experiencia digital del sitio web por',
+    'legal.developer.title': 'Desarrollo e implementación técnica',
+    'legal.developer.body': 'ETL GIS Consulting LLC proporciona la plataforma web, la presentación digital, el desarrollo y la implementación técnica de este proyecto.'
+  },
+  sw: {
+    'developer.inquiryLabel': 'Maswali ya tovuti na teknolojia',
+    'developer.inquiryText': 'Kwa maswali kuhusu tovuti, AI, GIS, uendeshaji otomatiki au uboreshaji wa kidijitali, wasiliana na ETL GIS Consulting LLC.',
+    'footer.developerCredit': 'Ubunifu, uendelezaji na uzoefu wa kidijitali wa tovuti na',
+    'legal.developer.title': 'Uendelezaji na utekelezaji wa kiufundi',
+    'legal.developer.body': 'ETL GIS Consulting LLC hutoa jukwaa la tovuti, uwasilishaji wa kidijitali, uendelezaji na utekelezaji wa kiufundi wa mradi huu.'
+  },
+  yo: {
+    'developer.inquiryLabel': 'Àwọn ìbéèrè nípa ojú-òpó wẹ́ẹ̀bù àti ìmọ̀ ẹ̀rọ',
+    'developer.inquiryText': 'Fún ojú-òpó wẹ́ẹ̀bù, AI, GIS, adaṣe, tàbí ìgbàlódé onínọ́mbà, kan sí ETL GIS Consulting LLC.',
+    'footer.developerCredit': 'Àpẹrẹ, ìdàgbàsókè àti ìrírí onínọ́mbà ojú-òpó wẹ́ẹ̀bù láti ọwọ́',
+    'legal.developer.title': 'Ìdàgbàsókè àti ìmúlò ìmọ̀ ẹ̀rọ',
+    'legal.developer.body': 'ETL GIS Consulting LLC ń pèsè pẹpẹ ojú-òpó wẹ́ẹ̀bù, ìfihàn onínọ́mbà, ìdàgbàsókè àti ìmúlò ìmọ̀ ẹ̀rọ fún iṣẹ́ yìí.'
+  },
+  de: {
+    'developer.inquiryLabel': 'Website- und Technologieanfragen',
+    'developer.inquiryText': 'Für Anfragen zu Websites, KI, GIS, Automatisierung oder digitaler Modernisierung kontaktieren Sie ETL GIS Consulting LLC.',
+    'footer.developerCredit': 'Website-Design, Entwicklung und digitales Erlebnis von',
+    'legal.developer.title': 'Entwicklung und technische Umsetzung',
+    'legal.developer.body': 'ETL GIS Consulting LLC stellt für dieses Projekt die Website-Plattform, digitale Präsentation, Entwicklung und technische Umsetzung bereit.'
+  },
+  ar: {
+    'developer.inquiryLabel': 'استفسارات المواقع والتقنية',
+    'developer.inquiryText': 'للاستفسارات المتعلقة بالمواقع أو الذكاء الاصطناعي أو نظم المعلومات الجغرافية أو الأتمتة أو التحديث الرقمي، تواصلوا مع ETL GIS Consulting LLC.',
+    'footer.developerCredit': 'تصميم الموقع وتطويره وتجربته الرقمية بواسطة',
+    'legal.developer.title': 'التطوير والتنفيذ التقني',
+    'legal.developer.body': 'توفر ETL GIS Consulting LLC منصة الموقع والعرض الرقمي والتطوير والتنفيذ التقني لهذا المشروع.'
+  },
+  'zh-CN': {
+    'developer.inquiryLabel': '网站与技术咨询',
+    'developer.inquiryText': '如需网站、人工智能、GIS、自动化或数字化现代化服务，请联系 ETL GIS Consulting LLC。',
+    'footer.developerCredit': '网站设计、开发和数字体验由以下团队提供：',
+    'legal.developer.title': '开发与技术实施',
+    'legal.developer.body': 'ETL GIS Consulting LLC 为本项目提供网站平台、数字呈现、开发和技术实施服务。'
+  }
+};
+mergeTranslationAdditions(developerPresenceTranslations, 'developer presence translations');
+
 const supportedLanguages = ['en', 'fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN'];
 let currentLanguage = DEFAULT_LANGUAGE;
 

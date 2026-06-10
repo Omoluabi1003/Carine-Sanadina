@@ -63,15 +63,28 @@ test('every supported language contains every English translation key', () => {
   }
 });
 
-test('developer attribution remains visible and localized in every supported language', () => {
+test('developer presence remains visible, secondary, and localized in every supported language', () => {
   const translations = readTranslations();
-  assert.match(indexHtml, /<p data-i18n="footer\.credit">[^<]*Omoluabi Productions[^<]*ETL GIS Consulting LLC[^<]*<\/p>/);
+  assert.match(indexHtml, /class="footer-developer-credit"/);
+  assert.match(indexHtml, /https:\/\/etl-gis-consulting-llc\.vercel\.app/);
+  assert.match(indexHtml, /class="developer-inquiry"/);
+  assert.match(indexHtml, /mailto:etlgisconsulting@outlook\.com/);
+  assert.match(indexHtml, /tel:\+17726773590/);
+  assert.match(legalHtml, /data-i18n="legal\.developer\.body"/);
+  assert.doesNotMatch(indexHtml.match(/<section[^>]+id="hero"[\s\S]*?<\/section>/)?.[0] || '', /ETL GIS Consulting LLC/);
 
+  const requiredKeys = [
+    'developer.inquiryLabel',
+    'developer.inquiryText',
+    'footer.developerCredit',
+    'legal.developer.title',
+    'legal.developer.body'
+  ];
   for (const [language, dictionary] of Object.entries(translations)) {
-    const credit = dictionary['footer.credit'];
-    assert.equal(typeof credit, 'string', `${language} is missing the developer attribution`);
-    assert.match(credit, /Omoluabi/i, `${language} omits the creative production identity`);
-    assert.match(credit, /ETL GIS Consulting LLC/, `${language} omits the operating legal entity`);
+    const missing = requiredKeys.filter((key) => typeof dictionary[key] !== 'string' || dictionary[key] === '');
+    assert.deepEqual(missing, [], `${language} is missing developer-presence translations: ${missing.join(', ')}`);
+    assert.match(dictionary['developer.inquiryText'], /ETL GIS Consulting LLC/, `${language} omits ETL from the developer inquiry`);
+    assert.match(dictionary['legal.developer.body'], /ETL GIS Consulting LLC/, `${language} omits ETL from the legal clarification`);
   }
 });
 
