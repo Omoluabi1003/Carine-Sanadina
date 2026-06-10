@@ -49,7 +49,7 @@ window.reflectionArticles = [
     slug: 'after-the-storm-restoration',
     date: '2026-02-14',
     categoryKey: 'reflection.category.restoration',
-    coverImage: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/dfb2374d-fab8-410b-af27-62e456653b4b.jpeg',
+    coverImage: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/f1b44262-8401-4cb3-a995-08788a969a55.jpeg',
     contentPath: 'content/reflections/after-the-storm-restoration.mdx',
     link: '#focus'
   },
