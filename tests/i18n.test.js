@@ -63,6 +63,30 @@ test('every supported language contains every English translation key', () => {
   }
 });
 
+test('developer presence is translated and keeps artist and developer inquiries distinct', () => {
+  const translations = readTranslations();
+  const requiredKeys = [
+    'developerInquiry.label',
+    'developerInquiry.text',
+    'legal.developer.title',
+    'legal.developer.body',
+    'footer.developerCredit'
+  ];
+
+  for (const [language, dictionary] of Object.entries(translations)) {
+    for (const key of requiredKeys) {
+      assert.equal(typeof dictionary[key], 'string', `${language} is missing ${key}`);
+      assert.notEqual(dictionary[key].trim(), '', `${language} has an empty ${key}`);
+    }
+  }
+
+  assert.match(indexHtml, /class="developer-inquiry"/);
+  assert.match(indexHtml, /mailto:etlgisconsulting@outlook\.com/);
+  assert.match(indexHtml, /tel:\+17726773590/);
+  assert.match(indexHtml, /Website design, development, and digital experience by ETL GIS Consulting LLC\./);
+  assert.match(legalHtml, /ETL GIS Consulting LLC provides the website platform, digital presentation, development, and technical implementation for this project\./);
+});
+
 test('English dictionary is clean and the contamination audit catches known scripts and terms', () => {
   const context = createI18nContext();
   const cleanReport = context.auditEnglishDictionary();
