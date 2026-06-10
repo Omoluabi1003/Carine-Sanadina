@@ -55,3 +55,9 @@ npm run check:pr
 ```
 
 The check prevents empty or unsafe PR attempts by verifying that `origin` and `origin/main` exist, the current branch is a feature branch with committed work, the working tree is clean, the branch is not behind `origin/main`, and no unresolved Git or conflict-marker artifacts remain in `script.js` or `styles.css`. Set `PR_BASE_REF` to check against a different remote base branch.
+
+## Clarity Loop AI Book Studio
+
+The private-beta publishing and adaptation workspace is available at `/studio/`. It is a dependency-free browser application with local project persistence and purpose-built paths for idea development, nonfiction, fiction, manuscript intake, screen adaptation, publishing packs, and movie pitch packs.
+
+Content quality and project-domain logic live in `studio/lib/` as browser-compatible modules that are also exercised directly by Node's test runner. The static build copies the complete studio into `dist/studio/`.
