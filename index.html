@@ -774,7 +774,7 @@
           </div>
           <div class="premium-grid press-kit-grid">
             <article class="premium-card reveal"><h3 data-i18n="bio.title">Media Bio</h3><p data-i18n="bio.body">Congolese-born and Jacksonville-based, Carine Sanadina brings together healthcare service, inspirational writing, music, and survivor advocacy to speak with tenderness about pain, courage, faith, and emotional restoration.</p></article>
-            <article class="premium-card reveal"><h3 data-i18n="press.headshots.title">Headshots & Portraits</h3><p data-i18n="press.headshots.body">Approved portraits and downloadable media assets can be attached here when final files are available. No binary assets are bundled automatically.</p><span class="press-placeholder" data-i18n="press.assetsPlaceholder">Downloadable assets placeholder</span></article>
+            <article class="premium-card reveal"><h3 data-i18n="press.headshots.title">Headshots & Portraits</h3><p data-i18n="press.headshots.body">Browse approved portraits, music, book imagery, and press-ready downloads through the media kit. All files are served from established hosted sources.</p><button class="button button-primary media-kit-trigger" type="button" data-media-kit-trigger aria-expanded="false" aria-controls="media-kit-drawer" data-i18n="mediaKit.downloadButton">Download Media Kit</button></article>
             <article class="premium-card reveal"><h3 data-i18n="speaking.title">Advocacy Themes</h3><ul><li data-i18n="speaking.topic1">Domestic violence awareness and hidden survival</li><li data-i18n="speaking.topic2">Faith, resilience, and rebuilding self-worth</li><li data-i18n="speaking.topic3">Human-centered care, immigrant experience, and emotional wellness</li></ul></article>
             <article class="premium-card reveal"><h3 data-i18n="press.books.title">Book List</h3><p data-i18n="press.books.body">The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, and After The Storm.</p></article>
             <article class="premium-card reveal"><h3 data-i18n="press.music.title">Music List</h3><p data-i18n="press.music.body">Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, and Reason are presented as a tender listening window into Carine’s healing-centered artistry.</p></article>
@@ -876,6 +876,25 @@
         </div>
       </section>
     </main>
+
+    <section class="media-kit-drawer" id="media-kit-drawer" data-media-kit-drawer hidden role="dialog" aria-modal="true" aria-labelledby="media-kit-title" aria-describedby="media-kit-description">
+      <button class="media-kit-drawer__backdrop" type="button" data-media-kit-close tabindex="-1" aria-label="Close media kit" data-i18n-aria-label="mediaKit.close"></button>
+      <div class="media-kit-drawer__panel">
+        <header class="media-kit-drawer__header">
+          <div>
+            <p class="eyebrow" data-i18n="press.kicker">Press Kit</p>
+            <h2 id="media-kit-title" data-i18n="mediaKit.title">Carine Sanadina Media Kit</h2>
+            <p id="media-kit-description" data-i18n="mediaKit.description">Download approved music, portraits, press images, and media materials for approved use.</p>
+          </div>
+          <button class="media-kit-drawer__close" type="button" data-media-kit-close aria-label="Close" data-i18n-aria-label="mediaKit.close">×</button>
+        </header>
+        <div class="media-kit-drawer__body" data-media-kit-content></div>
+        <footer class="media-kit-drawer__notice">
+          <strong data-i18n="mediaKit.usageNotice">Approved promotional use only.</strong>
+          <p data-i18n="mediaKit.legalNotice">Downloads are provided for approved promotional and media use only. Rights remain with their respective owners. Unauthorized redistribution, modification, or commercial use is prohibited.</p>
+        </footer>
+      </div>
+    </section>
 
 
     <div class="install-toast" data-install-toast hidden role="status" aria-live="polite">

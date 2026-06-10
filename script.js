@@ -3871,6 +3871,46 @@ const developerPresenceTranslations = {
 };
 mergeTranslationAdditions(developerPresenceTranslations, 'developer presence translations');
 
+const mediaKitTranslations = {
+  en: {
+    'press.headshots.body': 'Browse approved portraits, music, book imagery, and press-ready downloads through the media kit. All files are served from established hosted sources.', 'mediaKit.downloadButton': 'Download Media Kit', 'mediaKit.title': 'Carine Sanadina Media Kit', 'mediaKit.description': 'Download approved music, portraits, press images, and media materials for approved use.', 'mediaKit.music': 'Music Tracks', 'mediaKit.portraits': 'Portraits & Photos', 'mediaKit.press': 'Press Kit', 'mediaKit.books': 'Book Assets', 'mediaKit.download': 'Download', 'mediaKit.usageNotice': 'Approved promotional use only.', 'mediaKit.noAssets': 'No approved downloads are available in this category yet.', 'mediaKit.close': 'Close media kit',
+    'mediaKit.musicDescription': 'Approved promotional audio files.', 'mediaKit.portraitsDescription': 'Approved portraits and promotional images.', 'mediaKit.pressDescription': 'Bio, media notes, and approved press materials.', 'mediaKit.booksDescription': 'Approved book covers and author-related media.', 'mediaKit.assetDescription': 'Official downloadable media asset.', 'mediaKit.legalNotice': 'Downloads are provided for approved promotional and media use only. Rights remain with their respective owners. Unauthorized redistribution, modification, or commercial use is prohibited.'
+  },
+  fr: {
+    'press.headshots.body': 'Parcourez les portraits, la musique, les images de livres et les téléchargements de presse approuvés dans le kit média. Tous les fichiers proviennent de sources hébergées établies.', 'mediaKit.downloadButton': 'Télécharger le kit média', 'mediaKit.title': 'Kit média de Carine Sanadina', 'mediaKit.description': 'Téléchargez la musique, les portraits, les images de presse et les documents approuvés pour un usage autorisé.', 'mediaKit.music': 'Morceaux de musique', 'mediaKit.portraits': 'Portraits et photos', 'mediaKit.press': 'Dossier de presse', 'mediaKit.books': 'Ressources des livres', 'mediaKit.download': 'Télécharger', 'mediaKit.usageNotice': 'Usage promotionnel approuvé uniquement.', 'mediaKit.noAssets': 'Aucun téléchargement approuvé n’est encore disponible dans cette catégorie.', 'mediaKit.close': 'Fermer le kit média',
+    'mediaKit.musicDescription': 'Fichiers audio promotionnels approuvés.', 'mediaKit.portraitsDescription': 'Portraits et images promotionnelles approuvés.', 'mediaKit.pressDescription': 'Biographie, notes médias et documents de presse approuvés.', 'mediaKit.booksDescription': 'Couvertures de livres et médias liés à l’autrice approuvés.', 'mediaKit.assetDescription': 'Ressource média officielle à télécharger.', 'mediaKit.legalNotice': 'Les téléchargements sont fournis uniquement pour un usage promotionnel et médiatique approuvé. Les droits restent la propriété de leurs détenteurs respectifs. Toute redistribution, modification ou utilisation commerciale non autorisée est interdite.'
+  },
+  es: {
+    'press.headshots.body': 'Consulta retratos, música, imágenes de libros y descargas de prensa aprobadas en el kit de prensa. Todos los archivos se sirven desde fuentes alojadas establecidas.', 'mediaKit.downloadButton': 'Descargar kit de prensa', 'mediaKit.title': 'Kit de prensa de Carine Sanadina', 'mediaKit.description': 'Descarga música, retratos, imágenes de prensa y materiales aprobados para uso autorizado.', 'mediaKit.music': 'Pistas musicales', 'mediaKit.portraits': 'Retratos y fotos', 'mediaKit.press': 'Kit de prensa', 'mediaKit.books': 'Recursos de libros', 'mediaKit.download': 'Descargar', 'mediaKit.usageNotice': 'Solo para uso promocional aprobado.', 'mediaKit.noAssets': 'Aún no hay descargas aprobadas en esta categoría.', 'mediaKit.close': 'Cerrar kit de prensa',
+    'mediaKit.musicDescription': 'Archivos de audio promocionales aprobados.', 'mediaKit.portraitsDescription': 'Retratos e imágenes promocionales aprobados.', 'mediaKit.pressDescription': 'Biografía, notas para medios y materiales de prensa aprobados.', 'mediaKit.booksDescription': 'Portadas de libros y recursos de autora aprobados.', 'mediaKit.assetDescription': 'Recurso multimedia oficial descargable.', 'mediaKit.legalNotice': 'Las descargas se proporcionan únicamente para uso promocional y de prensa aprobado. Los derechos pertenecen a sus respectivos propietarios. Se prohíbe la redistribución, modificación o uso comercial no autorizado.'
+  },
+  ln: {
+    'press.headshots.body': 'Talá bililingi, miziki, bililingi ya babuku mpe biloko ya presse oyo endimami na kit ya média. Ba fichiers nyonso ewuti na bisika ya hébergement oyo esalelamaka.', 'mediaKit.downloadButton': 'Zwá kit ya média', 'mediaKit.title': 'Kit ya média ya Carine Sanadina', 'mediaKit.description': 'Zwá miziki, bililingi, bafoto ya presse mpe mikanda oyo endimami mpo na kosalela na ndingisa.', 'mediaKit.music': 'Banzembo', 'mediaKit.portraits': 'Bililingi mpe bafoto', 'mediaKit.press': 'Kit ya presse', 'mediaKit.books': 'Biloko ya babuku', 'mediaKit.download': 'Zwá', 'mediaKit.usageNotice': 'Mpo na promotion oyo endimami kaka.', 'mediaKit.noAssets': 'Eloko ya kozwa oyo endimami ezali naino te na eteni oyo.', 'mediaKit.close': 'Kangá kit ya média',
+    'mediaKit.musicDescription': 'Ba fichiers audio ya promotion oyo endimami.', 'mediaKit.portraitsDescription': 'Bililingi mpe bafoto ya promotion oyo endimami.', 'mediaKit.pressDescription': 'Biographie, bansango ya média mpe mikanda ya presse oyo endimami.', 'mediaKit.booksDescription': 'Bacouvertures ya babuku mpe média ya mokomi oyo endimami.', 'mediaKit.assetDescription': 'Eloko ya média ya officiel mpo na kozwa.', 'mediaKit.legalNotice': 'Biloko oyo epesami ezali kaka mpo na promotion mpe média oyo endimami. Makoki etikali ya bankolo na yango. Kokabola lisusu, kobongola to kosalela na mombongo kozanga ndingisa epekisami.'
+  },
+  sw: {
+    'press.headshots.body': 'Vinjari picha, muziki, taswira za vitabu na vipakuliwa vya habari vilivyoidhinishwa kupitia kifurushi cha media. Faili zote hutolewa kutoka vyanzo vya mtandaoni vilivyothibitishwa.', 'mediaKit.downloadButton': 'Pakua kifurushi cha media', 'mediaKit.title': 'Kifurushi cha Media cha Carine Sanadina', 'mediaKit.description': 'Pakua muziki, picha, taswira za habari na nyenzo zilizoidhinishwa kwa matumizi yaliyoidhinishwa.', 'mediaKit.music': 'Nyimbo', 'mediaKit.portraits': 'Picha na Taswira', 'mediaKit.press': 'Kifurushi cha Habari', 'mediaKit.books': 'Nyenzo za Vitabu', 'mediaKit.download': 'Pakua', 'mediaKit.usageNotice': 'Kwa matumizi ya matangazo yaliyoidhinishwa pekee.', 'mediaKit.noAssets': 'Bado hakuna vipakuliwa vilivyoidhinishwa katika sehemu hii.', 'mediaKit.close': 'Funga kifurushi cha media',
+    'mediaKit.musicDescription': 'Faili za sauti za matangazo zilizoidhinishwa.', 'mediaKit.portraitsDescription': 'Picha na taswira za matangazo zilizoidhinishwa.', 'mediaKit.pressDescription': 'Wasifu, maelezo ya media na nyenzo za habari zilizoidhinishwa.', 'mediaKit.booksDescription': 'Majalada ya vitabu na media za mwandishi zilizoidhinishwa.', 'mediaKit.assetDescription': 'Nyenzo rasmi ya media ya kupakua.', 'mediaKit.legalNotice': 'Vipakuliwa vinatolewa kwa matumizi ya matangazo na media yaliyoidhinishwa pekee. Haki zinabaki kwa wamiliki husika. Usambazaji, ubadilishaji au matumizi ya kibiashara bila ruhusa yamepigwa marufuku.'
+  },
+  yo: {
+    'press.headshots.body': 'Wo àwọn àwòrán, orin, àwòrán ìwé àti ohun ìròyìn tí a fọwọ́ sí nínú àpò media. Gbogbo fáìlì wá láti orísun ayélujára tí a ti dá sílẹ̀.', 'mediaKit.downloadButton': 'Gba àpò ìròyìn', 'mediaKit.title': 'Àpò Ìròyìn Carine Sanadina', 'mediaKit.description': 'Gba orin, àwòrán, fọ́tò ìròyìn àti ohun èlò tí a fọwọ́ sí fún lílò tí a fọwọ́ sí.', 'mediaKit.music': 'Àwọn orin', 'mediaKit.portraits': 'Àwòrán àti Fọ́tò', 'mediaKit.press': 'Àpò Ìròyìn', 'mediaKit.books': 'Ohun Èlò Ìwé', 'mediaKit.download': 'Gba sílẹ̀', 'mediaKit.usageNotice': 'Fún ìpolówó tí a fọwọ́ sí nìkan.', 'mediaKit.noAssets': 'Kò sí ohun tí a fọwọ́ sí láti gba sílẹ̀ ní ẹ̀ka yìí síbẹ̀.', 'mediaKit.close': 'Pa àpò ìròyìn',
+    'mediaKit.musicDescription': 'Fáìlì ohun ìpolówó tí a fọwọ́ sí.', 'mediaKit.portraitsDescription': 'Àwòrán àti fọ́tò ìpolówó tí a fọwọ́ sí.', 'mediaKit.pressDescription': 'Ìtàn ìgbésí-ayé, àkọsílẹ̀ media àti ohun èlò ìròyìn tí a fọwọ́ sí.', 'mediaKit.booksDescription': 'Àwòrán ìderí ìwé àti media òǹkọ̀wé tí a fọwọ́ sí.', 'mediaKit.assetDescription': 'Ohun èlò media osise láti gba sílẹ̀.', 'mediaKit.legalNotice': 'Àwọn ohun tí a lè gba sílẹ̀ wà fún ìpolówó àti lílò media tí a fọwọ́ sí nìkan. Ẹ̀tọ́ jẹ́ ti àwọn olówó wọn. Pínpín, àtúnṣe tàbí lílò fún òwò láìgba àṣẹ jẹ́ èèwọ̀.'
+  },
+  de: {
+    'press.headshots.body': 'Durchsuchen Sie freigegebene Porträts, Musik, Buchbilder und Presse-Downloads im Medienpaket. Alle Dateien werden aus etablierten gehosteten Quellen bereitgestellt.', 'mediaKit.downloadButton': 'Medienpaket herunterladen', 'mediaKit.title': 'Carine Sanadina Medienpaket', 'mediaKit.description': 'Laden Sie freigegebene Musik, Porträts, Pressebilder und Medienmaterialien zur genehmigten Nutzung herunter.', 'mediaKit.music': 'Musiktitel', 'mediaKit.portraits': 'Porträts & Fotos', 'mediaKit.press': 'Pressemappe', 'mediaKit.books': 'Buchmaterialien', 'mediaKit.download': 'Herunterladen', 'mediaKit.usageNotice': 'Nur zur genehmigten Werbenutzung.', 'mediaKit.noAssets': 'In dieser Kategorie sind noch keine freigegebenen Downloads verfügbar.', 'mediaKit.close': 'Medienpaket schließen',
+    'mediaKit.musicDescription': 'Freigegebene Audio-Dateien für Werbezwecke.', 'mediaKit.portraitsDescription': 'Freigegebene Porträts und Werbebilder.', 'mediaKit.pressDescription': 'Biografie, Medienhinweise und freigegebene Pressematerialien.', 'mediaKit.booksDescription': 'Freigegebene Buchcover und autorenbezogene Medien.', 'mediaKit.assetDescription': 'Offizielles herunterladbares Medienmaterial.', 'mediaKit.legalNotice': 'Downloads werden ausschließlich für genehmigte Werbe- und Medienzwecke bereitgestellt. Die Rechte verbleiben bei den jeweiligen Eigentümern. Unerlaubte Weitergabe, Bearbeitung oder kommerzielle Nutzung ist untersagt.'
+  },
+  ar: {
+    'press.headshots.body': 'تصفح الصور والموسيقى وصور الكتب والتنزيلات الصحفية المعتمدة من خلال الحقيبة الإعلامية. تُقدَّم جميع الملفات من مصادر استضافة موثوقة.', 'mediaKit.downloadButton': 'تنزيل الحقيبة الإعلامية', 'mediaKit.title': 'الحقيبة الإعلامية لكارين سانادينا', 'mediaKit.description': 'نزّل الموسيقى والصور الشخصية والصور الصحفية والمواد المعتمدة للاستخدام المصرح به.', 'mediaKit.music': 'المقاطع الموسيقية', 'mediaKit.portraits': 'الصور الشخصية والصور', 'mediaKit.press': 'الحقيبة الصحفية', 'mediaKit.books': 'مواد الكتب', 'mediaKit.download': 'تنزيل', 'mediaKit.usageNotice': 'للاستخدام الترويجي المعتمد فقط.', 'mediaKit.noAssets': 'لا تتوفر تنزيلات معتمدة في هذه الفئة بعد.', 'mediaKit.close': 'إغلاق الحقيبة الإعلامية',
+    'mediaKit.musicDescription': 'ملفات صوتية ترويجية معتمدة.', 'mediaKit.portraitsDescription': 'صور شخصية وترويجية معتمدة.', 'mediaKit.pressDescription': 'السيرة الذاتية والملاحظات الإعلامية والمواد الصحفية المعتمدة.', 'mediaKit.booksDescription': 'أغلفة الكتب والمواد الإعلامية المتعلقة بالمؤلفة والمعتمدة.', 'mediaKit.assetDescription': 'مادة إعلامية رسمية قابلة للتنزيل.', 'mediaKit.legalNotice': 'تُقدَّم التنزيلات للاستخدام الترويجي والإعلامي المعتمد فقط. وتبقى الحقوق لأصحابها. يُحظر إعادة التوزيع أو التعديل أو الاستخدام التجاري دون تصريح.'
+  },
+  'zh-CN': {
+    'press.headshots.body': '通过媒体资料包浏览经批准的肖像、音乐、图书图片和新闻下载内容。所有文件均来自已建立的托管来源。', 'mediaKit.downloadButton': '下载媒体资料包', 'mediaKit.title': 'Carine Sanadina 媒体资料包', 'mediaKit.description': '下载经批准的音乐、肖像、新闻图片和媒体材料，用于授权用途。', 'mediaKit.music': '音乐曲目', 'mediaKit.portraits': '肖像与照片', 'mediaKit.press': '新闻资料包', 'mediaKit.books': '图书素材', 'mediaKit.download': '下载', 'mediaKit.usageNotice': '仅限经批准的宣传用途。', 'mediaKit.noAssets': '此类别暂时没有经批准的下载内容。', 'mediaKit.close': '关闭媒体资料包',
+    'mediaKit.musicDescription': '经批准的宣传音频文件。', 'mediaKit.portraitsDescription': '经批准的肖像和宣传图片。', 'mediaKit.pressDescription': '个人简介、媒体说明和经批准的新闻材料。', 'mediaKit.booksDescription': '经批准的图书封面和作者相关媒体素材。', 'mediaKit.assetDescription': '可下载的官方媒体素材。', 'mediaKit.legalNotice': '下载内容仅供经批准的宣传和媒体用途。相关权利归各自所有者所有。严禁未经授权的再分发、修改或商业使用。'
+  }
+};
+mergeTranslationAdditions(mediaKitTranslations, 'media kit translations');
+
 const supportedLanguages = ['en', 'fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN'];
 let currentLanguage = DEFAULT_LANGUAGE;
 
@@ -9776,6 +9816,117 @@ document.querySelectorAll('[data-youtube-channel-link]').forEach((link) => {
 clearVideoIframe();
 renderVideoCards();
 loadAutomaticYouTubeVideos();
+
+// Downloadable media stays URL-only: these entries reference assets already hosted
+// by the project and never embed or generate binary data in the application bundle.
+const MEDIA_KIT_RAW_BASE = 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/';
+const mediaKitAssets = [
+  { id: 'music-consolation', category: 'music', title: 'Consolation', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Consolation.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Consolation%20Cover.png` },
+  { id: 'music-la-gentillesse', category: 'music', title: 'La Gentillesse', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}La%20Gentillesse.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}La%20Gentillesse.png` },
+  { id: 'music-wonderful', category: 'music', title: 'Wonderful', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Wonderful.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Wonderful%20cover.png` },
+  { id: 'music-womanifesto', category: 'music', title: 'Womanifesto', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Womanifesto%20(1).mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}4B4AE259-EC5A-46A2-BB9A-355667A3C23C.png` },
+  { id: 'music-paranoia', category: 'music', title: 'Paranoïa Persécutive', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Paranoi%CC%88a%20Perse%CC%81cutive.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}00243680-B36E-4587-8623-9AEFD1896D1A.png` },
+  { id: 'music-reason', category: 'music', title: 'Reason', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Reason.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}D60D546C-83C3-401A-8C56-3B48FD5022E0.png` },
+  { id: 'music-halleluyah', category: 'music', title: 'Halleluyah', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Hallelujah.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Halleluyah%20Cover.png` },
+  { id: 'portrait-official', category: 'portraits', title: 'Carine Sanadina — Official Portrait', fileType: 'PNG', downloadUrl: `${MEDIA_KIT_RAW_BASE}0F2574B3-8BD8-42CF-B229-3CA96FA94214.png`, previewUrl: `${MEDIA_KIT_RAW_BASE}0F2574B3-8BD8-42CF-B229-3CA96FA94214.png` },
+  { id: 'book-pain-nobody-saw', category: 'books', title: 'The Pain Nobody Saw', fileType: 'JPG', downloadUrl: `${MEDIA_KIT_RAW_BASE}049325d2-9ac2-4808-ab0f-289f958847c8.jpeg`, previewUrl: `${MEDIA_KIT_RAW_BASE}049325d2-9ac2-4808-ab0f-289f958847c8.jpeg` },
+  { id: 'book-if-red-toxic', category: 'books', title: 'If It’s Red, It’s Toxic', fileType: 'JPG', downloadUrl: `${MEDIA_KIT_RAW_BASE}d8dc62f7-2580-4ea4-849c-3ed6fbd94641.jpeg`, previewUrl: `${MEDIA_KIT_RAW_BASE}d8dc62f7-2580-4ea4-849c-3ed6fbd94641.jpeg` },
+  { id: 'book-road-sunshine', category: 'books', title: 'The Road to Sunshine', fileType: 'JPG', downloadUrl: `${MEDIA_KIT_RAW_BASE}5c02f64d-5d18-4456-b8bf-3102a751bc86.jpeg`, previewUrl: `${MEDIA_KIT_RAW_BASE}5c02f64d-5d18-4456-b8bf-3102a751bc86.jpeg` },
+  { id: 'book-after-storm', category: 'books', title: 'After The Storm', fileType: 'JPG', downloadUrl: `${MEDIA_KIT_RAW_BASE}f1b44262-8401-4cb3-a995-08788a969a55.jpeg`, previewUrl: `${MEDIA_KIT_RAW_BASE}f1b44262-8401-4cb3-a995-08788a969a55.jpeg` }
+].map((asset) => ({
+  ...asset,
+  descriptionKey: 'mediaKit.assetDescription',
+  usageNoteKey: 'mediaKit.usageNotice'
+}));
+
+const mediaKitCategories = [
+  { id: 'music', labelKey: 'mediaKit.music', descriptionKey: 'mediaKit.musicDescription' },
+  { id: 'portraits', labelKey: 'mediaKit.portraits', descriptionKey: 'mediaKit.portraitsDescription' },
+  { id: 'press', labelKey: 'mediaKit.press', descriptionKey: 'mediaKit.pressDescription' },
+  { id: 'books', labelKey: 'mediaKit.books', descriptionKey: 'mediaKit.booksDescription' }
+];
+
+const mediaKitTrigger = document.querySelector('[data-media-kit-trigger]');
+const mediaKitDrawer = document.querySelector('[data-media-kit-drawer]');
+const mediaKitContent = document.querySelector('[data-media-kit-content]');
+
+const getMediaKitFilename = (asset) => {
+  const extension = asset.fileType.toLowerCase() === 'jpg' ? 'jpg' : asset.fileType.toLowerCase();
+  return `${asset.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}.${extension}`;
+};
+
+const renderMediaKit = () => {
+  if (!mediaKitContent) return;
+  mediaKitContent.innerHTML = mediaKitCategories.map((category) => {
+    const assets = mediaKitAssets.filter((asset) => asset.category === category.id);
+    const assetMarkup = assets.length ? `<div class="media-kit-assets">${assets.map((asset) => {
+      const preview = asset.previewUrl
+        ? `<img class="media-kit-asset__preview" src="${escapeVideoText(asset.previewUrl)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`
+        : '';
+      return `<article class="media-kit-asset${preview ? '' : ' media-kit-asset--no-preview'}">
+        ${preview}
+        <div class="media-kit-asset__content">
+          <span class="media-kit-asset__type">${escapeVideoText(asset.fileType)}</span>
+          <h4>${escapeVideoText(asset.title)}</h4>
+          <p class="media-kit-asset__description">${escapeVideoText(translate(asset.descriptionKey))}</p>
+          <p class="media-kit-asset__usage">${escapeVideoText(translate(asset.usageNoteKey))}</p>
+          <a class="button button-secondary media-kit-asset__download" href="${escapeVideoText(asset.downloadUrl)}" download="${escapeVideoText(getMediaKitFilename(asset))}" target="_blank" rel="noopener noreferrer">${escapeVideoText(translate('mediaKit.download'))}</a>
+        </div>
+      </article>`;
+    }).join('')}</div>` : `<p class="media-kit-empty">${escapeVideoText(translate('mediaKit.noAssets'))}</p>`;
+    return `<section class="media-kit-category" aria-labelledby="media-kit-${category.id}-title">
+      <div class="media-kit-category__heading">
+        <h3 id="media-kit-${category.id}-title">${escapeVideoText(translate(category.labelKey))}</h3>
+        <p>${escapeVideoText(translate(category.descriptionKey))}</p>
+      </div>
+      ${assetMarkup}
+    </section>`;
+  }).join('');
+};
+
+const openMediaKit = () => {
+  if (!mediaKitDrawer || !mediaKitTrigger) return;
+  renderMediaKit();
+  mediaKitDrawer.hidden = false;
+  mediaKitTrigger.setAttribute('aria-expanded', 'true');
+  document.body.classList.add('media-kit-open');
+  window.requestAnimationFrame(() => mediaKitDrawer.querySelector('.media-kit-drawer__close')?.focus());
+};
+
+const closeMediaKit = () => {
+  if (!mediaKitDrawer) return;
+  const wasOpen = !mediaKitDrawer.hidden;
+  mediaKitDrawer.hidden = true;
+  mediaKitTrigger?.setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('media-kit-open');
+  if (wasOpen) window.requestAnimationFrame(() => mediaKitTrigger?.focus());
+};
+
+mediaKitTrigger?.addEventListener('click', openMediaKit);
+document.querySelectorAll('[data-media-kit-close]').forEach((button) => button.addEventListener('click', closeMediaKit));
+document.addEventListener('keydown', (event) => {
+  if (!mediaKitDrawer || mediaKitDrawer.hidden) return;
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeMediaKit();
+    return;
+  }
+  if (event.key !== 'Tab') return;
+  const focusable = getFocusableElements(mediaKitDrawer);
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+});
+window.addEventListener('carine:languagechange', renderMediaKit);
+window.mediaKitAssets = mediaKitAssets;
+renderMediaKit();
 
 // Decorative atmospheres are activated only near the viewport so the background
 // remains inexpensive on mobile while preserving the page's cinematic depth.
