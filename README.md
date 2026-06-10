@@ -44,3 +44,14 @@ For Vercel automatic updates, configure these server-side environment variables 
 - `YOUTUBE_CHANNEL_ID`: Carine's canonical YouTube channel ID.
 
 The serverless function resolves the channel's uploads playlist, returns a normalized video list, and emits edge-cache headers (`s-maxage=900`, `stale-while-revalidate=86400`) to conserve quota. A simpler future alternative is to parse the channel uploads RSS feed in this endpoint or at build time; client-side RSS fetching should not be used because of cross-origin reliability. The manual catalog remains the stability fallback in either design.
+
+## Pull request readiness
+
+Before opening a pull request, fetch the latest base branch and run the repository check:
+
+```sh
+git fetch origin
+npm run check:pr
+```
+
+The check prevents empty or unsafe PR attempts by verifying that `origin` and `origin/main` exist, the current branch is a feature branch with committed work, the working tree is clean, the branch is not behind `origin/main`, and no unresolved Git or conflict-marker artifacts remain in `script.js` or `styles.css`. Set `PR_BASE_REF` to check against a different remote base branch.
