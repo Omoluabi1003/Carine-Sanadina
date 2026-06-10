@@ -4,10 +4,9 @@
   "private": true,
   "description": "Premium one-page website for Carine Sanadina.",
   "scripts": {
-    "lint": "node --check api/youtube-videos.js && node --check tests/after-storm-cover.test.js && node --check content-reflections.js && node --check script.js && node --check scripts/build.js && node --check scripts/check-pr-readiness.js && node --check sw.js && node --check tests/android-audio.test.js && node --check tests/i18n.test.js && node --check tests/lyrics-system.test.js && node --check tests/media-kit-integration.test.js && node --check tests/turntable-integration.test.js && node --check tests/youtube-integration.test.js && node --check studio/lib/content-quality.js && node --check studio/lib/studio-core.js && node --check studio/app.js && node --check tests/clarity-studio.test.js",
+    "lint": "node --check api/youtube-videos.js && node --check tests/after-storm-cover.test.js && node --check content-reflections.js && node --check script.js && node --check scripts/build.js && node --check scripts/check-pr-readiness.js && node --check sw.js && node --check tests/android-audio.test.js && node --check tests/i18n.test.js && node --check tests/lyrics-system.test.js && node --check tests/media-kit-integration.test.js && node --check tests/turntable-integration.test.js && node --check tests/youtube-integration.test.js",
     "build": "node scripts/build.js",
     "test": "node --test tests/*.test.js",
-    "check:pr": "node scripts/check-pr-readiness.js",
-    "typecheck": "node --check studio/lib/content-quality.js && node --check studio/lib/studio-core.js && node --check studio/app.js"
+    "check:pr": "node scripts/check-pr-readiness.js"
   }
 }

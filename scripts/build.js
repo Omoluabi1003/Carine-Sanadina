@@ -79,7 +79,6 @@ for (const file of staticRootAssets) {
 
 copyStaticDirectory('legal');
 copyStaticDirectory('lyrics');
-copyStaticDirectory('studio');
 
 const legalIndex = join(dist, 'legal', 'index.html');
 if (existsSync(legalIndex)) {
