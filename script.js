@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-09-ios-vinyl-rotation';
+const APP_VERSION = 'carine-site-2026-06-10-android-audio-playback';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -8486,19 +8486,28 @@ if (musicPlayers.length) {
     }
 
     try {
-      let analyserReady = false;
+      // Android browsers can revoke transient user activation after the first
+      // asynchronous boundary. Start media playback before awaiting optional
+      // Web Audio setup so the original tap always reaches audio.play().
+      const playbackPromise = Promise.resolve(audio.play());
+      let analyserSetupPromise = Promise.resolve(false);
 
       if (visualizerEnabled && !reduceMotion) {
-        const context = await ensureAudioContextForGesture({ allowCreate: !isAutoAdvance, allowResume: !isAutoAdvance });
-        analyserReady = context ? connectAudioToAnalyser(audio) : false;
-        if (!analyserReady) {
-          setVisualizerFallback(false);
-        }
+        analyserSetupPromise = ensureAudioContextForGesture({ allowCreate: !isAutoAdvance, allowResume: !isAutoAdvance })
+          .then((context) => (context ? connectAudioToAnalyser(audio) : false))
+          .catch((error) => {
+            warnAnalyzerFallback(error?.message || error);
+            return false;
+          });
       } else {
         stopVisualizer('idle');
       }
 
-      await audio.play();
+      await playbackPromise;
+      const analyserReady = await analyserSetupPromise;
+      if (visualizerEnabled && !reduceMotion && !analyserReady) {
+        setVisualizerFallback(false);
+      }
       syncTransportButtons(audio);
       updateMediaSessionMetadata(player);
       logAudioDiagnostics('play-succeeded', {
