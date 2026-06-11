@@ -9462,3 +9462,71 @@ body.media-kit-open {
     height: 76px;
   }
 }
+
+/* iPhone viewport animation hardening.
+   Dynamic viewport units and compositor-friendly reveal transforms prevent
+   Safari's collapsing browser chrome from clipping or stranding animations. */
+.hero {
+  min-height: 100svh;
+  min-height: 100dvh;
+}
+
+.reveal {
+  transform: translate3d(0, 28px, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.reveal.is-visible {
+  transform: translate3d(0, 0, 0);
+}
+
+@media (max-width: 640px) {
+  html { scroll-padding-top: calc(86px + env(safe-area-inset-top)); }
+
+  .site-header {
+    top: max(10px, env(safe-area-inset-top));
+  }
+
+  .hero {
+    min-height: 100svh;
+    min-height: 100dvh;
+    padding-top: calc(104px + env(safe-area-inset-top));
+  }
+
+  .section {
+    scroll-margin-top: calc(86px + env(safe-area-inset-top));
+  }
+
+  .reveal {
+    transform: translate3d(0, 18px, 0);
+    transition-duration: 560ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.is-visible {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .cinematic-splash {
+    height: 100svh;
+    height: 100dvh;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .splash-card {
+    max-height: calc(100dvh - max(22px, env(safe-area-inset-top)) - max(22px, env(safe-area-inset-bottom)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
