@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-11-ios-vinyl-animation';
+const APP_VERSION = 'carine-site-2026-06-11-ios-vinyl-recovery';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -5893,7 +5893,7 @@ if (musicPlayers.length) {
   const isAppleTouchDevice = isIOS;
   const isWebKitEngine = /AppleWebKit/i.test(userAgent) && !/Android/i.test(userAgent);
   const isIosWebKit = isAppleTouchDevice && isWebKitEngine;
-  const useCssVinylAnimation = isIosWebKit;
+  let useCssVinylAnimation = isIosWebKit;
   const isIosSafari = isIosWebKit;
   const browserName = (() => {
     if (/CriOS/i.test(userAgent)) return 'Chrome iOS';
@@ -5986,6 +5986,7 @@ if (musicPlayers.length) {
   let vinylVelocity = 0;
   let vinylAnimationFrame = 0;
   let vinylLastFrameTime = 0;
+  let vinylAnimationProbeToken = 0;
   const vinylPlaybackSpeed = 24;
   const vinylDeceleration = 11;
   const lyricsCache = new Map();
@@ -8324,6 +8325,46 @@ if (musicPlayers.length) {
     }
   };
 
+  const getRenderedVinylTransform = (disc = getVinylPrimaryDisc()) => {
+    if (!disc) return 'none';
+    const styles = window.getComputedStyle(disc);
+    return styles.transform || styles.webkitTransform || 'none';
+  };
+
+  const activateVinylJavascriptFallback = (reason = 'css-animation-stalled') => {
+    if (!useCssVinylAnimation) return;
+    useCssVinylAnimation = false;
+    vinylAnimationProbeToken += 1;
+    document.documentElement.classList.add('vinyl-js-fallback');
+    vinylDiscs.forEach((disc) => {
+      disc.style.animationPlayState = 'paused';
+      disc.style.webkitAnimationPlayState = 'paused';
+    });
+    vinylVelocity = isVinylPlaying && !reduceMotion ? vinylPlaybackSpeed : 0;
+    renderVinylRotation();
+    ensureVinylAnimation();
+    window.console?.warn?.(`[vinyl] Switched to JavaScript rotation fallback: ${reason}`);
+  };
+
+  const verifyIosVinylAnimation = () => {
+    if (!useCssVinylAnimation || !isVinylPlaying || reduceMotion || document.visibilityState !== 'visible') return;
+    const disc = getVinylPrimaryDisc();
+    if (!disc) return;
+    const probeToken = ++vinylAnimationProbeToken;
+    const initialTransform = getRenderedVinylTransform(disc);
+
+    window.setTimeout(() => {
+      if (probeToken !== vinylAnimationProbeToken || !useCssVinylAnimation || !isVinylPlaying) return;
+      if (document.visibilityState !== 'visible') return;
+      const nextTransform = getRenderedVinylTransform(disc);
+      const styles = window.getComputedStyle(disc);
+      const animationRunning = (styles.animationPlayState || styles.webkitAnimationPlayState) === 'running';
+      if (!animationRunning || nextTransform === initialTransform) {
+        activateVinylJavascriptFallback(animationRunning ? 'computed-transform-did-not-advance' : 'animation-not-running');
+      }
+    }, 700);
+  };
+
   const syncVinylExperience = (isPlaying, playbackState = null) => {
     const shouldRotate = Boolean(isPlaying);
     const state = playbackState || (shouldRotate ? 'playing' : activePlayer ? 'paused' : 'ready');
@@ -8351,7 +8392,9 @@ if (musicPlayers.length) {
 
     expandedPlayerCard?.classList.toggle('is-playing', shouldRotate);
     expandedPlayerCard?.classList.toggle('turntable-playing', shouldRotate);
+    if (!shouldRotate) vinylAnimationProbeToken += 1;
     ensureVinylAnimation();
+    if (shouldRotate) verifyIosVinylAnimation();
   };
 
   setupVinylDebugPanel();
