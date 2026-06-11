@@ -53,3 +53,12 @@ test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states'
   assert.match(css, /data-playback-state="paused"/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
+
+test('iOS uses compositor-backed prefixed vinyl animation', () => {
+  assert.match(css, /@-webkit-keyframes carine-vinyl-spin/);
+  assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?-webkit-animation:\s*carine-vinyl-spin 15s linear infinite !important/);
+  assert.match(css, /html\.is-ios[\s\S]*?\.expanded-vinyl-disc\.is-playing[\s\S]*?-webkit-animation-play-state:\s*running !important/);
+  assert.match(script, /const useCssVinylAnimation = isIosWebKit/);
+  assert.match(script, /if \(useCssVinylAnimation\) return/);
+  assert.match(script, /removeProperty\('-webkit-transform'\)/);
+});
