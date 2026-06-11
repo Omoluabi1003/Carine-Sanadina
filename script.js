@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-10-after-the-storm-cover';
+const APP_VERSION = 'carine-site-2026-06-11-ios-vinyl-animation';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -5893,6 +5893,7 @@ if (musicPlayers.length) {
   const isAppleTouchDevice = isIOS;
   const isWebKitEngine = /AppleWebKit/i.test(userAgent) && !/Android/i.test(userAgent);
   const isIosWebKit = isAppleTouchDevice && isWebKitEngine;
+  const useCssVinylAnimation = isIosWebKit;
   const isIosSafari = isIosWebKit;
   const browserName = (() => {
     if (/CriOS/i.test(userAgent)) return 'Chrome iOS';
@@ -8316,6 +8317,7 @@ if (musicPlayers.length) {
   };
 
   const ensureVinylAnimation = () => {
+    if (useCssVinylAnimation) return;
     if (!vinylAnimationFrame && (isVinylPlaying || vinylVelocity > 0)) {
       vinylLastFrameTime = 0;
       vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
@@ -8338,8 +8340,13 @@ if (musicPlayers.length) {
     vinylDiscs.forEach((disc) => {
       disc.classList.toggle('is-playing', shouldRotate);
       disc.classList.toggle('vinyl-playing', shouldRotate);
-      disc.style.animationPlayState = 'paused';
-      disc.style.webkitAnimationPlayState = 'paused';
+      const animationState = useCssVinylAnimation && shouldRotate && !reduceMotion ? 'running' : 'paused';
+      disc.style.animationPlayState = animationState;
+      disc.style.webkitAnimationPlayState = animationState;
+      if (useCssVinylAnimation) {
+        disc.style.removeProperty('transform');
+        disc.style.removeProperty('-webkit-transform');
+      }
     });
 
     expandedPlayerCard?.classList.toggle('is-playing', shouldRotate);

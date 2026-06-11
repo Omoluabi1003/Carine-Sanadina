@@ -3765,15 +3765,20 @@ body.mini-player-active .guide-panel {
 }
 
 
+@-webkit-keyframes carine-vinyl-spin {
+  from { -webkit-transform: translate3d(0, 0, 4px) rotateZ(0deg); }
+  to { -webkit-transform: translate3d(0, 0, 4px) rotateZ(360deg); }
+}
+
 @keyframes carine-vinyl-spin {
   from {
-    -webkit-transform: translateZ(0) rotate(0deg);
-    transform: translateZ(0) rotate(0deg);
+    -webkit-transform: translate3d(0, 0, 4px) rotateZ(0deg);
+    transform: translate3d(0, 0, 4px) rotateZ(0deg);
   }
 
   to {
-    -webkit-transform: translateZ(0) rotate(360deg);
-    transform: translateZ(0) rotate(360deg);
+    -webkit-transform: translate3d(0, 0, 4px) rotateZ(360deg);
+    transform: translate3d(0, 0, 4px) rotateZ(360deg);
   }
 }
 
@@ -9528,5 +9533,38 @@ body.media-kit-open {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+}
+
+
+/* iOS WebKit can stop repainting JavaScript-driven transforms on complex,
+   preserve-3d turntables. Let its compositor own the playing record instead. */
+html.is-ios .turntable-assembly .expanded-vinyl-disc,
+html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,
+html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
+  -webkit-animation: carine-vinyl-spin 15s linear infinite !important;
+  animation: carine-vinyl-spin 15s linear infinite !important;
+  -webkit-animation-play-state: paused !important;
+  animation-play-state: paused !important;
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,
+html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
+  -webkit-animation-play-state: running !important;
+  animation-play-state: running !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-ios .turntable-assembly .expanded-vinyl-disc,
+  html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,
+  html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
+    -webkit-animation: none !important;
+    animation: none !important;
+    will-change: auto;
   }
 }
