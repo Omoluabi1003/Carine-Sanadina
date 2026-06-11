@@ -9559,6 +9559,16 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
   animation-play-state: running !important;
 }
 
+
+/* If iOS reports a running CSS animation without advancing its compositor
+   transform, JavaScript takes ownership so playback never leaves a frozen disc. */
+html.is-ios.vinyl-js-fallback .turntable-assembly .expanded-vinyl-disc,
+html.is-ios.vinyl-js-fallback .turntable-assembly .expanded-vinyl-disc.is-playing,
+html.is-ios.vinyl-js-fallback .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
+  -webkit-animation: none !important;
+  animation: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html.is-ios .turntable-assembly .expanded-vinyl-disc,
   html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,

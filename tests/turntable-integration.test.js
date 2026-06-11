@@ -58,7 +58,24 @@ test('iOS uses compositor-backed prefixed vinyl animation', () => {
   assert.match(css, /@-webkit-keyframes carine-vinyl-spin/);
   assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?-webkit-animation:\s*carine-vinyl-spin 15s linear infinite !important/);
   assert.match(css, /html\.is-ios[\s\S]*?\.expanded-vinyl-disc\.is-playing[\s\S]*?-webkit-animation-play-state:\s*running !important/);
-  assert.match(script, /const useCssVinylAnimation = isIosWebKit/);
+  assert.match(script, /let useCssVinylAnimation = isIosWebKit/);
   assert.match(script, /if \(useCssVinylAnimation\) return/);
   assert.match(script, /removeProperty\('-webkit-transform'\)/);
+});
+
+test('iOS vinyl animation automatically recovers when WebKit stalls', () => {
+  assert.match(script, /let useCssVinylAnimation = isIosWebKit/);
+  assert.match(script, /const verifyIosVinylAnimation = \(\) =>/);
+  assert.match(script, /nextTransform === initialTransform/);
+  assert.match(script, /activateVinylJavascriptFallback\('?[\w-]*'?/);
+  assert.match(script, /classList\.add\('vinyl-js-fallback'\)/);
+  assert.match(script, /useCssVinylAnimation = false/);
+  assert.match(script, /renderVinylRotation\(\);[\s\S]*?ensureVinylAnimation\(\)/);
+  assert.match(css, /html\.is-ios\.vinyl-js-fallback[\s\S]*?-webkit-animation:\s*none !important/);
+});
+
+test('iOS vinyl recovery is visibility-aware and preserves reduced-motion intent', () => {
+  assert.match(script, /document\.visibilityState !== 'visible'/);
+  assert.match(script, /if \(!useCssVinylAnimation \|\| !isVinylPlaying \|\| reduceMotion/);
+  assert.match(script, /if \(!shouldRotate\) vinylAnimationProbeToken \+= 1/);
 });
