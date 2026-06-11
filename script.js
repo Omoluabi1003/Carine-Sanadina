@@ -4988,6 +4988,7 @@ const completeCinematicSplash = () => {
   splash.setAttribute('aria-hidden', 'true');
   writeSplashStorage(CARINE_SPLASH_SEEN_KEY, 'true');
   writeSplashStorage(CARINE_SPLASH_SUCCESS_KEY, 'true');
+  window.dispatchEvent(new CustomEvent('carine:splashcomplete'));
 
   window.setTimeout(() => {
     splash.remove();
@@ -5121,24 +5122,56 @@ if ('IntersectionObserver' in window && observedSections.length) {
   updateActiveSection();
 }
 
-const revealElements = document.querySelectorAll('.reveal');
+const revealElements = [...document.querySelectorAll('.reveal')];
+const compactViewportQuery = window.matchMedia('(max-width: 640px)');
+let revealObserver = null;
+let revealRefreshFrame = 0;
+
+const revealElement = (element) => {
+  element.classList.add('is-visible');
+  revealObserver?.unobserve(element);
+};
+
+// iOS can defer IntersectionObserver callbacks while the launch splash owns the
+// viewport. Reconcile against the visual viewport after splash, resize, and
+// bfcache restores so content never remains transparent on compact screens.
+const refreshVisibleReveals = () => {
+  revealRefreshFrame = 0;
+  const viewportHeight = window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight;
+  const activationLine = viewportHeight * (compactViewportQuery.matches ? 1.08 : 0.94);
+
+  revealElements.forEach((element) => {
+    if (element.classList.contains('is-visible')) return;
+    const bounds = element.getBoundingClientRect();
+    if (bounds.top <= activationLine && bounds.bottom >= 0) revealElement(element);
+  });
+};
+
+const scheduleRevealRefresh = () => {
+  if (revealRefreshFrame) return;
+  revealRefreshFrame = window.requestAnimationFrame(refreshVisibleReveals);
+};
 
 if ('IntersectionObserver' in window) {
-  const revealObserver = new IntersectionObserver(
+  revealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
-        }
+        if (entry.isIntersecting || entry.intersectionRatio > 0) revealElement(entry.target);
       });
     },
-    { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+    compactViewportQuery.matches
+      ? { threshold: 0.01, rootMargin: '0px 0px 12% 0px' }
+      : { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
   );
 
   revealElements.forEach((element) => revealObserver.observe(element));
+  scheduleRevealRefresh();
+  window.addEventListener('carine:splashcomplete', scheduleRevealRefresh);
+  window.addEventListener('pageshow', scheduleRevealRefresh);
+  window.addEventListener('orientationchange', scheduleRevealRefresh, { passive: true });
+  window.visualViewport?.addEventListener('resize', scheduleRevealRefresh, { passive: true });
 } else {
-  revealElements.forEach((element) => element.classList.add('is-visible'));
+  revealElements.forEach(revealElement);
 }
 
 const portraitImages = [...document.querySelectorAll('[data-portrait-image]')];
