@@ -9530,3 +9530,36 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
     will-change: auto;
   }
 }
+
+/* Conversion-first audience response and compact mobile overlays */
+.audience-response {
+  background: linear-gradient(180deg, rgba(7, 28, 59, 0.18), rgba(3, 14, 34, 0.72));
+}
+
+.audience-response__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.audience-response__card {
+  padding: clamp(24px, 3vw, 34px);
+  border: 1px solid rgba(176, 211, 255, 0.16);
+  border-radius: 24px;
+  background: rgba(219, 234, 254, 0.055);
+}
+
+.audience-response__card h3 { margin: 0 0 10px; color: var(--ivory); }
+.audience-response__card p { margin: 0; color: rgba(226, 237, 255, 0.72); }
+.audience-response__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+@media (max-width: 760px) {
+  .audience-response__grid { grid-template-columns: 1fr; }
+  .audience-response__actions { align-items: stretch; flex-direction: column; }
+  .audience-response__actions .button { width: 100%; }
+  .guide-panel { max-height: calc(88dvh - env(safe-area-inset-top)); overflow: hidden; }
+  .guide-panel__messages { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .video-modal__panel,
+  .videos-drawer__panel,
+  .media-kit-drawer__panel { padding-bottom: env(safe-area-inset-bottom); }
+}

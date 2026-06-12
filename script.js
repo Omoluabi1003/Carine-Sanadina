@@ -1237,7 +1237,7 @@ const premiumExperienceTranslations = {
     'press.books.title': 'Book List',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, and After The Storm.',
     'press.music.title': 'Music List',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, and Reason are presented as a tender listening window into Carine’s healing-centered artistry.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason, and Halleluyah are presented as a tender listening window into Carine’s healing-centered artistry.',
     'speaking.title': 'Speaking Topics',
     'speaking.topic1': 'Domestic violence awareness and hidden survival',
     'speaking.topic2': 'Faith, resilience, and rebuilding self-worth',
@@ -3910,6 +3910,137 @@ const mediaKitTranslations = {
   }
 };
 mergeTranslationAdditions(mediaKitTranslations, 'media kit translations');
+
+
+const growthAuditTranslations = {
+  en: {
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason, and Halleluyah form a tender listening window into Carine’s healing-centered artistry.',
+    'buttons.askAvailability': 'Ask About Availability',
+    'audience.kicker': 'Audience response',
+    'audience.heading': 'What people can carry home from the conversation.',
+    'audience.intro': 'Carine’s work is designed to leave audiences with language, courage, and practical reflection—not a performance that ends when the room goes quiet.',
+    'audience.card1.title': 'Seen without spectacle',
+    'audience.card1.body': 'Survivors and families encounter difficult themes with dignity, emotional care, and room for their own pace.',
+    'audience.card2.title': 'Hope with substance',
+    'audience.card2.body': 'Faith and resilience become grounded invitations to rebuild self-worth, boundaries, and possibility.',
+    'audience.card3.title': 'A conversation that continues',
+    'audience.card3.body': 'Books, music, and reflection prompts give communities meaningful ways to continue after the event.',
+    'audience.cta': 'Explore a speaking invitation'
+  },
+  fr: {
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason et Halleluyah offrent une écoute sensible de l’art de Carine centré sur la guérison.',
+    'buttons.askAvailability': 'Demander la disponibilité',
+    'audience.kicker': 'Réponse du public',
+    'audience.heading': 'Ce que chacun peut emporter après la conversation.',
+    'audience.intro': 'Le travail de Carine laisse au public des mots, du courage et des pistes de réflexion concrètes — pas une performance qui s’arrête lorsque la salle se tait.',
+    'audience.card1.title': 'Être vu sans spectacle',
+    'audience.card1.body': 'Les survivantes, survivants et familles abordent les thèmes difficiles avec dignité, attention émotionnelle et respect de leur rythme.',
+    'audience.card2.title': 'Un espoir concret',
+    'audience.card2.body': 'La foi et la résilience deviennent des invitations ancrées à reconstruire l’estime de soi, les limites et les possibles.',
+    'audience.card3.title': 'Une conversation qui continue',
+    'audience.card3.body': 'Les livres, la musique et les questions de réflexion aident les communautés à poursuivre le chemin après l’événement.',
+    'audience.cta': 'Envisager une invitation à parler'
+  },
+  ln: {
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason mpe Halleluyah epesi nzela ya koyoka na boboto mayele ya Carine oyo etali kobika.',
+    'buttons.askAvailability': 'Tuna soki ezali',
+    'audience.kicker': 'Eyano ya bayoki',
+    'audience.heading': 'Makambo oyo bato bakoki komema sima ya lisolo.',
+    'audience.intro': 'Mosala ya Carine epesaka bayoki maloba, mpiko mpe makanisi ya kosalela — ezali te elakiseli oyo esilaka tango ndako ekomi kimia.',
+    'audience.card1.title': 'Komonana na limemya',
+    'audience.card1.body': 'Bato oyo babikaki mpe mabota bakutanaka na masolo ya mpasi na lokumu, bokebi ya motema mpe ntango na bango moko.',
+    'audience.card2.title': 'Elikya ya solo',
+    'audience.card2.body': 'Kondima mpe mpiko ekomi libyangi ya kotonga lisusu motuya, bandelo mpe makoki.',
+    'audience.card3.title': 'Lisolo ezali kokoba',
+    'audience.card3.body': 'Babuku, miziki mpe mituna ya kokanisa epesaka lisanga nzela ya kokoba sima ya likita.',
+    'audience.cta': 'Tala libyangi ya koloba'
+  },
+  es: {
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason y Halleluyah ofrecen una ventana sensible al arte sanador de Carine.',
+    'buttons.askAvailability': 'Consultar disponibilidad',
+    'audience.kicker': 'Respuesta del público',
+    'audience.heading': 'Lo que las personas pueden llevarse de la conversación.',
+    'audience.intro': 'El trabajo de Carine deja al público lenguaje, valor y reflexión práctica; no una actuación que termina cuando la sala queda en silencio.',
+    'audience.card1.title': 'Sentirse visto sin espectáculo',
+    'audience.card1.body': 'Sobrevivientes y familias encuentran temas difíciles con dignidad, cuidado emocional y espacio para su propio ritmo.',
+    'audience.card2.title': 'Esperanza con sustancia',
+    'audience.card2.body': 'La fe y la resiliencia se convierten en invitaciones concretas para reconstruir la autoestima, los límites y las posibilidades.',
+    'audience.card3.title': 'Una conversación que continúa',
+    'audience.card3.body': 'Los libros, la música y las preguntas de reflexión ayudan a las comunidades a continuar después del evento.',
+    'audience.cta': 'Explorar una invitación para hablar'
+  },
+  sw: {
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason na Halleluyah vinatoa dirisha la upole katika sanaa ya Carine inayolenga uponyaji.',
+    'buttons.askAvailability': 'Uliza upatikanaji',
+    'audience.kicker': 'Mwitikio wa hadhira',
+    'audience.heading': 'Kile watu wanaweza kuondoka nacho baada ya mazungumzo.',
+    'audience.intro': 'Kazi ya Carine huacha hadhira na lugha, ujasiri na tafakari ya vitendo—si onyesho linaloisha ukumbi unaponyamaza.',
+    'audience.card1.title': 'Kuonekana bila kufanywa tamasha',
+    'audience.card1.body': 'Walionusurika na familia hukutana na mada ngumu kwa heshima, uangalifu wa kihisia na nafasi ya kwenda kwa mwendo wao.',
+    'audience.card2.title': 'Tumaini lenye msingi',
+    'audience.card2.body': 'Imani na ustahimilivu huwa mialiko thabiti ya kujenga tena thamani binafsi, mipaka na uwezekano.',
+    'audience.card3.title': 'Mazungumzo yanayoendelea',
+    'audience.card3.body': 'Vitabu, muziki na maswali ya tafakari huipa jamii njia za kuendelea baada ya tukio.',
+    'audience.cta': 'Chunguza mwaliko wa kuzungumza'
+  },
+  yo: {
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason àti Halleluyah jẹ́ ferese ìgbọ́ràn pẹ̀lẹ́ sí iṣẹ́ ọnà ìwòsàn Carine.',
+    'buttons.askAvailability': 'Béèrè nípa àyè',
+    'audience.kicker': 'Ìdáhùn àwọn olùgbọ́',
+    'audience.heading': 'Ohun tí àwọn ènìyàn lè mú lọ sílé láti inú ìjíròrò.',
+    'audience.intro': 'Iṣẹ́ Carine ń fi èdè, ìgboyà àti àṣàrò tó wúlò sílẹ̀ fún àwọn olùgbọ́—kì í ṣe eré tó parí nígbà tí yàrá bá dákẹ́.',
+    'audience.card1.title': 'Kí a rí wọn pẹ̀lú iyì',
+    'audience.card1.body': 'Àwọn tó là á já àti ìdílé wọn pàdé àwọn kókó tó nira pẹ̀lú iyì, ìtọ́jú ọkàn àti àyè fún ìgbésẹ̀ tiwọn.',
+    'audience.card2.title': 'Ìrètí tó ní ìpìlẹ̀',
+    'audience.card2.body': 'Ìgbàgbọ́ àti ìfaradà di ìpè tó lágbára láti tún iyì ara ẹni, ààlà àti ohun tó ṣeé ṣe kọ́.',
+    'audience.card3.title': 'Ìjíròrò tó ń tẹ̀síwájú',
+    'audience.card3.body': 'Àwọn ìwé, orin àti ìbéèrè àṣàrò fún àwùjọ ní ọ̀nà láti tẹ̀síwájú lẹ́yìn ìṣẹ̀lẹ̀.',
+    'audience.cta': 'Ṣàwárí ìpè láti sọ̀rọ̀'
+  },
+  de: {
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason und Halleluyah öffnen ein sanftes Hörfenster in Carines heilungsorientierte Kunst.',
+    'buttons.askAvailability': 'Verfügbarkeit anfragen',
+    'audience.kicker': 'Resonanz beim Publikum',
+    'audience.heading': 'Was Menschen aus dem Gespräch mitnehmen können.',
+    'audience.intro': 'Carines Arbeit gibt dem Publikum Sprache, Mut und konkrete Reflexion mit—keine Darbietung, die endet, sobald der Raum still wird.',
+    'audience.card1.title': 'Gesehen ohne Inszenierung',
+    'audience.card1.body': 'Überlebende und Familien begegnen schwierigen Themen mit Würde, emotionaler Sorgfalt und Raum für ihr eigenes Tempo.',
+    'audience.card2.title': 'Hoffnung mit Substanz',
+    'audience.card2.body': 'Glaube und Resilienz werden zu geerdeten Einladungen, Selbstwert, Grenzen und Möglichkeiten neu aufzubauen.',
+    'audience.card3.title': 'Ein Gespräch, das weitergeht',
+    'audience.card3.body': 'Bücher, Musik und Reflexionsfragen geben Gemeinschaften Wege, nach der Veranstaltung weiterzumachen.',
+    'audience.cta': 'Eine Einladung als Rednerin anfragen'
+  },
+  ar: {
+    'press.music.body': 'تقدم Consolation وLa Gentillesse وWonderful وWomanifesto وParanoïa Persécutive وReason وHalleluyah نافذة موسيقية رقيقة على فن Carine المتمحور حول الشفاء.',
+    'buttons.askAvailability': 'الاستفسار عن التوفر',
+    'audience.kicker': 'استجابة الجمهور',
+    'audience.heading': 'ما الذي يمكن للناس أن يحملوه معهم من الحوار.',
+    'audience.intro': 'يمنح عمل كارين الجمهور لغة وشجاعة وتأملاً عملياً، وليس عرضاً ينتهي عندما تسود القاعة حالة الصمت.',
+    'audience.card1.title': 'أن يُرى الإنسان بكرامة',
+    'audience.card1.body': 'يتعامل الناجون والعائلات مع الموضوعات الصعبة بكرامة وعناية عاطفية ومساحة تناسب وتيرتهم.',
+    'audience.card2.title': 'أمل ذو مضمون',
+    'audience.card2.body': 'يصبح الإيمان والصمود دعوتين راسختين لإعادة بناء تقدير الذات والحدود والإمكانات.',
+    'audience.card3.title': 'حوار يستمر',
+    'audience.card3.body': 'تمنح الكتب والموسيقى وأسئلة التأمل المجتمعات طرقاً هادفة للاستمرار بعد الفعالية.',
+    'audience.cta': 'استكشاف دعوة للتحدث'
+  },
+  'zh-CN': {
+    'press.music.body': 'Consolation、La Gentillesse、Wonderful、Womanifesto、Paranoïa Persécutive、Reason 和 Halleluyah 共同呈现 Carine 以疗愈为中心的艺术窗口。',
+    'buttons.askAvailability': '咨询可订购情况',
+    'audience.kicker': '观众收获',
+    'audience.heading': '人们可以从这场对话中带走什么。',
+    'audience.intro': 'Carine 的作品旨在为观众留下语言、勇气和可实践的反思，而不是一场在现场安静后就结束的表演。',
+    'audience.card1.title': '被看见，而非被消费',
+    'audience.card1.body': '幸存者与家庭能够在尊严、情感关怀和尊重个人节奏的空间中面对艰难主题。',
+    'audience.card2.title': '有内容的希望',
+    'audience.card2.body': '信仰与韧性成为重建自我价值、边界和可能性的踏实邀请。',
+    'audience.card3.title': '持续的对话',
+    'audience.card3.body': '书籍、音乐和反思问题让社群在活动结束后仍能有意义地继续前行。',
+    'audience.cta': '探讨演讲邀请'
+  }
+};
+mergeTranslationAdditions(growthAuditTranslations, 'growth audit translations');
 
 const supportedLanguages = ['en', 'fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN'];
 let currentLanguage = DEFAULT_LANGUAGE;
@@ -9567,6 +9698,44 @@ if (musicPlayers.length) {
   }
 }
 
+
+const trackGrowthEvent = (eventName, details = {}) => {
+  const payload = {
+    event: eventName,
+    page_path: window.location.pathname,
+    language: currentLanguage,
+    ...details
+  };
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(payload);
+  window.dispatchEvent(new CustomEvent('carine:analytics', { detail: payload }));
+  return payload;
+};
+
+// A small first-party event layer keeps conversion intent observable without
+// blocking navigation or requiring an analytics vendor at runtime.
+document.addEventListener('click', (event) => {
+  const bookLink = event.target.closest('[data-book-id]');
+  if (bookLink) trackGrowthEvent('book_click', { book_title: bookLink.dataset.bookId, destination: bookLink.href });
+
+  const playControl = event.target.closest('[data-play-toggle]');
+  if (playControl) {
+    const player = playControl.closest('[data-audio-player]');
+    trackGrowthEvent('music_play_click', { track_id: player?.dataset.trackId || '', track_title: player?.dataset.trackTitle || '' });
+  }
+
+  const contactLink = event.target.closest('[data-contact-intent]');
+  if (contactLink) trackGrowthEvent('contact_click', { contact_intent: contactLink.dataset.contactIntent, destination: contactLink.href });
+
+  const channelLink = event.target.closest('[data-youtube-channel-link]');
+  if (channelLink) trackGrowthEvent('youtube_channel_click', { destination: channelLink.href });
+
+  const mediaDownload = event.target.closest('[data-media-kit-download]');
+  if (mediaDownload) trackGrowthEvent('media_kit_download', { asset_id: mediaDownload.dataset.mediaKitDownload, destination: mediaDownload.href });
+});
+
+window.trackGrowthEvent = trackGrowthEvent;
+
 const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 const YOUTUBE_EMBED_PARAMETERS = 'rel=0&modestbranding=1&playsinline=1';
 const YOUTUBE_CHANNEL_URL = 'https://youtube.com/@cariotendre?si=HsyeKHavudAxk3tu';
@@ -9635,7 +9804,6 @@ const videosDrawer = document.querySelector('[data-videos-drawer]');
 const videoGrid = document.querySelector('[data-video-grid]');
 const videoModal = document.querySelector('[data-video-modal]');
 const videoIframe = document.querySelector('[data-video-iframe]');
-const videoPlaceholder = document.querySelector('[data-video-placeholder]');
 const videoModalTitle = document.querySelector('[data-video-modal-title]');
 const videoModalDescription = document.querySelector('[data-video-modal-description]');
 let activeVideo = null;
@@ -9758,11 +9926,11 @@ const openVideoModal = (video) => {
   const videoId = getYouTubeVideoId(video);
   activeVideo = video;
   lastSelectedVideoId = videoId;
+  trackGrowthEvent('video_open', { video_id: videoId, video_title: video.title });
   closeVideosDrawer({ returnFocus: false });
   if (videoModalTitle) videoModalTitle.textContent = video.title;
   if (videoModalDescription) videoModalDescription.textContent = translate('videos.cardDescription');
   pauseMusicForVideo();
-  if (videoPlaceholder) videoPlaceholder.hidden = true;
   videoIframe.dataset.videoTitle = video.title;
   videoIframe.title = translateTemplate('videos.iframeTitle', { title: video.title });
   videoIframe.src = getYouTubeEmbedUrl(videoId);
@@ -9892,6 +10060,8 @@ loadAutomaticYouTubeVideos();
 // by the project and never embed or generate binary data in the application bundle.
 const MEDIA_KIT_RAW_BASE = 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/';
 const mediaKitAssets = [
+  { id: 'press-bio', category: 'press', title: 'Carine Sanadina — Press-Ready Bio', fileType: 'TXT', downloadUrl: `${MEDIA_KIT_RAW_BASE}media/carine-sanadina-press-bio.txt` },
+  { id: 'speaker-topics', category: 'press', title: 'Carine Sanadina — Speaking & Interview Topics', fileType: 'TXT', downloadUrl: `${MEDIA_KIT_RAW_BASE}media/carine-sanadina-speaker-topics.txt` },
   { id: 'music-consolation', category: 'music', title: 'Consolation', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Consolation.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Consolation%20Cover.png` },
   { id: 'music-la-gentillesse', category: 'music', title: 'La Gentillesse', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}La%20Gentillesse.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}La%20Gentillesse.png` },
   { id: 'music-wonderful', category: 'music', title: 'Wonderful', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Wonderful.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Wonderful%20cover.png` },
@@ -9917,7 +10087,9 @@ const mediaKitCategories = [
   { id: 'books', labelKey: 'mediaKit.books', descriptionKey: 'mediaKit.booksDescription' }
 ];
 
-const mediaKitTrigger = document.querySelector('[data-media-kit-trigger]');
+const mediaKitTriggers = [...document.querySelectorAll('[data-media-kit-trigger]')];
+const mediaKitTrigger = mediaKitTriggers[0] || null;
+let activeMediaKitTrigger = mediaKitTrigger;
 const mediaKitDrawer = document.querySelector('[data-media-kit-drawer]');
 const mediaKitContent = document.querySelector('[data-media-kit-content]');
 
@@ -9941,7 +10113,7 @@ const renderMediaKit = () => {
           <h4>${escapeVideoText(asset.title)}</h4>
           <p class="media-kit-asset__description">${escapeVideoText(translate(asset.descriptionKey))}</p>
           <p class="media-kit-asset__usage">${escapeVideoText(translate(asset.usageNoteKey))}</p>
-          <a class="button button-secondary media-kit-asset__download" href="${escapeVideoText(asset.downloadUrl)}" download="${escapeVideoText(getMediaKitFilename(asset))}" target="_blank" rel="noopener noreferrer">${escapeVideoText(translate('mediaKit.download'))}</a>
+          <a class="button button-secondary media-kit-asset__download" data-media-kit-download="${escapeVideoText(asset.id)}" href="${escapeVideoText(asset.downloadUrl)}" download="${escapeVideoText(getMediaKitFilename(asset))}" target="_blank" rel="noopener noreferrer">${escapeVideoText(translate('mediaKit.download'))}</a>
         </div>
       </article>`;
     }).join('')}</div>` : `<p class="media-kit-empty">${escapeVideoText(translate('mediaKit.noAssets'))}</p>`;
@@ -9955,11 +10127,13 @@ const renderMediaKit = () => {
   }).join('');
 };
 
-const openMediaKit = () => {
-  if (!mediaKitDrawer || !mediaKitTrigger) return;
+const openMediaKit = (event) => {
+  if (!mediaKitDrawer || !mediaKitTriggers.length) return;
+  activeMediaKitTrigger = event?.currentTarget || mediaKitTrigger;
   renderMediaKit();
   mediaKitDrawer.hidden = false;
-  mediaKitTrigger.setAttribute('aria-expanded', 'true');
+  mediaKitTriggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'true'));
+  trackGrowthEvent('media_kit_open', { source: activeMediaKitTrigger?.closest('section')?.id || 'unknown' });
   document.body.classList.add('media-kit-open');
   window.requestAnimationFrame(() => mediaKitDrawer.querySelector('.media-kit-drawer__close')?.focus());
 };
@@ -9968,12 +10142,12 @@ const closeMediaKit = () => {
   if (!mediaKitDrawer) return;
   const wasOpen = !mediaKitDrawer.hidden;
   mediaKitDrawer.hidden = true;
-  mediaKitTrigger?.setAttribute('aria-expanded', 'false');
+  mediaKitTriggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
   document.body.classList.remove('media-kit-open');
-  if (wasOpen) window.requestAnimationFrame(() => mediaKitTrigger?.focus());
+  if (wasOpen) window.requestAnimationFrame(() => activeMediaKitTrigger?.focus());
 };
 
-mediaKitTrigger?.addEventListener('click', openMediaKit);
+mediaKitTriggers.forEach((trigger) => trigger.addEventListener('click', openMediaKit));
 document.querySelectorAll('[data-media-kit-close]').forEach((button) => button.addEventListener('click', closeMediaKit));
 document.addEventListener('keydown', (event) => {
   if (!mediaKitDrawer || mediaKitDrawer.hidden) return;

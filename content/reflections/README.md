@@ -1,6 +1,6 @@
 # Reflection content model
 
-This folder is a placeholder for future MDX or CMS-synced reflection entries. The live static site currently reads `content-reflections.js`, where each reflection supports:
+This folder is reserved for future MDX or CMS-synced reflection entries. The live static site currently reads `content-reflections.js`, where each reflection supports:
 
 - `titleKey`
 - `excerptKey`
