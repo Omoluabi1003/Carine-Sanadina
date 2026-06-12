@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-11-ios-vinyl-recovery';
+const APP_VERSION = 'carine-site-2026-06-12-ios-vinyl-raf';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -5893,7 +5893,6 @@ if (musicPlayers.length) {
   const isAppleTouchDevice = isIOS;
   const isWebKitEngine = /AppleWebKit/i.test(userAgent) && !/Android/i.test(userAgent);
   const isIosWebKit = isAppleTouchDevice && isWebKitEngine;
-  let useCssVinylAnimation = isIosWebKit;
   const isIosSafari = isIosWebKit;
   const browserName = (() => {
     if (/CriOS/i.test(userAgent)) return 'Chrome iOS';
@@ -5986,7 +5985,8 @@ if (musicPlayers.length) {
   let vinylVelocity = 0;
   let vinylAnimationFrame = 0;
   let vinylLastFrameTime = 0;
-  let vinylAnimationProbeToken = 0;
+  let vinylRenderedFrameCount = 0;
+  let vinylLastRenderedAt = 0;
   const vinylPlaybackSpeed = 24;
   const vinylDeceleration = 11;
   const lyricsCache = new Map();
@@ -8140,11 +8140,14 @@ if (musicPlayers.length) {
     const discStyles = disc ? window.getComputedStyle(disc) : null;
     const rect = disc?.getBoundingClientRect?.() || { width: 0, height: 0 };
     const transformA = discStyles?.transform || discStyles?.webkitTransform || 'unavailable';
+    const renderedFrameCountA = vinylRenderedFrameCount;
     let transformB = transformA;
+    let renderedFrameCountB = renderedFrameCountA;
     if (sampleTransform && disc) {
       await new Promise((resolve) => window.setTimeout(resolve, 1000));
       const nextStyles = window.getComputedStyle(disc);
       transformB = nextStyles.transform || nextStyles.webkitTransform || 'unavailable';
+      renderedFrameCountB = vinylRenderedFrameCount;
     }
     const isPlaying = Boolean(audio && !audio.paused && !audio.ended);
     const playingClassApplied = Boolean(root?.classList.contains('is-playing') || disc?.classList.contains('is-playing') || miniPlayer?.classList.contains('is-playing') || expandedPlayerCard?.classList.contains('is-playing'));
@@ -8154,7 +8157,7 @@ if (musicPlayers.length) {
     const transformChanges = transformA !== transformB;
     const blockers = getVinylBlockers(disc || root);
     const assetVersions = await getLoadedAssetVersions();
-    const cssAnimationDisabled = animationName === 'none' || animationDuration === '0s' || animationDuration === '0ms' || animationPlayState !== 'running';
+    const javascriptRotationAdvancing = renderedFrameCountB > renderedFrameCountA;
     const wrongElementTargeted = Boolean(root && disc && root.classList.contains('is-playing') && !playingClassApplied);
     return {
       timestamp: new Date().toISOString(),
@@ -8181,12 +8184,16 @@ if (musicPlayers.length) {
       computedTransformAtTimeA: transformA,
       computedTransformAtTimeB: transformB,
       transformChangesAcrossOneSecondWhileAudioPlays: Boolean(isPlaying && transformChanges),
+      javascriptAnimationFrameScheduled: Boolean(vinylAnimationFrame),
+      renderedFrameCountAtTimeA: renderedFrameCountA,
+      renderedFrameCountAtTimeB: renderedFrameCountB,
+      millisecondsSinceLastRenderedFrame: vinylLastRenderedAt ? Math.round(window.performance.now() - vinylLastRenderedAt) : null,
       vinylElementSize: `${Math.round(rect.width)} × ${Math.round(rect.height)}`,
       parentContainer: getParentRenderSnapshot(disc || root),
       renderBlockers: blockers,
       overflowOrClippingIssue: blockers.some((blocker) => /overflow|clip-path/i.test(blocker)),
-      cssMediaQueryDisablesAnimationOnIos: Boolean((/iP(hone|od|ad)/i.test(userAgent) || (platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)) && cssAnimationDisabled && !reduceMotionQuery.matches),
-      reducedMotionLogicDisablesAppleDevices: Boolean(isAppleTouchDevice && cssAnimationDisabled && !reduceMotionQuery.matches),
+      cssMediaQueryDisablesAnimationOnIos: false,
+      reducedMotionLogicDisablesAppleDevices: Boolean(isAppleTouchDevice && reduceMotionQuery.matches),
       javascriptTogglingWrongClassOrElement: wrongElementTargeted,
       serviceWorkerCacheStatus: assetVersions,
       correctCssFileVersionLoaded: !assetVersions.possibleStaleCache,
@@ -8194,8 +8201,9 @@ if (musicPlayers.length) {
         audioActuallyPlaying: isPlaying,
         vinylElementVisible: Boolean(rect.width > 0 && rect.height > 0 && rootStyles?.display !== 'none' && rootStyles?.visibility !== 'hidden' && Number(rootStyles?.opacity ?? 1) > 0),
         playingClassApplied,
-        cssAnimationRunning: Boolean(animationName !== 'none' && animationPlayState === 'running' && !reduceMotionQuery.matches),
-        transformChanging: Boolean(isPlaying && transformChanges),
+        javascriptAnimationFrameScheduled: Boolean(vinylAnimationFrame),
+        javascriptRotationAdvancing: Boolean(!sampleTransform || !isPlaying || javascriptRotationAdvancing),
+        transformChanging: Boolean(!sampleTransform || !isPlaying || transformChanges),
         reducedMotionNotDisabling: !reduceMotionQuery.matches,
         correctCssFileVersionLoaded: !assetVersions.possibleStaleCache
       }
@@ -8210,8 +8218,9 @@ if (musicPlayers.length) {
     if (diagnostics.overflowOrClippingIssue) return 'Parent overflow/clipping';
     if (diagnostics.serviceWorkerCacheStatus?.possibleStaleCache) return 'Stale service worker cache';
     if (!checks.reducedMotionNotDisabling) return 'Reduced motion logic issue';
-    if (!checks.cssAnimationRunning) return 'CSS animation disabled';
-    if (diagnostics.iosDetected && checks.cssAnimationRunning && !checks.transformChanging) return 'iOS Safari transform/animation issue';
+    if (!checks.javascriptAnimationFrameScheduled) return 'JavaScript animation frame not scheduled';
+    if (!checks.javascriptRotationAdvancing) return 'JavaScript rotation loop stalled';
+    if (diagnostics.iosDetected && !checks.transformChanging) return 'iOS Safari transform repaint issue';
     if (!checks.correctCssFileVersionLoaded) return 'Wrong deployed file';
     return 'Other';
   };
@@ -8262,8 +8271,8 @@ if (musicPlayers.length) {
         ['Last audio event', diagnostics.lastAudioEvent],
         ['Vinyl root / disc found', `${diagnostics.vinylRootFound} / ${diagnostics.vinylDiscFound}`],
         ['Playing class applied', diagnostics.vinylPlayingClassApplied],
-        ['animation name / duration', `${diagnostics.computedAnimationName} / ${diagnostics.computedAnimationDuration}`],
-        ['animation play state', diagnostics.computedAnimationPlayState],
+        ['rAF scheduled / advancing', `${diagnostics.javascriptAnimationFrameScheduled} / ${diagnostics.checks.javascriptRotationAdvancing}`],
+        ['rendered frame count', diagnostics.renderedFrameCountAtTimeA],
         ['transform', diagnostics.computedTransformAtTimeA],
         ['vinyl width × height', diagnostics.vinylElementSize],
         ['parent display/visibility/opacity', `${diagnostics.parentContainer.display} / ${diagnostics.parentContainer.visibility} / ${diagnostics.parentContainer.opacity}`],
@@ -8282,13 +8291,19 @@ if (musicPlayers.length) {
 
   const renderVinylRotation = () => {
     const rotationValue = `${vinylRotation.toFixed(3)}deg`;
-    const discTransform = `translate3d(0, 0, 4px) rotateZ(${rotationValue})`;
+    // Alternating a sub-pixel Z depth periodically invalidates the WebKit layer
+    // without creating a visible wobble. This prevents visually stale frames on
+    // iOS even when requestAnimationFrame itself continues to fire.
+    const layerDepth = isIosWebKit && Math.floor(vinylRotation / 24) % 2 ? '4.001px' : '4px';
+    const discTransform = `translate3d(0, 0, ${layerDepth}) rotateZ(${rotationValue})`;
     vinylStages.forEach((stage) => stage.style.setProperty('--vinyl-rotation', rotationValue));
     vinylDiscs.forEach((disc) => {
       disc.style.setProperty('--vinyl-rotation', rotationValue);
       disc.style.transform = discTransform;
       disc.style.webkitTransform = discTransform;
     });
+    vinylRenderedFrameCount += 1;
+    vinylLastRenderedAt = window.performance.now();
   };
 
   const animateVinylRotation = (frameTime) => {
@@ -8309,7 +8324,7 @@ if (musicPlayers.length) {
       vinylVelocity = 0;
     }
 
-    if (isVinylPlaying || vinylVelocity > 0) {
+    if ((isVinylPlaying && !reduceMotion) || vinylVelocity > 0) {
       vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
     } else {
       vinylAnimationFrame = 0;
@@ -8318,52 +8333,34 @@ if (musicPlayers.length) {
   };
 
   const ensureVinylAnimation = () => {
-    if (useCssVinylAnimation) return;
-    if (!vinylAnimationFrame && (isVinylPlaying || vinylVelocity > 0)) {
+    if (!vinylAnimationFrame && ((isVinylPlaying && !reduceMotion) || vinylVelocity > 0)) {
       vinylLastFrameTime = 0;
       vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
     }
   };
 
-  const getRenderedVinylTransform = (disc = getVinylPrimaryDisc()) => {
-    if (!disc) return 'none';
-    const styles = window.getComputedStyle(disc);
-    return styles.transform || styles.webkitTransform || 'none';
-  };
-
-  const activateVinylJavascriptFallback = (reason = 'css-animation-stalled') => {
-    if (!useCssVinylAnimation) return;
-    useCssVinylAnimation = false;
-    vinylAnimationProbeToken += 1;
-    document.documentElement.classList.add('vinyl-js-fallback');
-    vinylDiscs.forEach((disc) => {
-      disc.style.animationPlayState = 'paused';
-      disc.style.webkitAnimationPlayState = 'paused';
-    });
-    vinylVelocity = isVinylPlaying && !reduceMotion ? vinylPlaybackSpeed : 0;
+  const restartVinylAnimation = () => {
+    if (vinylAnimationFrame) cancelAnimationFrame(vinylAnimationFrame);
+    vinylAnimationFrame = 0;
+    vinylLastFrameTime = 0;
     renderVinylRotation();
     ensureVinylAnimation();
-    window.console?.warn?.(`[vinyl] Switched to JavaScript rotation fallback: ${reason}`);
   };
 
-  const verifyIosVinylAnimation = () => {
-    if (!useCssVinylAnimation || !isVinylPlaying || reduceMotion || document.visibilityState !== 'visible') return;
-    const disc = getVinylPrimaryDisc();
-    if (!disc) return;
-    const probeToken = ++vinylAnimationProbeToken;
-    const initialTransform = getRenderedVinylTransform(disc);
-
-    window.setTimeout(() => {
-      if (probeToken !== vinylAnimationProbeToken || !useCssVinylAnimation || !isVinylPlaying) return;
-      if (document.visibilityState !== 'visible') return;
-      const nextTransform = getRenderedVinylTransform(disc);
-      const styles = window.getComputedStyle(disc);
-      const animationRunning = (styles.animationPlayState || styles.webkitAnimationPlayState) === 'running';
-      if (!animationRunning || nextTransform === initialTransform) {
-        activateVinylJavascriptFallback(animationRunning ? 'computed-transform-did-not-advance' : 'animation-not-running');
-      }
-    }, 700);
+  const recoverVinylAfterLifecycleChange = () => {
+    if (document.visibilityState !== 'visible' || !isVinylPlaying || reduceMotion) return;
+    window.requestAnimationFrame(restartVinylAnimation);
   };
+
+  document.addEventListener('visibilitychange', recoverVinylAfterLifecycleChange);
+  window.addEventListener('pageshow', recoverVinylAfterLifecycleChange);
+  window.addEventListener('orientationchange', recoverVinylAfterLifecycleChange);
+
+  window.setInterval(() => {
+    if (!isVinylPlaying || reduceMotion || document.visibilityState !== 'visible') return;
+    const frameAge = vinylLastRenderedAt ? window.performance.now() - vinylLastRenderedAt : Infinity;
+    if (!vinylAnimationFrame || frameAge > 1500) restartVinylAnimation();
+  }, 2000);
 
   const syncVinylExperience = (isPlaying, playbackState = null) => {
     const shouldRotate = Boolean(isPlaying);
@@ -8381,20 +8378,11 @@ if (musicPlayers.length) {
     vinylDiscs.forEach((disc) => {
       disc.classList.toggle('is-playing', shouldRotate);
       disc.classList.toggle('vinyl-playing', shouldRotate);
-      const animationState = useCssVinylAnimation && shouldRotate && !reduceMotion ? 'running' : 'paused';
-      disc.style.animationPlayState = animationState;
-      disc.style.webkitAnimationPlayState = animationState;
-      if (useCssVinylAnimation) {
-        disc.style.removeProperty('transform');
-        disc.style.removeProperty('-webkit-transform');
-      }
     });
 
     expandedPlayerCard?.classList.toggle('is-playing', shouldRotate);
     expandedPlayerCard?.classList.toggle('turntable-playing', shouldRotate);
-    if (!shouldRotate) vinylAnimationProbeToken += 1;
     ensureVinylAnimation();
-    if (shouldRotate) verifyIosVinylAnimation();
   };
 
   setupVinylDebugPanel();

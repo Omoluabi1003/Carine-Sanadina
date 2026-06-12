@@ -3686,14 +3686,8 @@ body.mini-player-active .guide-panel {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   will-change: transform;
-  animation: carine-vinyl-spin 15s linear infinite;
-  animation-play-state: paused;
 }
 
-.expanded-vinyl-wrap.is-playing .expanded-vinyl-disc,
-.expanded-player-card.is-playing .expanded-vinyl-disc {
-  animation-play-state: running;
-}
 
 .expanded-vinyl-disc::before {
   content: "";
@@ -5789,7 +5783,6 @@ html.splash-ready body > :not(.cinematic-splash) {
 }
 
 .stage-vinyl-wrap.is-playing .stage-vinyl-disc,
-.expanded-vinyl-wrap.is-playing .expanded-vinyl-disc,
 .mini-vinyl.is-playing .mini-vinyl-disc,
 .mini-player.is-playing .mini-vinyl-disc {
   animation-play-state: running;
@@ -8124,35 +8117,6 @@ body.expanded-player-open { overflow: auto; }
   position: relative;
 }
 
-.expanded-vinyl-disc,
-.expanded-vinyl-disc.is-playing,
-.expanded-vinyl-disc.vinyl-playing,
-.expanded-vinyl-wrap.is-playing .expanded-vinyl-disc,
-.expanded-vinyl-wrap.vinyl-playing .expanded-vinyl-disc,
-.expanded-vinyl-wrap.turntable-playing .expanded-vinyl-disc,
-.expanded-player-card.turntable-playing .expanded-vinyl-disc {
-  animation-name: carine-vinyl-spin;
-  animation-duration: 15s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-.expanded-vinyl-disc:not(.is-playing):not(.vinyl-playing) {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .direct-drive-deck .expanded-vinyl-disc,
-  .expanded-vinyl-disc {
-    animation: carine-vinyl-spin 30s linear infinite !important;
-    animation-play-state: paused !important;
-  }
-
-  .direct-drive-deck .expanded-vinyl-disc.is-playing,
-  .direct-drive-deck .expanded-vinyl-disc.vinyl-playing {
-    animation-play-state: running !important;
-  }
-}
 
 @media (max-width: 640px) {
   .direct-drive-deck .console-turntable {
@@ -9537,44 +9501,32 @@ body.media-kit-open {
 }
 
 
-/* iOS WebKit can stop repainting JavaScript-driven transforms on complex,
-   preserve-3d turntables. Let its compositor own the playing record instead. */
+/* iOS WebKit is prone to freezing animated descendants when a filtered,
+   preserve-3d ancestor owns the compositing layer. Flatten that layer and keep
+   requestAnimationFrame as the sole owner of the record transform. */
+html.is-ios .turntable-assembly .console-turntable {
+  -webkit-transform-style: flat;
+  transform-style: flat;
+  -webkit-filter: none;
+  filter: none;
+}
+
 html.is-ios .turntable-assembly .expanded-vinyl-disc,
 html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,
 html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
-  -webkit-animation: carine-vinyl-spin 15s linear infinite !important;
-  animation: carine-vinyl-spin 15s linear infinite !important;
-  -webkit-animation-play-state: paused !important;
-  animation-play-state: paused !important;
+  -webkit-animation: none !important;
+  animation: none !important;
   -webkit-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  contain: layout paint style;
+  isolation: isolate;
   will-change: transform;
 }
 
-html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,
-html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
-  -webkit-animation-play-state: running !important;
-  animation-play-state: running !important;
-}
-
-
-/* If iOS reports a running CSS animation without advancing its compositor
-   transform, JavaScript takes ownership so playback never leaves a frozen disc. */
-html.is-ios.vinyl-js-fallback .turntable-assembly .expanded-vinyl-disc,
-html.is-ios.vinyl-js-fallback .turntable-assembly .expanded-vinyl-disc.is-playing,
-html.is-ios.vinyl-js-fallback .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
-  -webkit-animation: none !important;
-  animation: none !important;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  html.is-ios .turntable-assembly .expanded-vinyl-disc,
-  html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,
-  html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
-    -webkit-animation: none !important;
-    animation: none !important;
+  html.is-ios .turntable-assembly .expanded-vinyl-disc {
     will-change: auto;
   }
 }

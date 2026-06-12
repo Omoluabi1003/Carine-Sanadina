@@ -54,28 +54,27 @@ test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states'
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
 
-test('iOS uses compositor-backed prefixed vinyl animation', () => {
-  assert.match(css, /@-webkit-keyframes carine-vinyl-spin/);
-  assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?-webkit-animation:\s*carine-vinyl-spin 15s linear infinite !important/);
-  assert.match(css, /html\.is-ios[\s\S]*?\.expanded-vinyl-disc\.is-playing[\s\S]*?-webkit-animation-play-state:\s*running !important/);
-  assert.match(script, /let useCssVinylAnimation = isIosWebKit/);
-  assert.match(script, /if \(useCssVinylAnimation\) return/);
-  assert.match(script, /removeProperty\('-webkit-transform'\)/);
+test('iOS keeps requestAnimationFrame as the sole vinyl transform owner', () => {
+  assert.doesNotMatch(script, /useCssVinylAnimation/);
+  assert.doesNotMatch(script, /verifyIosVinylAnimation/);
+  assert.match(script, /const layerDepth = isIosWebKit/);
+  assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
+  assert.match(script, /disc\.style\.webkitTransform\s*=\s*discTransform/);
+  assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?-webkit-animation:\s*none !important/);
 });
 
-test('iOS vinyl animation automatically recovers when WebKit stalls', () => {
-  assert.match(script, /let useCssVinylAnimation = isIosWebKit/);
-  assert.match(script, /const verifyIosVinylAnimation = \(\) =>/);
-  assert.match(script, /nextTransform === initialTransform/);
-  assert.match(script, /activateVinylJavascriptFallback\('?[\w-]*'?/);
-  assert.match(script, /classList\.add\('vinyl-js-fallback'\)/);
-  assert.match(script, /useCssVinylAnimation = false/);
-  assert.match(script, /renderVinylRotation\(\);[\s\S]*?ensureVinylAnimation\(\)/);
-  assert.match(css, /html\.is-ios\.vinyl-js-fallback[\s\S]*?-webkit-animation:\s*none !important/);
-});
-
-test('iOS vinyl recovery is visibility-aware and preserves reduced-motion intent', () => {
+test('iOS vinyl rotation recovers after WebKit lifecycle interruptions', () => {
+  assert.match(script, /const restartVinylAnimation = \(\) =>/);
+  assert.match(script, /cancelAnimationFrame\(vinylAnimationFrame\)/);
+  assert.match(script, /document\.addEventListener\('visibilitychange', recoverVinylAfterLifecycleChange\)/);
+  assert.match(script, /window\.addEventListener\('pageshow', recoverVinylAfterLifecycleChange\)/);
+  assert.match(script, /window\.addEventListener\('orientationchange', recoverVinylAfterLifecycleChange\)/);
   assert.match(script, /document\.visibilityState !== 'visible'/);
-  assert.match(script, /if \(!useCssVinylAnimation \|\| !isVinylPlaying \|\| reduceMotion/);
-  assert.match(script, /if \(!shouldRotate\) vinylAnimationProbeToken \+= 1/);
+  assert.match(script, /frameAge > 1500/);
+});
+
+test('iOS flattens the filtered 3D ancestor that can freeze child repaints', () => {
+  assert.match(css, /html\.is-ios \.turntable-assembly \.console-turntable[\s\S]*?transform-style:\s*flat/);
+  assert.match(css, /html\.is-ios \.turntable-assembly \.console-turntable[\s\S]*?filter:\s*none/);
+  assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?contain:\s*layout paint style/);
 });
