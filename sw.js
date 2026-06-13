@@ -1,12 +1,12 @@
-const APP_VERSION = 'carine-site-2026-06-13-vinyl-surgical-restore';
+const APP_VERSION = 'carine-site-2026-06-12-ios-vinyl-raf';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v15-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v12-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
-  `./styles.css?v=${APP_VERSION}`,
+  './styles.css',
   './content-reflections.js',
-  `./script.js?v=${APP_VERSION}`,
+  './script.js',
   './manifest.json'
 ];
 
