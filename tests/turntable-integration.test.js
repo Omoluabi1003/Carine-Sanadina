@@ -42,9 +42,9 @@ test('every track fills the same vinyl label area', () => {
   assert.match(vinylArtworkRule, /object-position:\s*center center/);
 });
 
-test('vinyl separates the tilt and spin transforms and maps playback states', () => {
-  assert.match(css, /\.turntable-assembly \.expanded-vinyl-wrap\s*\{[\s\S]*?perspective\(1200px\) rotateX\(0\.01deg\)/);
-  assert.match(css, /\.turntable-assembly \.vinyl-spin-layer\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1[\s\S]*?border-radius:\s*50%[\s\S]*?translate3d\(0, 0, 0\)[\s\S]*?transform-origin:\s*center center[\s\S]*?backface-visibility:\s*hidden[\s\S]*?will-change:\s*transform/);
+test('vinyl isolates its spin transform without changing the established turntable layout', () => {
+  assert.doesNotMatch(css, /\.turntable-assembly \.expanded-vinyl-wrap\s*\{[\s\S]*?perspective\(/);
+  assert.match(css, /\.turntable-assembly \.vinyl-spin-layer\s*\{[\s\S]*?inset:\s*0[\s\S]*?width:\s*100%[\s\S]*?height:\s*100%[\s\S]*?display:\s*grid[\s\S]*?place-items:\s*center[\s\S]*?border-radius:\s*50%[\s\S]*?translate3d\(0, 0, 0\)[\s\S]*?transform-origin:\s*center center[\s\S]*?backface-visibility:\s*hidden[\s\S]*?will-change:\s*transform[\s\S]*?pointer-events:\s*none/);
   assert.match(css, /@keyframes carineVinylSpin/);
   assert.match(css, /\.expanded-vinyl-wrap\.is-playing \.vinyl-spin-layer[\s\S]*?animation-play-state:\s*running/);
   assert.match(script, /requestAnimationFrame\(animateVinylRotation\)/);
