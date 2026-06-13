@@ -6,7 +6,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const script = fs.readFileSync(path.join(root, 'script.js'), 'utf8');
 
-const playAudioBody = script.match(/const playAudio = async \(player,[\s\S]*?\n  };\n\n  const getPlaylistTrackIds/)?.[0] || '';
+const playAudioBody = script.match(/const playActiveTrack = async \(source,[\s\S]*?\n  };\n\n  const playAudio/)?.[0] || '';
 
 test('audio playback starts before asynchronous visualizer setup', () => {
   const playCallIndex = playAudioBody.indexOf('const playbackPromise = Promise.resolve(audio.play())');
