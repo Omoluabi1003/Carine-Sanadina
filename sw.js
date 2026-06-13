@@ -1,12 +1,12 @@
-const APP_VERSION = 'carine-site-2026-06-12-ios-vinyl-raf';
+const APP_VERSION = 'carine-site-2026-06-13-vinyl-layer';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v12-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v13-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
-  './styles.css',
+  `./styles.css?v=${APP_VERSION}`,
   './content-reflections.js',
-  './script.js',
+  `./script.js?v=${APP_VERSION}`,
   './manifest.json'
 ];
 

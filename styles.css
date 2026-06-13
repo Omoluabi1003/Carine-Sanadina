@@ -8922,17 +8922,47 @@ body.video-overlay-open {
 .turntable-assembly.expanded-player-card.turntable-playing .expanded-vinyl-disc {
   z-index: 2;
   animation: none !important;
-  -webkit-transform: translate3d(0, 0, 4px) rotateZ(var(--vinyl-rotation));
-  transform: translate3d(0, 0, 4px) rotateZ(var(--vinyl-rotation));
-  -webkit-transform-origin: 50% 50%;
-  transform-origin: 50% 50%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
+  -webkit-transform: none;
+  transform: none;
   background:
     repeating-radial-gradient(circle at center, transparent 0 4px, rgba(182, 213, 241, 0.055) 4.5px 5.2px, transparent 5.7px 9px),
     conic-gradient(from 22deg, #01040a 0 8%, #172435 15%, #02050b 24%, #101d2c 35%, #010308 47%, #1b2b3d 57%, #02050a 72%, #111d2b 84%, #01040a 100%);
   box-shadow: inset 0 0 48px rgba(0, 0, 0, 0.82), 0 12px 19px rgba(0, 0, 0, 0.48);
+}
+
+.turntable-assembly .vinyl-spin-layer {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+  animation: carineVinylSpin 15s linear infinite paused;
+}
+
+.turntable-assembly .expanded-vinyl-wrap.is-playing .vinyl-spin-layer,
+.turntable-assembly .expanded-vinyl-wrap.vinyl-playing .vinyl-spin-layer,
+.turntable-assembly .expanded-vinyl-wrap.turntable-playing .vinyl-spin-layer {
+  animation-play-state: running;
+}
+
+.turntable-assembly .expanded-vinyl-wrap {
+  -webkit-transform: perspective(1200px) rotateX(0.01deg);
+  transform: perspective(1200px) rotateX(0.01deg);
+  transform-style: preserve-3d;
+}
+
+@keyframes carineVinylSpin {
+  from { transform: translate3d(0, 0, 0) rotateZ(0deg); }
+  to { transform: translate3d(0, 0, 0) rotateZ(360deg); }
 }
 
 .turntable-assembly .expanded-vinyl-sheen {
@@ -9095,7 +9125,7 @@ body.video-overlay-open {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .turntable-assembly .expanded-vinyl-disc { will-change: auto; }
+  .turntable-assembly .vinyl-spin-layer { animation: none; will-change: auto; }
   .tonearm-moving-group { transition-duration: 1ms; }
   .turntable-assembly:has([data-playback-state="playing"]) .deck-ambient-light { animation: none; }
 }
@@ -9511,11 +9541,7 @@ html.is-ios .turntable-assembly .console-turntable {
   filter: none;
 }
 
-html.is-ios .turntable-assembly .expanded-vinyl-disc,
-html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,
-html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
-  -webkit-animation: none !important;
-  animation: none !important;
+html.is-ios .turntable-assembly .vinyl-spin-layer {
   -webkit-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden;
@@ -9526,7 +9552,7 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.is-ios .turntable-assembly .expanded-vinyl-disc {
+  html.is-ios .turntable-assembly .vinyl-spin-layer {
     will-change: auto;
   }
 }
