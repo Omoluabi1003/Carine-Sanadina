@@ -12,6 +12,7 @@ test('turntable hardware is integrated inside one deck assembly', () => {
   const assembly = html.match(/<div class="direct-drive-deck turntable-assembly">([\s\S]*?)<div class="console-transport">/)?.[1] || '';
 
   assert.match(assembly, /data-vinyl-stage/);
+  assert.match(assembly, /class="vinyl-spin-layer"[^>]*data-vinyl-spin-layer/);
   assert.match(assembly, /data-vinyl-disc/);
   assert.match(assembly, /class="record-spindle"/);
   assert.match(assembly, /class="tonearm-assembly"[^>]*data-tonearm/);
@@ -41,11 +42,14 @@ test('every track fills the same vinyl label area', () => {
   assert.match(vinylArtworkRule, /object-position:\s*center center/);
 });
 
-test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states', () => {
+test('vinyl separates the tilt and spin transforms and maps playback states', () => {
+  assert.match(css, /\.turntable-assembly \.expanded-vinyl-wrap\s*\{[\s\S]*?perspective\(1200px\) rotateX\(0\.01deg\)/);
+  assert.match(css, /\.turntable-assembly \.vinyl-spin-layer\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1[\s\S]*?border-radius:\s*50%[\s\S]*?translate3d\(0, 0, 0\)[\s\S]*?transform-origin:\s*center center[\s\S]*?backface-visibility:\s*hidden[\s\S]*?will-change:\s*transform/);
+  assert.match(css, /@keyframes carineVinylSpin/);
+  assert.match(css, /\.expanded-vinyl-wrap\.is-playing \.vinyl-spin-layer[\s\S]*?animation-play-state:\s*running/);
   assert.match(script, /requestAnimationFrame\(animateVinylRotation\)/);
-  assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
-  assert.match(script, /disc\.style\.webkitTransform\s*=\s*discTransform/);
-  assert.match(css, /-webkit-transform:\s*translate3d\(0, 0, 4px\) rotateZ\(var\(--vinyl-rotation\)\)/);
+  assert.match(script, /layer\.style\.transform\s*=\s*discTransform/);
+  assert.match(script, /layer\.style\.webkitTransform\s*=\s*discTransform/);
   assert.match(script, /vinylDeceleration/);
   assert.match(script, /vinylVelocity\s*>\s*0/);
   assert.match(script, /syncVinylExperience\(false, 'ended'\)/);
@@ -54,13 +58,11 @@ test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states'
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
 
-test('iOS keeps requestAnimationFrame as the sole vinyl transform owner', () => {
-  assert.doesNotMatch(script, /useCssVinylAnimation/);
-  assert.doesNotMatch(script, /verifyIosVinylAnimation/);
-  assert.match(script, /const layerDepth = isIosWebKit/);
-  assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
-  assert.match(script, /disc\.style\.webkitTransform\s*=\s*discTransform/);
-  assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?-webkit-animation:\s*none !important/);
+test('iOS enables one requestAnimationFrame fallback only after CSS transform proof fails', () => {
+  assert.match(script, /isIosSafari && !diagnostics\.transformChangesAcross1500msWhileAudioPlays/);
+  assert.match(script, /vinylFallbackEnabled = true/);
+  assert.match(script, /if \(vinylFallbackEnabled && !vinylAnimationFrame/);
+  assert.match(script, /layer\.style\.animation = 'none'/);
 });
 
 test('iOS vinyl rotation recovers after WebKit lifecycle interruptions', () => {
@@ -76,5 +78,16 @@ test('iOS vinyl rotation recovers after WebKit lifecycle interruptions', () => {
 test('iOS flattens the filtered 3D ancestor that can freeze child repaints', () => {
   assert.match(css, /html\.is-ios \.turntable-assembly \.console-turntable[\s\S]*?transform-style:\s*flat/);
   assert.match(css, /html\.is-ios \.turntable-assembly \.console-turntable[\s\S]*?filter:\s*none/);
-  assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?contain:\s*layout paint style/);
+  assert.match(css, /html\.is-ios \.turntable-assembly \.vinyl-spin-layer[\s\S]*?contain:\s*layout paint style/);
+});
+
+test('vinyl debug mode exposes required 0/500/1000/1500ms transform diagnostics', () => {
+  assert.match(script, /const VINYL_DEBUG_QUERY_KEY = 'vinylDebug'/);
+  assert.match(script, /const VINYL_DEBUG_STORAGE_KEY = 'carineVinylDebug'/);
+  assert.match(script, /for \(const delay of \[0, 500, 1000, 1500\]\)/);
+  assert.match(script, /visibleVinylSelector/);
+  assert.match(script, /computedAnimationName/);
+  assert.match(script, /computedAnimationPlayState/);
+  assert.match(script, /transformChangesAcross1500msWhileAudioPlays/);
+  assert.match(script, /window\.__carineVinylDiagnostics/);
 });
