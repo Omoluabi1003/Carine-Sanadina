@@ -3,8 +3,8 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-13-vinyl-ui-restore';
-const CACHE_VERSION = `carine-static-v14-${APP_VERSION}`;
+const APP_VERSION = 'carine-site-2026-06-13-vinyl-surgical-restore';
+const CACHE_VERSION = `carine-static-v15-${APP_VERSION}`;
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -8571,10 +8571,12 @@ if (musicPlayers.length) {
     }
   };
 
-  window.__carineVinylDiagnostics = {
-    collect: (options = {}) => collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, options),
-    sample: () => collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, { sampleTransform: true })
-  };
+  if (isVinylDebugEnabled()) {
+    window.__carineVinylDiagnostics = {
+      collect: (options = {}) => collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, options),
+      sample: () => collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, { sampleTransform: true })
+    };
+  }
 
   setupVinylDebugPanel();
   updateVisualizerToggleUI();

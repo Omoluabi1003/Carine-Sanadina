@@ -20,8 +20,8 @@ test('After The Storm uses the approved cover in visible and structured website 
 });
 
 test('app and service-worker cache versions are aligned for the current rollout', () => {
-  const expectedVersion = 'carine-site-2026-06-13-vinyl-ui-restore';
+  const expectedVersion = 'carine-site-2026-06-13-vinyl-surgical-restore';
   assert.match(script, new RegExp(`const APP_VERSION = '${expectedVersion}'`));
   assert.match(serviceWorker, new RegExp(`const APP_VERSION = '${expectedVersion}'`));
-  assert.match(serviceWorker, /const CACHE_VERSION = `carine-static-v14-\$\{APP_VERSION\}`/);
+  assert.match(serviceWorker, /const CACHE_VERSION = `carine-static-v15-\$\{APP_VERSION\}`/);
 });

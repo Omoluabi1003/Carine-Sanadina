@@ -1,6 +1,6 @@
-const APP_VERSION = 'carine-site-2026-06-13-vinyl-ui-restore';
+const APP_VERSION = 'carine-site-2026-06-13-vinyl-surgical-restore';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v14-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v15-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
