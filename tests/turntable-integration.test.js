@@ -89,5 +89,5 @@ test('vinyl debug mode exposes required 0/500/1000/1500ms transform diagnostics'
   assert.match(script, /computedAnimationName/);
   assert.match(script, /computedAnimationPlayState/);
   assert.match(script, /transformChangesAcross1500msWhileAudioPlays/);
-  assert.match(script, /window\.__carineVinylDiagnostics/);
+  assert.match(script, /if \(isVinylDebugEnabled\(\)\) \{[\s\S]*?window\.__carineVinylDiagnostics/);
 });
