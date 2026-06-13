@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-12-ios-vinyl-raf';
+const APP_VERSION = 'carine-site-2026-06-13-product-discipline';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -1232,8 +1232,8 @@ const premiumExperienceTranslations = {
     'bio.title': 'Media Bio',
     'bio.body': 'Congolese-born and Jacksonville-based, Carine Sanadina brings together healthcare service, inspirational writing, music, and survivor advocacy to speak with tenderness about pain, courage, faith, and emotional restoration.',
     'press.headshots.title': 'Headshots & Portraits',
-    'press.headshots.body': 'Approved portraits and downloadable media assets can be attached here when final files are available. No binary assets are bundled automatically.',
-    'press.assetsPlaceholder': 'Downloadable assets placeholder',
+    'press.headshots.body': 'Approved portraits, music, and press materials are available for media and promotional inquiries.',
+    'press.assetsPlaceholder': 'Download Media Kit',
     'press.books.title': 'Book List',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, and After The Storm.',
     'press.music.title': 'Music List',
@@ -1247,7 +1247,7 @@ const premiumExperienceTranslations = {
     'inquiry.cta': 'Start an inquiry',
     'reflections.kicker': 'Reflections',
     'reflections.heading': 'Healing notes inspired by Carine’s books, music, and restoration-centered themes.',
-    'reflections.intro': 'A quiet, CMS-ready reflection library for readers exploring healing, faith, restoration, advocacy, resilience, womanhood, and emotional growth.',
+  'reflections.intro': 'A quiet reflection library for readers exploring healing, faith, restoration, advocacy, resilience, womanhood, and emotional growth.',
     'reflections.architectureNote': 'Each reflection is modeled with a title, excerpt, date, category, cover image, slug, and rich-content path so new writing can be added without changing the visual rhythm of this page.',
     'reflections.allLoaded': 'All reflections are visible',
     'reflections.toolbarLabel': 'Filter reflections',
@@ -4375,6 +4375,7 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/'/g, '&#39;');
 
 const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah'];
+const DEFAULT_MUSIC_TRACK_ID = 'halleluyah';
 const PLAYLIST_STORAGE_KEYS = [PLAYER_STATE_STORAGE_KEY];
 const CACHE_SENSITIVE_STORAGE_KEYS = [
   ...PLAYLIST_STORAGE_KEYS,
@@ -4494,8 +4495,6 @@ const CARINE_MUSIC_PLAYLIST = [
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Paranoi%CC%88a%20Perse%CC%81cutive.mp3',
     artworkFit: 'contain',
     lyrics: '/lyrics/paranoia-persecutive.txt',
-    // TODO: Convert Paranoïa Persécutive lyrics to timed LRC for sing-along sync.
-    // Future timed lyrics path: /lyrics/paranoia-persecutive.lrc
     lyricsLrc: '',
     about: 'A cinematic French track exploring intuition, protection, and survival-minded awareness, where vigilance becomes both warning and wisdom.',
     credits: 'Performed by Carine Sanadina. Music and lyrics rights remain with their respective owners.',
@@ -4513,8 +4512,6 @@ const CARINE_MUSIC_PLAYLIST = [
     coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/D60D546C-83C3-401A-8C56-3B48FD5022E0.png',
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Reason.mp3',
     lyrics: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Reason.txt',
-    // Future timed lyrics path: /lyrics/reason.lrc
-    // Keep lyricsLrc empty until a genuinely synchronized file is available.
     lyricsLrc: '',
     about: 'Reason captures Carine Sanadina’s vibrant message of purpose, movement, and gratitude. It blends everyday hustle with celebratory energy, reminding listeners that every step, every dance, and every season of growth carries meaning.',
     credits: 'Artist: Carine Sanadina\nProduced by Omoluabi Productions\nPresented by Omoluabi Productions',
@@ -4534,8 +4531,6 @@ const CARINE_MUSIC_PLAYLIST = [
     coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Halleluyah%20Cover.png',
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Hallelujah.mp3',
     lyrics: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Halleluyah.txt',
-    // Future timed lyrics path: /lyrics/halleluyah.lrc
-    // Keep lyricsLrc empty until a genuinely synchronized file is available.
     lyricsLrc: '',
     lyricsFallbackKey: 'tracks.halleluyah.lyricsFallback',
     about: 'Halleluyah is a faith-filled Lingala worship song that exalts God through praise, gratitude, and reverence. Drawing inspiration from heavenly worship and the language of adoration, the song invites listeners into an atmosphere of spiritual reflection, joy, and devotion.',
@@ -4556,6 +4551,14 @@ CARINE_MUSIC_PLAYLIST.forEach((track) => {
 });
 
 const MUSIC_TRACKS_BY_ID = new Map(CARINE_MUSIC_PLAYLIST.map((track) => [track.id, track]));
+const DEFAULT_MUSIC_TRACK = MUSIC_TRACKS_BY_ID.get(DEFAULT_MUSIC_TRACK_ID) || CARINE_MUSIC_PLAYLIST[0] || null;
+
+const renderPressMusicList = () => {
+  const mount = document.querySelector('[data-press-music-list]');
+  if (!mount) return;
+  const titles = getSafePlaylistTracks().map((track) => translate(`${track.translationKey}.title`));
+  mount.textContent = titles.join(', ');
+};
 
 const assertRequiredPlaylistTracks = () => {
   const playlistIds = CARINE_MUSIC_PLAYLIST.map((track) => track?.id).filter(Boolean);
@@ -4767,6 +4770,8 @@ const renderCarinePlaylist = () => {
 };
 
 renderCarinePlaylist();
+renderPressMusicList();
+window.addEventListener('carine:languagechange', renderPressMusicList);
 
 applyLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
 
@@ -5679,7 +5684,6 @@ const initializePwaExperience = () => {
 };
 
 const initializeGuideAssistant = () => {
-  // TODO: Connect this guide to a secure server-side AI endpoint for deeper conversational intelligence.
   const widget = document.querySelector('[data-guide-widget]');
   if (!widget) return;
 
@@ -6116,7 +6120,7 @@ if (musicPlayers.length) {
       const audio = activePlayer ? getAudio(activePlayer) : null;
       window.localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify({
         playlistVersion: PLAYLIST_VERSION,
-        activeTrackId: activePlayer?.dataset.trackId || CARINE_MUSIC_PLAYLIST[0]?.id || '',
+        activeTrackId: activePlayer?.dataset.trackId || DEFAULT_MUSIC_TRACK?.id || '',
         activeIndex: Math.max(activeIndex, 0),
         currentTime: audio ? Math.floor(audio.currentTime) : 0,
         volume: mini?.volume ? Number(mini.volume.value) : 0.85,
@@ -9555,7 +9559,7 @@ if (musicPlayers.length) {
   }
   updateCommandButtons();
   const restoredPlayer = musicPlayers.find((player) => player.dataset.trackId === storedState.activeTrackId)
-    || musicPlayers[Number.isInteger(storedState.activeIndex) ? storedState.activeIndex : 0]
+    || musicPlayers.find((player) => player.dataset.trackId === DEFAULT_MUSIC_TRACK_ID)
     || musicPlayers[0];
   if (restoredPlayer) {
     const restoredAudio = getAudio(restoredPlayer);
@@ -9892,13 +9896,15 @@ loadAutomaticYouTubeVideos();
 // by the project and never embed or generate binary data in the application bundle.
 const MEDIA_KIT_RAW_BASE = 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/';
 const mediaKitAssets = [
-  { id: 'music-consolation', category: 'music', title: 'Consolation', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Consolation.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Consolation%20Cover.png` },
-  { id: 'music-la-gentillesse', category: 'music', title: 'La Gentillesse', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}La%20Gentillesse.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}La%20Gentillesse.png` },
-  { id: 'music-wonderful', category: 'music', title: 'Wonderful', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Wonderful.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Wonderful%20cover.png` },
-  { id: 'music-womanifesto', category: 'music', title: 'Womanifesto', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Womanifesto%20(1).mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}4B4AE259-EC5A-46A2-BB9A-355667A3C23C.png` },
-  { id: 'music-paranoia', category: 'music', title: 'Paranoïa Persécutive', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Paranoi%CC%88a%20Perse%CC%81cutive.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}00243680-B36E-4587-8623-9AEFD1896D1A.png` },
-  { id: 'music-reason', category: 'music', title: 'Reason', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Reason.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}D60D546C-83C3-401A-8C56-3B48FD5022E0.png` },
-  { id: 'music-halleluyah', category: 'music', title: 'Halleluyah', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Hallelujah.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Halleluyah%20Cover.png` },
+  ...getSafePlaylistTracks().map((track) => ({
+    id: `music-${track.id}`,
+    category: 'music',
+    title: track.title,
+    titleKey: `${track.translationKey}.title`,
+    fileType: 'MP3',
+    downloadUrl: track.audioUrl,
+    previewUrl: track.coverUrl
+  })),
   { id: 'portrait-official', category: 'portraits', title: 'Carine Sanadina — Official Portrait', fileType: 'PNG', downloadUrl: `${MEDIA_KIT_RAW_BASE}0F2574B3-8BD8-42CF-B229-3CA96FA94214.png`, previewUrl: `${MEDIA_KIT_RAW_BASE}0F2574B3-8BD8-42CF-B229-3CA96FA94214.png` },
   { id: 'book-pain-nobody-saw', category: 'books', title: 'The Pain Nobody Saw', fileType: 'JPG', downloadUrl: `${MEDIA_KIT_RAW_BASE}049325d2-9ac2-4808-ab0f-289f958847c8.jpeg`, previewUrl: `${MEDIA_KIT_RAW_BASE}049325d2-9ac2-4808-ab0f-289f958847c8.jpeg` },
   { id: 'book-if-red-toxic', category: 'books', title: 'If It’s Red, It’s Toxic', fileType: 'JPG', downloadUrl: `${MEDIA_KIT_RAW_BASE}d8dc62f7-2580-4ea4-849c-3ed6fbd94641.jpeg`, previewUrl: `${MEDIA_KIT_RAW_BASE}d8dc62f7-2580-4ea4-849c-3ed6fbd94641.jpeg` },
@@ -9938,7 +9944,7 @@ const renderMediaKit = () => {
         ${preview}
         <div class="media-kit-asset__content">
           <span class="media-kit-asset__type">${escapeVideoText(asset.fileType)}</span>
-          <h4>${escapeVideoText(asset.title)}</h4>
+          <h4>${escapeVideoText(asset.titleKey ? translate(asset.titleKey) : asset.title)}</h4>
           <p class="media-kit-asset__description">${escapeVideoText(translate(asset.descriptionKey))}</p>
           <p class="media-kit-asset__usage">${escapeVideoText(translate(asset.usageNoteKey))}</p>
           <a class="button button-secondary media-kit-asset__download" href="${escapeVideoText(asset.downloadUrl)}" download="${escapeVideoText(getMediaKitFilename(asset))}" target="_blank" rel="noopener noreferrer">${escapeVideoText(translate('mediaKit.download'))}</a>
