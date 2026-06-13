@@ -20,10 +20,19 @@ test('press placeholder is replaced by an accessible media kit trigger and drawe
 test('media kit assets are centralized and URL-only', () => {
   assert.match(script, /const mediaKitAssets = \[/);
   assert.match(script, /MEDIA_KIT_RAW_BASE/);
+  assert.match(script, /\.\.\.getSafePlaylistTracks\(\)\.map\(\(track\) =>/);
   assert.doesNotMatch(script, /data:(?:audio|image|application)\//i);
   assert.match(script, /download="\$\{escapeVideoText\(getMediaKitFilename\(asset\)\)\}"/);
   assert.match(script, /target="_blank" rel="noopener noreferrer"/);
   assert.match(script, /window\.mediaKitAssets = mediaKitAssets/);
+});
+
+test('press music list and media-kit music both use the canonical playlist', () => {
+  assert.match(indexHtml, /data-press-music-list/);
+  assert.doesNotMatch(indexHtml, /data-i18n="press\.music\.body"/);
+  assert.match(script, /const renderPressMusicList = \(\) =>/);
+  assert.match(script, /getSafePlaylistTracks\(\)\.map\(\(track\) => translate/);
+  assert.match(script, /titleKey: `\$\{track\.translationKey\}\.title`/);
 });
 
 test('media kit supports desktop modal and mobile bottom-sheet scrolling', () => {

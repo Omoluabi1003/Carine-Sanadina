@@ -52,6 +52,12 @@ test('each track declares only its own expected timed or static lyrics source', 
   assert.equal(tracks.get('halleluyah')?.language, 'Lingala');
 });
 
+test('Halleluyah is the ready-state default without enabling autoplay', () => {
+  assert.match(script, /const DEFAULT_MUSIC_TRACK_ID = 'halleluyah'/);
+  assert.match(script, /musicPlayers\.find\(\(player\) => player\.dataset\.trackId === DEFAULT_MUSIC_TRACK_ID\)/);
+  assert.doesNotMatch(script, /restoredAudio\.play\(\)/);
+});
+
 test('existing synchronized lyric files contain ordered timestamps and lyric text', () => {
   const tracks = playlistById();
   for (const trackId of ['consolation', 'gentillesse', 'wonderful', 'womanifesto']) {
