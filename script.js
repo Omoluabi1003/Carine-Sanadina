@@ -3,8 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-13-vinyl-surgical-restore';
-const CACHE_VERSION = `carine-static-v15-${APP_VERSION}`;
+const APP_VERSION = 'carine-site-2026-06-12-ios-vinyl-raf';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -1238,7 +1237,7 @@ const premiumExperienceTranslations = {
     'press.books.title': 'Book List',
     'press.books.body': 'The Pain Nobody Saw, If It’s Red, It’s Toxic, The Road to Sunshine, and After The Storm.',
     'press.music.title': 'Music List',
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason, and Halleluyah are presented as a tender listening window into Carine’s healing-centered artistry.',
+    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, and Reason are presented as a tender listening window into Carine’s healing-centered artistry.',
     'speaking.title': 'Speaking Topics',
     'speaking.topic1': 'Domestic violence awareness and hidden survival',
     'speaking.topic2': 'Faith, resilience, and rebuilding self-worth',
@@ -3912,137 +3911,6 @@ const mediaKitTranslations = {
 };
 mergeTranslationAdditions(mediaKitTranslations, 'media kit translations');
 
-
-const growthAuditTranslations = {
-  en: {
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason, and Halleluyah form a tender listening window into Carine’s healing-centered artistry.',
-    'buttons.askAvailability': 'Ask About Availability',
-    'audience.kicker': 'Audience response',
-    'audience.heading': 'What people can carry home from the conversation.',
-    'audience.intro': 'Carine’s work is designed to leave audiences with language, courage, and practical reflection—not a performance that ends when the room goes quiet.',
-    'audience.card1.title': 'Seen without spectacle',
-    'audience.card1.body': 'Survivors and families encounter difficult themes with dignity, emotional care, and room for their own pace.',
-    'audience.card2.title': 'Hope with substance',
-    'audience.card2.body': 'Faith and resilience become grounded invitations to rebuild self-worth, boundaries, and possibility.',
-    'audience.card3.title': 'A conversation that continues',
-    'audience.card3.body': 'Books, music, and reflection prompts give communities meaningful ways to continue after the event.',
-    'audience.cta': 'Explore a speaking invitation'
-  },
-  fr: {
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason et Halleluyah offrent une écoute sensible de l’art de Carine centré sur la guérison.',
-    'buttons.askAvailability': 'Demander la disponibilité',
-    'audience.kicker': 'Réponse du public',
-    'audience.heading': 'Ce que chacun peut emporter après la conversation.',
-    'audience.intro': 'Le travail de Carine laisse au public des mots, du courage et des pistes de réflexion concrètes — pas une performance qui s’arrête lorsque la salle se tait.',
-    'audience.card1.title': 'Être vu sans spectacle',
-    'audience.card1.body': 'Les survivantes, survivants et familles abordent les thèmes difficiles avec dignité, attention émotionnelle et respect de leur rythme.',
-    'audience.card2.title': 'Un espoir concret',
-    'audience.card2.body': 'La foi et la résilience deviennent des invitations ancrées à reconstruire l’estime de soi, les limites et les possibles.',
-    'audience.card3.title': 'Une conversation qui continue',
-    'audience.card3.body': 'Les livres, la musique et les questions de réflexion aident les communautés à poursuivre le chemin après l’événement.',
-    'audience.cta': 'Envisager une invitation à parler'
-  },
-  ln: {
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason mpe Halleluyah epesi nzela ya koyoka na boboto mayele ya Carine oyo etali kobika.',
-    'buttons.askAvailability': 'Tuna soki ezali',
-    'audience.kicker': 'Eyano ya bayoki',
-    'audience.heading': 'Makambo oyo bato bakoki komema sima ya lisolo.',
-    'audience.intro': 'Mosala ya Carine epesaka bayoki maloba, mpiko mpe makanisi ya kosalela — ezali te elakiseli oyo esilaka tango ndako ekomi kimia.',
-    'audience.card1.title': 'Komonana na limemya',
-    'audience.card1.body': 'Bato oyo babikaki mpe mabota bakutanaka na masolo ya mpasi na lokumu, bokebi ya motema mpe ntango na bango moko.',
-    'audience.card2.title': 'Elikya ya solo',
-    'audience.card2.body': 'Kondima mpe mpiko ekomi libyangi ya kotonga lisusu motuya, bandelo mpe makoki.',
-    'audience.card3.title': 'Lisolo ezali kokoba',
-    'audience.card3.body': 'Babuku, miziki mpe mituna ya kokanisa epesaka lisanga nzela ya kokoba sima ya likita.',
-    'audience.cta': 'Tala libyangi ya koloba'
-  },
-  es: {
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason y Halleluyah ofrecen una ventana sensible al arte sanador de Carine.',
-    'buttons.askAvailability': 'Consultar disponibilidad',
-    'audience.kicker': 'Respuesta del público',
-    'audience.heading': 'Lo que las personas pueden llevarse de la conversación.',
-    'audience.intro': 'El trabajo de Carine deja al público lenguaje, valor y reflexión práctica; no una actuación que termina cuando la sala queda en silencio.',
-    'audience.card1.title': 'Sentirse visto sin espectáculo',
-    'audience.card1.body': 'Sobrevivientes y familias encuentran temas difíciles con dignidad, cuidado emocional y espacio para su propio ritmo.',
-    'audience.card2.title': 'Esperanza con sustancia',
-    'audience.card2.body': 'La fe y la resiliencia se convierten en invitaciones concretas para reconstruir la autoestima, los límites y las posibilidades.',
-    'audience.card3.title': 'Una conversación que continúa',
-    'audience.card3.body': 'Los libros, la música y las preguntas de reflexión ayudan a las comunidades a continuar después del evento.',
-    'audience.cta': 'Explorar una invitación para hablar'
-  },
-  sw: {
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason na Halleluyah vinatoa dirisha la upole katika sanaa ya Carine inayolenga uponyaji.',
-    'buttons.askAvailability': 'Uliza upatikanaji',
-    'audience.kicker': 'Mwitikio wa hadhira',
-    'audience.heading': 'Kile watu wanaweza kuondoka nacho baada ya mazungumzo.',
-    'audience.intro': 'Kazi ya Carine huacha hadhira na lugha, ujasiri na tafakari ya vitendo—si onyesho linaloisha ukumbi unaponyamaza.',
-    'audience.card1.title': 'Kuonekana bila kufanywa tamasha',
-    'audience.card1.body': 'Walionusurika na familia hukutana na mada ngumu kwa heshima, uangalifu wa kihisia na nafasi ya kwenda kwa mwendo wao.',
-    'audience.card2.title': 'Tumaini lenye msingi',
-    'audience.card2.body': 'Imani na ustahimilivu huwa mialiko thabiti ya kujenga tena thamani binafsi, mipaka na uwezekano.',
-    'audience.card3.title': 'Mazungumzo yanayoendelea',
-    'audience.card3.body': 'Vitabu, muziki na maswali ya tafakari huipa jamii njia za kuendelea baada ya tukio.',
-    'audience.cta': 'Chunguza mwaliko wa kuzungumza'
-  },
-  yo: {
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason àti Halleluyah jẹ́ ferese ìgbọ́ràn pẹ̀lẹ́ sí iṣẹ́ ọnà ìwòsàn Carine.',
-    'buttons.askAvailability': 'Béèrè nípa àyè',
-    'audience.kicker': 'Ìdáhùn àwọn olùgbọ́',
-    'audience.heading': 'Ohun tí àwọn ènìyàn lè mú lọ sílé láti inú ìjíròrò.',
-    'audience.intro': 'Iṣẹ́ Carine ń fi èdè, ìgboyà àti àṣàrò tó wúlò sílẹ̀ fún àwọn olùgbọ́—kì í ṣe eré tó parí nígbà tí yàrá bá dákẹ́.',
-    'audience.card1.title': 'Kí a rí wọn pẹ̀lú iyì',
-    'audience.card1.body': 'Àwọn tó là á já àti ìdílé wọn pàdé àwọn kókó tó nira pẹ̀lú iyì, ìtọ́jú ọkàn àti àyè fún ìgbésẹ̀ tiwọn.',
-    'audience.card2.title': 'Ìrètí tó ní ìpìlẹ̀',
-    'audience.card2.body': 'Ìgbàgbọ́ àti ìfaradà di ìpè tó lágbára láti tún iyì ara ẹni, ààlà àti ohun tó ṣeé ṣe kọ́.',
-    'audience.card3.title': 'Ìjíròrò tó ń tẹ̀síwájú',
-    'audience.card3.body': 'Àwọn ìwé, orin àti ìbéèrè àṣàrò fún àwùjọ ní ọ̀nà láti tẹ̀síwájú lẹ́yìn ìṣẹ̀lẹ̀.',
-    'audience.cta': 'Ṣàwárí ìpè láti sọ̀rọ̀'
-  },
-  de: {
-    'press.music.body': 'Consolation, La Gentillesse, Wonderful, Womanifesto, Paranoïa Persécutive, Reason und Halleluyah öffnen ein sanftes Hörfenster in Carines heilungsorientierte Kunst.',
-    'buttons.askAvailability': 'Verfügbarkeit anfragen',
-    'audience.kicker': 'Resonanz beim Publikum',
-    'audience.heading': 'Was Menschen aus dem Gespräch mitnehmen können.',
-    'audience.intro': 'Carines Arbeit gibt dem Publikum Sprache, Mut und konkrete Reflexion mit—keine Darbietung, die endet, sobald der Raum still wird.',
-    'audience.card1.title': 'Gesehen ohne Inszenierung',
-    'audience.card1.body': 'Überlebende und Familien begegnen schwierigen Themen mit Würde, emotionaler Sorgfalt und Raum für ihr eigenes Tempo.',
-    'audience.card2.title': 'Hoffnung mit Substanz',
-    'audience.card2.body': 'Glaube und Resilienz werden zu geerdeten Einladungen, Selbstwert, Grenzen und Möglichkeiten neu aufzubauen.',
-    'audience.card3.title': 'Ein Gespräch, das weitergeht',
-    'audience.card3.body': 'Bücher, Musik und Reflexionsfragen geben Gemeinschaften Wege, nach der Veranstaltung weiterzumachen.',
-    'audience.cta': 'Eine Einladung als Rednerin anfragen'
-  },
-  ar: {
-    'press.music.body': 'تقدم Consolation وLa Gentillesse وWonderful وWomanifesto وParanoïa Persécutive وReason وHalleluyah نافذة موسيقية رقيقة على فن Carine المتمحور حول الشفاء.',
-    'buttons.askAvailability': 'الاستفسار عن التوفر',
-    'audience.kicker': 'استجابة الجمهور',
-    'audience.heading': 'ما الذي يمكن للناس أن يحملوه معهم من الحوار.',
-    'audience.intro': 'يمنح عمل كارين الجمهور لغة وشجاعة وتأملاً عملياً، وليس عرضاً ينتهي عندما تسود القاعة حالة الصمت.',
-    'audience.card1.title': 'أن يُرى الإنسان بكرامة',
-    'audience.card1.body': 'يتعامل الناجون والعائلات مع الموضوعات الصعبة بكرامة وعناية عاطفية ومساحة تناسب وتيرتهم.',
-    'audience.card2.title': 'أمل ذو مضمون',
-    'audience.card2.body': 'يصبح الإيمان والصمود دعوتين راسختين لإعادة بناء تقدير الذات والحدود والإمكانات.',
-    'audience.card3.title': 'حوار يستمر',
-    'audience.card3.body': 'تمنح الكتب والموسيقى وأسئلة التأمل المجتمعات طرقاً هادفة للاستمرار بعد الفعالية.',
-    'audience.cta': 'استكشاف دعوة للتحدث'
-  },
-  'zh-CN': {
-    'press.music.body': 'Consolation、La Gentillesse、Wonderful、Womanifesto、Paranoïa Persécutive、Reason 和 Halleluyah 共同呈现 Carine 以疗愈为中心的艺术窗口。',
-    'buttons.askAvailability': '咨询可订购情况',
-    'audience.kicker': '观众收获',
-    'audience.heading': '人们可以从这场对话中带走什么。',
-    'audience.intro': 'Carine 的作品旨在为观众留下语言、勇气和可实践的反思，而不是一场在现场安静后就结束的表演。',
-    'audience.card1.title': '被看见，而非被消费',
-    'audience.card1.body': '幸存者与家庭能够在尊严、情感关怀和尊重个人节奏的空间中面对艰难主题。',
-    'audience.card2.title': '有内容的希望',
-    'audience.card2.body': '信仰与韧性成为重建自我价值、边界和可能性的踏实邀请。',
-    'audience.card3.title': '持续的对话',
-    'audience.card3.body': '书籍、音乐和反思问题让社群在活动结束后仍能有意义地继续前行。',
-    'audience.cta': '探讨演讲邀请'
-  }
-};
-mergeTranslationAdditions(growthAuditTranslations, 'growth audit translations');
-
 const supportedLanguages = ['en', 'fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN'];
 let currentLanguage = DEFAULT_LANGUAGE;
 
@@ -6079,7 +5947,6 @@ if (musicPlayers.length) {
   const expandedVisualizer = document.querySelector('[data-expanded-visualizer]');
   const vinylStages = Array.from(document.querySelectorAll('[data-vinyl-stage], [data-mini-vinyl-stage]'));
   const vinylDiscs = Array.from(document.querySelectorAll('[data-vinyl-disc]'));
-  const vinylSpinLayers = Array.from(document.querySelectorAll('[data-vinyl-spin-layer]'));
   const expandedVinylStage = document.querySelector('[data-vinyl-stage]');
   const expandedVinylDisc = document.querySelector('[data-vinyl-disc]');
   let expandedTrackOptions = Array.from(document.querySelectorAll('[data-expanded-track-option]'));
@@ -6120,8 +5987,6 @@ if (musicPlayers.length) {
   let vinylLastFrameTime = 0;
   let vinylRenderedFrameCount = 0;
   let vinylLastRenderedAt = 0;
-  let vinylFallbackEnabled = false;
-  let vinylProbeToken = 0;
   const vinylPlaybackSpeed = 24;
   const vinylDeceleration = 11;
   const lyricsCache = new Map();
@@ -8228,10 +8093,6 @@ if (musicPlayers.length) {
     const stage = getVinylPrimaryStage();
     return stage?.querySelector('[data-vinyl-disc]') || expandedVinylDisc || vinylDiscs[0] || null;
   };
-  const getVinylPrimarySpinLayer = () => {
-    const stage = getVinylPrimaryStage();
-    return stage?.querySelector('[data-vinyl-spin-layer]') || vinylSpinLayers[0] || null;
-  };
 
   const getParentRenderSnapshot = (element) => {
     const parent = element?.parentElement || null;
@@ -8272,47 +8133,32 @@ if (musicPlayers.length) {
     };
   };
 
-  const sampleVinylTransforms = async (element) => {
-    if (!element) return [];
-    const startedAt = window.performance.now();
-    const samples = [];
-    for (const delay of [0, 500, 1000, 1500]) {
-      const remaining = delay - (window.performance.now() - startedAt);
-      if (remaining > 0) await new Promise((resolve) => window.setTimeout(resolve, remaining));
-      const styles = window.getComputedStyle(element);
-      samples.push({
-        elapsedMs: delay,
-        transform: styles.transform || styles.webkitTransform || 'none'
-      });
-    }
-    return samples;
-  };
-
   const collectVinylDiagnostics = async (audio = activePlayer ? getAudio(activePlayer) : null, { sampleTransform = false } = {}) => {
     const root = getVinylPrimaryStage();
     const disc = getVinylPrimaryDisc();
-    const spinLayer = getVinylPrimarySpinLayer();
     const rootStyles = root ? window.getComputedStyle(root) : null;
-    const spinStyles = spinLayer ? window.getComputedStyle(spinLayer) : null;
-    const rect = spinLayer?.getBoundingClientRect?.() || { width: 0, height: 0 };
-    const transformSamples = sampleTransform
-      ? await sampleVinylTransforms(spinLayer)
-      : [{ elapsedMs: 0, transform: spinStyles?.transform || spinStyles?.webkitTransform || 'unavailable' }];
-    const transformA = transformSamples[0]?.transform || 'unavailable';
+    const discStyles = disc ? window.getComputedStyle(disc) : null;
+    const rect = disc?.getBoundingClientRect?.() || { width: 0, height: 0 };
+    const transformA = discStyles?.transform || discStyles?.webkitTransform || 'unavailable';
     const renderedFrameCountA = vinylRenderedFrameCount;
-    const transformB = transformSamples.at(-1)?.transform || transformA;
-    const renderedFrameCountB = vinylRenderedFrameCount;
+    let transformB = transformA;
+    let renderedFrameCountB = renderedFrameCountA;
+    if (sampleTransform && disc) {
+      await new Promise((resolve) => window.setTimeout(resolve, 1000));
+      const nextStyles = window.getComputedStyle(disc);
+      transformB = nextStyles.transform || nextStyles.webkitTransform || 'unavailable';
+      renderedFrameCountB = vinylRenderedFrameCount;
+    }
     const isPlaying = Boolean(audio && !audio.paused && !audio.ended);
-    const playingClassApplied = Boolean(root?.classList.contains('is-playing'));
-    const animationName = spinStyles?.animationName || 'unavailable';
-    const animationDuration = spinStyles?.animationDuration || 'unavailable';
-    const animationPlayState = spinStyles?.animationPlayState || 'unavailable';
-    const transformChanges = new Set(transformSamples.map(({ transform }) => transform)).size > 1;
-    const blockers = getVinylBlockers(spinLayer || root);
+    const playingClassApplied = Boolean(root?.classList.contains('is-playing') || disc?.classList.contains('is-playing') || miniPlayer?.classList.contains('is-playing') || expandedPlayerCard?.classList.contains('is-playing'));
+    const animationName = discStyles?.animationName || 'unavailable';
+    const animationDuration = discStyles?.animationDuration || 'unavailable';
+    const animationPlayState = discStyles?.animationPlayState || 'unavailable';
+    const transformChanges = transformA !== transformB;
+    const blockers = getVinylBlockers(disc || root);
     const assetVersions = await getLoadedAssetVersions();
     const javascriptRotationAdvancing = renderedFrameCountB > renderedFrameCountA;
-    const cssTargetsPlayingClass = Boolean(root && spinLayer && root.classList.contains('is-playing') && animationPlayState === 'running');
-    const wrongElementTargeted = Boolean(isPlaying && (!playingClassApplied || (!cssTargetsPlayingClass && !vinylFallbackEnabled)));
+    const wrongElementTargeted = Boolean(root && disc && root.classList.contains('is-playing') && !playingClassApplied);
     return {
       timestamp: new Date().toISOString(),
       browserPlatform: `${browserName} / ${platform || 'unknown platform'}`,
@@ -8323,7 +8169,6 @@ if (musicPlayers.length) {
       safariVersion,
       iosVersion,
       prefersReducedMotion: reduceMotionQuery.matches,
-      activeTrackId: activePlayer?.dataset.trackId || '',
       activeTrackTitle: activePlayer ? getTrackTitle(activePlayer) : '',
       audioPaused: audio?.paused ?? true,
       audioEnded: audio?.ended ?? false,
@@ -8332,26 +8177,19 @@ if (musicPlayers.length) {
       lastAudioEvent,
       vinylRootFound: Boolean(root),
       vinylDiscFound: Boolean(disc),
-      vinylSpinLayerFound: Boolean(spinLayer),
-      visibleVinylSelector: spinLayer ? '[data-vinyl-spin-layer]' : 'none',
       vinylPlayingClassApplied: playingClassApplied,
-      playingClassTargetsSpinLayer: cssTargetsPlayingClass,
       computedAnimationName: animationName,
       computedAnimationDuration: animationDuration,
       computedAnimationPlayState: animationPlayState,
       computedTransformAtTimeA: transformA,
       computedTransformAtTimeB: transformB,
-      transformSamples,
-      transformChangesAcross1500msWhileAudioPlays: Boolean(isPlaying && transformChanges),
-      vinylFallbackEnabled,
+      transformChangesAcrossOneSecondWhileAudioPlays: Boolean(isPlaying && transformChanges),
       javascriptAnimationFrameScheduled: Boolean(vinylAnimationFrame),
       renderedFrameCountAtTimeA: renderedFrameCountA,
       renderedFrameCountAtTimeB: renderedFrameCountB,
       millisecondsSinceLastRenderedFrame: vinylLastRenderedAt ? Math.round(window.performance.now() - vinylLastRenderedAt) : null,
       vinylElementSize: `${Math.round(rect.width)} × ${Math.round(rect.height)}`,
-      computedWidth: Math.round(rect.width),
-      computedHeight: Math.round(rect.height),
-      parentContainer: getParentRenderSnapshot(spinLayer || root),
+      parentContainer: getParentRenderSnapshot(disc || root),
       renderBlockers: blockers,
       overflowOrClippingIssue: blockers.some((blocker) => /overflow|clip-path/i.test(blocker)),
       cssMediaQueryDisablesAnimationOnIos: false,
@@ -8363,8 +8201,8 @@ if (musicPlayers.length) {
         audioActuallyPlaying: isPlaying,
         vinylElementVisible: Boolean(rect.width > 0 && rect.height > 0 && rootStyles?.display !== 'none' && rootStyles?.visibility !== 'hidden' && Number(rootStyles?.opacity ?? 1) > 0),
         playingClassApplied,
-        javascriptAnimationFrameScheduled: Boolean(!vinylFallbackEnabled || vinylAnimationFrame),
-        javascriptRotationAdvancing: Boolean(!vinylFallbackEnabled || !sampleTransform || !isPlaying || javascriptRotationAdvancing),
+        javascriptAnimationFrameScheduled: Boolean(vinylAnimationFrame),
+        javascriptRotationAdvancing: Boolean(!sampleTransform || !isPlaying || javascriptRotationAdvancing),
         transformChanging: Boolean(!sampleTransform || !isPlaying || transformChanges),
         reducedMotionNotDisabling: !reduceMotionQuery.matches,
         correctCssFileVersionLoaded: !assetVersions.possibleStaleCache
@@ -8380,8 +8218,8 @@ if (musicPlayers.length) {
     if (diagnostics.overflowOrClippingIssue) return 'Parent overflow/clipping';
     if (diagnostics.serviceWorkerCacheStatus?.possibleStaleCache) return 'Stale service worker cache';
     if (!checks.reducedMotionNotDisabling) return 'Reduced motion logic issue';
-    if (diagnostics.vinylFallbackEnabled && !checks.javascriptAnimationFrameScheduled) return 'JavaScript animation frame not scheduled';
-    if (diagnostics.vinylFallbackEnabled && !checks.javascriptRotationAdvancing) return 'JavaScript rotation loop stalled';
+    if (!checks.javascriptAnimationFrameScheduled) return 'JavaScript animation frame not scheduled';
+    if (!checks.javascriptRotationAdvancing) return 'JavaScript rotation loop stalled';
     if (diagnostics.iosDetected && !checks.transformChanging) return 'iOS Safari transform repaint issue';
     if (!checks.correctCssFileVersionLoaded) return 'Wrong deployed file';
     return 'Other';
@@ -8405,7 +8243,11 @@ if (musicPlayers.length) {
 
   const runVinylSelfChecksAfterPlay = (audio) => {
     if (!isVinylDebugEnabled() || !audio) return;
-    window.setTimeout(() => logVinylDiagnostics('1500ms transform self-check after play', audio, { sampleTransform: true }), 250);
+    [800, 1600, 3000].forEach((delay) => {
+      window.setTimeout(() => {
+        logVinylDiagnostics(`${delay}ms self-check after play`, audio, { sampleTransform: true });
+      }, delay);
+    });
   };
 
   const setupVinylDebugPanel = () => {
@@ -8416,40 +8258,35 @@ if (musicPlayers.length) {
     panel.setAttribute('aria-label', translate('vinyl.debug.ariaLabel'));
     document.body.appendChild(panel);
     const render = async () => {
-      const diagnostics = await collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, { sampleTransform: true });
+      const diagnostics = await collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, { sampleTransform: false });
       const rows = [
         ['Browser/platform detected', diagnostics.browserPlatform],
-        ['APP_VERSION', APP_VERSION],
-        ['CACHE_VERSION', CACHE_VERSION],
         ['iOS detected', diagnostics.iosDetected],
         ['iPadOS detected', diagnostics.ipadOsDetected],
         ['Safari detected', diagnostics.safariDetected],
         ['prefers-reduced-motion detected', diagnostics.prefersReducedMotion],
-        ['Active track ID', diagnostics.activeTrackId || 'none'],
+        ['Active track title', diagnostics.activeTrackTitle],
         ['audio.paused / audio.ended', `${diagnostics.audioPaused} / ${diagnostics.audioEnded}`],
         ['audio currentTime', diagnostics.audioCurrentTime],
         ['Last audio event', diagnostics.lastAudioEvent],
-        ['Visible vinyl selector', diagnostics.visibleVinylSelector],
-        ['Computed width × height', `${diagnostics.computedWidth} × ${diagnostics.computedHeight}`],
-        ['Playing class targets layer', diagnostics.playingClassTargetsSpinLayer],
-        ['animation-name', diagnostics.computedAnimationName],
-        ['animation-play-state', diagnostics.computedAnimationPlayState],
+        ['Vinyl root / disc found', `${diagnostics.vinylRootFound} / ${diagnostics.vinylDiscFound}`],
+        ['Playing class applied', diagnostics.vinylPlayingClassApplied],
         ['rAF scheduled / advancing', `${diagnostics.javascriptAnimationFrameScheduled} / ${diagnostics.checks.javascriptRotationAdvancing}`],
         ['rendered frame count', diagnostics.renderedFrameCountAtTimeA],
         ['transform', diagnostics.computedTransformAtTimeA],
-        ['transform changes / 1500ms', diagnostics.transformChangesAcross1500msWhileAudioPlays],
+        ['vinyl width × height', diagnostics.vinylElementSize],
         ['parent display/visibility/opacity', `${diagnostics.parentContainer.display} / ${diagnostics.parentContainer.visibility} / ${diagnostics.parentContainer.opacity}`],
         ['overflow/clipping issue', diagnostics.overflowOrClippingIssue],
         ['iOS media disables animation', diagnostics.cssMediaQueryDisablesAnimationOnIos],
         ['reduced-motion Apple issue', diagnostics.reducedMotionLogicDisablesAppleDevices],
         ['wrong class/element', diagnostics.javascriptTogglingWrongClassOrElement],
         ['stale cache', diagnostics.serviceWorkerCacheStatus.possibleStaleCache],
-        ['failure category', categorizeVinylFailure(diagnostics)]
+        ['APP_VERSION', APP_VERSION]
       ];
       panel.innerHTML = `<strong>${escapeDiagnosticHtml(translate('vinyl.debug.title'))}</strong>${rows.map(([label, value]) => `<div><span>${escapeDiagnosticHtml(label)}</span><b>${escapeDiagnosticHtml(value)}</b></div>`).join('')}`;
     };
     render();
-    window.setInterval(render, 2000);
+    window.setInterval(render, 1000);
   };
 
   const renderVinylRotation = () => {
@@ -8457,12 +8294,13 @@ if (musicPlayers.length) {
     // Alternating a sub-pixel Z depth periodically invalidates the WebKit layer
     // without creating a visible wobble. This prevents visually stale frames on
     // iOS even when requestAnimationFrame itself continues to fire.
-    const discTransform = `translate3d(0, 0, 0) rotateZ(${rotationValue})`;
+    const layerDepth = isIosWebKit && Math.floor(vinylRotation / 24) % 2 ? '4.001px' : '4px';
+    const discTransform = `translate3d(0, 0, ${layerDepth}) rotateZ(${rotationValue})`;
     vinylStages.forEach((stage) => stage.style.setProperty('--vinyl-rotation', rotationValue));
-    vinylSpinLayers.forEach((layer) => {
-      layer.style.animation = 'none';
-      layer.style.transform = discTransform;
-      layer.style.webkitTransform = discTransform;
+    vinylDiscs.forEach((disc) => {
+      disc.style.setProperty('--vinyl-rotation', rotationValue);
+      disc.style.transform = discTransform;
+      disc.style.webkitTransform = discTransform;
     });
     vinylRenderedFrameCount += 1;
     vinylLastRenderedAt = window.performance.now();
@@ -8495,7 +8333,7 @@ if (musicPlayers.length) {
   };
 
   const ensureVinylAnimation = () => {
-    if (vinylFallbackEnabled && !vinylAnimationFrame && ((isVinylPlaying && !reduceMotion) || vinylVelocity > 0)) {
+    if (!vinylAnimationFrame && ((isVinylPlaying && !reduceMotion) || vinylVelocity > 0)) {
       vinylLastFrameTime = 0;
       vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
     }
@@ -8510,22 +8348,16 @@ if (musicPlayers.length) {
   };
 
   const recoverVinylAfterLifecycleChange = () => {
-    if (!vinylFallbackEnabled || document.visibilityState !== 'visible' || !isVinylPlaying || reduceMotion) return;
+    if (document.visibilityState !== 'visible' || !isVinylPlaying || reduceMotion) return;
     window.requestAnimationFrame(restartVinylAnimation);
   };
 
   document.addEventListener('visibilitychange', recoverVinylAfterLifecycleChange);
   window.addEventListener('pageshow', recoverVinylAfterLifecycleChange);
   window.addEventListener('orientationchange', recoverVinylAfterLifecycleChange);
-  window.addEventListener('pagehide', () => {
-    vinylProbeToken += 1;
-    if (vinylAnimationFrame) cancelAnimationFrame(vinylAnimationFrame);
-    vinylAnimationFrame = 0;
-    vinylLastFrameTime = 0;
-  });
 
   window.setInterval(() => {
-    if (!vinylFallbackEnabled || !isVinylPlaying || reduceMotion || document.visibilityState !== 'visible') return;
+    if (!isVinylPlaying || reduceMotion || document.visibilityState !== 'visible') return;
     const frameAge = vinylLastRenderedAt ? window.performance.now() - vinylLastRenderedAt : Infinity;
     if (!vinylAnimationFrame || frameAge > 1500) restartVinylAnimation();
   }, 2000);
@@ -8551,32 +8383,7 @@ if (musicPlayers.length) {
     expandedPlayerCard?.classList.toggle('is-playing', shouldRotate);
     expandedPlayerCard?.classList.toggle('turntable-playing', shouldRotate);
     ensureVinylAnimation();
-    if (shouldRotate && !reduceMotion) {
-      const probeToken = ++vinylProbeToken;
-      window.setTimeout(async () => {
-        if (probeToken !== vinylProbeToken || !isVinylPlaying || vinylFallbackEnabled) return;
-        const diagnostics = await collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, { sampleTransform: true });
-        if (probeToken !== vinylProbeToken || !isVinylPlaying) return;
-        if (isIosSafari && !diagnostics.transformChangesAcross1500msWhileAudioPlays) {
-          vinylFallbackEnabled = true;
-          restartVinylAnimation();
-          logVinylDiagnostics('CSS transform stalled; iOS RAF fallback enabled', activePlayer ? getAudio(activePlayer) : null, { sampleTransform: true });
-        }
-      }, 100);
-    } else {
-      vinylProbeToken += 1;
-      if (vinylAnimationFrame) cancelAnimationFrame(vinylAnimationFrame);
-      vinylAnimationFrame = 0;
-      vinylLastFrameTime = 0;
-    }
   };
-
-  if (isVinylDebugEnabled()) {
-    window.__carineVinylDiagnostics = {
-      collect: (options = {}) => collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, options),
-      sample: () => collectVinylDiagnostics(activePlayer ? getAudio(activePlayer) : null, { sampleTransform: true })
-    };
-  }
 
   setupVinylDebugPanel();
   updateVisualizerToggleUI();
@@ -9760,44 +9567,6 @@ if (musicPlayers.length) {
   }
 }
 
-
-const trackGrowthEvent = (eventName, details = {}) => {
-  const payload = {
-    event: eventName,
-    page_path: window.location.pathname,
-    language: currentLanguage,
-    ...details
-  };
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push(payload);
-  window.dispatchEvent(new CustomEvent('carine:analytics', { detail: payload }));
-  return payload;
-};
-
-// A small first-party event layer keeps conversion intent observable without
-// blocking navigation or requiring an analytics vendor at runtime.
-document.addEventListener('click', (event) => {
-  const bookLink = event.target.closest('[data-book-id]');
-  if (bookLink) trackGrowthEvent('book_click', { book_title: bookLink.dataset.bookId, destination: bookLink.href });
-
-  const playControl = event.target.closest('[data-play-toggle]');
-  if (playControl) {
-    const player = playControl.closest('[data-audio-player]');
-    trackGrowthEvent('music_play_click', { track_id: player?.dataset.trackId || '', track_title: player?.dataset.trackTitle || '' });
-  }
-
-  const contactLink = event.target.closest('[data-contact-intent]');
-  if (contactLink) trackGrowthEvent('contact_click', { contact_intent: contactLink.dataset.contactIntent, destination: contactLink.href });
-
-  const channelLink = event.target.closest('[data-youtube-channel-link]');
-  if (channelLink) trackGrowthEvent('youtube_channel_click', { destination: channelLink.href });
-
-  const mediaDownload = event.target.closest('[data-media-kit-download]');
-  if (mediaDownload) trackGrowthEvent('media_kit_download', { asset_id: mediaDownload.dataset.mediaKitDownload, destination: mediaDownload.href });
-});
-
-window.trackGrowthEvent = trackGrowthEvent;
-
 const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 const YOUTUBE_EMBED_PARAMETERS = 'rel=0&modestbranding=1&playsinline=1';
 const YOUTUBE_CHANNEL_URL = 'https://youtube.com/@cariotendre?si=HsyeKHavudAxk3tu';
@@ -9866,6 +9635,7 @@ const videosDrawer = document.querySelector('[data-videos-drawer]');
 const videoGrid = document.querySelector('[data-video-grid]');
 const videoModal = document.querySelector('[data-video-modal]');
 const videoIframe = document.querySelector('[data-video-iframe]');
+const videoPlaceholder = document.querySelector('[data-video-placeholder]');
 const videoModalTitle = document.querySelector('[data-video-modal-title]');
 const videoModalDescription = document.querySelector('[data-video-modal-description]');
 let activeVideo = null;
@@ -9988,11 +9758,11 @@ const openVideoModal = (video) => {
   const videoId = getYouTubeVideoId(video);
   activeVideo = video;
   lastSelectedVideoId = videoId;
-  trackGrowthEvent('video_open', { video_id: videoId, video_title: video.title });
   closeVideosDrawer({ returnFocus: false });
   if (videoModalTitle) videoModalTitle.textContent = video.title;
   if (videoModalDescription) videoModalDescription.textContent = translate('videos.cardDescription');
   pauseMusicForVideo();
+  if (videoPlaceholder) videoPlaceholder.hidden = true;
   videoIframe.dataset.videoTitle = video.title;
   videoIframe.title = translateTemplate('videos.iframeTitle', { title: video.title });
   videoIframe.src = getYouTubeEmbedUrl(videoId);
@@ -10122,8 +9892,6 @@ loadAutomaticYouTubeVideos();
 // by the project and never embed or generate binary data in the application bundle.
 const MEDIA_KIT_RAW_BASE = 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/';
 const mediaKitAssets = [
-  { id: 'press-bio', category: 'press', title: 'Carine Sanadina — Press-Ready Bio', fileType: 'TXT', downloadUrl: `${MEDIA_KIT_RAW_BASE}media/carine-sanadina-press-bio.txt` },
-  { id: 'speaker-topics', category: 'press', title: 'Carine Sanadina — Speaking & Interview Topics', fileType: 'TXT', downloadUrl: `${MEDIA_KIT_RAW_BASE}media/carine-sanadina-speaker-topics.txt` },
   { id: 'music-consolation', category: 'music', title: 'Consolation', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Consolation.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Consolation%20Cover.png` },
   { id: 'music-la-gentillesse', category: 'music', title: 'La Gentillesse', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}La%20Gentillesse.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}La%20Gentillesse.png` },
   { id: 'music-wonderful', category: 'music', title: 'Wonderful', fileType: 'MP3', downloadUrl: `${MEDIA_KIT_RAW_BASE}Wonderful.mp3`, previewUrl: `${MEDIA_KIT_RAW_BASE}Wonderful%20cover.png` },
@@ -10149,9 +9917,7 @@ const mediaKitCategories = [
   { id: 'books', labelKey: 'mediaKit.books', descriptionKey: 'mediaKit.booksDescription' }
 ];
 
-const mediaKitTriggers = [...document.querySelectorAll('[data-media-kit-trigger]')];
-const mediaKitTrigger = mediaKitTriggers[0] || null;
-let activeMediaKitTrigger = mediaKitTrigger;
+const mediaKitTrigger = document.querySelector('[data-media-kit-trigger]');
 const mediaKitDrawer = document.querySelector('[data-media-kit-drawer]');
 const mediaKitContent = document.querySelector('[data-media-kit-content]');
 
@@ -10175,7 +9941,7 @@ const renderMediaKit = () => {
           <h4>${escapeVideoText(asset.title)}</h4>
           <p class="media-kit-asset__description">${escapeVideoText(translate(asset.descriptionKey))}</p>
           <p class="media-kit-asset__usage">${escapeVideoText(translate(asset.usageNoteKey))}</p>
-          <a class="button button-secondary media-kit-asset__download" data-media-kit-download="${escapeVideoText(asset.id)}" href="${escapeVideoText(asset.downloadUrl)}" download="${escapeVideoText(getMediaKitFilename(asset))}" target="_blank" rel="noopener noreferrer">${escapeVideoText(translate('mediaKit.download'))}</a>
+          <a class="button button-secondary media-kit-asset__download" href="${escapeVideoText(asset.downloadUrl)}" download="${escapeVideoText(getMediaKitFilename(asset))}" target="_blank" rel="noopener noreferrer">${escapeVideoText(translate('mediaKit.download'))}</a>
         </div>
       </article>`;
     }).join('')}</div>` : `<p class="media-kit-empty">${escapeVideoText(translate('mediaKit.noAssets'))}</p>`;
@@ -10189,13 +9955,11 @@ const renderMediaKit = () => {
   }).join('');
 };
 
-const openMediaKit = (event) => {
-  if (!mediaKitDrawer || !mediaKitTriggers.length) return;
-  activeMediaKitTrigger = event?.currentTarget || mediaKitTrigger;
+const openMediaKit = () => {
+  if (!mediaKitDrawer || !mediaKitTrigger) return;
   renderMediaKit();
   mediaKitDrawer.hidden = false;
-  mediaKitTriggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'true'));
-  trackGrowthEvent('media_kit_open', { source: activeMediaKitTrigger?.closest('section')?.id || 'unknown' });
+  mediaKitTrigger.setAttribute('aria-expanded', 'true');
   document.body.classList.add('media-kit-open');
   window.requestAnimationFrame(() => mediaKitDrawer.querySelector('.media-kit-drawer__close')?.focus());
 };
@@ -10204,12 +9968,12 @@ const closeMediaKit = () => {
   if (!mediaKitDrawer) return;
   const wasOpen = !mediaKitDrawer.hidden;
   mediaKitDrawer.hidden = true;
-  mediaKitTriggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
+  mediaKitTrigger?.setAttribute('aria-expanded', 'false');
   document.body.classList.remove('media-kit-open');
-  if (wasOpen) window.requestAnimationFrame(() => activeMediaKitTrigger?.focus());
+  if (wasOpen) window.requestAnimationFrame(() => mediaKitTrigger?.focus());
 };
 
-mediaKitTriggers.forEach((trigger) => trigger.addEventListener('click', openMediaKit));
+mediaKitTrigger?.addEventListener('click', openMediaKit);
 document.querySelectorAll('[data-media-kit-close]').forEach((button) => button.addEventListener('click', closeMediaKit));
 document.addEventListener('keydown', (event) => {
   if (!mediaKitDrawer || mediaKitDrawer.hidden) return;

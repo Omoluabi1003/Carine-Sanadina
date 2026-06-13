@@ -8922,44 +8922,17 @@ body.video-overlay-open {
 .turntable-assembly.expanded-player-card.turntable-playing .expanded-vinyl-disc {
   z-index: 2;
   animation: none !important;
-  -webkit-transform: none;
-  transform: none;
+  -webkit-transform: translate3d(0, 0, 4px) rotateZ(var(--vinyl-rotation));
+  transform: translate3d(0, 0, 4px) rotateZ(var(--vinyl-rotation));
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
   background:
     repeating-radial-gradient(circle at center, transparent 0 4px, rgba(182, 213, 241, 0.055) 4.5px 5.2px, transparent 5.7px 9px),
     conic-gradient(from 22deg, #01040a 0 8%, #172435 15%, #02050b 24%, #101d2c 35%, #010308 47%, #1b2b3d 57%, #02050a 72%, #111d2b 84%, #01040a 100%);
   box-shadow: inset 0 0 48px rgba(0, 0, 0, 0.82), 0 12px 19px rgba(0, 0, 0, 0.48);
-}
-
-.turntable-assembly .vinyl-spin-layer {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1 / 1;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-transform-origin: center center;
-  transform-origin: center center;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
-  animation: carineVinylSpin 15s linear infinite paused;
-  pointer-events: none;
-}
-
-.turntable-assembly .expanded-vinyl-wrap.is-playing .vinyl-spin-layer,
-.turntable-assembly .expanded-vinyl-wrap.vinyl-playing .vinyl-spin-layer,
-.turntable-assembly .expanded-vinyl-wrap.turntable-playing .vinyl-spin-layer {
-  animation-play-state: running;
-}
-
-@keyframes carineVinylSpin {
-  from { transform: translate3d(0, 0, 0) rotateZ(0deg); }
-  to { transform: translate3d(0, 0, 0) rotateZ(360deg); }
 }
 
 .turntable-assembly .expanded-vinyl-sheen {
@@ -9122,7 +9095,7 @@ body.video-overlay-open {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .turntable-assembly .vinyl-spin-layer { animation: none; will-change: auto; }
+  .turntable-assembly .expanded-vinyl-disc { will-change: auto; }
   .tonearm-moving-group { transition-duration: 1ms; }
   .turntable-assembly:has([data-playback-state="playing"]) .deck-ambient-light { animation: none; }
 }
@@ -9529,8 +9502,8 @@ body.media-kit-open {
 
 
 /* iOS WebKit is prone to freezing animated descendants when a filtered,
-   preserve-3d ancestor owns the compositing layer. Flatten only the existing
-   console layer; the layout-owning vinyl wrapper remains visually unchanged. */
+   preserve-3d ancestor owns the compositing layer. Flatten that layer and keep
+   requestAnimationFrame as the sole owner of the record transform. */
 html.is-ios .turntable-assembly .console-turntable {
   -webkit-transform-style: flat;
   transform-style: flat;
@@ -9538,7 +9511,11 @@ html.is-ios .turntable-assembly .console-turntable {
   filter: none;
 }
 
-html.is-ios .turntable-assembly .vinyl-spin-layer {
+html.is-ios .turntable-assembly .expanded-vinyl-disc,
+html.is-ios .turntable-assembly .expanded-vinyl-disc.is-playing,
+html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
+  -webkit-animation: none !important;
+  animation: none !important;
   -webkit-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden;
@@ -9549,40 +9526,7 @@ html.is-ios .turntable-assembly .vinyl-spin-layer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.is-ios .turntable-assembly .vinyl-spin-layer {
+  html.is-ios .turntable-assembly .expanded-vinyl-disc {
     will-change: auto;
   }
-}
-
-/* Conversion-first audience response and compact mobile overlays */
-.audience-response {
-  background: linear-gradient(180deg, rgba(7, 28, 59, 0.18), rgba(3, 14, 34, 0.72));
-}
-
-.audience-response__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.audience-response__card {
-  padding: clamp(24px, 3vw, 34px);
-  border: 1px solid rgba(176, 211, 255, 0.16);
-  border-radius: 24px;
-  background: rgba(219, 234, 254, 0.055);
-}
-
-.audience-response__card h3 { margin: 0 0 10px; color: var(--ivory); }
-.audience-response__card p { margin: 0; color: rgba(226, 237, 255, 0.72); }
-.audience-response__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
-
-@media (max-width: 760px) {
-  .audience-response__grid { grid-template-columns: 1fr; }
-  .audience-response__actions { align-items: stretch; flex-direction: column; }
-  .audience-response__actions .button { width: 100%; }
-  .guide-panel { max-height: calc(88dvh - env(safe-area-inset-top)); overflow: hidden; }
-  .guide-panel__messages { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-  .video-modal__panel,
-  .videos-drawer__panel,
-  .media-kit-drawer__panel { padding-bottom: env(safe-area-inset-bottom); }
 }
