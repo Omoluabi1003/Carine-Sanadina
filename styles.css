@@ -9530,3 +9530,91 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
     will-change: auto;
   }
 }
+
+.advocacy-speaking {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(231, 184, 173, 0.28), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(191, 141, 63, 0.18), transparent 24rem),
+    linear-gradient(180deg, rgba(255, 248, 238, 0.72), rgba(247, 236, 221, 0.92));
+}
+
+.advocacy-speaking__glow {
+  position: absolute;
+  inset: 12% auto auto 50%;
+  width: min(46vw, 520px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(95, 20, 39, 0.12), transparent 68%);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.advocacy-speaking__shell { position: relative; z-index: 1; }
+
+.advocacy-speaking__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2.8vw, 26px);
+}
+
+.advocacy-card {
+  min-height: 100%;
+  padding: clamp(24px, 3.2vw, 34px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(95, 20, 39, 0.1);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(255, 248, 238, 0.52)),
+    radial-gradient(circle at 18% 0%, rgba(234, 211, 162, 0.3), transparent 13rem);
+  box-shadow: 0 22px 62px rgba(63, 13, 27, 0.09);
+}
+
+.advocacy-card__number {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--burgundy), var(--burgundy-dark));
+  color: var(--gold-soft);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.advocacy-card h3 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1;
+}
+
+.advocacy-card p { margin-top: 16px; }
+
+.advocacy-speaking__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  margin-top: clamp(24px, 4vw, 42px);
+  padding: clamp(22px, 3vw, 32px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(95, 20, 39, 0.12);
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: 0 18px 52px rgba(63, 13, 27, 0.08);
+}
+
+.advocacy-speaking__cta p {
+  max-width: 680px;
+  font-weight: 800;
+  color: var(--cocoa);
+}
+
+@media (max-width: 920px) {
+  .advocacy-speaking__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .advocacy-speaking__cta { align-items: flex-start; flex-direction: column; }
+}
+
+@media (max-width: 640px) {
+  .advocacy-speaking__grid { grid-template-columns: 1fr; }
+  .advocacy-card { border-radius: 26px; }
+}

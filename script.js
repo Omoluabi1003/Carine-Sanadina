@@ -3911,6 +3911,65 @@ const mediaKitTranslations = {
 };
 mergeTranslationAdditions(mediaKitTranslations, 'media kit translations');
 
+
+const advocacySpeakingTranslations = {
+  en: {
+    'nav.advocacySpeaking': 'Advocacy',
+    'advocacy.kicker': 'Advocacy & Speaking',
+    'advocacy.heading': 'A dedicated voice for survivor advocacy, awareness, and healing-centered gatherings.',
+    'advocacy.intro': 'Carine Sanadina brings lived testimony, faith-rooted compassion, and restorative language to spaces supporting survivors, women, families, and communities.',
+    'advocacy.gridLabel': 'Advocacy and speaking focus areas',
+    'advocacy.survivor.title': 'Survivor advocacy',
+    'advocacy.survivor.body': 'Story-informed support that honors courage, safety, dignity, and the long journey from survival toward restored identity.',
+    'advocacy.domestic.title': 'Domestic violence awareness',
+    'advocacy.domestic.body': 'Conversations that help communities recognize hidden abuse, emotional manipulation, warning signs, and pathways toward help.',
+    'advocacy.community.title': 'Community speaking engagements',
+    'advocacy.community.body': 'Healing-centered talks for local programs, outreach events, book conversations, and resilience-focused community gatherings.',
+    'advocacy.church.title': 'Church & women’s conference appearances',
+    'advocacy.church.body': 'Faith-sensitive appearances for women’s ministries, church gatherings, conferences, and spaces centered on restoration and hope.',
+    'advocacy.media.title': 'Media interviews',
+    'advocacy.media.body': 'Thoughtful interview availability for conversations about memoir, music, healing after abuse, faith, and emotional restoration.',
+    'advocacy.mentorship.title': 'Survivor mentorship initiatives',
+    'advocacy.mentorship.body': 'Mentorship-minded initiatives that encourage survivors to reclaim voice, rebuild confidence, and move forward with care.',
+    'advocacy.ctaText': 'Invite Carine for advocacy conversations, media interviews, church gatherings, women’s conferences, or survivor-centered community moments.',
+    'advocacy.ctaButton': 'Plan an advocacy or speaking inquiry'
+  }
+};
+for (const language of ['fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN']) {
+  advocacySpeakingTranslations[language] = { ...advocacySpeakingTranslations.en };
+}
+Object.assign(advocacySpeakingTranslations.fr, {
+  'nav.advocacySpeaking': 'Plaidoyer',
+  'advocacy.kicker': 'Plaidoyer et conférences',
+  'advocacy.heading': 'Une voix dédiée au plaidoyer des survivantes, à la sensibilisation et aux rassemblements centrés sur la guérison.',
+  'advocacy.ctaButton': 'Préparer une demande de plaidoyer ou de conférence'
+});
+Object.assign(advocacySpeakingTranslations.es, {
+  'nav.advocacySpeaking': 'Defensa',
+  'advocacy.kicker': 'Defensa y conferencias',
+  'advocacy.heading': 'Una voz dedicada a la defensa de sobrevivientes, la concientización y encuentros centrados en la sanación.',
+  'advocacy.ctaButton': 'Planificar una consulta de defensa o conferencia'
+});
+Object.assign(advocacySpeakingTranslations.de, {
+  'nav.advocacySpeaking': 'Advocacy',
+  'advocacy.kicker': 'Advocacy & Vorträge',
+  'advocacy.heading': 'Eine engagierte Stimme für Survivor-Advocacy, Aufklärung und heilungsorientierte Begegnungen.',
+  'advocacy.ctaButton': 'Advocacy- oder Vortragsanfrage planen'
+});
+Object.assign(advocacySpeakingTranslations.ar, {
+  'nav.advocacySpeaking': 'المناصرة',
+  'advocacy.kicker': 'المناصرة والتحدث',
+  'advocacy.heading': 'صوت مخصص لمناصرة الناجين والتوعية واللقاءات المرتكزة على الشفاء.',
+  'advocacy.ctaButton': 'خطط لطلب مناصرة أو حديث'
+});
+Object.assign(advocacySpeakingTranslations['zh-CN'], {
+  'nav.advocacySpeaking': '倡导',
+  'advocacy.kicker': '倡导与演讲',
+  'advocacy.heading': '面向幸存者倡导、公众意识与疗愈型聚会的专属声音。',
+  'advocacy.ctaButton': '规划倡导或演讲咨询'
+});
+mergeTranslationAdditions(advocacySpeakingTranslations, 'advocacy speaking translations');
+
 const supportedLanguages = ['en', 'fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN'];
 let currentLanguage = DEFAULT_LANGUAGE;
 
