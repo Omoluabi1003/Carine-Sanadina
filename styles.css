@@ -9534,9 +9534,9 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
 .advocacy-speaking {
   overflow: hidden;
   background:
-    radial-gradient(circle at 12% 12%, rgba(231, 184, 173, 0.28), transparent 28rem),
-    radial-gradient(circle at 88% 18%, rgba(191, 141, 63, 0.18), transparent 24rem),
-    linear-gradient(180deg, rgba(255, 248, 238, 0.72), rgba(247, 236, 221, 0.92));
+    radial-gradient(circle at 12% 12%, rgba(231, 184, 173, 0.16), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(234, 211, 162, 0.14), transparent 24rem),
+    linear-gradient(180deg, #06152f, #0d244a 48%, #102a51);
 }
 
 .advocacy-speaking__glow {
@@ -9545,12 +9545,21 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
   width: min(46vw, 520px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(95, 20, 39, 0.12), transparent 68%);
+  background: radial-gradient(circle, rgba(234, 211, 162, 0.18), transparent 68%);
   transform: translateX(-50%);
   pointer-events: none;
 }
 
 .advocacy-speaking__shell { position: relative; z-index: 1; }
+
+.advocacy-speaking .eyebrow { color: #93c5fd; }
+
+.advocacy-speaking .section-heading h2 { color: var(--ivory); }
+
+.advocacy-speaking .section-heading p,
+.advocacy-speaking .section-heading span {
+  color: rgba(255, 248, 238, 0.88);
+}
 
 .advocacy-speaking__grid {
   display: grid;
@@ -9562,11 +9571,11 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
   min-height: 100%;
   padding: clamp(24px, 3.2vw, 34px);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(95, 20, 39, 0.1);
+  border: 1px solid rgba(234, 211, 162, 0.26);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(255, 248, 238, 0.52)),
-    radial-gradient(circle at 18% 0%, rgba(234, 211, 162, 0.3), transparent 13rem);
-  box-shadow: 0 22px 62px rgba(63, 13, 27, 0.09);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(255, 248, 238, 0.9)),
+    radial-gradient(circle at 18% 0%, rgba(234, 211, 162, 0.26), transparent 13rem);
+  box-shadow: 0 22px 62px rgba(2, 8, 23, 0.24);
 }
 
 .advocacy-card__number {
@@ -9584,11 +9593,16 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
 }
 
 .advocacy-card h3 {
+  color: var(--burgundy-dark);
   font-size: clamp(2rem, 3vw, 3rem);
   line-height: 1;
 }
 
-.advocacy-card p { margin-top: 16px; }
+.advocacy-card p {
+  margin-top: 16px;
+  color: #51392f;
+  font-weight: 650;
+}
 
 .advocacy-speaking__cta {
   display: flex;
@@ -9598,9 +9612,9 @@ html.is-ios .turntable-assembly .expanded-vinyl-disc.vinyl-playing {
   margin-top: clamp(24px, 4vw, 42px);
   padding: clamp(22px, 3vw, 32px);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(95, 20, 39, 0.12);
-  background: rgba(255, 255, 255, 0.58);
-  box-shadow: 0 18px 52px rgba(63, 13, 27, 0.08);
+  border: 1px solid rgba(234, 211, 162, 0.28);
+  background: rgba(255, 248, 238, 0.96);
+  box-shadow: 0 18px 52px rgba(2, 8, 23, 0.22);
 }
 
 .advocacy-speaking__cta p {
