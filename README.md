@@ -27,6 +27,12 @@ unset npm_config_http_proxy
 
 The warning comes from the invoking shell or CI environment, not from this repository; there is no project `.npmrc` defining `http-proxy`.
 
+## GeoAware OS Governance
+
+This repository follows GeoAware OS v1.0.0, a design and engineering philosophy founded by Paul Iyogun for calm, geography-first digital experiences where technology quietly guides discovery.
+
+Governance details are recorded in `.geoaware/constitution.json`, including founder attribution, the local product mission, GeoAware design principles, and quality gates for performance, accessibility, restraint, and product coherence.
+
 ## Deployment and cache policy
 
 - Vercel builds this static site with `npm run build` and serves the generated `dist/` directory.
