@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "extends": {
+    "name": "GeoAware OS",
+    "version": "1.0.0",
+    "source": "https://github.com/Omoluabi1003/GeoAware-OS",
+    "inherits": ["GDL", "GEC", "GPC", "GAIC", "GDS"]
+  },
+  "founder": {
+    "name": "Paul Iyogun",
+    "title": "Founder and Chief Architect",
+    "organization": "ETL GIS Consulting LLC"
+  },
+  "localProductMission": "Provide a premium, dependency-free one-page website for Carine Sanadina that presents music, video, reflections, and related media with stable, accessible discovery.",
+  "governance": {
+    "purpose": "Apply GeoAware OS governance to documentation and product decisions without changing application behavior unless a future change is explicitly scoped and reviewed.",
+    "designPrinciples": [
+      "Geography-first context: orient users through place, culture, and local meaning before technology takes focus.",
+      "Calm discovery: guide exploration quietly with clear hierarchy, minimal friction, and respectful pacing.",
+      "Human stewardship: preserve founder attribution, product intent, and accountable ownership in governance decisions.",
+      "Restraint by default: prefer simple, durable, dependency-conscious implementation over unnecessary complexity.",
+      "Coherent experience: keep content, interactions, performance, and accessibility aligned with the product mission."
+    ],
+    "qualityGate": {
+      "requires": [
+        "performance",
+        "accessibility",
+        "restraint",
+        "product coherence"
+      ],
+      "description": "Changes governed by GeoAware OS should maintain fast delivery, inclusive access, restrained design and engineering choices, and coherence with the local product mission."
+    }
+  }
+}
