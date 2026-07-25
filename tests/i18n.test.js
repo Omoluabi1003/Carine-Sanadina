@@ -63,6 +63,26 @@ test('every supported language contains every English translation key', () => {
   }
 });
 
+test('professional credential is factual, accessible, localized, and presented without certificate media', () => {
+  const translations = readTranslations();
+  const credentialSection = indexHtml.match(/<section class="credentials"[\s\S]*?<\/section>/)?.[0] || '';
+
+  assert.match(credentialSection, /Professional Credentials/);
+  assert.match(credentialSection, /Certificate of Completion/);
+  assert.match(credentialSection, /Florida Community College at Jacksonville/);
+  assert.match(credentialSection, /datetime="2009-06-22"/);
+  assert.match(credentialSection, /role="list"/);
+  assert.doesNotMatch(credentialSection, /<img|<picture|<iframe|\.pdf|duration|licensed|certified domestic violence/i);
+  assert.match(indexHtml, /"@type": "EducationalOccupationalCredential"/);
+
+  const credentialKeys = Object.keys(translations.en).filter((key) => key.startsWith('credentials.'));
+  assert.equal(credentialKeys.length, 8);
+  for (const [language, dictionary] of Object.entries(translations)) {
+    const missing = credentialKeys.filter((key) => typeof dictionary[key] !== 'string' || dictionary[key] === '');
+    assert.deepEqual(missing, [], `${language} is missing credential translations: ${missing.join(', ')}`);
+  }
+});
+
 test('developer presence remains visible, secondary, and localized in every supported language', () => {
   const translations = readTranslations();
   assert.match(indexHtml, /class="footer-developer-credit"/);

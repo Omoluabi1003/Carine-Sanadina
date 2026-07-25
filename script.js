@@ -3970,6 +3970,68 @@ Object.assign(advocacySpeakingTranslations['zh-CN'], {
 });
 mergeTranslationAdditions(advocacySpeakingTranslations, 'advocacy speaking translations');
 
+const professionalCredentialTranslations = {
+  en: {
+    'credentials.kicker': 'Education & Training',
+    'credentials.heading': 'Professional Credentials',
+    'credentials.description': 'Carine completed formal training in Domestic Violence through Florida Community College at Jacksonville. This educational achievement complements her advocacy work, healthcare background, and commitment to supporting survivors through education, awareness, and compassionate community engagement.',
+    'credentials.listLabel': 'Carine Sanadina professional credentials',
+    'credentials.domestic.credential': 'Certificate of Completion',
+    'credentials.domestic.title': 'Domestic Violence',
+    'credentials.domestic.institution': 'Florida Community College at Jacksonville',
+    'credentials.domestic.date': 'June 22, 2009'
+  },
+  fr: {
+    'credentials.kicker': 'Études et formation', 'credentials.heading': 'Qualifications professionnelles',
+    'credentials.description': 'Carine a suivi une formation formelle sur la violence domestique au Florida Community College at Jacksonville. Cet acquis éducatif complète son travail de plaidoyer, son expérience dans le domaine de la santé et son engagement à soutenir les survivantes et survivants par l’éducation, la sensibilisation et un engagement communautaire empreint de compassion.',
+    'credentials.listLabel': 'Qualifications professionnelles de Carine Sanadina', 'credentials.domestic.credential': 'Certificat de réussite',
+    'credentials.domestic.title': 'Violence domestique', 'credentials.domestic.institution': 'Florida Community College at Jacksonville', 'credentials.domestic.date': '22 juin 2009'
+  },
+  ln: {
+    'credentials.kicker': 'Boyekoli mpe formation', 'credentials.heading': 'Mikanda ya mosala',
+    'credentials.description': 'Carine asilisaki mateya ya Domestic Violence na Florida Community College at Jacksonville. Elonga yango ya kelasi ebakisami na mosala na ye ya advocacy, boyebi na ye ya bokolongono, mpe mokano na ye ya kosunga babiki na mateya, bososolisi mpe mosala ya lisanga oyo etondi na mawa.',
+    'credentials.listLabel': 'Mikanda ya mosala ya Carine Sanadina', 'credentials.domestic.credential': 'Mokanda ya kosilisa mateya',
+    'credentials.domestic.title': 'Domestic Violence', 'credentials.domestic.institution': 'Florida Community College at Jacksonville', 'credentials.domestic.date': '22 Yuni 2009'
+  },
+  es: {
+    'credentials.kicker': 'Educación y formación', 'credentials.heading': 'Credenciales profesionales',
+    'credentials.description': 'Carine completó una formación formal en Violencia Doméstica a través de Florida Community College at Jacksonville. Este logro educativo complementa su labor de defensa, su experiencia en el ámbito de la salud y su compromiso de apoyar a sobrevivientes mediante la educación, la concientización y una participación comunitaria compasiva.',
+    'credentials.listLabel': 'Credenciales profesionales de Carine Sanadina', 'credentials.domestic.credential': 'Certificado de finalización',
+    'credentials.domestic.title': 'Violencia doméstica', 'credentials.domestic.institution': 'Florida Community College at Jacksonville', 'credentials.domestic.date': '22 de junio de 2009'
+  },
+  sw: {
+    'credentials.kicker': 'Elimu na mafunzo', 'credentials.heading': 'Sifa za kitaaluma',
+    'credentials.description': 'Carine alikamilisha mafunzo rasmi kuhusu Ukatili wa Majumbani kupitia Florida Community College at Jacksonville. Mafanikio haya ya kielimu yanaimarisha kazi yake ya utetezi, uzoefu wake wa afya, na dhamira yake ya kuwasaidia walionusurika kupitia elimu, uhamasishaji na ushiriki wa jamii wenye huruma.',
+    'credentials.listLabel': 'Sifa za kitaaluma za Carine Sanadina', 'credentials.domestic.credential': 'Cheti cha Kukamilisha',
+    'credentials.domestic.title': 'Ukatili wa Majumbani', 'credentials.domestic.institution': 'Florida Community College at Jacksonville', 'credentials.domestic.date': 'Juni 22, 2009'
+  },
+  yo: {
+    'credentials.kicker': 'Ẹ̀kọ́ àti ìdánilẹ́kọ̀ọ́', 'credentials.heading': 'Àwọn ẹ̀rí iṣẹ́ amọ̀ja',
+    'credentials.description': 'Carine parí ìdánilẹ́kọ̀ọ́ nípa Ìwà-ipa Ilé ní Florida Community College at Jacksonville. Àṣeyọrí ẹ̀kọ́ yìí ṣe àfikún sí iṣẹ́ alágbàwí rẹ̀, ìrírí ìlera rẹ̀, àti ìfarajìn rẹ̀ láti ṣe atilẹyin fún àwọn olùlàájá nípasẹ̀ ẹ̀kọ́, ìmọ̀lára àti ìbáṣepọ̀ àánú pẹ̀lú àwùjọ.',
+    'credentials.listLabel': 'Àwọn ẹ̀rí iṣẹ́ amọ̀ja Carine Sanadina', 'credentials.domestic.credential': 'Ìwé-ẹ̀rí Ìparí',
+    'credentials.domestic.title': 'Ìwà-ipa Ilé', 'credentials.domestic.institution': 'Florida Community College at Jacksonville', 'credentials.domestic.date': '22 Oṣù Kẹfà 2009'
+  },
+  de: {
+    'credentials.kicker': 'Ausbildung & Weiterbildung', 'credentials.heading': 'Berufliche Qualifikationen',
+    'credentials.description': 'Carine absolvierte am Florida Community College at Jacksonville eine formale Weiterbildung zum Thema häusliche Gewalt. Dieser Bildungsabschluss ergänzt ihre Advocacy-Arbeit, ihren Hintergrund im Gesundheitswesen und ihr Engagement, Betroffene durch Bildung, Aufklärung und mitfühlende Gemeinwesenarbeit zu unterstützen.',
+    'credentials.listLabel': 'Berufliche Qualifikationen von Carine Sanadina', 'credentials.domestic.credential': 'Abschlusszertifikat',
+    'credentials.domestic.title': 'Häusliche Gewalt', 'credentials.domestic.institution': 'Florida Community College at Jacksonville', 'credentials.domestic.date': '22. Juni 2009'
+  },
+  ar: {
+    'credentials.kicker': 'التعليم والتدريب', 'credentials.heading': 'المؤهلات المهنية',
+    'credentials.description': 'أكملت كارين تدريبًا رسميًا حول العنف المنزلي من خلال Florida Community College at Jacksonville. ويكمل هذا الإنجاز التعليمي عملها في المناصرة وخلفيتها في الرعاية الصحية والتزامها بدعم الناجين من خلال التعليم والتوعية والمشاركة المجتمعية المتعاطفة.',
+    'credentials.listLabel': 'المؤهلات المهنية لكارين سانادينا', 'credentials.domestic.credential': 'شهادة إتمام',
+    'credentials.domestic.title': 'العنف المنزلي', 'credentials.domestic.institution': 'Florida Community College at Jacksonville', 'credentials.domestic.date': '22 يونيو 2009'
+  },
+  'zh-CN': {
+    'credentials.kicker': '教育与培训', 'credentials.heading': '专业资历',
+    'credentials.description': 'Carine 在 Florida Community College at Jacksonville 完成了家庭暴力方面的正式培训。这项教育成果与她的倡导工作、医疗保健背景，以及通过教育、宣传和富有同理心的社区参与来支持幸存者的承诺相辅相成。',
+    'credentials.listLabel': 'Carine Sanadina 的专业资历', 'credentials.domestic.credential': '结业证书',
+    'credentials.domestic.title': '家庭暴力', 'credentials.domestic.institution': 'Florida Community College at Jacksonville', 'credentials.domestic.date': '2009年6月22日'
+  }
+};
+mergeTranslationAdditions(professionalCredentialTranslations, 'professional credential translations');
+
 const supportedLanguages = ['en', 'fr', 'ln', 'es', 'sw', 'yo', 'de', 'ar', 'zh-CN'];
 let currentLanguage = DEFAULT_LANGUAGE;
 
