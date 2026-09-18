@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-06-13-product-discipline';
+const APP_VERSION = 'carine-site-2026-09-18-hosanna';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3563,6 +3563,29 @@ const halleluyahTranslations = {
 
 mergeTranslationAdditions(halleluyahTranslations, 'Halleluyah translations');
 
+const hosannaTranslations = {
+  en: {
+    'tracks.hosanna.title': 'Hosanna',
+    'tracks.hosanna.audioLabel': 'Hosanna by Carine Sanadina',
+    'tracks.hosanna.coverAlt': 'Hosanna cover art',
+    'tracks.hosanna.fallback': 'Hosanna cover art is temporarily unavailable.',
+    'tracks.hosanna.number': 'Track 08',
+    'tracks.hosanna.description': 'A faith-filled gospel worship song of joyful praise and devotion.',
+    'tracks.hosanna.about': 'Hosanna is a gospel worship song that celebrates faith through joyful praise, reverence, and heartfelt devotion.',
+    'hosannaSynopsis': 'A faith-filled gospel worship song of joyful praise and devotion.',
+    'tracks.hosanna.credits': 'Artist: Carine Sanadina\nProduced by Omoluabi Productions\nPresented by Omoluabi Productions',
+    'tracks.hosanna.playLabel': 'Play Hosanna'
+  }
+};
+
+Object.keys(translations).forEach((language) => {
+  if (!hosannaTranslations[language]) {
+    hosannaTranslations[language] = { ...hosannaTranslations.en };
+  }
+});
+
+mergeTranslationAdditions(hosannaTranslations, 'Hosanna translations');
+
 const appWideTranslationAdditions = {
   en: {
     'brand.logoAlt': 'Carine Sanadina logo',
@@ -4495,7 +4518,7 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
-const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah'];
+const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah', 'hosanna'];
 const DEFAULT_MUSIC_TRACK_ID = 'halleluyah';
 const PLAYLIST_STORAGE_KEYS = [PLAYER_STATE_STORAGE_KEY];
 const CACHE_SENSITIVE_STORAGE_KEYS = [
@@ -4659,6 +4682,24 @@ const CARINE_MUSIC_PLAYLIST = [
     lyricsTimed: [],
     translationKey: 'tracks.halleluyah',
     synopsisKey: 'halleluyahSynopsis'
+  },
+  {
+    id: 'hosanna',
+    title: 'Hosanna',
+    artist: 'Carine Sanadina',
+    genre: 'Gospel Worship',
+    mood: 'Worship • Praise • Faith • Spiritual Upliftment',
+    shortDescription: 'A faith-filled gospel worship song of joyful praise and devotion.',
+    description: 'A faith-filled gospel worship song of joyful praise and devotion.',
+    coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/CED3FF47-13B6-44E2-A80B-E9FE1469049D.png',
+    audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Hosanna.mp3',
+    lyrics: '',
+    lyricsLrc: '',
+    about: 'Hosanna is a gospel worship song that celebrates faith through joyful praise, reverence, and heartfelt devotion.',
+    credits: 'Artist: Carine Sanadina\nProduced by Omoluabi Productions\nPresented by Omoluabi Productions',
+    lyricsTimed: [],
+    translationKey: 'tracks.hosanna',
+    synopsisKey: 'hosannaSynopsis'
   }
 ];
 
