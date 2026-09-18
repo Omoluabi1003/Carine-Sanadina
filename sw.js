@@ -1,6 +1,6 @@
-const APP_VERSION = 'carine-site-2026-09-18-hosanna';
+const APP_VERSION = 'carine-site-2026-09-18-hosanna-cover-fix';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v13-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v14-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
