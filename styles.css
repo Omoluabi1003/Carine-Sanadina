@@ -9971,3 +9971,148 @@ body {
   .focus-pill,
   .book-card { border: 1px solid CanvasText; }
 }
+
+/* Accessible blue background system
+   Layered blue "background images" keep every editorial section visually rich
+   while the opaque navy base preserves readable contrast if gradients fail. */
+:root {
+  --ivory: #ffffff;
+  --warm-ivory: #eaf2ff;
+  --rose: #93c5fd;
+  --rose-soft: #0f3978;
+  --burgundy: #2563eb;
+  --burgundy-dark: #bfdbfe;
+  --gold: #f6d98b;
+  --gold-soft: #ffe6a7;
+  --cocoa: #dbeafe;
+  --ink: #ffffff;
+  --muted: #dbeafe;
+  --line: rgba(191, 219, 254, 0.34);
+  --surface: rgba(8, 31, 70, 0.94);
+  --shadow: 0 24px 70px rgba(1, 8, 24, 0.42);
+  --accessible-blue: #061b3f;
+  --accessible-blue-surface: #0b2f68;
+}
+
+html { color-scheme: dark; }
+
+body {
+  color: var(--ink);
+  background-color: var(--accessible-blue);
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(59, 130, 246, 0.34), transparent 32rem),
+    radial-gradient(circle at 88% 32%, rgba(14, 165, 233, 0.2), transparent 28rem),
+    linear-gradient(180deg, #03132f 0%, #0a3474 48%, #041733 100%);
+  background-attachment: fixed;
+}
+
+body::before {
+  background-image:
+    linear-gradient(rgba(191, 219, 254, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(191, 219, 254, 0.035) 1px, transparent 1px);
+}
+
+main > .section,
+.quote-wall,
+.quote-banner {
+  background-color: var(--accessible-blue);
+  background-image:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(3, 19, 47, 0.88)),
+    radial-gradient(circle at 82% 18%, rgba(125, 211, 252, 0.18), transparent 26rem);
+}
+
+main > .section:nth-of-type(even) {
+  background-image:
+    linear-gradient(225deg, rgba(29, 78, 216, 0.2), rgba(4, 23, 51, 0.92)),
+    radial-gradient(circle at 16% 72%, rgba(56, 189, 248, 0.16), transparent 28rem);
+}
+
+p,
+.subtitle,
+.section-heading p:not(.eyebrow),
+.about-content p,
+.book-body p,
+.premium-card p,
+.reflection-card p,
+.position-card p,
+.advocacy-card p,
+.advocacy-speaking__cta p,
+.cta-panel p:not(.eyebrow),
+.footer-inner p {
+  color: var(--muted);
+}
+
+h1, h2, h3, h4, blockquote,
+.about-content h2,
+.section-heading h2,
+.book-body h3,
+.premium-card h3,
+.position-card h3,
+.advocacy-card h3,
+.final-cta h2 {
+  color: var(--ivory);
+}
+
+.about-content,
+.book-card,
+.premium-card,
+.reflection-card,
+.position-card,
+.advocacy-card,
+.advocacy-speaking__cta,
+.focus-pill,
+.cta-panel {
+  border-color: var(--line);
+  background-color: var(--accessible-blue-surface);
+  background-image:
+    linear-gradient(145deg, rgba(20, 66, 137, 0.96), rgba(5, 27, 63, 0.97)),
+    radial-gradient(circle at 12% 0%, rgba(125, 211, 252, 0.2), transparent 15rem);
+  color: var(--ivory);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.eyebrow,
+.section-kicker,
+.text-link,
+.card-number,
+.advocacy-card__number { color: #bfdbfe; }
+
+.button-secondary,
+.button-ghost {
+  border-color: rgba(191, 219, 254, 0.54);
+  background: #123f82;
+  color: #ffffff;
+}
+
+.focus-pill:hover { background: #174b96; }
+.quote-wall,
+.quote-banner { border-color: var(--line); }
+.quote-wall-grid span,
+.quote-banner blockquote { color: #ffffff; }
+.site-footer { background: #020d22; color: var(--muted); }
+
+@media (max-width: 760px) {
+  body { background-attachment: scroll; }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --muted: #ffffff;
+    --line: rgba(255, 255, 255, 0.72);
+  }
+
+  body { background-image: none; }
+  main > .section,
+  main > .section:nth-of-type(even),
+  .quote-wall,
+  .quote-banner { background-image: none; }
+  .about-content,
+  .book-card,
+  .premium-card,
+  .reflection-card,
+  .position-card,
+  .advocacy-card,
+  .advocacy-speaking__cta,
+  .focus-pill,
+  .cta-panel { background-image: none; }
+}
