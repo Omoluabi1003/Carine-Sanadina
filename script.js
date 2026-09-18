@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-18-hosanna';
+const APP_VERSION = 'carine-site-2026-09-18-hosanna-cover-fix';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -4682,7 +4682,7 @@ const CARINE_MUSIC_PLAYLIST = [
     mood: 'Worship • Praise • Faith • Adoration',
     shortDescription: 'A faith-filled song of praise and adoration.',
     description: 'A faith-filled song of praise and adoration.',
-    coverUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/CS%20logo.png',
+    coverUrl: './CS%20logo.png',
     audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Hosanna.mp3',
     artworkFit: 'contain',
     lyrics: '',
