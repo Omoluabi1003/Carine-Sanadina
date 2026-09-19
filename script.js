@@ -6031,6 +6031,10 @@ if (musicPlayers.length) {
     const numericMax = Number(max);
     const percentage = numericMax > 0 ? (Number(value) / numericMax) * 100 : 0;
     range.style.setProperty('--range-progress', `${Math.min(Math.max(percentage, 0), 100)}%`);
+    if (range.hasAttribute('data-expanded-progress')) {
+      range.parentElement.style.setProperty('--track-progress', `${Math.min(Math.max(percentage, 0), 100)}%`);
+      document.querySelector('.music-showcase')?.style.setProperty('--track-light', String(0.55 + Math.min(Math.max(percentage, 0), 100) * 0.002));
+    }
   };
 
   const updateMiniPlayerBodyState = () => {
@@ -7119,6 +7123,39 @@ if (musicPlayers.length) {
     resizeVisualizerSurface();
   };
 
+  let waveformCatalogPromise;
+  let waveformRequest = 0;
+  const updateSeekWaveform = async (id) => {
+    const request = ++waveformRequest;
+    const progress = expandedProgress?.parentElement;
+    if (!progress) return;
+    progress.classList.remove('has-track-waveform');
+    try {
+      waveformCatalogPromise ||= fetch('./waveforms.json').then(response => {
+        if (!response.ok) throw new Error('Waveform unavailable');
+        return response.json();
+      }).catch(error => { waveformCatalogPromise = null; throw error; });
+      const catalog = await waveformCatalogPromise;
+      if (request !== waveformRequest) return;
+      const data = catalog[id];
+      if (!data || !Array.isArray(data.peaks) || data.peaks.length !== 120 || !data.peaks.every(value => Number.isFinite(value) && value >= 0 && value <= 1)) return;
+      progress.querySelectorAll('svg').forEach(element => element.remove());
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 480 40');
+      svg.setAttribute('preserveAspectRatio', 'none');
+      svg.setAttribute('aria-hidden', 'true');
+      data.peaks.forEach((value, i) => {
+        const rect = document.createElementNS(svg.namespaceURI, 'rect');
+        for (const [name, number] of Object.entries({ x: i * 4, y: 20 - value * 18, width: 2, height: Math.max(1, value * 36), rx: 1 })) rect.setAttribute(name, String(number));
+        svg.append(rect);
+      });
+      const played = svg.cloneNode(true);
+      played.classList.add('waveform-played');
+      progress.prepend(svg, played);
+      progress.classList.add('has-track-waveform');
+    } catch (_) { /* Retain the existing accurate native progress slider. */ }
+  };
+
   const setActiveTrack = (player) => {
     const nextTrackId = player?.dataset.trackId || '';
     const trackChanged = nextTrackId !== activeTrackId;
@@ -7130,6 +7167,10 @@ if (musicPlayers.length) {
       lastPlayedTracks = [...lastPlayedTracks.filter((trackId) => trackId !== activeTrackId), activeTrackId].slice(-12);
     }
     if (trackChanged) {
+      updateSeekWaveform(nextTrackId);
+      if (!reduceMotion) {
+        document.querySelector('[data-mobile-cover]')?.animate?.([{ opacity: 0.35 }, { opacity: 1 }], { duration: 450 });
+      }
       lyricsLoadToken += 1;
       currentLyricsPlayer = null;
       currentLyricsLrcPath = '';
@@ -7367,6 +7408,9 @@ if (musicPlayers.length) {
       this.spectrumBands = new Float32Array(WAVEFORM_UNIT_COUNT);
       this.waveformData = new Uint8Array(WAVEFORM_SAMPLE_COUNT);
       this.waveformPoints = new Float32Array(WAVEFORM_UNIT_COUNT);
+      this.spectrumPeaks = new Float32Array(WAVEFORM_UNIT_COUNT);
+      this.peakUntil = new Float64Array(WAVEFORM_UNIT_COUNT);
+      this.peakFrameTime = 0;
       this.audioContextConstructor = window.AudioContext || window.webkitAudioContext;
       this.audioContext = null;
       this.analyser = null;
@@ -7889,9 +7933,31 @@ if (musicPlayers.length) {
       const barWidth = Math.max(3, Math.min(12, (width * 0.86) / barCount - gap));
       const startX = (width - (barCount * barWidth + (barCount - 1) * gap)) / 2;
       const waveformAmplitude = height * (isQuiet ? 0.16 : 0.34);
+      const peakDelta = Math.min(0.1, Math.max(0, (time - this.peakFrameTime) / 1000));
+      this.peakFrameTime = time;
+      if (selectedVisualizationStyle === 'waveform') {
+        context.beginPath();
+        for (let i = 0; i < bands.waveform.length; i++) {
+          const x = i / Math.max(1, bands.waveform.length - 1) * width;
+          const y = centerY + (bands.waveform[i] - 128) / 128 * waveformAmplitude;
+          if (i === 0) context.moveTo(x, y); else context.lineTo(x, y);
+        }
+        context.strokeStyle = 'rgba(191, 219, 254, .9)';
+        context.lineWidth = 2;
+        context.shadowColor = '#60a5fa';
+        context.shadowBlur = isQuiet ? 0 : 6;
+        context.stroke();
+        context.restore();
+        return;
+      }
       for (let index = 0; index < barCount; index += 1) {
         const normalized = index / Math.max(barCount - 1, 1);
         const value = bands.spectrum[index] || 0;
+        if (isQuiet) this.spectrumPeaks[index] = 0;
+        else if (value >= this.spectrumPeaks[index]) {
+          this.spectrumPeaks[index] = value;
+          this.peakUntil[index] = time + 450;
+        } else if (time > this.peakUntil[index]) this.spectrumPeaks[index] = Math.max(value, this.spectrumPeaks[index] - peakDelta * 0.45);
         const sampleIndex = Math.min(bands.waveform.length - 1, Math.round(normalized * (bands.waveform.length - 1)));
         const rawWave = ((bands.waveform[sampleIndex] || 128) - 128) / 128;
         const shapedWave = Math.min(0.9, Math.max(-0.9, rawWave));
@@ -7904,6 +7970,14 @@ if (musicPlayers.length) {
         let drawWidth = barWidth;
         let drawHeight = selectedVisualizationStyle === 'spectrum' ? 8 + value * height * 0.58 : 6 + Math.abs(this.waveformPoints[index]) * height * 0.22;
         let rotation = Math.atan2(this.waveformPoints[Math.min(this.waveformPoints.length - 1, index + 1)] - this.waveformPoints[index], 0.08);
+        if (selectedVisualizationStyle === 'spectrum') {
+          rotation = 0;
+          y = centerY;
+          if (!isQuiet) {
+            context.fillStyle = '#f4d59a';
+            context.fillRect(x, centerY - (8 + this.spectrumPeaks[index] * height * 0.58) / 2 - 3, barWidth, 2);
+          }
+        }
         if (selectedVisualizationStyle === 'radial') {
           const angle = normalized * Math.PI * 2 + timeSeconds * 0.24;
           const radius = Math.min(width, height) * (0.1 + (index % 16) / 90 + bands.mid * 0.1 * quietScale);
@@ -7946,7 +8020,7 @@ if (musicPlayers.length) {
         const angle = (index / segments) * Math.PI * 2 - Math.PI / 2;
         // Keep the pulse outside the artwork; only measured energy moves it.
         const inner = size * (0.43 + (isLive ? bands.bass * 0.008 : 0));
-        const outer = inner + (isLive ? energy * size * 0.052 : 0);
+        const outer = inner + (isLive ? Math.min(0.052, energy * 0.04 + (bands.mid || 0) * 0.012) * size : 0);
         context.beginPath();
         context.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
         context.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
@@ -7955,7 +8029,7 @@ if (musicPlayers.length) {
           : 'rgba(218, 186, 118, 0.25)';
         context.lineWidth = isLive ? 2 : 1;
         context.shadowColor = 'rgba(96, 165, 250, 0.45)';
-        context.shadowBlur = isLive ? 8 : 0;
+        context.shadowBlur = isLive ? 4 + (bands.high || 0) * 8 : 0;
         context.stroke();
       }
       if (!isLive) {
@@ -8718,8 +8792,20 @@ if (musicPlayers.length) {
     setTransportButtonState(mobileToggle, activeIsPlaying);
   };
 
+  let cinematicIdleTimer = 0;
+  const revealCinematicControls = () => {
+    clearTimeout(cinematicIdleTimer);
+    document.body.classList.remove('cinematic-controls-idle');
+    if (!document.body.classList.contains('cinematic-listening-mode') || reduceMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    cinematicIdleTimer = setTimeout(() => {
+      if (!document.querySelector('.console-transport')?.contains(document.activeElement)) document.body.classList.add('cinematic-controls-idle');
+    }, 4000);
+  };
+  ['pointermove', 'pointerdown', 'keydown', 'focusin'].forEach(event => document.addEventListener(event, revealCinematicControls, { passive: true }));
+  window.addEventListener('pagehide', () => clearTimeout(cinematicIdleTimer));
   const setCinematicMode = (enabled) => {
     document.body.classList.toggle('cinematic-listening-mode', enabled);
+    revealCinematicControls();
     cinematicModeButton?.setAttribute('aria-pressed', String(enabled));
     cinematicModeButton?.setAttribute('aria-label', enabled ? 'Exit cinematic listening mode' : 'Enter cinematic listening mode');
     cinematicModeButton?.setAttribute('title', enabled ? 'Exit cinematic listening mode' : 'Cinematic listening mode');
