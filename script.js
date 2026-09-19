@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-18-hosanna-artwork';
+const APP_VERSION = 'carine-site-2026-09-19-matondo';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3577,6 +3577,20 @@ const hosannaTranslations = {
 
 mergeTranslationAdditions(hosannaTranslations, 'Hosanna translations');
 
+const matondoTranslations = {
+  en: { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Matondo by Carine Sanadina', 'tracks.matondo.coverAlt': 'Matondo cover artwork', 'tracks.matondo.fallback': 'Matondo artwork is temporarily unavailable.', 'tracks.matondo.number': 'Track 09', 'tracks.matondo.description': 'A joyful gospel expression of gratitude and praise to God.', 'tracks.matondo.about': 'Matondo is a joyful song of thanksgiving that celebrates life, faith, and gratitude to God.', 'matondoSynopsis': 'A joyful gospel expression of gratitude and praise to God.', 'tracks.matondo.credits': 'Artist: Carine Sanadina\nPresented by Omoluabi Productions', 'tracks.matondo.playLabel': 'Play Matondo', 'tracks.matondo.lyricsFallback': 'Lyrics coming soon.' },
+  fr: { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Matondo par Carine Sanadina', 'tracks.matondo.coverAlt': 'Pochette de Matondo', 'tracks.matondo.fallback': 'L’illustration de Matondo est temporairement indisponible.', 'tracks.matondo.number': 'Piste 09', 'tracks.matondo.description': 'Une joyeuse expression gospel de gratitude et de louange à Dieu.', 'tracks.matondo.about': 'Matondo est un chant joyeux de reconnaissance qui célèbre la vie, la foi et la gratitude envers Dieu.', 'matondoSynopsis': 'Une joyeuse expression gospel de gratitude et de louange à Dieu.', 'tracks.matondo.credits': 'Artiste : Carine Sanadina\nPrésenté par Omoluabi Productions', 'tracks.matondo.playLabel': 'Lire Matondo', 'tracks.matondo.lyricsFallback': 'Paroles bientôt disponibles.' },
+  es: { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Matondo de Carine Sanadina', 'tracks.matondo.coverAlt': 'Portada de Matondo', 'tracks.matondo.fallback': 'La imagen de Matondo no está disponible temporalmente.', 'tracks.matondo.number': 'Pista 09', 'tracks.matondo.description': 'Una alegre expresión góspel de gratitud y alabanza a Dios.', 'tracks.matondo.about': 'Matondo es una alegre canción de agradecimiento que celebra la vida, la fe y la gratitud a Dios.', 'matondoSynopsis': 'Una alegre expresión góspel de gratitud y alabanza a Dios.', 'tracks.matondo.credits': 'Artista: Carine Sanadina\nPresentado por Omoluabi Productions', 'tracks.matondo.playLabel': 'Reproducir Matondo', 'tracks.matondo.lyricsFallback': 'Letra disponible próximamente.' },
+  ln: { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Matondo ya Carine Sanadina', 'tracks.matondo.coverAlt': 'Elilingi ya ezipeli ya Matondo', 'tracks.matondo.fallback': 'Elilingi ya Matondo ezali te mpo na mwa ntango.', 'tracks.matondo.number': 'Loyembo 09', 'tracks.matondo.description': 'Loyembo ya esengo ya botondi mpe masanzoli epai ya Nzambe.', 'tracks.matondo.about': 'Matondo ezali loyembo ya esengo oyo ekumisaka bomoi, kondima mpe botondi epai ya Nzambe.', 'matondoSynopsis': 'Loyembo ya esengo ya botondi mpe masanzoli epai ya Nzambe.', 'tracks.matondo.credits': 'Moyembi: Carine Sanadina\nElakisami na Omoluabi Productions', 'tracks.matondo.playLabel': 'Beta Matondo', 'tracks.matondo.lyricsFallback': 'Maloba ya loyembo ekoya kala mingi te.' },
+  sw: { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Matondo ya Carine Sanadina', 'tracks.matondo.coverAlt': 'Jalada la Matondo', 'tracks.matondo.fallback': 'Mchoro wa Matondo haupatikani kwa muda.', 'tracks.matondo.number': 'Wimbo 09', 'tracks.matondo.description': 'Wimbo wa furaha wa injili wa shukrani na sifa kwa Mungu.', 'tracks.matondo.about': 'Matondo ni wimbo wa furaha wa shukrani unaosherehekea maisha, imani na kumshukuru Mungu.', 'matondoSynopsis': 'Wimbo wa furaha wa injili wa shukrani na sifa kwa Mungu.', 'tracks.matondo.credits': 'Msanii: Carine Sanadina\nImewasilishwa na Omoluabi Productions', 'tracks.matondo.playLabel': 'Cheza Matondo', 'tracks.matondo.lyricsFallback': 'Maneno ya wimbo yanakuja hivi karibuni.' },
+  yo: { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Matondo láti ọwọ́ Carine Sanadina', 'tracks.matondo.coverAlt': 'Àwòrán àwo orin Matondo', 'tracks.matondo.fallback': 'Àwòrán Matondo kò sí fún ìgbà díẹ̀.', 'tracks.matondo.number': 'Orin 09', 'tracks.matondo.description': 'Orin ìhìnrere aláyọ̀ ti ọpẹ́ àti ìyìn sí Ọlọ́run.', 'tracks.matondo.about': 'Matondo jẹ́ orin ìdúpẹ́ aláyọ̀ tí ń ṣe ayẹyẹ ìyè, ìgbàgbọ́ àti ọpẹ́ sí Ọlọ́run.', 'matondoSynopsis': 'Orin ìhìnrere aláyọ̀ ti ọpẹ́ àti ìyìn sí Ọlọ́run.', 'tracks.matondo.credits': 'Olórin: Carine Sanadina\nOmoluabi Productions ló gbé e kalẹ̀', 'tracks.matondo.playLabel': 'Mu Matondo ṣiṣẹ́', 'tracks.matondo.lyricsFallback': 'Ọ̀rọ̀ orin ń bọ̀ láìpẹ́.' },
+  de: { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Matondo von Carine Sanadina', 'tracks.matondo.coverAlt': 'Covermotiv von Matondo', 'tracks.matondo.fallback': 'Das Matondo-Motiv ist vorübergehend nicht verfügbar.', 'tracks.matondo.number': 'Titel 09', 'tracks.matondo.description': 'Ein freudiger Gospel-Ausdruck von Dankbarkeit und Lobpreis Gottes.', 'tracks.matondo.about': 'Matondo ist ein freudiges Danklied, das das Leben, den Glauben und die Dankbarkeit gegenüber Gott feiert.', 'matondoSynopsis': 'Ein freudiger Gospel-Ausdruck von Dankbarkeit und Lobpreis Gottes.', 'tracks.matondo.credits': 'Künstlerin: Carine Sanadina\nPräsentiert von Omoluabi Productions', 'tracks.matondo.playLabel': 'Matondo abspielen', 'tracks.matondo.lyricsFallback': 'Liedtext folgt in Kürze.' },
+  ar: { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Matondo بصوت Carine Sanadina', 'tracks.matondo.coverAlt': 'غلاف أغنية Matondo', 'tracks.matondo.fallback': 'صورة Matondo غير متاحة مؤقتاً.', 'tracks.matondo.number': 'المسار 09', 'tracks.matondo.description': 'ترنيمة إنجيلية مبهجة تعبّر عن الشكر والتسبيح لله.', 'tracks.matondo.about': 'Matondo ترنيمة شكر مبهجة تحتفي بالحياة والإيمان والامتنان لله.', 'matondoSynopsis': 'ترنيمة إنجيلية مبهجة تعبّر عن الشكر والتسبيح لله.', 'tracks.matondo.credits': 'الفنانة: Carine Sanadina\nتقديم Omoluabi Productions', 'tracks.matondo.playLabel': 'تشغيل Matondo', 'tracks.matondo.lyricsFallback': 'الكلمات ستتوفر قريباً.' },
+  'zh-CN': { 'tracks.matondo.title': 'Matondo', 'tracks.matondo.audioLabel': 'Carine Sanadina 演唱的 Matondo', 'tracks.matondo.coverAlt': 'Matondo 封面图', 'tracks.matondo.fallback': 'Matondo 图片暂时无法显示。', 'tracks.matondo.number': '曲目 09', 'tracks.matondo.description': '一首以喜乐表达对上帝感恩与赞美的福音歌曲。', 'tracks.matondo.about': 'Matondo 是一首欢欣的感恩之歌，歌颂生命、信仰以及对上帝的感谢。', 'matondoSynopsis': '一首以喜乐表达对上帝感恩与赞美的福音歌曲。', 'tracks.matondo.credits': '艺人：Carine Sanadina\n呈现：Omoluabi Productions', 'tracks.matondo.playLabel': '播放 Matondo', 'tracks.matondo.lyricsFallback': '歌词即将上线。' }
+};
+
+mergeTranslationAdditions(matondoTranslations, 'Matondo translations');
+
 const appWideTranslationAdditions = {
   en: {
     'brand.logoAlt': 'Carine Sanadina logo',
@@ -4509,7 +4523,7 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
-const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah', 'hosanna'];
+const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah', 'hosanna', 'matondo'];
 const DEFAULT_MUSIC_TRACK_ID = 'halleluyah';
 const PLAYLIST_STORAGE_KEYS = [PLAYER_STATE_STORAGE_KEY];
 const CACHE_SENSITIVE_STORAGE_KEYS = [
@@ -4692,6 +4706,27 @@ const CARINE_MUSIC_PLAYLIST = [
     lyricsTimed: [],
     translationKey: 'tracks.hosanna',
     synopsisKey: 'hosannaSynopsis'
+  },
+  {
+    id: 'matondo',
+    title: 'Matondo',
+    artist: 'Carine Sanadina',
+    genre: 'Gospel Praise',
+    mood: 'Gratitude • Praise • Faith • Joy',
+    shortDescription: 'A joyful gospel expression of gratitude and praise to God.',
+    description: 'A joyful gospel expression of gratitude and praise to God.',
+    coverUrl: './Matondo.jpeg',
+    audioUrl: 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Matondo.mp3',
+    duration: 251.616,
+    lyrics: '',
+    lyricsLrc: '',
+    lyricsFallbackKey: 'tracks.matondo.lyricsFallback',
+    sunoSource: 'https://suno.com/song/180fc006-07dc-4de4-9feb-38073b48a4b0',
+    about: 'Matondo is a joyful song of thanksgiving that celebrates life, faith, and gratitude to God.',
+    credits: 'Artist: Carine Sanadina\nPresented by Omoluabi Productions',
+    lyricsTimed: [],
+    translationKey: 'tracks.matondo',
+    synopsisKey: 'matondoSynopsis'
   }
 ];
 

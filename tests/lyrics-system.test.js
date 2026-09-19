@@ -53,6 +53,10 @@ test('each track declares only its own expected timed or static lyrics source', 
   assert.equal(tracks.get('hosanna')?.audioUrl, 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Hosanna.mp3');
   assert.equal(tracks.get('hosanna')?.lyrics, '', 'Hosanna must not claim unavailable lyrics');
   assert.equal(tracks.get('hosanna')?.lyricsLrc, '', 'Hosanna must not claim synchronized lyrics');
+  assert.equal(tracks.get('matondo')?.audioUrl, 'https://raw.githubusercontent.com/Omoluabi1003/Carine-Sanadina/main/Matondo.mp3');
+  assert.equal(tracks.get('matondo')?.coverUrl, './Matondo.jpeg');
+  assert.equal(tracks.get('matondo')?.lyrics, '', 'Matondo must not claim unavailable lyrics');
+  assert.equal(tracks.get('matondo')?.lyricsLrc, '', 'Matondo must not claim synchronized lyrics');
 });
 
 test('Halleluyah is the ready-state default without enabling autoplay', () => {

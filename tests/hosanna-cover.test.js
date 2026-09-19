@@ -43,11 +43,11 @@ test('Hosanna alt text describes cover artwork rather than a logo', () => {
   assert.doesNotMatch(hosannaTranslations, /coverAlt[^\n]*(?:logo|logotipo|شعار|标志)/i);
 });
 
-test('app and service-worker versions are synchronized for the artwork rollout', () => {
+test('app and service-worker versions remain synchronized after the artwork rollout', () => {
   const appVersion = script.match(/const APP_VERSION = '([^']+)'/)?.[1];
   const workerVersion = serviceWorker.match(/const APP_VERSION = '([^']+)'/)?.[1];
 
   assert.equal(workerVersion, appVersion);
-  assert.match(appVersion, /hosanna-artwork$/);
+  assert.match(appVersion, /^carine-site-/);
   assert.match(serviceWorker, /const CACHE_VERSION = `carine-static-v14-\$\{APP_VERSION\}`/);
 });
