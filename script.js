@@ -7936,6 +7936,7 @@ if (musicPlayers.length) {
       const context = this.haloContext;
       const center = size / 2;
       const isLive = state === 'playing' && this.enabled && !this.fallbackActive && !this.analyserFlat && !reduceMotion;
+      this.halo.closest('.luxury-audio-console')?.style.setProperty('--studio-level', isLive ? Math.min(1, Math.max(0, bands.energy || 0)).toFixed(3) : '0');
       context.clearRect(0, 0, size, size);
       context.save();
       context.translate(center, center);
@@ -10406,3 +10407,31 @@ const updatePremiumDepth = (event) => {
 window.addEventListener('pointermove', updatePremiumDepth, { passive: true });
 window.addEventListener('blur', resetPremiumDepth);
 premiumDepthQuery.addEventListener?.('change', resetPremiumDepth);
+
+// Model selection changes the cabinet only: never recreate the audio or disc.
+(() => {
+  const selector = document.querySelector('[data-turntable-model]');
+  const consoleElement = selector?.closest('.luxury-audio-console');
+  if (!selector || !consoleElement) return;
+  const models = {
+    direct: ['DD-01', 'QUARTZ • DIRECT DRIVE', 'Brushed metal, precision hardware, and a direct-drive studio finish.'],
+    audiophile: ['BD-02', 'REFERENCE • BELT DRIVE', 'Walnut plinth, carbon-fiber arm finish, and a minimalist reference deck.'],
+    broadcast: ['BC-03', 'STUDIO • BROADCAST', 'Rack-style chassis, illuminated signal level, and broadcast transport styling.']
+  };
+  const applyModel = (requested) => {
+    const model = Object.hasOwn(models, requested) ? requested : 'direct';
+    selector.value = model;
+    consoleElement.dataset.turntableModel = model;
+    const [code, name, description] = models[model];
+    consoleElement.querySelector('.console-brand span').textContent = code;
+    consoleElement.querySelector('.deck-model').textContent = name;
+    consoleElement.querySelector('[data-turntable-description]').textContent = description;
+  };
+  let saved = 'direct';
+  try { saved = localStorage.getItem('carine-turntable-model') || saved; } catch (_) { /* Storage may be disabled. */ }
+  applyModel(saved);
+  selector.addEventListener('change', () => {
+    applyModel(selector.value);
+    try { localStorage.setItem('carine-turntable-model', selector.value); } catch (_) { /* Keep session selection. */ }
+  });
+})();
