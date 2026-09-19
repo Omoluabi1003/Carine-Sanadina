@@ -10213,3 +10213,84 @@ p,
 @media (prefers-reduced-motion: reduce) {
   .audio-visualizer-panel .visualizer-unit { transition: none; animation: none; }
 }
+
+/* Premium Studio 2.0: album atmosphere, genuine analyser halo, and immersive mode. */
+.music-showcase {
+  --album-primary: rgb(74 140 255);
+  --album-secondary: rgb(16 45 86);
+  --album-accent: rgb(218 186 118);
+  isolation: isolate;
+  transition: --album-primary 700ms ease, --album-secondary 700ms ease, --album-accent 700ms ease;
+}
+
+.music-showcase .music-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 24%, color-mix(in srgb, var(--album-primary) 24%, transparent), transparent 44%),
+    radial-gradient(circle at 82% 68%, color-mix(in srgb, var(--album-secondary) 20%, transparent), transparent 48%),
+    radial-gradient(circle at 50% 92%, color-mix(in srgb, var(--album-accent) 12%, transparent), transparent 38%);
+  filter: blur(26px) saturate(1.08);
+  opacity: .72;
+  transition: background 700ms ease, opacity 700ms ease;
+  pointer-events: none;
+}
+
+.vinyl-audio-halo {
+  position: absolute;
+  z-index: -1;
+  width: 118%;
+  height: 118%;
+  max-width: none;
+  inset: -9%;
+  pointer-events: none;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--album-primary) 42%, transparent));
+  opacity: .9;
+}
+
+/* A resting/fallback display is deliberately static: it never impersonates audio. */
+.music-visualizer.visualizer-fallback span,
+.music-visualizer.is-idle span,
+.music-visualizer.is-paused span {
+  animation: none;
+}
+
+.cinematic-mode-control[aria-pressed="true"] {
+  color: #fff8e7;
+  border-color: color-mix(in srgb, var(--album-accent) 60%, transparent);
+  background: color-mix(in srgb, var(--album-primary) 24%, rgba(4, 12, 28, .9));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--album-primary) 28%, transparent);
+}
+
+body.cinematic-listening-mode { overflow: hidden; }
+body.cinematic-listening-mode .music-showcase {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: auto;
+  min-height: 100dvh;
+  padding-block: max(24px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--album-primary) 32%, transparent), transparent 42%),
+    radial-gradient(circle at 80% 78%, color-mix(in srgb, var(--album-secondary) 26%, transparent), transparent 46%),
+    #030812;
+}
+body.cinematic-listening-mode .music-showcase > .music-ambient { opacity: 1; }
+body.cinematic-listening-mode .music-showcase .section-heading { display: none; }
+body.cinematic-listening-mode .music-shell { width: min(1180px, calc(100% - 24px)); }
+body.cinematic-listening-mode .inline-player-card { margin-inline: auto; }
+body.cinematic-listening-mode .audio-visualizer-panel { box-shadow: 0 30px 100px rgba(0, 0, 0, .5), 0 0 80px color-mix(in srgb, var(--album-primary) 14%, transparent); }
+
+@media (max-width: 640px) {
+  .vinyl-audio-halo { width: 114%; height: 114%; inset: -7%; }
+  body.cinematic-listening-mode .music-showcase { padding-top: max(10px, env(safe-area-inset-top)); }
+  body.cinematic-listening-mode .music-shell { width: min(100% - 12px, 1180px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-showcase,
+  .music-showcase .music-ambient { transition: none; }
+  .vinyl-audio-halo { filter: none; }
+}

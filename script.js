@@ -6146,6 +6146,8 @@ if (musicPlayers.length) {
   const vinylDiscs = Array.from(document.querySelectorAll('[data-vinyl-disc]'));
   const expandedVinylStage = document.querySelector('[data-vinyl-stage]');
   const expandedVinylDisc = document.querySelector('[data-vinyl-disc]');
+  const vinylHalo = document.querySelector('[data-vinyl-halo]');
+  const cinematicModeButton = document.querySelector('[data-cinematic-mode]');
   let expandedTrackOptions = Array.from(document.querySelectorAll('[data-expanded-track-option]'));
   const expandedPlayerCard = document.querySelector('.expanded-player-card');
   const lyricsPanel = document.querySelector('[data-lyrics-panel]');
@@ -7043,6 +7045,54 @@ if (musicPlayers.length) {
     setRangeFill(expandedProgress, expandedProgress.value, expandedProgress.max);
   };
 
+  const artworkPaletteCache = new Map();
+  let artworkPaletteRequest = 0;
+  const updateArtworkAtmosphere = (source) => {
+    const musicSection = document.querySelector('.music-showcase');
+    if (!musicSection || !source) return;
+    const request = ++artworkPaletteRequest;
+    const applyPalette = ({ primary, secondary, accent }) => {
+      if (request !== artworkPaletteRequest) return;
+      musicSection.style.setProperty('--album-primary', primary);
+      musicSection.style.setProperty('--album-secondary', secondary);
+      musicSection.style.setProperty('--album-accent', accent);
+    };
+    if (artworkPaletteCache.has(source)) {
+      applyPalette(artworkPaletteCache.get(source));
+      return;
+    }
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.onload = () => {
+      if (request !== artworkPaletteRequest) return;
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 24;
+        canvas.height = 24;
+        const context = canvas.getContext('2d', { willReadFrequently: true });
+        context.drawImage(image, 0, 0, 24, 24);
+        const pixels = context.getImageData(0, 0, 24, 24).data;
+        const totals = [0, 0, 0];
+        let count = 0;
+        for (let index = 0; index < pixels.length; index += 16) {
+          if (pixels[index + 3] < 160) continue;
+          totals[0] += pixels[index]; totals[1] += pixels[index + 1]; totals[2] += pixels[index + 2]; count += 1;
+        }
+        const rgb = totals.map((total) => Math.round(total / Math.max(1, count)));
+        const palette = {
+          primary: `rgb(${rgb.join(' ')})`,
+          secondary: `rgb(${rgb.map((value) => Math.min(255, Math.round(value * 0.62 + 42))).join(' ')})`,
+          accent: `rgb(${rgb.map((value) => Math.min(255, Math.round(value * 1.18 + 18))).join(' ')})`
+        };
+        artworkPaletteCache.set(source, palette);
+        applyPalette(palette);
+      } catch (error) {
+        // Cross-origin artwork keeps the established theme without affecting playback.
+      }
+    };
+    image.src = source;
+  };
+
   const syncStage = (player) => {
     if (!player) return;
     const title = getTrackTitle(player);
@@ -7057,6 +7107,7 @@ if (musicPlayers.length) {
       mobileCover.alt = `${title} ${translate('audio.coverArt')}`;
       syncArtworkFit(mobileCover, player);
     }
+    updateArtworkAtmosphere(player.dataset.trackCover || '');
     if (mobileTitle) mobileTitle.textContent = title;
     if (lyricsFocusTitle) lyricsFocusTitle.textContent = title;
     if (mobileArtist) mobileArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
@@ -7282,6 +7333,8 @@ if (musicPlayers.length) {
       this.units = [];
       this.surface = null;
       this.surfaceContext = null;
+      this.halo = vinylHalo;
+      this.haloContext = this.halo?.getContext('2d', { alpha: true }) || null;
       this.cssWidth = 360;
       this.cssHeight = 210;
       this.frameId = 0;
@@ -7405,6 +7458,13 @@ if (musicPlayers.length) {
       this.surface.style.width = `${cssWidth}px`;
       this.surface.style.height = `${cssHeight}px`;
       this.surfaceContext?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      if (this.halo && this.haloContext) {
+        const haloRect = this.halo.getBoundingClientRect();
+        const haloSize = Math.max(1, Math.round(haloRect.width || 400));
+        this.halo.width = Math.round(haloSize * pixelRatio);
+        this.halo.height = Math.round(haloSize * pixelRatio);
+        this.haloContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      }
       if ((cssWidth < 2 || cssHeight < 2) && !document.hidden && !this.canvasSizeWarned && (this.isDebugEnabled() || isAudioDebugEnabled())) {
         this.canvasSizeWarned = true;
         window.console?.warn?.('[music visualizer] unsafe visualizer size', { width: cssWidth, height: cssHeight, pixelRatio });
@@ -7440,8 +7500,8 @@ if (musicPlayers.length) {
 
       if (!this.analyser) {
         this.analyser = this.audioContext.createAnalyser();
-        this.analyser.fftSize = 256;
-        this.analyser.smoothingTimeConstant = 0.84;
+        this.analyser.fftSize = 2048;
+        this.analyser.smoothingTimeConstant = 0.8;
         this.analyser.minDecibels = -90;
         this.analyser.maxDecibels = -10;
       }
@@ -7554,8 +7614,8 @@ if (musicPlayers.length) {
           const useAnalyser = forceMode !== 'fallback' && Boolean(this.analyser && this.sourceConnected);
           const drawTime = useAnalyser ? time : 0;
           const bands = this.sampleBands(drawTime, false, !useAnalyser);
-          this.fallbackActive = !useAnalyser;
-          this.setFallbackNote(!useAnalyser);
+          this.fallbackActive = !useAnalyser || this.flatFrames >= 20;
+          this.setFallbackNote(this.fallbackActive);
           this.applyTheme('playing');
           this.renderFrame(bands, drawTime, 'playing');
           this.frameCount += 1;
@@ -7727,11 +7787,13 @@ if (musicPlayers.length) {
       this.units.forEach((unit, index) => {
         const normalized = index / Math.max(WAVEFORM_UNIT_COUNT - 1, 1);
         const seed = this.seededNoise(index, styleIndex + trackIndex * 0.37);
-        const beat = Math.pow((Math.sin(seconds * (2.1 + seed * 0.8) + seed * 6.28) + 1) / 2, 2.1);
-        const shimmer = (Math.sin(seconds * (4.2 + seed * 2.4) + index * 0.31) + 1) / 2;
-        const wave = Math.sin(seconds * (1.5 + styleIndex * 0.07) + index * 0.22 + trackIndex * 0.6);
-        const scale = isQuiet ? 0.16 + seed * 0.2 : Math.min(1.2, 0.18 + energy * 0.5 + beat * 0.42 + shimmer * 0.18);
-        const opacity = isQuiet ? 0.26 + seed * 0.18 : Math.min(0.96, 0.38 + energy * 0.24 + beat * 0.22 + shimmer * 0.12);
+        const binEnergy = isQuiet ? 0 : (bands.spectrum[index] || 0);
+        const waveSample = bands.waveform[Math.floor(normalized * (bands.waveform.length - 1))] || 128;
+        const wave = isQuiet ? 0 : (waveSample - 128) / 128;
+        const beat = binEnergy;
+        const shimmer = bands.high || 0;
+        const scale = isQuiet ? 0.16 : Math.min(1.2, 0.12 + binEnergy * 1.08);
+        const opacity = isQuiet ? 0.3 : Math.min(0.96, 0.3 + binEnergy * 0.66);
         const hue = 208 + normalized * 30 + bands.high * 24;
         let unitX = 0;
         let unitY = 0;
@@ -7741,8 +7803,8 @@ if (musicPlayers.length) {
         switch (selectedVisualizationStyle) {
           case 'waveform':
             unitX = (normalized - 0.5) * this.cssWidth * 0.84;
-            unitY = (wave * this.cssHeight * 0.18) + (Math.sin(seconds * 2.8 + index * 0.41) * 10);
-            rotate = Math.atan2(Math.cos(seconds * 1.8 + index * 0.22), 5) * 36;
+            unitY = wave * this.cssHeight * 0.18;
+            rotate = wave * 18;
             scaleX = 0.72 + beat * 0.45;
             scaleY = 0.8 + Math.abs(wave) * 2.1 + energy * 1.3;
             break;
@@ -7805,6 +7867,7 @@ if (musicPlayers.length) {
 
     renderFrame(bands, time = 0, state = 'playing') {
       this.updateUnits(bands, time, state);
+      this.renderHalo(bands, state);
       if (!this.surfaceContext || !this.surface) return;
       const context = this.surfaceContext;
       const isQuiet = state !== 'playing' || !this.enabled || reduceMotion;
@@ -7831,7 +7894,6 @@ if (musicPlayers.length) {
         const value = bands.spectrum[index] || 0;
         const sampleIndex = Math.min(bands.waveform.length - 1, Math.round(normalized * (bands.waveform.length - 1)));
         const rawWave = ((bands.waveform[sampleIndex] || 128) - 128) / 128;
-        const fallbackWave = Math.sin((time / 360) + sampleIndex * 0.41) * (isQuiet ? 0.035 : 0.12);
         const shapedWave = Math.min(0.9, Math.max(-0.9, rawWave));
         this.waveformPoints[index] += (shapedWave - this.waveformPoints[index]) * (isQuiet ? 0.12 : 0.34);
         const pulse = Math.max(0.06, value * quietScale);
@@ -7864,6 +7926,41 @@ if (musicPlayers.length) {
         this.roundedRect(context, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight, Math.max(3, drawWidth));
         context.fill();
         context.restore();
+      }
+      context.restore();
+    }
+
+    renderHalo(bands, state = 'idle') {
+      if (!this.haloContext || !this.halo) return;
+      const size = this.halo.getBoundingClientRect().width || 400;
+      const context = this.haloContext;
+      const center = size / 2;
+      const isLive = state === 'playing' && this.enabled && !this.fallbackActive && !reduceMotion;
+      context.clearRect(0, 0, size, size);
+      context.save();
+      context.translate(center, center);
+      const segments = isLive ? 72 : 1;
+      for (let index = 0; index < segments; index += 1) {
+        const energy = isLive ? (bands.spectrum[Math.floor(index * bands.spectrum.length / segments)] || 0) : 0;
+        const angle = (index / segments) * Math.PI * 2 - Math.PI / 2;
+        const inner = size * 0.43;
+        const outer = inner + (isLive ? 5 + energy * size * 0.055 : 0);
+        context.beginPath();
+        context.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
+        context.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
+        context.strokeStyle = isLive
+          ? `rgba(191, 219, 254, ${0.22 + energy * 0.68})`
+          : 'rgba(218, 186, 118, 0.25)';
+        context.lineWidth = isLive ? 1.5 : 1;
+        context.shadowColor = 'rgba(96, 165, 250, 0.45)';
+        context.shadowBlur = isLive ? 8 : 0;
+        context.stroke();
+      }
+      if (!isLive) {
+        context.beginPath();
+        context.arc(0, 0, size * 0.43, 0, Math.PI * 2);
+        context.strokeStyle = 'rgba(218, 186, 118, 0.25)';
+        context.stroke();
       }
       context.restore();
     }
@@ -8618,6 +8715,20 @@ if (musicPlayers.length) {
     setTransportButtonState(mini?.toggle, activeIsPlaying);
     setTransportButtonState(mobileToggle, activeIsPlaying);
   };
+
+  const setCinematicMode = (enabled) => {
+    document.body.classList.toggle('cinematic-listening-mode', enabled);
+    cinematicModeButton?.setAttribute('aria-pressed', String(enabled));
+    cinematicModeButton?.setAttribute('aria-label', enabled ? 'Exit cinematic listening mode' : 'Enter cinematic listening mode');
+    cinematicModeButton?.setAttribute('title', enabled ? 'Exit cinematic listening mode' : 'Cinematic listening mode');
+    window.requestAnimationFrame(resizeVisualizerSurface);
+  };
+  cinematicModeButton?.addEventListener('click', () => {
+    setCinematicMode(!document.body.classList.contains('cinematic-listening-mode'));
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && document.body.classList.contains('cinematic-listening-mode')) setCinematicMode(false);
+  });
 
   const getSafeDuration = (audio, fallback = 0) => {
     if (audio && Number.isFinite(audio.duration) && audio.duration > 0) {
