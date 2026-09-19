@@ -10218,6 +10218,35 @@ p,
   .audio-visualizer-panel .visualizer-unit { transition: none; animation: none; }
 }
 
+/* Interchangeable physical cabinets share the same platter and audio engine. */
+.turntable-selector { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; color: #f7ecdd; font-size: .85rem; }
+.turntable-selector select { min-height: 44px; max-width: 100%; padding: 10px 32px 10px 12px; border: 1px solid #b79862; border-radius: 8px; background: #0c1b2d; color: #fff8ee; font: inherit; }
+.turntable-selector select:focus-visible { outline: 2px solid #f4d59a; outline-offset: 3px; }
+.turntable-description { color: #d6deea; font-size: .8rem; min-height: 2.8em; margin: 10px 0; }
+.broadcast-meter { display: none; }
+.inline-player-card [data-turntable-model="direct"] .turntable-assembly {
+  background: repeating-linear-gradient(0deg, transparent 0 2px, #ffffff05 2px 3px), linear-gradient(145deg, #334351, #101d2c 48%, #25313b);
+  border: 1px solid #637383;
+}
+.inline-player-card [data-turntable-model="audiophile"] .turntable-assembly {
+  background: repeating-linear-gradient(3deg, #ffffff04 0 2px, #00000012 3px 5px, transparent 5px 12px), linear-gradient(115deg, #42281c, #79513a 35%, #35251c 80%);
+  border: 1px solid #34251e;
+  box-shadow: inset 0 0 0 7px #34251e, inset 0 1px 1px #d3a67a, 0 12px 0 #201713, 0 24px 38px #0008;
+}
+.inline-player-card [data-turntable-model="audiophile"] .pitch-control,
+.inline-player-card [data-turntable-model="audiophile"] .speed-selector { visibility: hidden; }
+.inline-player-card [data-turntable-model="audiophile"] .tonearm-wand { background: repeating-linear-gradient(45deg, #13171b 0 2px, #46515c 2px 3px); }
+.inline-player-card [data-turntable-model="audiophile"] .platter-strobe-ring { opacity: .15; }
+.inline-player-card [data-turntable-model="broadcast"] .turntable-assembly {
+  border: 1px solid #768183;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #161e20 0 3%, transparent 3% 97%, #161e20 97%), repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 4px), #34403e;
+  box-shadow: inset 0 0 0 6px #101b1b, 0 20px 40px #0008;
+}
+[data-turntable-model="broadcast"] .broadcast-meter { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 12px; background: #090f0c; border: 1px solid #727e60; border-radius: 5px; color: #dfcc93; font-size: .65rem; letter-spacing: .15em; }
+.broadcast-meter i { display: block; flex: 1; height: 10px; background: linear-gradient(90deg, #9bd593 0 65%, #edcf74 80%, #da896d); transform: scaleX(var(--studio-level, 0)); transform-origin: left; }
+@media (max-width: 640px) { .turntable-selector { display: grid; } .turntable-selector select { width: 100%; } }
+
 /* Premium Studio 2.0: album atmosphere, genuine analyser halo, and immersive mode. */
 .music-showcase {
   --album-primary: rgb(74 140 255);
