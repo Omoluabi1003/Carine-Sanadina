@@ -7935,7 +7935,7 @@ if (musicPlayers.length) {
       const size = this.halo.getBoundingClientRect().width || 400;
       const context = this.haloContext;
       const center = size / 2;
-      const isLive = state === 'playing' && this.enabled && !this.fallbackActive && !reduceMotion;
+      const isLive = state === 'playing' && this.enabled && !this.fallbackActive && !this.analyserFlat && !reduceMotion;
       context.clearRect(0, 0, size, size);
       context.save();
       context.translate(center, center);
@@ -7943,15 +7943,16 @@ if (musicPlayers.length) {
       for (let index = 0; index < segments; index += 1) {
         const energy = isLive ? (bands.spectrum[Math.floor(index * bands.spectrum.length / segments)] || 0) : 0;
         const angle = (index / segments) * Math.PI * 2 - Math.PI / 2;
-        const inner = size * 0.43;
-        const outer = inner + (isLive ? 5 + energy * size * 0.055 : 0);
+        // Keep the pulse outside the artwork; only measured energy moves it.
+        const inner = size * (0.43 + (isLive ? bands.bass * 0.008 : 0));
+        const outer = inner + (isLive ? energy * size * 0.052 : 0);
         context.beginPath();
         context.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
         context.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
         context.strokeStyle = isLive
-          ? `rgba(191, 219, 254, ${0.22 + energy * 0.68})`
+          ? `rgba(226, 207, 167, ${0.18 + energy * 0.78})`
           : 'rgba(218, 186, 118, 0.25)';
-        context.lineWidth = isLive ? 1.5 : 1;
+        context.lineWidth = isLive ? 2 : 1;
         context.shadowColor = 'rgba(96, 165, 250, 0.45)';
         context.shadowBlur = isLive ? 8 : 0;
         context.stroke();
