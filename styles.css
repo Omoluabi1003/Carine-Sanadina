@@ -10116,3 +10116,53 @@ h1, h2, h3, h4, blockquote,
   .focus-pill,
   .cta-panel { background-image: none; }
 }
+
+/* Readability pass: keep supporting copy crisp on every sapphire surface. */
+:root {
+  --muted: #e6f0ff;
+  --text-secondary: #e6f0ff;
+  --text-tertiary: #c9dcf5;
+}
+
+p,
+.subtitle,
+.portrait-caption,
+.artist-name,
+.track-description,
+.track-duration,
+.music-showcase .section-heading p,
+.premium-card li,
+.discreet-notice,
+.console-artist,
+.console-synopsis,
+.expanded-player-copy p:last-child,
+.expanded-player-progress,
+.lyrics-empty,
+.track-info-panel,
+.lyric-line,
+.lyric-line.is-upcoming,
+.footer-inner p {
+  color: var(--text-secondary);
+}
+
+.playlist-header,
+.language-switcher__label,
+.deck-brand-row,
+.deck-brand-row .console-brand span,
+.lyrics-mode-label,
+.lyric-section {
+  color: var(--text-tertiary);
+}
+
+/* Make the cover a true record label rather than a small center thumbnail. */
+.direct-drive-deck .expanded-vinyl-label,
+.turntable-assembly .expanded-vinyl-label {
+  width: 58%;
+}
+
+@media (max-width: 640px) {
+  .direct-drive-deck .expanded-vinyl-label,
+  .turntable-assembly .expanded-vinyl-label {
+    width: 62%;
+  }
+}

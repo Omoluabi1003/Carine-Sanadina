@@ -41,6 +41,11 @@ test('every track fills the same vinyl label area', () => {
   assert.match(vinylArtworkRule, /object-position:\s*center center/);
 });
 
+test('album artwork is large enough to read as the vinyl label', () => {
+  assert.match(css, /\.direct-drive-deck \.expanded-vinyl-label,[\s\S]*?\.turntable-assembly \.expanded-vinyl-label\s*\{[\s\S]*?width:\s*58%/);
+  assert.match(css, /@media \(max-width:\s*640px\)[\s\S]*?\.turntable-assembly \.expanded-vinyl-label\s*\{[\s\S]*?width:\s*62%/);
+});
+
 test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states', () => {
   assert.match(script, /requestAnimationFrame\(animateVinylRotation\)/);
   assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
