@@ -668,34 +668,28 @@
                 </div>
               </aside>
 
-              <div class="lyrics-panel" data-lyrics-panel>
-                <div class="lyrics-focus-bar" data-lyrics-focus-bar hidden>
-                  <button class="lyrics-return-button" type="button" data-lyrics-return data-i18n="lyrics.return">Back to Player</button>
-                  <div class="lyrics-focus-heading"><span data-i18n="lyrics.focusKicker">Lyrics Focus Mode</span><strong data-lyrics-focus-title>Consolation</strong></div>
-                  <button class="lyrics-more-toggle" type="button" data-lyrics-more-toggle aria-expanded="false" aria-controls="lyrics-more-drawer" data-i18n="lyrics.moreMenu">⋯ More</button>
-                </div>
-                <div class="lyrics-panel-toolbar">
-                  <div class="lyrics-tabs" role="tablist" aria-label="Track details" data-i18n-aria-label="lyrics.tabsLabel">
-                    <button class="lyrics-tab is-active" type="button" role="tab" aria-selected="true" data-lyrics-tab="lyrics" data-i18n="lyrics.tab.lyrics">Lyrics</button>
-                    <button class="lyrics-tab" type="button" role="tab" aria-selected="false" data-lyrics-tab="about" data-i18n="lyrics.tab.about">About</button>
-                    <button class="lyrics-tab" type="button" role="tab" aria-selected="false" data-lyrics-tab="credits" data-i18n="lyrics.tab.credits">Credits</button>
+              <section class="audio-visualizer-panel" aria-labelledby="audio-visualizer-title">
+                <header class="audio-visualizer-header">
+                  <div>
+                    <p class="eyebrow">Live audio</p>
+                    <h3 id="audio-visualizer-title">Sound in motion</h3>
                   </div>
-                  <span class="lyrics-mode-label" data-lyrics-mode-label data-lyrics-mode="unavailable" hidden></span>
-                  <button class="lyrics-expand-toggle" type="button" data-lyrics-expand aria-expanded="false" data-i18n="lyrics.expand">Expand Lyrics</button>
-                </div>
-                <div class="lyrics-scroll" data-lyrics-scroll role="region" aria-live="polite" aria-label="Synchronized lyrics" data-i18n-aria-label="lyrics.scrollLabel">
-                  <p class="lyrics-empty" data-i18n="lyrics.selectTrack">Select a track to view lyrics.</p>
-                </div>
-                <div class="track-info-panel" data-track-info-panel hidden></div>
-                <div class="lyrics-more-drawer" id="lyrics-more-drawer" data-lyrics-more-drawer hidden>
-                  <div class="lyrics-more-card" role="dialog" aria-label="Lyrics focus menu" data-i18n-aria-label="lyrics.moreMenuLabel">
-                    <div class="lyrics-more-header"><span data-i18n="lyrics.moreMenu">⋯ More</span><button class="lyrics-more-close" type="button" data-lyrics-more-close aria-label="Close lyrics menu" data-i18n-aria-label="lyrics.moreClose">×</button></div>
-                    <div class="lyrics-more-section lyrics-more-section--playlist"><div class="expanded-track-picker" aria-label="Choose a track" data-i18n-aria-label="music.playlistLabel"><div class="expanded-track-picker__header"><span data-i18n="music.playlist">Playlist</span><span data-i18n="music.time">Time</span></div><div class="expanded-track-list" data-expanded-focus-playlist-tracks></div></div></div>
-                    <div class="lyrics-more-section" data-lyrics-more-about></div>
-                    <div class="lyrics-more-section" data-lyrics-more-credits></div>
+                  <div class="audio-visualizer-controls">
+                    <label class="visualizer-toggle">
+                      <span class="visualizer-toggle__text" data-i18n="music.visualizerToggleLabel">Visualizer</span>
+                      <input class="visualizer-toggle__input" type="checkbox" data-visualizer-toggle checked />
+                      <span class="visualizer-toggle__track" aria-hidden="true"><span class="visualizer-toggle__thumb"></span></span>
+                    </label>
+                    <label class="visualizer-style-control">
+                      <span class="visualizer-style-control__label" data-i18n="music.visualizerStyleLabel">Visualization style</span>
+                      <select class="visualizer-style-control__select" data-visualizer-style aria-label="Choose visualization style" data-i18n-aria-label="music.visualizerStyleAria"></select>
+                    </label>
                   </div>
-                </div>
-              </div>
+                </header>
+                <div class="music-visualizer" data-audio-visualizer role="img" aria-label="Real-time visualization of the playing audio" data-i18n-aria-label="music.visualizerStyleAria"></div>
+                <p class="visualizer-helper" data-visualizer-helper aria-live="polite"></p>
+                <p class="visualizer-fallback" data-visualizer-fallback hidden>Audio analysis is unavailable for this source; playback continues normally.</p>
+              </section>
             </div>
           </div>
 
