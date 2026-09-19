@@ -10244,7 +10244,7 @@ p,
 
 .vinyl-audio-halo {
   position: absolute;
-  z-index: -1;
+  z-index: 3;
   width: 118%;
   height: 118%;
   max-width: none;
@@ -10252,6 +10252,27 @@ p,
   pointer-events: none;
   filter: drop-shadow(0 0 12px color-mix(in srgb, var(--album-primary) 42%, transparent));
   opacity: .9;
+}
+
+/* Stationary studio lighting lets rotating artwork read as a physical record. */
+.turntable-assembly .expanded-vinyl-wrap {
+  isolation: isolate;
+}
+
+.turntable-assembly .expanded-vinyl-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  z-index: 4;
+  border-radius: 50%;
+  pointer-events: none;
+  background: linear-gradient(125deg, transparent 18%, rgba(255, 244, 215, .16) 24%, transparent 33%, transparent 66%, rgba(133, 186, 244, .09) 74%, transparent 82%);
+  opacity: .45;
+  transition: opacity 350ms ease;
+}
+
+.turntable-assembly .expanded-vinyl-wrap.is-playing::after {
+  opacity: .85;
 }
 
 /* A resting/fallback display is deliberately static: it never impersonates audio. */
@@ -10297,4 +10318,5 @@ body.cinematic-listening-mode .audio-visualizer-panel { box-shadow: 0 30px 100px
   .music-showcase,
   .music-showcase .music-ambient { transition: none; }
   .vinyl-audio-halo { filter: none; }
+  .turntable-assembly .expanded-vinyl-wrap::after { transition: none; }
 }
