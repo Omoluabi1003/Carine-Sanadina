@@ -10218,6 +10218,41 @@ p,
   .audio-visualizer-panel .visualizer-unit { transition: none; animation: none; }
 }
 
+/* Real full-track peaks sit behind the native accessible seeking control. */
+.waveform-seek { position: relative; min-width: 0; display: grid; align-items: center; min-height: 44px; }
+.waveform-seek .expanded-progress-range { position: relative; z-index: 1; width: 100%; min-height: 44px; margin: 0; }
+.waveform-seek svg { display: none; position: absolute; inset: 2px 0; width: 100%; height: 40px; pointer-events: none; fill: #61728a; }
+.waveform-seek.has-track-waveform svg { display: block; }
+.waveform-seek svg.waveform-played { fill: #f4d59a; clip-path: inset(0 calc(100% - var(--track-progress, 0%)) 0 0); }
+.waveform-seek.has-track-waveform input { background: transparent; }
+.waveform-seek.has-track-waveform input::-webkit-slider-runnable-track { background: transparent; }
+.waveform-seek.has-track-waveform input::-moz-range-track { background: transparent; }
+.waveform-seek.has-track-waveform input::-moz-range-progress { background: transparent; }
+.console-playback-status[data-state="playing"]::before { box-shadow: 0 0 12px #83c6b1; background: #83c6b1; }
+.expanded-play-toggle { transition: box-shadow 180ms ease, background-color 180ms ease; }
+.turntable-assembly .record-spindle::after { content: ""; position: absolute; inset: 20% 42%; background: #384553; border-radius: 2px; }
+@property --album-primary { syntax: '<color>'; inherits: true; initial-value: #4a8cff; }
+@property --album-secondary { syntax: '<color>'; inherits: true; initial-value: #102d56; }
+@property --album-accent { syntax: '<color>'; inherits: true; initial-value: #daba76; }
+.music-showcase .music-ambient { opacity: var(--track-light, .65); }
+body.cinematic-listening-mode .music-ambient::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, #e8d19c88 1px, transparent 2px), radial-gradient(circle, #9abce055 1px, transparent 2px);
+  background-size: 117px 153px, 191px 227px;
+  animation: studio-dust 32s linear infinite alternate;
+}
+@keyframes studio-dust { to { transform: translate3d(20px, -30px, 0); } }
+@media (hover: hover) and (pointer: fine) {
+  body.cinematic-listening-mode .console-transport { transition: opacity 300ms ease; }
+  body.cinematic-controls-idle .console-transport:not(:focus-within):not(:hover) { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.cinematic-listening-mode .music-ambient::after { animation: none; }
+  body.cinematic-listening-mode .console-transport, .expanded-play-toggle { transition: none; }
+  body.cinematic-controls-idle .console-transport { opacity: 1; }
+}
+@media (update: slow) { body.cinematic-listening-mode .music-ambient::after { animation: none; } }
+
 /* Interchangeable physical cabinets share the same platter and audio engine. */
 .turntable-selector { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; color: #f7ecdd; font-size: .85rem; }
 .turntable-selector select { min-height: 44px; max-width: 100%; padding: 10px 32px 10px 12px; border: 1px solid #b79862; border-radius: 8px; background: #0c1b2d; color: #fff8ee; font: inherit; }
