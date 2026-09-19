@@ -8,6 +8,30 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const script = fs.readFileSync(path.join(root, 'script.js'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
 
+test('full-track waveform catalog contains bounded genuine peaks for all nine tracks', () => {
+  const catalog = JSON.parse(fs.readFileSync(path.join(root, 'public/waveforms.json'), 'utf8'));
+  assert.equal(Object.keys(catalog).length, 9);
+  for (const track of Object.values(catalog)) {
+    assert.ok(track.duration > 60);
+    assert.equal(track.peaks.length, 120);
+    assert.ok(track.peaks.every(value => Number.isFinite(value) && value >= 0 && value <= 1));
+    assert.ok(new Set(track.peaks).size > 5);
+  }
+  assert.match(script, /request !== waveformRequest/);
+  assert.match(script, /Retain the existing accurate native progress slider/);
+  assert.match(html, /class="waveform-seek"/);
+});
+
+test('studio refinements retain native seeking and motion safeguards', () => {
+  assert.match(script, /this\.peakUntil\[index\] = time \+ 450/);
+  assert.match(script, /this\.spectrumPeaks\[index\] - peakDelta \* 0\.45/);
+  assert.match(script, /bands\.waveform\[i\] - 128/);
+  assert.match(script, /event.key === 'Escape'/);
+  assert.match(script, /contains\(document\.activeElement\)/);
+  assert.match(styles, /console-transport:not\(:focus-within\):not\(:hover\)/);
+  assert.match(styles, /prefers-reduced-motion: reduce/);
+});
+
 test('turntable selection restores safely and switches without accessing playback', () => {
   const vm = require('node:vm');
   const source = script.slice(script.indexOf('// Model selection changes the cabinet only:'));
@@ -35,7 +59,7 @@ test('vinyl lighting and live halo remain visible without fake audio motion', ()
   assert.match(styles, /\.vinyl-audio-halo\s*\{[^}]*z-index:\s*3/);
   assert.match(styles, /\.turntable-assembly \.expanded-vinyl-wrap::after\s*\{[^}]*pointer-events:\s*none/);
   assert.match(script, /!this\.fallbackActive && !this\.analyserFlat && !reduceMotion/);
-  assert.match(script, /energy \* size \* 0\.052/);
+  assert.match(script, /Math\.min\(0\.052, energy \* 0\.04/);
 });
 
 test('halo draws finite coordinates from actual bass and spectrum values', () => {
