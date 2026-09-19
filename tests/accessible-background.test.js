@@ -36,3 +36,9 @@ test('high-contrast preference removes decorative imagery and maximizes text con
   assert.match(styles, /@media \(prefers-contrast: more\)[\s\S]*?--muted:\s*#ffffff/);
   assert.match(styles, /@media \(prefers-contrast: more\)[\s\S]*?body\s*\{\s*background-image:\s*none;/);
 });
+
+test('supporting text uses an opaque high-contrast color on blue surfaces', () => {
+  assert.match(styles, /--text-secondary:\s*#e6f0ff/);
+  assert.ok(contrast('#e6f0ff', '#0b2f68') >= 4.5, 'Supporting text should meet normal-text contrast on cards');
+  assert.match(styles, /\.track-description,[\s\S]*?color:\s*var\(--text-secondary\)/);
+});
