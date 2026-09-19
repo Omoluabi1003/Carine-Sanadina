@@ -7124,14 +7124,11 @@ if (musicPlayers.length) {
   const isCoarsePointerDevice = () => Boolean(coarsePointerQuery && coarsePointerQuery.matches);
 
   const VISUALIZATION_STYLES = [
-    { id: 'orb', labelKey: 'music.visualizerStyle.orb' },
-    { id: 'waveform', labelKey: 'music.visualizerStyle.waveform' },
-    { id: 'particle-field', labelKey: 'music.visualizerStyle.particle-field' },
-    { id: 'wireframe-lattice', labelKey: 'music.visualizerStyle.wireframe-lattice' },
-    { id: 'waveform-tunnel', labelKey: 'music.visualizerStyle.waveform-tunnel' },
-    { id: 'holographic-rings', labelKey: 'music.visualizerStyle.holographic-rings' }
+    { id: 'spectrum', label: 'Frequency spectrum' },
+    { id: 'waveform', label: 'Fluid waveform' },
+    { id: 'radial', label: 'Circular spectrum' }
   ];
-  const DEFAULT_VISUALIZATION_STYLE = 'waveform';
+  const DEFAULT_VISUALIZATION_STYLE = 'spectrum';
   const normalizeVisualizationStyle = (styleId) => {
     const normalizedStyleId = String(styleId || '');
     const compactStyleId = normalizedStyleId.replace(/[\s-]/g, '').toLowerCase();
@@ -7248,7 +7245,7 @@ if (musicPlayers.length) {
   const setupVisualizationStyleSelector = () => {
     if (!visualizerStyleSelect) return;
     visualizerStyleSelect.innerHTML = VISUALIZATION_STYLES.map((style) => (
-      `<option value="${style.id}">${escapePlaylistText(translate(style.labelKey))}</option>`
+      `<option value="${style.id}">${escapePlaylistText(style.label)}</option>`
     )).join('');
     visualizerStyleSelect.value = selectedVisualizationStyle;
   };
@@ -7554,11 +7551,11 @@ if (musicPlayers.length) {
           this.lastDrawTime = time;
           this.inspectAnalyser(currentAudio);
           const forceMode = this.getForceMode();
-          const useAnalyser = forceMode === 'analyser' ? true : forceMode === 'fallback' ? false : (!isIosWebKit && this.analyser && !this.analyserFlat);
-          const fallbackTime = Math.max(0, currentAudio.currentTime || 0) * 1000;
-          const drawTime = useAnalyser ? time : fallbackTime;
+          const useAnalyser = forceMode !== 'fallback' && Boolean(this.analyser && this.sourceConnected);
+          const drawTime = useAnalyser ? time : 0;
           const bands = this.sampleBands(drawTime, false, !useAnalyser);
           this.fallbackActive = !useAnalyser;
+          this.setFallbackNote(!useAnalyser);
           this.applyTheme('playing');
           this.renderFrame(bands, drawTime, 'playing');
           this.frameCount += 1;
@@ -7585,16 +7582,7 @@ if (musicPlayers.length) {
       this.fallbackActive = false;
       this.resize();
       this.applyTheme(mode);
-      const tick = (time = window.performance.now()) => {
-        const mobileFrameInterval = (isCoarsePointerDevice() || isIosWebKit) ? 33 : 0;
-        if (!mobileFrameInterval || !this.lastDrawTime || time - this.lastDrawTime >= mobileFrameInterval) {
-          this.lastDrawTime = time;
-          this.renderFrame(this.sampleBands(time, true, true), time, mode);
-          this.frameCount += 1;
-        }
-        this.frameId = window.requestAnimationFrame(tick);
-      };
-      tick();
+      this.renderFrame(this.sampleBands(0, true, true), 0, mode);
     }
 
     renderStatic(mode = 'idle') {
@@ -7646,22 +7634,10 @@ if (musicPlayers.length) {
           return this.sampleBands(time, useIdle, true);
         }
       } else {
-        const seconds = time / 1000;
-        const trackIndex = Math.max(0, activePlayer ? musicPlayers.indexOf(activePlayer) : 0);
-        const styleSeed = Math.max(1, VISUALIZATION_STYLES.findIndex((style) => style.id === selectedVisualizationStyle) + 1);
-        const beat = forceFallback ? Math.pow((Math.sin((seconds * (2.05 + trackIndex * 0.06)) + styleSeed) + 1) / 2, 2.35) : 0;
-        const pulse = forceFallback ? Math.pow((Math.sin((seconds * 4.15) + trackIndex * 0.7) + 1) / 2, 3.2) : 0;
-        const breath = forceFallback ? 34 + beat * 112 + pulse * 46 : 18;
-        const movement = forceFallback ? 0.18 + styleSeed * 0.01 : 0.42;
-        for (let index = 0; index < this.frequencyData.length; index += 1) {
-          const seed = this.seededNoise(index, trackIndex + styleSeed * 0.13);
-          const wave = Math.sin((time / (forceFallback ? 210 : 680)) + index * movement + seed * 0.6);
-          const harmonic = Math.sin((time / (340 + trackIndex * 23)) + index * (0.11 + styleSeed * 0.005)) * (forceFallback ? 24 : 10);
-          const stagger = Math.sin(seconds * (1.3 + seed * 1.7) + index * 0.17) * 18;
-          const taper = 1 - (index / this.frequencyData.length) * 0.54;
-          this.frequencyData[index] = Math.round(Math.min(255, Math.max(0, (breath + ((wave + 1) * 26) + harmonic + stagger) * taper)));
-          this.waveformData[index] = Math.round(128 + Math.sin((time / (forceFallback ? 145 : 520)) + index * 0.24 + seed) * (forceFallback ? 46 : 18));
-        }
+        // Never imply that decorative motion represents the audio. Without a
+        // usable analyser (for example, a CORS-restricted stream), render rest.
+        this.frequencyData.fill(0);
+        this.waveformData.fill(128);
       }
 
       const step = Math.max(1, Math.floor(this.frequencyData.length / this.spectrumBands.length));
@@ -7856,7 +7832,7 @@ if (musicPlayers.length) {
         const sampleIndex = Math.min(bands.waveform.length - 1, Math.round(normalized * (bands.waveform.length - 1)));
         const rawWave = ((bands.waveform[sampleIndex] || 128) - 128) / 128;
         const fallbackWave = Math.sin((time / 360) + sampleIndex * 0.41) * (isQuiet ? 0.035 : 0.12);
-        const shapedWave = Math.min(0.9, Math.max(-0.9, rawWave || fallbackWave));
+        const shapedWave = Math.min(0.9, Math.max(-0.9, rawWave));
         this.waveformPoints[index] += (shapedWave - this.waveformPoints[index]) * (isQuiet ? 0.12 : 0.34);
         const pulse = Math.max(0.06, value * quietScale);
         const hue = 205 + normalized * 36 + (bands.high * 24);
@@ -7864,9 +7840,9 @@ if (musicPlayers.length) {
         let x = startX + index * (barWidth + gap);
         let y = centerY + this.waveformPoints[index] * waveformAmplitude * quietScale;
         let drawWidth = barWidth;
-        let drawHeight = 10 + Math.abs(this.waveformPoints[index]) * height * 0.24 + bands.energy * height * 0.1 * quietScale;
+        let drawHeight = selectedVisualizationStyle === 'spectrum' ? 8 + value * height * 0.58 : 6 + Math.abs(this.waveformPoints[index]) * height * 0.22;
         let rotation = Math.atan2(this.waveformPoints[Math.min(this.waveformPoints.length - 1, index + 1)] - this.waveformPoints[index], 0.08);
-        if (selectedVisualizationStyle !== 'waveform') {
+        if (selectedVisualizationStyle === 'radial') {
           const angle = normalized * Math.PI * 2 + timeSeconds * 0.24;
           const radius = Math.min(width, height) * (0.1 + (index % 16) / 90 + bands.mid * 0.1 * quietScale);
           x = centerX + Math.cos(angle) * radius;
