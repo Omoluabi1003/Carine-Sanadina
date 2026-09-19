@@ -10154,19 +10154,6 @@ p,
   color: var(--text-tertiary);
 }
 
-/* Make the cover a true record label rather than a small center thumbnail. */
-.direct-drive-deck .expanded-vinyl-label,
-.turntable-assembly .expanded-vinyl-label {
-  width: 58%;
-}
-
-@media (max-width: 640px) {
-  .direct-drive-deck .expanded-vinyl-label,
-  .turntable-assembly .expanded-vinyl-label {
-    width: 62%;
-  }
-}
-
 /* Real-time audio stage: replaces the unsynchronised lyrics surface. */
 .audio-visualizer-panel {
   position: relative;
@@ -10197,9 +10184,26 @@ p,
 .audio-visualizer-panel .visualizer-helper,
 .audio-visualizer-panel .visualizer-fallback { margin: 10px 2px 0; color: var(--text-tertiary); font-size: .78rem; }
 
-/* A larger label image within the unchanged platter and record dimensions. */
+/* Enlarge only the artwork layer. The record geometry above remains unchanged. */
 .direct-drive-deck .expanded-vinyl-label,
-.turntable-assembly .expanded-vinyl-label { width: 64%; }
+.turntable-assembly .expanded-vinyl-label {
+  box-sizing: border-box;
+  width: 72%;
+  max-width: none;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+}
+
+.direct-drive-deck .expanded-vinyl-label .mobile-player-cover,
+.turntable-assembly .expanded-vinyl-label .mobile-player-cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  padding: 0;
+  object-fit: cover;
+  object-position: center center;
+}
 
 @media (max-width: 640px) {
   .audio-visualizer-panel { min-height: 0; margin-top: 18px; padding: 14px; border-radius: 22px; }
@@ -10207,12 +10211,41 @@ p,
   .audio-visualizer-controls { width: 100%; justify-content: space-between; }
   .audio-visualizer-panel .music-visualizer { height: clamp(140px, 42vw, 176px); min-height: 140px; }
   .direct-drive-deck .expanded-vinyl-label,
-  .turntable-assembly .expanded-vinyl-label { width: 68%; }
+  .turntable-assembly .expanded-vinyl-label { width: 76%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .audio-visualizer-panel .visualizer-unit { transition: none; animation: none; }
 }
+
+/* Interchangeable physical cabinets share the same platter and audio engine. */
+.turntable-selector { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; color: #f7ecdd; font-size: .85rem; }
+.turntable-selector select { min-height: 44px; max-width: 100%; padding: 10px 32px 10px 12px; border: 1px solid #b79862; border-radius: 8px; background: #0c1b2d; color: #fff8ee; font: inherit; }
+.turntable-selector select:focus-visible { outline: 2px solid #f4d59a; outline-offset: 3px; }
+.turntable-description { color: #d6deea; font-size: .8rem; min-height: 2.8em; margin: 10px 0; }
+.broadcast-meter { display: none; }
+.inline-player-card [data-turntable-model="direct"] .turntable-assembly {
+  background: repeating-linear-gradient(0deg, transparent 0 2px, #ffffff05 2px 3px), linear-gradient(145deg, #334351, #101d2c 48%, #25313b);
+  border: 1px solid #637383;
+}
+.inline-player-card [data-turntable-model="audiophile"] .turntable-assembly {
+  background: repeating-linear-gradient(3deg, #ffffff04 0 2px, #00000012 3px 5px, transparent 5px 12px), linear-gradient(115deg, #42281c, #79513a 35%, #35251c 80%);
+  border: 1px solid #34251e;
+  box-shadow: inset 0 0 0 7px #34251e, inset 0 1px 1px #d3a67a, 0 12px 0 #201713, 0 24px 38px #0008;
+}
+.inline-player-card [data-turntable-model="audiophile"] .pitch-control,
+.inline-player-card [data-turntable-model="audiophile"] .speed-selector { visibility: hidden; }
+.inline-player-card [data-turntable-model="audiophile"] .tonearm-wand { background: repeating-linear-gradient(45deg, #13171b 0 2px, #46515c 2px 3px); }
+.inline-player-card [data-turntable-model="audiophile"] .platter-strobe-ring { opacity: .15; }
+.inline-player-card [data-turntable-model="broadcast"] .turntable-assembly {
+  border: 1px solid #768183;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #161e20 0 3%, transparent 3% 97%, #161e20 97%), repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 4px), #34403e;
+  box-shadow: inset 0 0 0 6px #101b1b, 0 20px 40px #0008;
+}
+[data-turntable-model="broadcast"] .broadcast-meter { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 12px; background: #090f0c; border: 1px solid #727e60; border-radius: 5px; color: #dfcc93; font-size: .65rem; letter-spacing: .15em; }
+.broadcast-meter i { display: block; flex: 1; height: 10px; background: linear-gradient(90deg, #9bd593 0 65%, #edcf74 80%, #da896d); transform: scaleX(var(--studio-level, 0)); transform-origin: left; }
+@media (max-width: 640px) { .turntable-selector { display: grid; } .turntable-selector select { width: 100%; } }
 
 /* Premium Studio 2.0: album atmosphere, genuine analyser halo, and immersive mode. */
 .music-showcase {
@@ -10240,7 +10273,7 @@ p,
 
 .vinyl-audio-halo {
   position: absolute;
-  z-index: -1;
+  z-index: 3;
   width: 118%;
   height: 118%;
   max-width: none;
@@ -10248,6 +10281,27 @@ p,
   pointer-events: none;
   filter: drop-shadow(0 0 12px color-mix(in srgb, var(--album-primary) 42%, transparent));
   opacity: .9;
+}
+
+/* Stationary studio lighting lets rotating artwork read as a physical record. */
+.turntable-assembly .expanded-vinyl-wrap {
+  isolation: isolate;
+}
+
+.turntable-assembly .expanded-vinyl-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  z-index: 4;
+  border-radius: 50%;
+  pointer-events: none;
+  background: linear-gradient(125deg, transparent 18%, rgba(255, 244, 215, .16) 24%, transparent 33%, transparent 66%, rgba(133, 186, 244, .09) 74%, transparent 82%);
+  opacity: .45;
+  transition: opacity 350ms ease;
+}
+
+.turntable-assembly .expanded-vinyl-wrap.is-playing::after {
+  opacity: .85;
 }
 
 /* A resting/fallback display is deliberately static: it never impersonates audio. */
@@ -10293,4 +10347,5 @@ body.cinematic-listening-mode .audio-visualizer-panel { box-shadow: 0 30px 100px
   .music-showcase,
   .music-showcase .music-ambient { transition: none; }
   .vinyl-audio-halo { filter: none; }
+  .turntable-assembly .expanded-vinyl-wrap::after { transition: none; }
 }

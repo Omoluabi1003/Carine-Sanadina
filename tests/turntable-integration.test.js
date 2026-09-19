@@ -42,8 +42,19 @@ test('every track fills the same vinyl label area', () => {
 });
 
 test('album artwork is large enough to read as the vinyl label', () => {
-  assert.match(css, /\.direct-drive-deck \.expanded-vinyl-label,[\s\S]*?\.turntable-assembly \.expanded-vinyl-label\s*\{[\s\S]*?width:\s*58%/);
-  assert.match(css, /@media \(max-width:\s*640px\)[\s\S]*?\.turntable-assembly \.expanded-vinyl-label\s*\{[\s\S]*?width:\s*62%/);
+  assert.match(css, /\.direct-drive-deck \.expanded-vinyl-label,[\s\S]*?\.turntable-assembly \.expanded-vinyl-label\s*\{[\s\S]*?width:\s*72%[\s\S]*?max-width:\s*none[\s\S]*?padding:\s*0/);
+  assert.match(css, /@media \(max-width:\s*640px\)[\s\S]*?\.turntable-assembly \.expanded-vinyl-label\s*\{\s*width:\s*76%/);
+});
+
+test('vinyl artwork fills its label without changing record geometry', () => {
+  const finalArtworkRule = css.match(/\.turntable-assembly \.expanded-vinyl-label \.mobile-player-cover\s*\{([\s\S]*?)\}/)?.[1] || '';
+
+  assert.match(finalArtworkRule, /width:\s*100%/);
+  assert.match(finalArtworkRule, /height:\s*100%/);
+  assert.match(finalArtworkRule, /max-width:\s*none/);
+  assert.match(finalArtworkRule, /padding:\s*0/);
+  assert.match(finalArtworkRule, /object-fit:\s*cover/);
+  assert.match(css, /\.direct-drive-console \.expanded-vinyl-disc\s*\{[\s\S]*?width:\s*min\(52vw,\s*260px\)[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/);
 });
 
 test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states', () => {
