@@ -10243,9 +10243,15 @@ body.cinematic-listening-mode .music-ambient::after {
 }
 @keyframes studio-dust { to { transform: translate3d(20px, -30px, 0); } }
 @media (hover: hover) and (pointer: fine) {
-  body.cinematic-listening-mode .console-transport { transition: opacity 300ms ease; }
-  body.cinematic-controls-idle .console-transport:not(:focus-within):not(:hover) { opacity: 0; }
+  body.cinematic-listening-mode .console-transport > * { transition: opacity 300ms ease; }
+  body.cinematic-controls-idle .console-transport:not(:focus-within):not(:hover) > * { opacity: 0; }
+  body.cinematic-controls-idle .console-transport .mobile-player-actions,
+  body.cinematic-controls-idle .console-transport .cinematic-mode-control { opacity: 1; }
+  body.cinematic-controls-idle .console-transport .mobile-player-actions > :not(.cinematic-mode-control) { opacity: 0; pointer-events: none; }
 }
+.cinematic-exit-label { display: none; font-size: .72rem; font-weight: 700; }
+body.cinematic-listening-mode .cinematic-mode-control { position: fixed; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); z-index: 1002; width: auto; padding-inline: 12px; gap: 6px; }
+body.cinematic-listening-mode .cinematic-exit-label { display: inline; }
 @media (prefers-reduced-motion: reduce) {
   body.cinematic-listening-mode .music-ambient::after { animation: none; }
   body.cinematic-listening-mode .console-transport, .expanded-play-toggle { transition: none; }

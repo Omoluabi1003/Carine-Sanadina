@@ -568,11 +568,11 @@
                 </div>
 
                 <label class="turntable-selector">
-                  Choose your turntable
+                  <span data-i18n="studio.turntableLabel">Choose your turntable</span>
                   <select data-turntable-model>
-                    <option value="direct">Professional Direct-Drive</option>
-                    <option value="audiophile">Audiophile Belt-Drive</option>
-                    <option value="broadcast">Broadcast Console</option>
+                    <option value="direct" data-i18n="studio.turntableDirect">Professional Direct-Drive</option>
+                    <option value="audiophile" data-i18n="studio.turntableAudiophile">Audiophile Belt-Drive</option>
+                    <option value="broadcast" data-i18n="studio.turntableBroadcast">Broadcast Console</option>
                   </select>
                 </label>
                 <p class="turntable-description" data-turntable-description>Brushed metal, precision hardware, and a direct-drive studio finish.</p>
@@ -665,7 +665,7 @@
                       <span class="control-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5M3 8l6-6M21 8l-6-6M3 16l6 6M21 16l-6 6"/></svg></span>
                     </button>
                     <button class="console-icon-control cinematic-mode-control" type="button" data-cinematic-mode aria-pressed="false" aria-label="Expand" data-i18n-aria-label="mini.expand" title="Expand" data-i18n-title="mini.expand">
-                      <span class="control-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3"/></svg></span>
+                      <span class="control-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3"/></svg></span><span class="cinematic-exit-label" data-i18n="studio.cinematicExit">Exit</span>
                     </button>
                   </div>
                 </div>
@@ -688,8 +688,8 @@
               <section class="audio-visualizer-panel" aria-labelledby="audio-visualizer-title">
                 <header class="audio-visualizer-header">
                   <div>
-                    <p class="eyebrow">Live audio</p>
-                    <h3 id="audio-visualizer-title">Sound in motion</h3>
+                    <p class="eyebrow" data-i18n="studio.liveAudio">Live audio</p>
+                    <h3 id="audio-visualizer-title" data-i18n="studio.soundInMotion">Sound in motion</h3>
                   </div>
                   <div class="audio-visualizer-controls">
                     <label class="visualizer-toggle">
@@ -705,7 +705,7 @@
                 </header>
                 <div class="music-visualizer" data-audio-visualizer role="img" aria-label="Real-time visualization of the playing audio" data-i18n-aria-label="music.visualizerStyleAria"></div>
                 <p class="visualizer-helper" data-visualizer-helper aria-live="polite"></p>
-                <p class="visualizer-fallback" data-visualizer-fallback hidden>Audio analysis is unavailable for this source; playback continues normally.</p>
+                <p class="visualizer-fallback" data-visualizer-fallback hidden data-i18n="studio.analysisUnavailable">Audio analysis is unavailable for this source; playback continues normally.</p>
               </section>
             </div>
           </div>

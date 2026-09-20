@@ -29,6 +29,7 @@ test('studio refinements retain native seeking and motion safeguards', () => {
   assert.match(script, /event.key === 'Escape'/);
   assert.match(script, /contains\(document\.activeElement\)/);
   assert.match(styles, /console-transport:not\(:focus-within\):not\(:hover\)/);
+  assert.match(styles, /cinematic-controls-idle[\s\S]*cinematic-mode-control[^}]*opacity:\s*1/);
   assert.match(styles, /prefers-reduced-motion: reduce/);
 });
 
@@ -107,4 +108,13 @@ test('album artwork atmosphere caches colors and rejects stale extraction result
   assert.match(script, /request !== artworkPaletteRequest/);
   assert.match(script, /image\.crossOrigin = 'anonymous'/);
   assert.match(styles, /--album-primary/);
+});
+
+test('premium studio interface is localized and cinematic exit remains persistent', () => {
+  for (const key of ['studio.turntableLabel', 'studio.liveAudio', 'studio.soundInMotion', 'studio.analysisUnavailable']) {
+    assert.match(html, new RegExp(`data-i18n="${key.replace('.', '\\.')}"`));
+  }
+  assert.match(script, /labelKey: 'studio\.spectrum'/);
+  assert.match(script, /translate\(enabled \? 'studio\.cinematicExit' : 'studio\.cinematicEnter'\)/);
+  assert.match(html, /class="cinematic-exit-label"/);
 });

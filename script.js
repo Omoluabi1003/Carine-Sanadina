@@ -2259,6 +2259,19 @@ const finalTranslationAuditOverrides = {
 
 mergeTranslationAdditions(finalTranslationAuditOverrides, 'final translation audit overrides');
 
+const premiumStudioTranslations = {
+  en: { 'studio.turntableLabel': 'Choose your turntable', 'studio.turntableDirect': 'Professional Direct-Drive', 'studio.turntableAudiophile': 'Audiophile Belt-Drive', 'studio.turntableBroadcast': 'Broadcast Console', 'studio.liveAudio': 'Live audio', 'studio.soundInMotion': 'Sound in motion', 'studio.analysisUnavailable': 'Audio analysis is unavailable for this source; playback continues normally.', 'studio.cinematicEnter': 'Enter cinematic listening mode', 'studio.cinematicExit': 'Exit cinematic listening mode', 'studio.spectrum': 'Frequency spectrum', 'studio.waveform': 'Continuous waveform', 'studio.radial': 'Circular spectrum' },
+  fr: { 'studio.turntableLabel': 'Choisissez votre platine', 'studio.turntableDirect': 'Entraînement direct professionnel', 'studio.turntableAudiophile': 'Entraînement par courroie audiophile', 'studio.turntableBroadcast': 'Console de diffusion', 'studio.liveAudio': 'Audio en direct', 'studio.soundInMotion': 'Le son en mouvement', 'studio.analysisUnavailable': 'L’analyse audio est indisponible pour cette source ; la lecture continue normalement.', 'studio.cinematicEnter': 'Activer le mode d’écoute cinématique', 'studio.cinematicExit': 'Quitter le mode d’écoute cinématique', 'studio.spectrum': 'Spectre de fréquences', 'studio.waveform': 'Forme d’onde continue', 'studio.radial': 'Spectre circulaire' },
+  ln: { 'studio.turntableLabel': 'Pona platine na yo', 'studio.turntableDirect': 'Entraînement direct ya mosala', 'studio.turntableAudiophile': 'Platine audiophile na courroie', 'studio.turntableBroadcast': 'Console ya radio', 'studio.liveAudio': 'Lokito na ntango ya solo', 'studio.soundInMotion': 'Lokito ezali kotambola', 'studio.analysisUnavailable': 'Analyse ya lokito ezali te mpo na source oyo; lecture ezali kokoba.', 'studio.cinematicEnter': 'Kota na mode cinéma', 'studio.cinematicExit': 'Bima na mode cinéma', 'studio.spectrum': 'Spectre ya fréquence', 'studio.waveform': 'Forme ya mbonge', 'studio.radial': 'Spectre ya cercle' },
+  es: { 'studio.turntableLabel': 'Elige tu tocadiscos', 'studio.turntableDirect': 'Tracción directa profesional', 'studio.turntableAudiophile': 'Tracción por correa audiófila', 'studio.turntableBroadcast': 'Consola de radiodifusión', 'studio.liveAudio': 'Audio en directo', 'studio.soundInMotion': 'Sonido en movimiento', 'studio.analysisUnavailable': 'El análisis de audio no está disponible para esta fuente; la reproducción continúa normalmente.', 'studio.cinematicEnter': 'Entrar en el modo de escucha cinematográfica', 'studio.cinematicExit': 'Salir del modo de escucha cinematográfica', 'studio.spectrum': 'Espectro de frecuencias', 'studio.waveform': 'Forma de onda continua', 'studio.radial': 'Espectro circular' },
+  sw: { 'studio.turntableLabel': 'Chagua turntable yako', 'studio.turntableDirect': 'Direct-Drive ya kitaalamu', 'studio.turntableAudiophile': 'Belt-Drive ya audiophile', 'studio.turntableBroadcast': 'Dashibodi ya utangazaji', 'studio.liveAudio': 'Sauti mubashara', 'studio.soundInMotion': 'Sauti katika mwendo', 'studio.analysisUnavailable': 'Uchanganuzi wa sauti haupatikani kwa chanzo hiki; uchezaji unaendelea kawaida.', 'studio.cinematicEnter': 'Ingia katika hali ya sinema', 'studio.cinematicExit': 'Ondoka katika hali ya sinema', 'studio.spectrum': 'Wigo wa masafa', 'studio.waveform': 'Wimbi endelevu', 'studio.radial': 'Wigo wa duara' },
+  yo: { 'studio.turntableLabel': 'Yan turntable rẹ', 'studio.turntableDirect': 'Direct-Drive amọ̀ja', 'studio.turntableAudiophile': 'Belt-Drive audiophile', 'studio.turntableBroadcast': 'Console igbohunsafefe', 'studio.liveAudio': 'Ohun laaye', 'studio.soundInMotion': 'Ohun ninu išipopada', 'studio.analysisUnavailable': 'Itupalẹ ohun ko si fun orisun yii; ṣiṣiṣẹ tẹsiwaju deede.', 'studio.cinematicEnter': 'Wọ ipo gbigbọ sinima', 'studio.cinematicExit': 'Jade kuro ni ipo gbigbọ sinima', 'studio.spectrum': 'Spectrum igbohunsafẹfẹ', 'studio.waveform': 'Waveform lemọlemọ', 'studio.radial': 'Spectrum iyika' },
+  de: { 'studio.turntableLabel': 'Plattenspieler auswählen', 'studio.turntableDirect': 'Professioneller Direktantrieb', 'studio.turntableAudiophile': 'Audiophiler Riemenantrieb', 'studio.turntableBroadcast': 'Broadcast-Konsole', 'studio.liveAudio': 'Live-Audio', 'studio.soundInMotion': 'Klang in Bewegung', 'studio.analysisUnavailable': 'Die Audioanalyse ist für diese Quelle nicht verfügbar; die Wiedergabe läuft normal weiter.', 'studio.cinematicEnter': 'Kinomodus starten', 'studio.cinematicExit': 'Kinomodus verlassen', 'studio.spectrum': 'Frequenzspektrum', 'studio.waveform': 'Kontinuierliche Wellenform', 'studio.radial': 'Kreisförmiges Spektrum' },
+  ar: { 'studio.turntableLabel': 'اختر مشغل الأسطوانات', 'studio.turntableDirect': 'دفع مباشر احترافي', 'studio.turntableAudiophile': 'دفع بالحزام لعشاق الصوت', 'studio.turntableBroadcast': 'وحدة تحكم للبث', 'studio.liveAudio': 'صوت مباشر', 'studio.soundInMotion': 'الصوت في حركة', 'studio.analysisUnavailable': 'تحليل الصوت غير متاح لهذا المصدر؛ يستمر التشغيل بشكل طبيعي.', 'studio.cinematicEnter': 'الدخول إلى وضع الاستماع السينمائي', 'studio.cinematicExit': 'الخروج من وضع الاستماع السينمائي', 'studio.spectrum': 'طيف التردد', 'studio.waveform': 'موجة مستمرة', 'studio.radial': 'طيف دائري' },
+  'zh-CN': { 'studio.turntableLabel': '选择唱机', 'studio.turntableDirect': '专业直驱唱机', 'studio.turntableAudiophile': '发烧级皮带驱动唱机', 'studio.turntableBroadcast': '广播控制台', 'studio.liveAudio': '实时音频', 'studio.soundInMotion': '流动之声', 'studio.analysisUnavailable': '此音源无法进行音频分析；播放将正常继续。', 'studio.cinematicEnter': '进入影院聆听模式', 'studio.cinematicExit': '退出影院聆听模式', 'studio.spectrum': '频谱', 'studio.waveform': '连续波形', 'studio.radial': '环形频谱' }
+};
+mergeTranslationAdditions(premiumStudioTranslations, 'premium studio interface');
+
 
 const reflectionAdvocacyAuditTranslations = {
   es: {
@@ -7216,9 +7229,9 @@ if (musicPlayers.length) {
   const isCoarsePointerDevice = () => Boolean(coarsePointerQuery && coarsePointerQuery.matches);
 
   const VISUALIZATION_STYLES = [
-    { id: 'spectrum', label: 'Frequency spectrum' },
-    { id: 'waveform', label: 'Fluid waveform' },
-    { id: 'radial', label: 'Circular spectrum' }
+    { id: 'spectrum', labelKey: 'studio.spectrum' },
+    { id: 'waveform', labelKey: 'studio.waveform' },
+    { id: 'radial', labelKey: 'studio.radial' }
   ];
   const DEFAULT_VISUALIZATION_STYLE = 'spectrum';
   const normalizeVisualizationStyle = (styleId) => {
@@ -7337,7 +7350,7 @@ if (musicPlayers.length) {
   const setupVisualizationStyleSelector = () => {
     if (!visualizerStyleSelect) return;
     visualizerStyleSelect.innerHTML = VISUALIZATION_STYLES.map((style) => (
-      `<option value="${style.id}">${escapePlaylistText(style.label)}</option>`
+      `<option value="${style.id}">${escapePlaylistText(translate(style.labelKey))}</option>`
     )).join('');
     visualizerStyleSelect.value = selectedVisualizationStyle;
   };
@@ -8371,6 +8384,7 @@ if (musicPlayers.length) {
     setupVisualizationStyleSelector();
     setVisualizerFallback(false);
     updateVisualizerToggleUI();
+    setCinematicMode(document.body.classList.contains('cinematic-listening-mode'));
   });
 
   const getAudio = (player) => player?.querySelector('audio') || null;
@@ -8807,8 +8821,9 @@ if (musicPlayers.length) {
     document.body.classList.toggle('cinematic-listening-mode', enabled);
     revealCinematicControls();
     cinematicModeButton?.setAttribute('aria-pressed', String(enabled));
-    cinematicModeButton?.setAttribute('aria-label', enabled ? 'Exit cinematic listening mode' : 'Enter cinematic listening mode');
-    cinematicModeButton?.setAttribute('title', enabled ? 'Exit cinematic listening mode' : 'Cinematic listening mode');
+    const label = translate(enabled ? 'studio.cinematicExit' : 'studio.cinematicEnter');
+    cinematicModeButton?.setAttribute('aria-label', label);
+    cinematicModeButton?.setAttribute('title', label);
     window.requestAnimationFrame(resizeVisualizerSurface);
   };
   cinematicModeButton?.addEventListener('click', () => {
