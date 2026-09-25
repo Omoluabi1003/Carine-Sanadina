@@ -10458,6 +10458,12 @@ h1, h2, h3, h4, h5, h6, blockquote {
   color: var(--text-secondary-light);
 }
 
+/* Keep the credential summary readable on the light editorial surface. Its
+   earlier, dark-theme selector is more specific than the shared rule above. */
+.about-content .credentials__description {
+  color: var(--text-secondary-light);
+}
+
 .about-content h2, .credentials h3, .achievement-card h4, .book-card h3,
 .reflection-card h3, .featured-reflection h3, .press-card h3,
 .media-card h3, .contact-card h3, .legal-card h2 {

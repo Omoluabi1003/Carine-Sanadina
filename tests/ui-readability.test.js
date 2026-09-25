@@ -156,3 +156,13 @@ test('hero and install actions preserve readable sapphire-theme contrast', async
   }
   await page.close();
 });
+
+test('credential copy uses the light-card text palette', async () => {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  await page.goto(origin, { waitUntil: 'domcontentloaded' });
+
+  const color = await page.locator('.credentials__description').evaluate((element) => getComputedStyle(element).color);
+
+  assert.equal(color, 'rgb(95, 74, 66)');
+  await page.close();
+});
