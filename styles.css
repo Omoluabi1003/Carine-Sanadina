@@ -10392,77 +10392,82 @@ body.cinematic-listening-mode .audio-visualizer-panel { box-shadow: 0 30px 100px
 }
 
 
-/* Universal readability and box-safety layer
-   Centralized override so typography, contrast, wrapping, and cards remain legible
-   across desktop, tablet, mobile, translations, and future content additions. */
+/* Authoritative UI contract
+   This is the single final cascade layer for type, surfaces, wrapping and responsive
+   box behaviour. Component artwork and animation remain defined above. */
 :root {
-  --readable-text: #2b1915;
-  --readable-muted: #5f4a42;
-  --surface-light: rgba(255, 255, 255, 0.92);
-  --surface-light-soft: rgba(255, 252, 247, 0.82);
-  --surface-dark: rgba(5, 17, 39, 0.94);
-  --surface-dark-soft: rgba(8, 28, 62, 0.9);
+  --text-primary: #2b1915;
+  --text-secondary-light: #5f4a42;
+  --text-primary-dark: #fffaf1;
+  --text-secondary-dark: #e6f0ff;
+  --surface-light: rgba(255, 255, 255, 0.94);
+  --surface-light-soft: rgba(255, 252, 247, 0.86);
+  --surface-dark: rgba(5, 17, 39, 0.95);
+  --surface-dark-soft: rgba(8, 28, 62, 0.92);
   --focus-ring: #2f6fc5;
-  --body-min: 1rem;
-  --small-min: 0.82rem;
+  --focus-ring-dark: #ffe6a7;
+  --font-body-min: 1rem;
+  --font-small-min: 0.82rem;
+  --content-width: 1200px;
+  --mobile-gutter: 20px;
+  --radius-card: 18px;
 }
 
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-body { color: var(--readable-text); }
+body { min-width: 0; color: var(--text-primary-dark); font-size: var(--font-body-min); line-height: 1.65; }
 
-p, li, dd, dt, label, input, textarea, select, button {
+p, li, dd, dt, label, input, textarea, select, button, a, time {
   overflow-wrap: anywhere;
   word-break: normal;
 }
 
 p, li, dd, dt { line-height: 1.65; }
+main p:not(.sr-only), main li, footer p { font-size: max(var(--font-small-min), 13px) !important; }
 
-/* Prevent decorative serif headings from becoming too compressed to read. */
 h1, h2, h3, h4, h5, h6, blockquote {
   overflow-wrap: anywhere;
+  word-break: normal;
   hyphens: auto;
+  line-height: 1.12;
 }
 
-h1, h2, h3, blockquote { line-height: 1.04; }
+.container { width: min(var(--content-width), calc(100% - (2 * var(--mobile-gutter)))); }
 
-/* Light cards must always carry dark, readable copy regardless of page backdrop. */
+/* Editorial cards are deliberately light; their foreground never inherits from the
+   dark page canvas. */
 .about-content,
+.credentials,
+.achievement-card,
 .book-card,
 .reflection-card,
+.featured-reflection,
 .press-card,
 .media-card,
 .contact-card,
-.ai-facts {
-  color: var(--readable-text);
+.ai-facts,
+.legal-card {
+  color: var(--text-primary);
+  background-color: var(--surface-light);
+  background-image: linear-gradient(145deg, rgba(255,255,255,.98), rgba(255,248,238,.94));
+  border-color: rgba(43, 25, 21, 0.14);
 }
 
-.about-content {
-  background: var(--surface-light-soft);
+.about-content p, .credentials p, .achievement-card p, .book-card p,
+.reflection-card p, .featured-reflection p, .press-card p, .media-card p,
+.contact-card p, .ai-facts, .legal-card p {
+  color: var(--text-secondary-light);
 }
 
-.about-content p,
-.about-content .credentials__description,
-.about-content .achievement-card__institution,
-.about-content .achievement-card__type,
-.about-content .achievement-card__date,
-.ai-facts {
-  color: var(--readable-muted);
+.about-content h2, .credentials h3, .achievement-card h4, .book-card h3,
+.reflection-card h3, .featured-reflection h3, .press-card h3,
+.media-card h3, .contact-card h3, .legal-card h2 {
+  color: var(--text-primary);
 }
 
-.about-content .achievement-card__type,
-.about-content .achievement-card__date {
-  color: #6d4f17;
-}
-
-.achievement-card {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(95, 20, 39, 0.13);
-}
-
-.achievement-card h4 { color: var(--burgundy-dark); }
+.about-content .achievement-card__type, .about-content .achievement-card__date { color: #6d4f17; }
 .achievement-card__mark { color: #7b571c; border-color: rgba(123, 87, 28, 0.34); }
 
-/* Dark/glass surfaces get a single high-contrast text contract. */
+/* Interactive/media surfaces are explicitly dark. */
 .nav,
 .language-switcher__menu,
 .music-showcase,
@@ -10474,8 +10479,13 @@ h1, h2, h3, blockquote { line-height: 1.04; }
 .video-card,
 .video-modal__panel,
 .videos-drawer__panel,
-.lyrics-more-card {
-  color: #fff8ee;
+.lyrics-more-card,
+.media-kit-drawer__panel,
+.guide-panel,
+.install-toast,
+.install-instructions-panel__card,
+.cta-panel {
+  color: var(--text-primary-dark);
 }
 
 .nav p,
@@ -10488,11 +10498,15 @@ h1, h2, h3, blockquote { line-height: 1.04; }
 .video-card p,
 .video-modal__panel p,
 .videos-drawer__panel p,
-.lyrics-more-card p {
-  color: rgba(242, 247, 255, 0.8);
+.lyrics-more-card p,
+.media-kit-drawer__panel p,
+.guide-panel p,
+.install-toast p,
+.install-instructions-panel__card p,
+.cta-panel p:not(.eyebrow) {
+  color: var(--text-secondary-dark);
 }
 
-/* Readable minimums for interface microcopy. */
 .language-switcher__label,
 .language-switcher__trigger,
 .language-option,
@@ -10506,18 +10520,26 @@ h1, h2, h3, blockquote { line-height: 1.04; }
 .deck-brand-row,
 .video-card__category,
 .press-placeholder,
-.contact-paths span {
-  font-size: max(var(--small-min), 0.82rem);
+.contact-paths span,
+.portrait-caption,
+.visualizer-helper,
+.turntable-selector,
+.turntable-description {
+  font-size: max(var(--font-small-min), 13px);
+  line-height: 1.45;
 }
 
 .nav-links a { font-size: max(0.9rem, 14px); }
-.button,
-button,
-input,
-select,
-textarea { font-size: max(0.95rem, 16px); }
+.button, button, input, select, textarea { font-size: max(0.95rem, 16px); }
+.button, button { min-height: 44px; height: auto; white-space: normal; }
+main button, main .button { font-size: max(var(--font-small-min), 13px) !important; }
+.console-icon-control, .console-playlist-toggle, .cinematic-mode-control,
+.visualizer-style-control, .expanded-play-toggle { font-size: max(var(--font-small-min), 13px); }
 
-/* Universal component box safety. */
+/* Grid/flex descendants must be shrinkable; content determines card height. */
+.hero-grid > *, .split-layout > *, .book-grid > *, .premium-grid > *,
+.reflection-grid > *, .advocacy-grid > *, .position-grid > *,
+.expanded-player-layout > *, .console-status-row > *, .footer-inner > *,
 .about-content,
 .achievement-card,
 .book-card,
@@ -10529,14 +10551,17 @@ textarea { font-size: max(0.95rem, 16px); }
 .playlist-track,
 .console-playlist-panel,
 .lyrics-more-section,
-.contact-card {
+.contact-card,
+.media-kit-drawer__panel,
+.guide-panel {
   min-width: 0;
   max-width: 100%;
 }
 
-img, video, iframe, canvas, svg {
-  max-width: 100%;
-}
+img, video, iframe, canvas, svg { max-width: 100%; }
+img, video { height: auto; }
+.about-content, .credentials, .achievement-card, .book-card, .reflection-card,
+.premium-card, .position-card, .advocacy-card, .video-card, .legal-card { height: auto; }
 
 .button,
 .nav-links a,
@@ -10550,38 +10575,51 @@ img, video, iframe, canvas, svg {
   min-width: 0;
 }
 
-/* One consistent keyboard focus treatment. */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-[tabindex]:focus-visible {
+:focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
 }
+.nav :focus-visible, .music-showcase :focus-visible, .videos-showcase :focus-visible,
+.video-modal :focus-visible, .videos-drawer :focus-visible, .guide-panel :focus-visible,
+.media-kit-drawer :focus-visible { outline-color: var(--focus-ring-dark); }
 
-/* Translation-safe layout: long French, Lingala, Spanish, Yoruba, Swahili, Arabic, etc. */
 .nav-links,
 .hero-actions,
 .cta-actions,
 .contact-paths,
 .console-status-row,
 .expanded-player-actions,
-.lyrics-panel-toolbar {
+.lyrics-panel-toolbar,
+.developer-inquiry__contacts,
+.install-toast__actions,
+.media-kit-drawer__header {
   flex-wrap: wrap;
 }
 
+.expanded-player-copy h3, .console-now-playing h3, .track-title,
+.mini-player-meta p, .video-card h3 { white-space: normal; overflow: visible; text-overflow: clip; }
+.track-synopsis, .console-synopsis { max-height: none; overflow: visible; }
+.expanded-track-option__meta, .playlist-track, .contact-paths span { height: auto; }
+.video-modal__panel, .videos-drawer__panel, .media-kit-drawer__panel,
+.guide-panel { max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; }
+.nav-links.is-open { visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto; transition: none; }
+
 @media (max-width: 920px) {
-  :root { --container: min(100% - 28px, 1120px); }
+  :root { --mobile-gutter: 16px; }
   .section { padding-block: clamp(72px, 10vw, 96px); }
   .split-layout,
   .hero-grid { grid-template-columns: 1fr; }
+  .nav { min-width: 0; }
+  .nav-links.is-open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
 }
 
 @media (max-width: 640px) {
-  :root { --container: min(100% - 22px, 1120px); }
-  body { font-size: 16px; }
+  :root { --mobile-gutter: 12px; }
   .section { padding-block: 68px; }
 
   .about-content,
@@ -10593,11 +10631,11 @@ textarea:focus-visible,
     padding-right: max(16px, env(safe-area-inset-right));
   }
 
-  .hero h1 { font-size: clamp(3rem, 15vw, 5.6rem); line-height: 0.98; }
+  .hero h1 { max-width: 100%; font-size: clamp(2.65rem, 14vw, 5rem); line-height: 1; letter-spacing: -0.055em; }
   .hero h2,
   .about-content h2,
   .section-heading h2,
-  .final-cta h2 { line-height: 1.02; }
+  .final-cta h2 { font-size: clamp(2.25rem, 11vw, 3.8rem); line-height: 1.08; }
 
   .nav-links a,
   .language-switcher__trigger,
@@ -10621,15 +10659,18 @@ textarea:focus-visible,
     white-space: normal;
   }
 
-  .video-card,
-  .expanded-track-option,
-  .playlist-track {
-    overflow: hidden;
-  }
+  .hero-actions { grid-template-columns: 1fr; }
+  .hero-actions .button, .cta-actions .button { width: 100%; }
+  .audio-visualizer-controls, .console-status-row { align-items: stretch; flex-direction: column; }
+  .expanded-player-actions { justify-content: center; }
+  .language-switcher__menu { max-width: calc(100vw - 24px); }
+  .guide-widget { max-width: calc(100vw - 24px); }
+  .guide-panel { width: min(100%, calc(100vw - 24px)); }
 }
 
 @media (max-width: 390px) {
-  :root { --container: min(100% - 18px, 1120px); }
-  .hero h1 { font-size: clamp(2.7rem, 14vw, 4.6rem); }
-  .button { width: 100%; }
+  :root { --mobile-gutter: 9px; }
+  .hero h1 { font-size: clamp(2.4rem, 13.5vw, 4.2rem); }
+  .button, .contact-paths span { width: 100%; }
+  .achievement-card { grid-template-columns: 40px minmax(0, 1fr); }
 }
