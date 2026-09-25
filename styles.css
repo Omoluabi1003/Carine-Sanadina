@@ -132,6 +132,82 @@ h1, h2, h3, blockquote {
 .nav-links a:hover, .nav-links a:focus-visible, .nav-links a.is-active { background: rgba(234, 211, 162, 0.14); color: var(--gold-soft); box-shadow: inset 0 0 0 1px rgba(234, 211, 162, 0.18); }
 .nav-links a.is-active { pointer-events: none; }
 .nav-toggle { display: none; }
+.date-time-widget {
+  --clock-bg: linear-gradient(145deg, rgba(18, 37, 72, 0.92), rgba(5, 16, 38, 0.94));
+  --clock-border: rgba(147, 197, 253, 0.22);
+  --clock-text: #f8fbff;
+  --clock-muted: #a9c4e8;
+  display: grid;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: max(20px, calc((100vw - 1120px) / 2));
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 230px;
+  padding: 7px 8px 7px 13px;
+  border: 1px solid var(--clock-border);
+  border-radius: 18px;
+  background: var(--clock-bg);
+  color: var(--clock-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 28px rgba(2, 8, 23, 0.18);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.25s ease;
+  pointer-events: auto;
+}
+.date-time-widget:hover { transform: translateY(-1px); }
+.date-time-widget[data-theme="light"] {
+  --clock-bg: linear-gradient(145deg, rgba(255, 252, 246, 0.98), rgba(235, 242, 252, 0.96));
+  --clock-border: rgba(191, 141, 63, 0.3);
+  --clock-text: #271816;
+  --clock-muted: #70574e;
+}
+.date-time-widget__display { min-width: 0; line-height: 1; }
+.date-time-widget__time {
+  display: block;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  white-space: nowrap;
+}
+.date-time-widget__date {
+  display: block;
+  max-width: 180px;
+  margin-top: 5px;
+  overflow: hidden;
+  color: var(--clock-muted);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.date-time-widget__zone {
+  display: block;
+  margin-top: 4px;
+  color: var(--clock-muted);
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.date-time-widget__controls { display: grid; gap: 3px; }
+.clock-control {
+  width: 27px;
+  height: 23px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(125, 171, 226, 0.12);
+  color: inherit;
+  cursor: pointer;
+  font: 800 0.57rem/1 "Inter", sans-serif;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.clock-control:hover, .clock-control:focus-visible { background: rgba(125, 171, 226, 0.26); transform: scale(1.05); }
+.clock-theme-toggle svg { width: 12px; height: 12px; fill: currentColor; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.clock-theme-toggle__sun, .date-time-widget[data-theme="light"] .clock-theme-toggle__moon { display: none; }
+.date-time-widget[data-theme="light"] .clock-theme-toggle__sun { display: inline; }
 .language-switcher {
   position: relative;
   display: inline-flex;
@@ -1328,6 +1404,7 @@ body.lyrics-expanded-open .mini-player.is-visible:focus-within {
 }
 
 @media (max-width: 920px) {
+  .language-switcher { margin-left: 0; }
   .nav-toggle {
     display: inline-flex;
     flex-direction: column;
@@ -1378,6 +1455,10 @@ body.lyrics-expanded-open .mini-player.is-visible:focus-within {
 }
 
 @media (max-width: 640px) {
+  .date-time-widget { top: calc(100% + 8px); right: 14px; min-width: 220px; padding: 6px 7px 6px 10px; border-radius: 15px; }
+  .date-time-widget__time { font-size: 0.82rem; }
+  .date-time-widget__date { max-width: 168px; font-size: 0.52rem; }
+  .clock-control { width: 24px; height: 21px; }
   :root { --container: min(100% - 28px, 1120px); }
   .site-header { top: 10px; }
   .nav { min-height: 62px; padding: 8px 9px 8px 12px; }
@@ -10731,4 +10812,9 @@ img, video { height: auto; }
   border-color: #bfdbfe;
   background: #163fae;
   color: #ffffff;
+}
+
+/* The compact clock sits beneath the mobile navigation as a deliberate second row. */
+@media (max-width: 640px) {
+  .hero { padding-top: calc(210px + env(safe-area-inset-top)); }
 }
