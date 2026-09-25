@@ -10390,3 +10390,246 @@ body.cinematic-listening-mode .audio-visualizer-panel { box-shadow: 0 30px 100px
   .vinyl-audio-halo { filter: none; }
   .turntable-assembly .expanded-vinyl-wrap::after { transition: none; }
 }
+
+
+/* Universal readability and box-safety layer
+   Centralized override so typography, contrast, wrapping, and cards remain legible
+   across desktop, tablet, mobile, translations, and future content additions. */
+:root {
+  --readable-text: #2b1915;
+  --readable-muted: #5f4a42;
+  --surface-light: rgba(255, 255, 255, 0.92);
+  --surface-light-soft: rgba(255, 252, 247, 0.82);
+  --surface-dark: rgba(5, 17, 39, 0.94);
+  --surface-dark-soft: rgba(8, 28, 62, 0.9);
+  --focus-ring: #2f6fc5;
+  --body-min: 1rem;
+  --small-min: 0.82rem;
+}
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { color: var(--readable-text); }
+
+p, li, dd, dt, label, input, textarea, select, button {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+p, li, dd, dt { line-height: 1.65; }
+
+/* Prevent decorative serif headings from becoming too compressed to read. */
+h1, h2, h3, h4, h5, h6, blockquote {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+h1, h2, h3, blockquote { line-height: 1.04; }
+
+/* Light cards must always carry dark, readable copy regardless of page backdrop. */
+.about-content,
+.book-card,
+.reflection-card,
+.press-card,
+.media-card,
+.contact-card,
+.ai-facts {
+  color: var(--readable-text);
+}
+
+.about-content {
+  background: var(--surface-light-soft);
+}
+
+.about-content p,
+.about-content .credentials__description,
+.about-content .achievement-card__institution,
+.about-content .achievement-card__type,
+.about-content .achievement-card__date,
+.ai-facts {
+  color: var(--readable-muted);
+}
+
+.about-content .achievement-card__type,
+.about-content .achievement-card__date {
+  color: #6d4f17;
+}
+
+.achievement-card {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(95, 20, 39, 0.13);
+}
+
+.achievement-card h4 { color: var(--burgundy-dark); }
+.achievement-card__mark { color: #7b571c; border-color: rgba(123, 87, 28, 0.34); }
+
+/* Dark/glass surfaces get a single high-contrast text contract. */
+.nav,
+.language-switcher__menu,
+.music-showcase,
+.videos-showcase,
+.expanded-player-card,
+.luxury-audio-console,
+.direct-drive-deck,
+.console-playlist-panel,
+.video-card,
+.video-modal__panel,
+.videos-drawer__panel,
+.lyrics-more-card {
+  color: #fff8ee;
+}
+
+.nav p,
+.music-showcase p,
+.videos-showcase p,
+.expanded-player-card p,
+.luxury-audio-console p,
+.direct-drive-deck p,
+.console-playlist-panel p,
+.video-card p,
+.video-modal__panel p,
+.videos-drawer__panel p,
+.lyrics-more-card p {
+  color: rgba(242, 247, 255, 0.8);
+}
+
+/* Readable minimums for interface microcopy. */
+.language-switcher__label,
+.language-switcher__trigger,
+.language-option,
+.eyebrow,
+.section-kicker,
+.track-duration,
+.expanded-track-option__duration,
+.expanded-track-option__meta span:last-child,
+.console-playback-status,
+.console-brand,
+.deck-brand-row,
+.video-card__category,
+.press-placeholder,
+.contact-paths span {
+  font-size: max(var(--small-min), 0.82rem);
+}
+
+.nav-links a { font-size: max(0.9rem, 14px); }
+.button,
+button,
+input,
+select,
+textarea { font-size: max(0.95rem, 16px); }
+
+/* Universal component box safety. */
+.about-content,
+.achievement-card,
+.book-card,
+.reflection-card,
+.press-card,
+.media-card,
+.video-card,
+.expanded-track-option,
+.playlist-track,
+.console-playlist-panel,
+.lyrics-more-section,
+.contact-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img, video, iframe, canvas, svg {
+  max-width: 100%;
+}
+
+.button,
+.nav-links a,
+.language-switcher__trigger,
+.language-option,
+.contact-paths span,
+.track-meta,
+.expanded-track-option__meta,
+.video-card__body,
+.book-body {
+  min-width: 0;
+}
+
+/* One consistent keyboard focus treatment. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* Translation-safe layout: long French, Lingala, Spanish, Yoruba, Swahili, Arabic, etc. */
+.nav-links,
+.hero-actions,
+.cta-actions,
+.contact-paths,
+.console-status-row,
+.expanded-player-actions,
+.lyrics-panel-toolbar {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 920px) {
+  :root { --container: min(100% - 28px, 1120px); }
+  .section { padding-block: clamp(72px, 10vw, 96px); }
+  .split-layout,
+  .hero-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  :root { --container: min(100% - 22px, 1120px); }
+  body { font-size: 16px; }
+  .section { padding-block: 68px; }
+
+  .about-content,
+  .achievement-card,
+  .video-card__body,
+  .lyrics-more-section,
+  .console-playlist-panel {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .hero h1 { font-size: clamp(3rem, 15vw, 5.6rem); line-height: 0.98; }
+  .hero h2,
+  .about-content h2,
+  .section-heading h2,
+  .final-cta h2 { line-height: 1.02; }
+
+  .nav-links a,
+  .language-switcher__trigger,
+  .language-option,
+  .contact-paths span,
+  .track-synopsis,
+  .console-synopsis,
+  .expanded-track-option__meta span:last-child,
+  .expanded-track-option__duration {
+    font-size: max(0.82rem, 13px);
+  }
+
+  .achievement-card {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .achievement-card__date {
+    grid-column: 2;
+    justify-self: start;
+    white-space: normal;
+  }
+
+  .video-card,
+  .expanded-track-option,
+  .playlist-track {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 390px) {
+  :root { --container: min(100% - 18px, 1120px); }
+  .hero h1 { font-size: clamp(2.7rem, 14vw, 4.6rem); }
+  .button { width: 100%; }
+}
