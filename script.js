@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-25-player-artwork';
+const APP_VERSION = 'carine-site-2026-09-25-local-clock';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -5254,6 +5254,78 @@ const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
 const siteHeader = document.querySelector('.site-header');
 const navAnchorLinks = [...document.querySelectorAll('[data-nav-link]')];
+
+const clockWidget = document.querySelector('[data-date-time-widget]');
+
+if (clockWidget) {
+  const timeDisplay = clockWidget.querySelector('[data-clock-time]');
+  const dateDisplay = clockWidget.querySelector('[data-clock-date]');
+  const zoneDisplay = clockWidget.querySelector('[data-clock-zone]');
+  const formatButton = clockWidget.querySelector('[data-clock-format]');
+  const formatLabel = clockWidget.querySelector('[data-clock-format-label]');
+  const themeButton = clockWidget.querySelector('[data-clock-theme]');
+  const clockFormatKey = getCarineStorageKey('clock-format');
+  const clockThemeKey = getCarineStorageKey('clock-theme');
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const localHourCycle = new Intl.DateTimeFormat(undefined, { hour: 'numeric' }).resolvedOptions().hourCycle;
+  let clockFormat = localHourCycle === 'h23' || localHourCycle === 'h24' ? '24' : '12';
+  let clockTheme = systemPrefersDark.matches ? 'dark' : 'light';
+
+  try {
+    const savedFormat = localStorage.getItem(clockFormatKey);
+    const savedTheme = localStorage.getItem(clockThemeKey);
+    if (savedFormat === '12' || savedFormat === '24') clockFormat = savedFormat;
+    if (savedTheme === 'light' || savedTheme === 'dark') clockTheme = savedTheme;
+  } catch (_) { /* Private browsing can disable storage. */ }
+
+  const applyClockPreferences = () => {
+    const uses24HourTime = clockFormat === '24';
+    const usesDarkTheme = clockTheme === 'dark';
+    clockWidget.dataset.theme = clockTheme;
+    formatLabel.textContent = uses24HourTime ? '24H' : '12H';
+    formatButton.setAttribute('aria-pressed', String(uses24HourTime));
+    formatButton.setAttribute('aria-label', `Switch to ${uses24HourTime ? '12' : '24'}-hour time`);
+    themeButton.setAttribute('aria-pressed', String(!usesDarkTheme));
+    themeButton.setAttribute('aria-label', `Use ${usesDarkTheme ? 'light' : 'dark'} clock theme`);
+  };
+
+  const renderLocalDateTime = () => {
+    const now = new Date();
+    const requestedLanguage = navigator.languages?.[0] || navigator.language;
+    let language;
+    try {
+      [language] = Intl.getCanonicalLocales(requestedLanguage?.split('@')[0].replace(/_/g, '-'));
+    } catch (_) { language = undefined; }
+    timeDisplay.textContent = new Intl.DateTimeFormat(language, {
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: clockFormat === '12'
+    }).format(now);
+    dateDisplay.textContent = new Intl.DateTimeFormat(language, {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    }).format(now);
+    zoneDisplay.textContent = new Intl.DateTimeFormat(language, { timeZoneName: 'short' })
+      .formatToParts(now).find((part) => part.type === 'timeZoneName')?.value || '';
+    timeDisplay.dateTime = now.toISOString();
+    dateDisplay.dateTime = now.toISOString().slice(0, 10);
+    clockWidget.setAttribute('aria-label', `Local date and time: ${dateDisplay.textContent}, ${timeDisplay.textContent}`);
+  };
+
+  formatButton.addEventListener('click', () => {
+    clockFormat = clockFormat === '12' ? '24' : '12';
+    try { localStorage.setItem(clockFormatKey, clockFormat); } catch (_) { /* Keep this session's preference. */ }
+    applyClockPreferences();
+    renderLocalDateTime();
+  });
+
+  themeButton.addEventListener('click', () => {
+    clockTheme = clockTheme === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem(clockThemeKey, clockTheme); } catch (_) { /* Keep this session's preference. */ }
+    applyClockPreferences();
+  });
+
+  applyClockPreferences();
+  renderLocalDateTime();
+  window.setInterval(renderLocalDateTime, 1000);
+}
 
 const closeMobileNavigation = () => {
   navToggle?.setAttribute('aria-expanded', 'false');
