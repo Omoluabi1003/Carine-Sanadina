@@ -10674,3 +10674,29 @@ img, video { height: auto; }
   .button, .contact-paths span { width: 100%; }
   .achievement-card { grid-template-columns: 40px minmax(0, 1fr); }
 }
+
+/* High-contrast controls on the sapphire theme.
+   The editorial layer above originally used --ink as a light-page button fill and
+   a fixed brown hero heading. In the blue theme --ink is white, which made primary
+   labels white-on-white and left hero copy nearly invisible. Keep these semantic
+   elements explicitly paired with dark-blue surfaces instead of inherited palette
+   tokens so later theme refinements cannot recreate that contrast regression. */
+.hero .subtitle { color: var(--text-secondary-dark); }
+.hero h2 { color: var(--text-primary-dark); }
+
+.button-primary,
+.install-toast .install-toast__button {
+  border: 1px solid #7db7ff;
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(2, 8, 23, 0.32);
+}
+
+.button-primary:hover,
+.button-primary:focus-visible,
+.install-toast .install-toast__button:hover,
+.install-toast .install-toast__button:focus-visible {
+  border-color: #bfdbfe;
+  background: #163fae;
+  color: #ffffff;
+}
