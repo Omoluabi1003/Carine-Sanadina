@@ -94,3 +94,23 @@ test('iOS flattens the filtered 3D ancestor that can freeze child repaints', () 
   assert.match(css, /html\.is-ios \.turntable-assembly \.console-turntable[\s\S]*?filter:\s*none/);
   assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?contain:\s*layout paint style/);
 });
+
+test('audiophile belt-drive is the default turntable', () => {
+  assert.match(html, /<option value="audiophile"[^>]*selected>Audiophile Belt-Drive<\/option>/);
+  assert.match(script, /let saved = 'audiophile'/);
+});
+
+test('track artwork invalidates composited WebKit layers when a track changes', () => {
+  assert.match(script, /const syncArtworkSource = \(image, source, trackId = ''\) =>/);
+  assert.match(script, /image\.dataset\.artworkRevision = revision/);
+  assert.match(script, /image\.getBoundingClientRect\(\)/);
+  assert.match(script, /syncArtworkSource\(mobileCover, player\.dataset\.trackCover/);
+  assert.match(script, /syncArtworkSource\(mini\.cover, player\.dataset\.trackCover/);
+  assert.match(css, /\.mobile-player-cover\.is-artwork-refreshing/);
+});
+
+test('featured reflections retain a legible editorial text palette', () => {
+  assert.match(css, /\.reflections \.reflection-card blockquote\s*\{[\s\S]*?color:\s*#291b18/);
+  assert.match(css, /\.reflections \.reflection-prompt strong,[\s\S]*?color:\s*#612237/);
+  assert.match(css, /\.reflections \.reflection-card__meta,[\s\S]*?color:\s*#674f47/);
+});

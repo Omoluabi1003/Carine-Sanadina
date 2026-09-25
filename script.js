@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-19-matondo';
+const APP_VERSION = 'carine-site-2026-09-25-player-artwork';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -6288,6 +6288,33 @@ if (musicPlayers.length) {
     image.dataset.artworkFit = getTrackArtworkFit(player);
   };
 
+  // WebKit can retain an old decoded bitmap inside the continuously
+  // transformed vinyl layer. Invalidate that composited layer after every
+  // source update rather than altering the canonical artwork URL.
+  let artworkPaintRevision = 0;
+  const syncArtworkSource = (image, source, trackId = '') => {
+    if (!image || !source) return;
+    const revision = String(++artworkPaintRevision);
+    image.dataset.artworkTrack = trackId;
+    image.dataset.artworkRevision = revision;
+    image.classList.add('is-artwork-refreshing');
+    if (image.getAttribute('src') !== source) image.setAttribute('src', source);
+
+    const revealArtwork = () => {
+      if (image.dataset.artworkRevision !== revision) return;
+      image.getBoundingClientRect();
+      requestAnimationFrame(() => {
+        if (image.dataset.artworkRevision === revision) image.classList.remove('is-artwork-refreshing');
+      });
+    };
+
+    if (image.complete && image.naturalWidth > 0) revealArtwork();
+    else {
+      image.addEventListener('load', revealArtwork, { once: true });
+      image.addEventListener('error', revealArtwork, { once: true });
+    }
+  };
+
   const applyResolvedAudioSource = (player, audio) => {
     const verifiedSource = getVerifiedAudioSource(player);
 
@@ -7114,13 +7141,13 @@ if (musicPlayers.length) {
     if (!player) return;
     const title = getTrackTitle(player);
     if (stageCover) {
-      stageCover.src = player.dataset.trackCover || '';
+      syncArtworkSource(stageCover, player.dataset.trackCover || '', player.dataset.trackId || '');
       syncArtworkFit(stageCover, player);
     }
     if (stageTitle) stageTitle.textContent = title;
     if (stageArtist) stageArtist.textContent = player.dataset.trackArtist || 'Carine Sanadina';
     if (mobileCover) {
-      mobileCover.src = player.dataset.trackCover || '';
+      syncArtworkSource(mobileCover, player.dataset.trackCover || '', player.dataset.trackId || '');
       mobileCover.alt = `${title} ${translate('audio.coverArt')}`;
       syncArtworkFit(mobileCover, player);
     }
@@ -8913,7 +8940,7 @@ if (musicPlayers.length) {
     miniPlayer.setAttribute('aria-hidden', 'false');
     updateMiniPlayerBodyState();
     miniPlayer.classList.toggle('is-playing', audio && !audio.paused && !audio.ended);
-    mini.cover.src = player.dataset.trackCover;
+    syncArtworkSource(mini.cover, player.dataset.trackCover, player.dataset.trackId || '');
     syncArtworkFit(mini.cover, player);
     const trackTitle = getTrackTitle(player);
     mini.cover.alt = `${trackTitle} ${translate('audio.coverArt')}`;
@@ -10528,7 +10555,7 @@ premiumDepthQuery.addEventListener?.('change', resetPremiumDepth);
     consoleElement.querySelector('.deck-model').textContent = name;
     consoleElement.querySelector('[data-turntable-description]').textContent = description;
   };
-  let saved = 'direct';
+  let saved = 'audiophile';
   try { saved = localStorage.getItem('carine-turntable-model') || saved; } catch (_) { /* Storage may be disabled. */ }
   applyModel(saved);
   selector.addEventListener('change', () => {

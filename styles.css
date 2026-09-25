@@ -3025,6 +3025,32 @@ html.is-ios .music-visualizer.visualizer-idle .visualizer-units {
 .reflection-actions { display: flex; justify-content: center; margin-top: 28px; }
 .reflection-actions [hidden] { display: none; }
 
+/* These cards become light editorial surfaces later in the cascade, so their
+   detailed copy needs an explicit, high-contrast ink palette as well. */
+.reflections .reflection-featured-label { color: #6d3d14; }
+.reflections .reflection-card__meta,
+.reflections .reflection-card__meta time { color: #674f47; }
+.reflections .reflection-card blockquote {
+  color: #291b18;
+  border-left-color: #9a5a22;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.reflections .reflection-prompt {
+  color: #49352f;
+  background: rgba(122, 73, 30, 0.09);
+}
+.reflections .reflection-prompt strong,
+.reflections .reflection-link { color: #612237; }
+
+.mobile-player-cover.is-artwork-refreshing,
+.mini-player-cover.is-artwork-refreshing {
+  opacity: 0.985;
+  transform: translateZ(0.01px);
+  -webkit-transform: translateZ(0.01px);
+}
+
 .install-toast {
   position: fixed;
   right: max(18px, env(safe-area-inset-right));
