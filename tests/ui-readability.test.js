@@ -124,3 +124,35 @@ test('mobile navigation opens and exposes its links', async () => {
   assert.ok(await page.locator('.nav-links a').count() >= 5);
   await page.close();
 });
+
+test('hero and install actions preserve readable sapphire-theme contrast', async () => {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  await page.goto(origin, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    document.querySelector('[data-cinematic-splash]')?.remove();
+    document.documentElement.classList.remove('splash-booting', 'splash-ready');
+    document.querySelector('[data-install-toast]')?.removeAttribute('hidden');
+  });
+
+  const colors = await page.evaluate(() => {
+    const read = (selector) => {
+      const style = getComputedStyle(document.querySelector(selector));
+      return { color: style.color, backgroundColor: style.backgroundColor };
+    };
+    return {
+      subtitle: read('.hero .subtitle'),
+      heading: read('.hero h2'),
+      primary: read('.hero .button-primary'),
+      install: read('[data-install-button]')
+    };
+  });
+
+  assert.equal(colors.subtitle.color, 'rgb(230, 240, 255)');
+  assert.equal(colors.heading.color, 'rgb(255, 250, 241)');
+  for (const control of [colors.primary, colors.install]) {
+    assert.equal(control.color, 'rgb(255, 255, 255)');
+    assert.equal(control.backgroundColor, 'rgb(29, 78, 216)');
+    assert.notEqual(control.color, control.backgroundColor);
+  }
+  await page.close();
+});
