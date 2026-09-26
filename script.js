@@ -2,6 +2,7 @@ const CARINE_STORAGE_PREFIX = 'carine-sanadina';
 const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
+const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
 const APP_VERSION = 'carine-site-2026-09-26-universal-audio-visualizer';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
@@ -5775,21 +5776,18 @@ const initializePwaExperience = () => {
       serviceWorkerUrl.searchParams.set('v', APP_VERSION);
 
       navigator.serviceWorker.register(serviceWorkerUrl).then((registration) => {
-        registration.update();
-
-        if (registration.waiting) {
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           document.body.classList.add('app-update-ready');
+          try { window.sessionStorage.setItem(getCarineStorageKey('app-update-available'), 'true'); } catch (_) { /* Storage may be unavailable. */ }
+          window.console?.info?.('[SERVICE_WORKER] New controller active; automatic reload suppressed.');
         });
 
         registration.addEventListener('updatefound', () => {
           const installingWorker = registration.installing;
           installingWorker?.addEventListener('statechange', () => {
             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              installingWorker.postMessage({ type: 'SKIP_WAITING' });
+              document.body.classList.add('app-update-ready');
+              try { window.sessionStorage.setItem(getCarineStorageKey('app-update-available'), 'true'); } catch (_) { /* Storage may be unavailable. */ }
             }
           });
         });
@@ -6416,14 +6414,20 @@ if (musicPlayers.length) {
 
   const getStoredPlayerState = () => {
     try {
-      const storedState = JSON.parse(window.localStorage.getItem(PLAYER_STORAGE_KEY) || '{}');
+      // sessionStorage is the recovery source for an OS-discarded tab. Keep the
+      // local preference record as a fallback, but never let an app update erase
+      // the active listening session.
+      const sessionState = JSON.parse(window.sessionStorage.getItem(PLAYER_SESSION_STORAGE_KEY) || '{}');
+      const localState = JSON.parse(window.localStorage.getItem(PLAYER_STORAGE_KEY) || '{}');
+      const hasSessionState = Object.keys(sessionState).length > 0;
+      const storedState = hasSessionState ? sessionState : localState;
 
-      if (storedState.playlistVersion && storedState.playlistVersion !== PLAYLIST_VERSION) {
+      if (!hasSessionState && storedState.playlistVersion && storedState.playlistVersion !== PLAYLIST_VERSION) {
         clearVersionedPlaylistState();
         return {};
       }
 
-      if (!storedState.playlistVersion && Object.keys(storedState).length > 0) {
+      if (!hasSessionState && !storedState.playlistVersion && Object.keys(storedState).length > 0) {
         clearVersionedPlaylistState();
         return {};
       }
@@ -6439,17 +6443,26 @@ if (musicPlayers.length) {
     try {
       const activeIndex = activePlayer ? musicPlayers.indexOf(activePlayer) : 0;
       const audio = activePlayer ? getAudio(activePlayer) : null;
-      window.localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify({
+      const state = {
         playlistVersion: PLAYLIST_VERSION,
+        route: `${window.location.pathname}${window.location.search}${window.location.hash}`,
         activeTrackId: activePlayer?.dataset.trackId || DEFAULT_MUSIC_TRACK?.id || '',
+        trackUrl: activePlayer ? getVerifiedAudioSource(activePlayer) : '',
         activeIndex: Math.max(activeIndex, 0),
         currentTime: audio ? Math.floor(audio.currentTime) : 0,
+        playing: Boolean(audio && !audio.paused && !audio.ended),
         volume: mini?.volume ? Number(mini.volume.value) : 0.85,
+        visualizationMode: selectedVisualizationStyle,
+        playerExpanded: Boolean(mobilePlayer?.classList.contains('is-open') || mobilePlayer?.classList.contains('is-expanded-player')),
         shuffleEnabled,
         shuffleQueue,
         shuffleHistory,
-        repeatMode
-      }));
+        repeatMode,
+        savedAt: Date.now()
+      };
+      const serializedState = JSON.stringify(state);
+      window.sessionStorage.setItem(PLAYER_SESSION_STORAGE_KEY, serializedState);
+      window.localStorage.setItem(PLAYER_STORAGE_KEY, serializedState);
     } catch (error) {
       // Storage can be unavailable in restricted browsing contexts.
     }
@@ -7813,34 +7826,41 @@ if (musicPlayers.length) {
 
     renderLoop(time = window.performance.now()) {
       this.frameId = 0;
-      const dt = Math.min(50, Math.max(0, this.previousTimestamp ? time - this.previousTimestamp : 16.67));
-      this.previousTimestamp = time;
-      const audio = this.activeAudio;
-      const playing = Boolean(audio && !audio.paused && !audio.ended);
-      const contextRunning = this.audioContext?.state === 'running';
-      const analyserAvailable = Boolean(playing && contextRunning && this.analyser && this.sourceConnected);
+      try {
+        const dt = Math.min(50, Math.max(0, this.previousTimestamp ? time - this.previousTimestamp : 16.67));
+        this.previousTimestamp = time;
+        const audio = this.activeAudio;
+        const playing = Boolean(audio && !audio.paused && !audio.ended);
+        const contextRunning = this.audioContext?.state === 'running';
+        const analyserAvailable = Boolean(playing && contextRunning && this.analyser && this.sourceConnected);
 
-      if (playing && !contextRunning && this.audioContext && time - this.lastRecoveryAttempt > 1500 && document.visibilityState === 'visible') {
-        this.lastRecoveryAttempt = time;
-        this.audioContext.resume?.().catch((error) => this.warnFallback(error?.message || error));
-      }
+        if (playing && !contextRunning && this.audioContext && time - this.lastRecoveryAttempt > 1500 && document.visibilityState === 'visible') {
+          this.lastRecoveryAttempt = time;
+          this.audioContext.resume?.().catch((error) => this.warnFallback(error?.message || error));
+        }
 
-      if (!document.hidden) {
-        const forceFallback = this.getForceMode() === 'fallback';
-        const analyserConnected = analyserAvailable && !forceFallback;
-        if (analyserConnected) this.inspectAnalyser(audio);
-        const live = analyserConnected && this.flatFrames < 20;
-        const bands = this.sampleBands(time, !playing, !live, dt);
-        this.liveBlend += ((live ? 1 : 0) - this.liveBlend) * Math.min(1, dt / 180);
-        this.fallbackActive = playing && !live;
-        this.analyserFlat = analyserConnected ? this.analyserFlat : true;
-        this.mode = playing ? (this.buffering ? 'waiting' : 'playing') : (audio && !audio.ended ? 'paused' : 'idle');
-        this.setFallbackNote(this.fallbackActive);
-        this.applyTheme(this.mode);
-        this.renderFrame(bands, time, playing ? 'playing' : this.mode);
-        this.frameCount += 1;
+        if (!document.hidden) {
+          const forceFallback = this.getForceMode() === 'fallback';
+          const analyserConnected = analyserAvailable && !forceFallback;
+          if (analyserConnected) this.inspectAnalyser(audio);
+          const live = analyserConnected && this.flatFrames < 20;
+          const bands = this.sampleBands(time, !playing, !live, dt);
+          this.liveBlend += ((live ? 1 : 0) - this.liveBlend) * Math.min(1, dt / 180);
+          this.fallbackActive = playing && !live;
+          this.analyserFlat = analyserConnected ? this.analyserFlat : true;
+          this.mode = playing ? (this.buffering ? 'waiting' : 'playing') : (audio && !audio.ended ? 'paused' : 'idle');
+          this.setFallbackNote(this.fallbackActive);
+          this.applyTheme(this.mode);
+          this.renderFrame(bands, time, playing ? 'playing' : this.mode);
+          this.frameCount += 1;
+        }
+      } catch (error) {
+        // A canvas/GPU failure is isolated from media playback and the app shell.
+        this.warnFallback(`[VISUALIZER] frame disabled: ${error?.message || error}`);
+        this.enabled = false;
+      } finally {
+        this.frameId = window.requestAnimationFrame((nextTime) => this.renderLoop(nextTime));
       }
-      this.frameId = window.requestAnimationFrame((nextTime) => this.renderLoop(nextTime));
     }
 
     destroy() {
@@ -8892,25 +8912,27 @@ if (musicPlayers.length) {
   };
 
   const animateVinylRotation = (frameTime) => {
-    const elapsed = vinylLastFrameTime ? Math.min((frameTime - vinylLastFrameTime) / 1000, 0.05) : 0;
-    vinylLastFrameTime = frameTime;
-    // The media element is the source of truth. UI state and Web Audio can both
-    // lag behind after an iOS media-process suspension.
-    const audio = activePlayer ? getAudio(activePlayer) : null;
-    const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended && audio.readyState >= 2);
-    const targetVelocity = actuallyPlaying ? vinylPlaybackSpeed : 0;
-    vinylVelocity = targetVelocity;
-    if (actuallyPlaying !== isVinylPlaying) syncVinylExperience(actuallyPlaying, actuallyPlaying ? 'playing' : (audio?.ended ? 'ended' : 'paused'));
+    try {
+      const elapsed = vinylLastFrameTime ? Math.min((frameTime - vinylLastFrameTime) / 1000, 0.05) : 0;
+      vinylLastFrameTime = frameTime;
+      // The media element is the source of truth. UI state and Web Audio can both
+      // lag behind after an iOS media-process suspension.
+      const audio = activePlayer ? getAudio(activePlayer) : null;
+      const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended && audio.readyState >= 2);
+      const targetVelocity = actuallyPlaying ? vinylPlaybackSpeed : 0;
+      vinylVelocity = targetVelocity;
+      if (actuallyPlaying !== isVinylPlaying) syncVinylExperience(actuallyPlaying, actuallyPlaying ? 'playing' : (audio?.ended ? 'ended' : 'paused'));
 
-    if (vinylVelocity > 0.01) {
-      vinylRotation = (vinylRotation + vinylVelocity * elapsed) % 360;
-      renderVinylRotation();
-    } else {
-      vinylVelocity = 0;
+      if (vinylVelocity > 0.01) {
+        vinylRotation = (vinylRotation + vinylVelocity * elapsed) % 360;
+        renderVinylRotation();
+      } else {
+        vinylVelocity = 0;
+      }
+    } catch (error) {
+      window.console?.error?.('[VISUALIZER] vinyl frame failed without interrupting playback', error);
     }
-
-    // Keep one loop alive while paused so WebKit can resume without rebuilding
-    // a callback chain after lock-screen, tab, or back-forward-cache recovery.
+    // One failed visual frame must not terminate the only rotation loop.
     vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
   };
 
@@ -10265,10 +10287,30 @@ if (musicPlayers.length) {
   const restorePlayerStateWithoutAutoplay = () => {
     const storedState = getStoredPlayerState();
     restoreStateRan = true;
+    if (!window.location.hash && storedState.route) {
+      try {
+        const restoredRoute = new URL(storedState.route, window.location.origin);
+        if (restoredRoute.origin === window.location.origin && restoredRoute.pathname === window.location.pathname && restoredRoute.hash) {
+          window.console?.info?.('[NAVIGATION]', {
+            destination: restoredRoute.hash,
+            source: 'player-session-restore',
+            reason: 'document-recreated-without-hash',
+            currentRoute: window.location.pathname,
+            playbackState: storedState.playing ? 'previously-playing' : 'paused'
+          });
+          window.history.replaceState(window.history.state, '', `${restoredRoute.pathname}${restoredRoute.search}${restoredRoute.hash}`);
+        }
+      } catch (_) { /* Ignore invalid or cross-origin recovery routes. */ }
+    }
     shuffleEnabled = Boolean(storedState.shuffleEnabled);
     shuffleQueue = Array.isArray(storedState.shuffleQueue) ? storedState.shuffleQueue.filter((trackId) => MUSIC_TRACKS_BY_ID.has(trackId)) : [];
     shuffleHistory = Array.isArray(storedState.shuffleHistory) ? storedState.shuffleHistory.filter((trackId) => MUSIC_TRACKS_BY_ID.has(trackId)) : [];
     repeatMode = ['all', 'one', 'off'].includes(storedState.repeatMode) ? storedState.repeatMode : 'all';
+    if (storedState.visualizationMode) {
+      selectedVisualizationStyle = normalizeVisualizationStyle(storedState.visualizationMode);
+      visualizerController?.switchMode(selectedVisualizationStyle);
+      updateVisualizerToggleUI();
+    }
     if (mini?.volume && Number.isFinite(storedState.volume)) {
       mini.volume.value = String(Math.min(Math.max(storedState.volume, 0), 1));
       setRangeFill(mini.volume, mini.volume.value, mini.volume.max);
@@ -10281,15 +10323,49 @@ if (musicPlayers.length) {
       defaultTrackInitializationRan = !storedState.activeTrackId;
       const restoredAudio = getAudio(restoredPlayer);
       if (restoredAudio && Number.isFinite(storedState.currentTime) && storedState.currentTime > 0) {
-        restoredAudio.currentTime = storedState.currentTime;
+        const restorePosition = () => {
+          const duration = Number.isFinite(restoredAudio.duration) ? restoredAudio.duration : storedState.currentTime;
+          restoredAudio.currentTime = Math.min(storedState.currentTime, Math.max(0, duration));
+        };
+        if (restoredAudio.readyState >= 1) restorePosition();
+        else restoredAudio.addEventListener('loadedmetadata', restorePosition, { once: true });
       }
       setActiveTrack(restoredPlayer);
+      // Deliberately restore the screen but not autoplay: browser policies may
+      // require a fresh gesture after the operating system recreated the page.
+      if (storedState.playerExpanded) setMobilePlayerOpen(true);
       if (shuffleEnabled && !shuffleQueue.length) createShuffleQueue(activeTrackId);
     }
     reconcileAudioState('restore-without-autoplay');
   };
 
   restorePlayerStateWithoutAutoplay();
+  // Persist playback position at a bounded cadence rather than from animation
+  // frames/timeupdate. This is also the non-destructive player watchdog.
+  window.setInterval(() => {
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    if (activePlayer) persistPlayerState();
+    if (document.visibilityState === 'visible' && activePlayer && !audio) {
+      window.console?.warn?.('[MEMORY] Player watchdog found a missing audio element; route preserved.');
+    }
+  }, 4000);
+
+  const reportGlobalPlayerError = (kind, reason) => {
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    window.console?.error?.('[GLOBAL_ERROR]', {
+      kind,
+      message: reason?.message || String(reason || 'unknown'),
+      stack: reason?.stack || '',
+      route: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+      track: activePlayer?.dataset.trackId || '',
+      currentTime: audio?.currentTime || 0,
+      readyState: audio?.readyState ?? -1,
+      audioContextState: getAudioContextState(),
+      visibilityState: document.visibilityState
+    });
+  };
+  window.addEventListener('error', (event) => reportGlobalPlayerError('error', event.error || event.message));
+  window.addEventListener('unhandledrejection', (event) => reportGlobalPlayerError('unhandledrejection', event.reason));
   window.addEventListener('focus', () => {
     lastLifecycleEvent = 'focus';
     const audio = reconcileAudioState('focus');
