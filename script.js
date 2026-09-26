@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-26-adaptive-rendering';
+const APP_VERSION = 'carine-site-2026-09-26-content-platform';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -10411,6 +10411,14 @@ if (musicPlayers.length) {
     }
     reconcileAudioState('restore-without-autoplay');
   };
+
+  // Additive routing bridge: selects an existing player without recreating or autoplaying its audio.
+  window.addEventListener('carine:selecttrack', (event) => {
+    const requestedPlayer = musicPlayers.find((player) => player.dataset.trackId === event.detail?.trackId);
+    if (!requestedPlayer) return;
+    setActiveTrack(requestedPlayer);
+    if (event.detail?.autoplay) playAudio(requestedPlayer);
+  });
 
   restorePlayerStateWithoutAutoplay();
   // Persist playback position at a bounded cadence rather than from animation
