@@ -41,3 +41,20 @@ test('canvas and lifecycle adapt across mobile and restored pages', () => {
   assert.match(script, /window\.addEventListener\('pageshow',[\s\S]*?recoverVisualizer\(\)/);
   assert.match(script, /document\.addEventListener\('visibilitychange',[\s\S]*?recoverVisualizer\(\)/);
 });
+
+test('visualization uses a cached, contrast-aware frequency palette', () => {
+  assert.match(script, /this\.visualGradientKey = ''/);
+  assert.match(script, /createLinearGradient\(0, 0, this\.cssWidth, 0\)/);
+  for (const color of ['#00D68F', '#4EC7C2', '#38BDF8', '#8B5CF6', '#E0B968']) {
+    assert.match(script, new RegExp(color));
+  }
+  assert.match(script, /luminance > 0\.55/);
+  assert.match(script, /Math\.max\(0\.82,/);
+});
+
+test('waveform strokes remain crisp and disable glow first on low-power devices', () => {
+  assert.match(script, /width < 600 \? 2 : width < 900 \? 2\.4 : 2\.8/);
+  assert.match(script, /context\.lineCap = 'round'/);
+  assert.match(script, /context\.lineJoin = 'round'/);
+  assert.match(script, /navigator\.deviceMemory && navigator\.deviceMemory <= 2/);
+});
