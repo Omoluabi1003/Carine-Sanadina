@@ -45,6 +45,43 @@ writePageLifecycleRecord({
 window.addEventListener('pageshow', (event) => writePageLifecycleRecord({ pageshowPersisted: Boolean(event.persisted) }));
 window.addEventListener('pagehide', () => writePageLifecycleRecord({ pagehideAt: Date.now() }));
 
+// Continuity recovery must run before the cinematic splash or any feature boot.
+// Mobile Safari/WebKit can discard and recreate a document under memory pressure.
+// That is not application navigation, so restore the last in-app route immediately
+// and mark the boot as a recovery. The full player state is reconciled later without
+// autoplay, in accordance with browser media policies.
+const CONTINUITY_RECOVERY_WINDOW_MS = 30 * 60 * 1000;
+const getEarlyContinuityState = () => {
+  try {
+    const sessionState = JSON.parse(window.sessionStorage.getItem(PLAYER_SESSION_STORAGE_KEY) || '{}');
+    const localState = JSON.parse(window.localStorage.getItem(PLAYER_STATE_STORAGE_KEY) || '{}');
+    return Object.keys(sessionState).length ? sessionState : localState;
+  } catch (_) {
+    return {};
+  }
+};
+const earlyContinuityState = getEarlyContinuityState();
+const continuityStateAge = Date.now() - Number(earlyContinuityState.savedAt || 0);
+const isContinuityRecoveryBoot = Boolean(
+  earlyContinuityState.route
+  && Number.isFinite(continuityStateAge)
+  && continuityStateAge >= 0
+  && continuityStateAge <= CONTINUITY_RECOVERY_WINDOW_MS
+  && previousPageLifecycle.bootId
+);
+if (isContinuityRecoveryBoot) {
+  try {
+    const recoveryUrl = new URL(earlyContinuityState.route, window.location.origin);
+    if (recoveryUrl.origin === window.location.origin && recoveryUrl.pathname === window.location.pathname) {
+      const currentRoute = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      const recoveryRoute = `${recoveryUrl.pathname}${recoveryUrl.search}${recoveryUrl.hash}`;
+      if (currentRoute !== recoveryRoute) window.history.replaceState(window.history.state, '', recoveryRoute);
+      document.documentElement.classList.add('continuity-recovery');
+      writePageLifecycleRecord({ continuityRecovery: true, continuityRoute: recoveryRoute });
+    }
+  } catch (_) { /* Invalid recovery state must never block application boot. */ }
+}
+
 const translations = {};
 
 function mergeTranslationAdditions(additions, label = 'translation additions') {
@@ -5249,6 +5286,14 @@ const initializeCinematicSplash = () => {
     return;
   }
 
+  // A browser/OS document recreation is not a new visit. Replaying the landing
+  // splash makes a recovered session look like an application reset, so complete
+  // it immediately and reveal the already-restored route/player shell.
+  if (isContinuityRecoveryBoot) {
+    completeCinematicSplash();
+    return;
+  }
+
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const animationReady = waitForSplashPaint(splash);
   const returningVisitor = hasSuccessfulSplashLoad();
@@ -7896,7 +7941,10 @@ if (musicPlayers.length) {
         }
 
         if (!document.hidden && playing) {
-          const constrainedDevice = reduceMotion || isCoarsePointerDevice() || (navigator.deviceMemory && navigator.deviceMemory <= 4);
+          // Mobile WebKit is especially sensitive to sustained compositor/GPU pressure.
+          // Keep the experience fluid at 30fps on coarse-pointer/mobile devices;
+          // native audio playback remains independent and full quality.
+          const constrainedDevice = reduceMotion || isCoarsePointerDevice() || isIosSafari || (navigator.deviceMemory && navigator.deviceMemory <= 4);
           const minimumFrameInterval = constrainedDevice ? 1000 / 30 : 1000 / 60;
           if (this.lastDrawTime && time - this.lastDrawTime < minimumFrameInterval) return;
           this.lastDrawTime = time;
