@@ -8,9 +8,9 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const script = fs.readFileSync(path.join(root, 'script.js'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
 
-test('full-track waveform catalog contains bounded genuine peaks for all nine tracks', () => {
+test('full-track waveform catalog contains bounded genuine peaks for every catalog track', () => {
   const catalog = JSON.parse(fs.readFileSync(path.join(root, 'public/waveforms.json'), 'utf8'));
-  assert.equal(Object.keys(catalog).length, 9);
+  assert.equal(Object.keys(catalog).length, 10);
   for (const track of Object.values(catalog)) {
     assert.ok(track.duration > 60);
     assert.equal(track.peaks.length, 120);
