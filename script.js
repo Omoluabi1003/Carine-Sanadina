@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-26-motion-system';
+const APP_VERSION = 'carine-site-2026-09-26-universal-audio-visualizer';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -7504,6 +7504,12 @@ if (musicPlayers.length) {
       this.sourceReused = false;
       this.lastThemeKey = '';
       this.lastDrawTime = 0;
+      this.previousTimestamp = 0;
+      this.lastRecoveryAttempt = 0;
+      this.buffering = false;
+      this.liveBlend = 0;
+      this.smoothedMetrics = { subBass: 0, bass: 0, lowMid: 0, mid: 0, highMid: 0, treble: 0, rms: 0, peak: 0, energy: 0 };
+      this.resizeObserver = null;
       this.lastDiagnosticsTime = 0;
       this.lastReportedFrameCount = 0;
       this.lastDiagnosticTransform = '';
@@ -7514,12 +7520,12 @@ if (musicPlayers.length) {
       this.canvasSizeWarned = false;
       this.fallbackWarned = false;
       this.frequencyData = new Uint8Array(frequencyBinCount);
-      this.timeData = new Uint8Array(frequencyBinCount);
+      this.timeData = new Uint8Array(2048);
       this.probeFrequencyData = new Uint8Array(frequencyBinCount);
       this.probeTimeData = new Uint8Array(frequencyBinCount);
       this.previousProbeData = new Uint8Array(frequencyBinCount);
       this.spectrumBands = new Float32Array(WAVEFORM_UNIT_COUNT);
-      this.waveformData = new Uint8Array(WAVEFORM_SAMPLE_COUNT);
+      this.waveformData = new Uint8Array(2048);
       this.waveformPoints = new Float32Array(WAVEFORM_UNIT_COUNT);
       this.spectrumPeaks = new Float32Array(WAVEFORM_UNIT_COUNT);
       this.peakUntil = new Float64Array(WAVEFORM_UNIT_COUNT);
@@ -7557,6 +7563,12 @@ if (musicPlayers.length) {
       this.resize();
       this.setFallbackNote(false);
       this.idle('idle');
+      if (typeof window.ResizeObserver === 'function') {
+        this.resizeObserver = new window.ResizeObserver(() => this.resize());
+        this.resizeObserver.observe(this.container);
+        if (this.halo) this.resizeObserver.observe(this.halo);
+      }
+      this.ensureFrameLoop();
       this.logDiagnostics('init');
     }
 
@@ -7634,7 +7646,12 @@ if (musicPlayers.length) {
         return null;
       }
 
-      if (!this.audioContext || this.audioContext.state === 'closed') {
+      if (this.audioContext?.state === 'closed') {
+        this.warnFallback('AudioContext is closed; preserving media source ownership and using fallback.');
+        return null;
+      }
+
+      if (!this.audioContext) {
         if (!allowCreate) {
           this.warnFallback('AudioContext unavailable outside a user gesture.');
           return null;
@@ -7661,6 +7678,11 @@ if (musicPlayers.length) {
         this.analyser.smoothingTimeConstant = 0.82;
         this.analyser.minDecibels = -90;
         this.analyser.maxDecibels = -10;
+        this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
+        this.probeFrequencyData = new Uint8Array(this.analyser.frequencyBinCount);
+        this.previousProbeData = new Uint8Array(this.analyser.frequencyBinCount);
+        this.waveformData = new Uint8Array(this.analyser.fftSize);
+        this.probeTimeData = new Uint8Array(this.analyser.fftSize);
       }
 
       if (!this.analyserConnectedToDestination) {
@@ -7735,83 +7757,93 @@ if (musicPlayers.length) {
       if (!this.container) return;
       this.activeAudio = audio || this.activeAudio;
       this.activeTrackTitle = activePlayer ? getTrackTitle(activePlayer) : this.activeTrackTitle;
-      this.cancelFrame();
-
-      if (!this.enabled || reduceMotion || this.getForceMode() === 'idle') {
-        this.renderStatic(audio && !audio.paused && !audio.ended ? 'paused' : 'idle');
-        return;
-      }
-
       this.mode = 'playing';
-      this.fallbackActive = true;
-      this.analyserFlat = true;
-      this.lastDrawTime = 0;
-      this.lastAnalyserAudioTime = Math.max(0, this.activeAudio?.currentTime || 0);
-      this.flatFrames = 0;
-      this.activeFrames = 0;
-      this.previousProbeData.fill(0);
+      this.buffering = false;
       this.resize();
-      this.applyTheme('playing');
+      this.ensureFrameLoop();
       setVisualizerHelper('');
-      this.setFallbackNote(false);
-      this.logDiagnostics(isIosSafari ? 'start-ios-fallback-first' : 'start', true);
-
-      const tick = (time = window.performance.now()) => {
-        const currentAudio = this.activeAudio;
-        if (!currentAudio || currentAudio.paused || currentAudio.ended) {
-          this.idle(currentAudio && !currentAudio.ended ? 'paused' : 'idle');
-          return;
-        }
-
-        if (!document.hidden) {
-          this.lastDrawTime = time;
-          this.inspectAnalyser(currentAudio);
-          const forceMode = this.getForceMode();
-          const useAnalyser = forceMode !== 'fallback' && Boolean(this.analyser && this.sourceConnected);
-          const drawTime = useAnalyser ? time : 0;
-          const bands = this.sampleBands(drawTime, false, !useAnalyser);
-          this.fallbackActive = !useAnalyser || this.flatFrames >= 20;
-          this.setFallbackNote(this.fallbackActive);
-          this.applyTheme('playing');
-          this.renderFrame(bands, drawTime, 'playing');
-          this.frameCount += 1;
-          this.logDiagnostics('tick');
-        }
-        this.frameId = window.requestAnimationFrame(tick);
-      };
-
-      tick();
+      this.logDiagnostics('start', true);
     }
 
     stop(mode = 'idle') {
-      this.idle(mode);
+      this.mode = mode;
+      this.buffering = mode === 'waiting';
+      this.ensureFrameLoop();
     }
 
     idle(mode = 'idle') {
       if (!this.container) return;
-      if (!this.enabled || reduceMotion || this.getForceMode() === 'idle') {
-        this.renderStatic(mode);
-        return;
-      }
-      this.cancelFrame();
       this.mode = mode;
-      this.fallbackActive = false;
-      this.resize();
-      this.applyTheme(mode);
-      this.renderFrame(this.sampleBands(0, true, true), 0, mode);
+      this.ensureFrameLoop();
     }
 
     renderStatic(mode = 'idle') {
-      this.cancelFrame();
       this.mode = mode;
-      this.fallbackActive = false;
-      this.resize();
+      const bands = this.sampleBands(0, true, true, 16);
       this.applyTheme(mode);
-      this.renderFrame(this.sampleBands(window.performance.now(), true, true), window.performance.now(), mode);
+      this.renderFrame(bands, window.performance.now(), mode);
+    }
+
+    ensureFrameLoop() {
+      if (this.frameId || !this.container) return;
+      this.previousTimestamp = 0;
+      this.frameId = window.requestAnimationFrame((time) => this.renderLoop(time));
+    }
+
+    recover() {
+      if (this.frameId) window.cancelAnimationFrame(this.frameId);
+      this.frameId = 0;
+      this.previousTimestamp = 0;
+      this.resize();
+      const audio = this.activeAudio;
+      if (audio && !audio.paused && !audio.ended && this.audioContext && ['suspended', 'interrupted'].includes(this.audioContext.state)) {
+        this.audioContext.resume?.().catch((error) => this.warnFallback(error?.message || error));
+      }
+      this.ensureFrameLoop();
+    }
+
+    setBuffering(isBuffering) {
+      this.buffering = Boolean(isBuffering);
+      this.ensureFrameLoop();
+    }
+
+    renderLoop(time = window.performance.now()) {
+      this.frameId = 0;
+      const dt = Math.min(50, Math.max(0, this.previousTimestamp ? time - this.previousTimestamp : 16.67));
+      this.previousTimestamp = time;
+      const audio = this.activeAudio;
+      const playing = Boolean(audio && !audio.paused && !audio.ended);
+      const contextRunning = this.audioContext?.state === 'running';
+      const analyserAvailable = Boolean(playing && contextRunning && this.analyser && this.sourceConnected);
+
+      if (playing && !contextRunning && this.audioContext && time - this.lastRecoveryAttempt > 1500 && document.visibilityState === 'visible') {
+        this.lastRecoveryAttempt = time;
+        this.audioContext.resume?.().catch((error) => this.warnFallback(error?.message || error));
+      }
+
+      if (!document.hidden) {
+        const forceFallback = this.getForceMode() === 'fallback';
+        const analyserConnected = analyserAvailable && !forceFallback;
+        if (analyserConnected) this.inspectAnalyser(audio);
+        const live = analyserConnected && this.flatFrames < 20;
+        const bands = this.sampleBands(time, !playing, !live, dt);
+        this.liveBlend += ((live ? 1 : 0) - this.liveBlend) * Math.min(1, dt / 180);
+        this.fallbackActive = playing && !live;
+        this.analyserFlat = analyserConnected ? this.analyserFlat : true;
+        this.mode = playing ? (this.buffering ? 'waiting' : 'playing') : (audio && !audio.ended ? 'paused' : 'idle');
+        this.setFallbackNote(this.fallbackActive);
+        this.applyTheme(this.mode);
+        this.renderFrame(bands, time, playing ? 'playing' : this.mode);
+        this.frameCount += 1;
+      }
+      this.frameId = window.requestAnimationFrame((nextTime) => this.renderLoop(nextTime));
     }
 
     destroy() {
-      this.cancelFrame();
+      if (this.frameId) window.cancelAnimationFrame(this.frameId);
+      this.frameId = 0;
+      this.resizeObserver?.disconnect();
+      this.resizeObserver = null;
       this.units = [];
       this.surfaceContext = null;
       this.surface = null;
@@ -7822,10 +7854,8 @@ if (musicPlayers.length) {
     }
 
     cancelFrame() {
-      if (this.frameId) {
-        window.cancelAnimationFrame(this.frameId);
-        this.frameId = 0;
-      }
+      // The visualization loop intentionally survives pause and AudioContext suspension.
+      this.ensureFrameLoop();
     }
 
     averageRange(array, start, end) {
@@ -7839,32 +7869,77 @@ if (musicPlayers.length) {
       return value - Math.floor(value);
     }
 
-    sampleBands(time = 0, useIdle = false, forceFallback = false) {
-      if (this.analyser && !useIdle && !forceFallback) {
+    frequencyRangeAverage(array, minimumHz, maximumHz) {
+      const sampleRate = this.audioContext?.sampleRate || 48000;
+      const fftSize = this.analyser?.fftSize || 2048;
+      const start = Math.max(0, Math.floor(minimumHz * fftSize / sampleRate));
+      const end = Math.min(array.length, Math.max(start + 1, Math.ceil(maximumHz * fftSize / sampleRate)));
+      return this.averageRange(array, start, end) / 255;
+    }
+
+    sampleBands(time = 0, useIdle = false, forceFallback = false, dt = 16.67) {
+      const playing = Boolean(this.activeAudio && !this.activeAudio.paused && !this.activeAudio.ended);
+      const live = Boolean(this.analyser && !useIdle && !forceFallback && this.audioContext?.state === 'running');
+      if (live) {
         try {
           this.analyser.getByteFrequencyData(this.frequencyData);
-          if (typeof this.analyser.getByteTimeDomainData === 'function') this.analyser.getByteTimeDomainData(this.waveformData);
+          this.analyser.getByteTimeDomainData(this.waveformData);
         } catch (error) {
-          this.analyserFlat = true;
           this.warnFallback(error?.message || error);
-          return this.sampleBands(time, useIdle, true);
+          return this.sampleBands(time, useIdle, true, dt);
         }
       } else {
-        // Never imply that decorative motion represents the audio. Without a
-        // usable analyser (for example, a CORS-restricted stream), render rest.
         this.frequencyData.fill(0);
         this.waveformData.fill(128);
       }
 
-      const step = Math.max(1, Math.floor(this.frequencyData.length / this.spectrumBands.length));
-      for (let index = 0; index < this.spectrumBands.length; index += 1) {
-        const value = (this.frequencyData[index * step] || 0) / 255;
-        this.spectrumBands[index] += (value - this.spectrumBands[index]) * (useIdle ? 0.08 : 0.42);
+      let rmsSum = 0;
+      let instantaneousPeak = 0;
+      for (let index = 0; index < this.waveformData.length; index += 1) {
+        const amplitude = (this.waveformData[index] - 128) / 128;
+        rmsSum += amplitude * amplitude;
+        instantaneousPeak = Math.max(instantaneousPeak, Math.abs(amplitude));
       }
-      const bass = this.averageRange(this.spectrumBands, 0, Math.round(WAVEFORM_UNIT_COUNT * 0.16));
-      const mid = this.averageRange(this.spectrumBands, Math.round(WAVEFORM_UNIT_COUNT * 0.16), Math.round(WAVEFORM_UNIT_COUNT * 0.5));
-      const high = this.averageRange(this.spectrumBands, Math.round(WAVEFORM_UNIT_COUNT * 0.5), WAVEFORM_UNIT_COUNT);
-      return { bass, mid, high, energy: Math.min(Math.max((bass + mid + high) / 3, 0), 1), spectrum: this.spectrumBands, waveform: this.waveformData };
+      const targets = live ? {
+        subBass: this.frequencyRangeAverage(this.frequencyData, 20, 60),
+        bass: this.frequencyRangeAverage(this.frequencyData, 60, 250),
+        lowMid: this.frequencyRangeAverage(this.frequencyData, 250, 500),
+        mid: this.frequencyRangeAverage(this.frequencyData, 500, 2000),
+        highMid: this.frequencyRangeAverage(this.frequencyData, 2000, 6000),
+        treble: this.frequencyRangeAverage(this.frequencyData, 6000, 16000),
+        rms: Math.sqrt(rmsSum / Math.max(1, this.waveformData.length)),
+        peak: instantaneousPeak
+      } : (() => {
+        // This restrained pulse only communicates active playback; it is never
+        // presented as frequency analysis while Web Audio is unavailable.
+        const pulse = playing ? 0.035 + (Math.sin((this.activeAudio.currentTime || time / 1000) * Math.PI * 1.6) + 1) * 0.012 : 0;
+        return { subBass: pulse, bass: pulse, lowMid: pulse * .8, mid: pulse * .75, highMid: pulse * .55, treble: pulse * .4, rms: pulse, peak: pulse };
+      })();
+      targets.energy = (targets.bass * 0.32 + targets.mid * 0.38 + targets.treble * 0.18 + targets.rms * 0.12);
+      const factors = { subBass: .12, bass: .12, lowMid: .14, mid: .16, highMid: .18, treble: .2, rms: .14, energy: .1 };
+      const frameScale = Math.min(3, dt / 16.67);
+      Object.keys(factors).forEach((key) => {
+        const factor = 1 - Math.pow(1 - factors[key], frameScale);
+        this.smoothedMetrics[key] += (targets[key] - this.smoothedMetrics[key]) * factor;
+      });
+      if (targets.peak >= this.smoothedMetrics.peak) this.smoothedMetrics.peak = targets.peak;
+      else this.smoothedMetrics.peak = Math.max(0, this.smoothedMetrics.peak - 0.04 * dt / 1000);
+
+      const nyquist = (this.audioContext?.sampleRate || 48000) / 2;
+      for (let index = 0; index < this.spectrumBands.length; index += 1) {
+        const lowHz = 20 * Math.pow(Math.min(16000, nyquist) / 20, index / this.spectrumBands.length);
+        const highHz = 20 * Math.pow(Math.min(16000, nyquist) / 20, (index + 1) / this.spectrumBands.length);
+        const value = live ? this.frequencyRangeAverage(this.frequencyData, lowHz, highHz) : targets.energy;
+        const factor = 1 - Math.pow(1 - (live ? .18 : .08), frameScale);
+        this.spectrumBands[index] += (value - this.spectrumBands[index]) * factor;
+      }
+      return {
+        ...this.smoothedMetrics,
+        high: this.smoothedMetrics.treble,
+        spectrum: this.spectrumBands,
+        waveform: this.waveformData,
+        live
+      };
     }
 
     inspectAnalyser(audio) {
@@ -8040,7 +8115,7 @@ if (musicPlayers.length) {
       glowGradient.addColorStop(1, 'rgba(96, 165, 250, 0)');
       context.fillStyle = glowGradient;
       context.fillRect(0, 0, width, height);
-      const barCount = WAVEFORM_UNIT_COUNT;
+      const barCount = width < 420 ? 32 : width < 720 ? 48 : WAVEFORM_UNIT_COUNT;
       const gap = Math.max(3, width / 190);
       const barWidth = Math.max(3, Math.min(12, (width * 0.86) / barCount - gap));
       const startX = (width - (barCount * barWidth + (barCount - 1) * gap)) / 2;
@@ -8064,7 +8139,8 @@ if (musicPlayers.length) {
       }
       for (let index = 0; index < barCount; index += 1) {
         const normalized = index / Math.max(barCount - 1, 1);
-        const value = bands.spectrum[index] || 0;
+        const spectrumIndex = Math.min(bands.spectrum.length - 1, Math.floor(index * bands.spectrum.length / barCount));
+        const value = bands.spectrum[spectrumIndex] || 0;
         if (isQuiet) this.spectrumPeaks[index] = 0;
         else if (value >= this.spectrumPeaks[index]) {
           this.spectrumPeaks[index] = value;
@@ -8303,6 +8379,8 @@ if (musicPlayers.length) {
   const stopVisualizer = (mode = 'idle') => visualizerController?.stop(mode);
   const runIdleVisualizer = (mode = 'idle') => visualizerController?.idle(mode);
   const setVisualizerStatic = (mode = 'idle') => visualizerController?.renderStatic(mode);
+  const recoverVisualizer = () => visualizerController?.recover();
+  const setVisualizerBuffering = (isBuffering) => visualizerController?.setBuffering(isBuffering);
 
   visualizerController = new VisualizerController({ container: visualizerCanvas, note: visualizerFallback });
   visualizerController.setEnabled(visualizerEnabled);
@@ -8462,6 +8540,7 @@ if (musicPlayers.length) {
   window.addEventListener('pageshow', () => {
     lastLifecycleEvent = 'pageshow';
     reconcileAudioState('pageshow');
+    recoverVisualizer();
     scheduleVisualizerResize(40);
     const audio = activePlayer ? getAudio(activePlayer) : null;
     if (visualizerEnabled && audio && !audio.paused && !audio.ended) {
@@ -8483,6 +8562,7 @@ if (musicPlayers.length) {
     lastLifecycleEvent = 'visibility-visible';
     logAudioDiagnostics('visibility-visible', { audio, wasPlayingBeforeBackground, userStoppedManually });
     reconcileAudioState('visibility-visible');
+    recoverVisualizer();
     wasPlayingBeforeBackground = false;
     if (audio && visualizerEnabled && !audio.paused && !audio.ended) {
       initializeMediaEngine();
@@ -9505,10 +9585,15 @@ if (musicPlayers.length) {
         if (activePlayer === musicPlayer) syncTransportButtons(audio);
       };
 
-      ['waiting', 'stalled', 'playing'].forEach((eventName) => {
+      ['waiting', 'stalled', 'playing', 'canplay', 'canplaythrough'].forEach((eventName) => {
         audio.addEventListener(eventName, () => {
-          if (activePlayer === musicPlayer && status && eventName === 'waiting') {
-            status.textContent = '';
+          if (activePlayer === musicPlayer) {
+            if (status && eventName === 'waiting') status.textContent = '';
+            setVisualizerBuffering(eventName === 'waiting' || eventName === 'stalled');
+            if (eventName === 'playing') {
+              initializeMediaEngine();
+              recoverVisualizer();
+            }
           }
           syncActiveTransportFromEvent();
         });
@@ -10175,6 +10260,7 @@ if (musicPlayers.length) {
   window.addEventListener('focus', () => {
     lastLifecycleEvent = 'focus';
     const audio = reconcileAudioState('focus');
+    recoverVisualizer();
     if (audio && !audio.paused && !audio.ended) initializeMediaEngine();
   });
   window.addEventListener('pagehide', () => {
