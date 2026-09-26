@@ -5,11 +5,13 @@ const path = require('node:path');
 
 const script = fs.readFileSync(path.join(__dirname, '..', 'script.js'), 'utf8');
 
-test('visualizer owns a singleton recovery-oriented animation loop', () => {
+test('visualizer owns one playback-bound adaptive animation loop', () => {
   assert.match(script, /this\.ensureFrameLoop\(\)/);
   assert.match(script, /Math\.min\(50, Math\.max\(0,/);
   assert.match(script, /this\.frameId = window\.requestAnimationFrame\(\(nextTime\) => this\.renderLoop\(nextTime\)\)/);
-  assert.match(script, /visualization loop intentionally survives pause and AudioContext suspension/);
+  assert.match(script, /minimumFrameInterval = constrainedDevice \? 1000 \/ 30 : 1000 \/ 60/);
+  assert.match(script, /stopFrameLoop\(\)/);
+  assert.match(script, /renderVinylEngineFrame\(time\)/);
   assert.match(script, /recoverVisualizer\(\)/);
 });
 
@@ -50,6 +52,18 @@ test('visualization uses a cached, contrast-aware frequency palette', () => {
   }
   assert.match(script, /luminance > 0\.55/);
   assert.match(script, /Math\.max\(0\.82,/);
+  assert.match(script, /this\.glowGradientKey === key/);
+  assert.match(script, /ensureGlowGradient\(\)/);
+  assert.equal((script.match(/createRadialGradient/g) || []).length, 1);
+  const renderFrameStart = script.indexOf('renderFrame(bands, time =');
+  const renderFrameEnd = script.indexOf('\n    renderHalo(', renderFrameStart);
+  assert.doesNotMatch(script.slice(renderFrameStart, renderFrameEnd), /createRadialGradient/);
+});
+
+test('lifecycle evidence distinguishes discard, reload, and history restoration', () => {
+  for (const marker of ['bootId', 'navigationType', 'pageshowPersisted', 'wasDiscarded', 'priorPagehideAt', 'lastPlaybackTime', 'visualizerFrames', 'vinylFrames']) {
+    assert.match(script, new RegExp(marker));
+  }
 });
 
 test('waveform strokes remain crisp and disable glow first on low-power devices', () => {
