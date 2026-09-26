@@ -8050,6 +8050,33 @@ if (musicPlayers.length) {
       return this.averageRange(array, start, end) / 255;
     }
 
+    // captureStream() is not universally available (notably across WebKit/iOS).
+    // When raw PCM cannot be observed, synthesize a restrained, deterministic
+    // playback-synchronized waveform solely for visual continuity. It never
+    // enters the audio graph and is never represented as measured audio.
+    fillUniversalWaveformFallback(time = 0, playing = false) {
+      const length = this.waveformData.length;
+      if (!playing || !length) {
+        this.waveformData.fill(128);
+        return;
+      }
+      const audioTime = Number(this.activeAudio?.currentTime);
+      const phaseTime = Number.isFinite(audioTime) ? audioTime : time / 1000;
+      const trackIndex = Math.max(0, activePlayer ? musicPlayers.indexOf(activePlayer) : 0);
+      const seed = 0.73 + trackIndex * 0.173;
+      const envelope = 0.34 + 0.1 * Math.sin(phaseTime * 1.9 + seed);
+      for (let index = 0; index < length; index += 1) {
+        const x = index / Math.max(1, length - 1);
+        const carrier =
+          Math.sin(x * Math.PI * 8 + phaseTime * 3.7 + seed)
+          + 0.52 * Math.sin(x * Math.PI * 15 - phaseTime * 2.3 + seed * 2.1)
+          + 0.24 * Math.sin(x * Math.PI * 29 + phaseTime * 5.1 + seed * 0.7);
+        const edgeEnvelope = Math.sin(Math.PI * x);
+        const amplitude = Math.max(-1, Math.min(1, carrier / 1.76));
+        this.waveformData[index] = Math.round(128 + amplitude * 127 * envelope * (0.48 + edgeEnvelope * 0.52));
+      }
+    }
+
     sampleBands(time = 0, useIdle = false, forceFallback = false, dt = 16.67) {
       const playing = Boolean(this.activeAudio && !this.activeAudio.paused && !this.activeAudio.ended);
       const live = Boolean(this.analyser && !useIdle && !forceFallback && this.audioContext?.state === 'running');
@@ -8063,7 +8090,7 @@ if (musicPlayers.length) {
         }
       } else {
         this.frequencyData.fill(0);
-        this.waveformData.fill(128);
+        this.fillUniversalWaveformFallback(time, playing && !useIdle);
       }
 
       let rmsSum = 0;
@@ -8111,7 +8138,8 @@ if (musicPlayers.length) {
         high: this.smoothedMetrics.treble,
         spectrum: this.spectrumBands,
         waveform: this.waveformData,
-        live
+        live,
+        waveformSource: live ? 'analyser' : (playing && !useIdle ? 'playback-synchronized-fallback' : 'idle')
       };
     }
 
