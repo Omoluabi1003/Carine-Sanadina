@@ -89,3 +89,16 @@ test('visual analyser never replaces native HTML audio output', () => {
   assert.match(connectBody, /createMediaStreamSource/);
   assert.doesNotMatch(connectBody, /audioContext\.destination/);
 });
+
+
+test('document recreation restores continuity before splash boot', () => {
+  assert.match(script, /const isContinuityRecoveryBoot = Boolean/);
+  assert.match(script, /window\.history\.replaceState\(window\.history\.state, '', recoveryRoute\)/);
+  assert.match(script, /document\.documentElement\.classList\.add\('continuity-recovery'\)/);
+  assert.match(script, /if \(isContinuityRecoveryBoot\) \{\s*completeCinematicSplash\(\);\s*return;/);
+});
+
+test('mobile WebKit uses the constrained visual frame budget', () => {
+  assert.match(script, /isCoarsePointerDevice\(\) \|\| isIosSafari/);
+  assert.match(script, /constrainedDevice \? 1000 \/ 30 : 1000 \/ 60/);
+});
