@@ -2154,6 +2154,12 @@ h1, h2, h3, blockquote { color: var(--ivory); }
   visibility: visible;
 }
 
+/* Canvas is the sole live visualization layer; keep diagnostic bars in the DOM
+   without paying for a second per-frame compositor workload. */
+.music-visualizer:has(.visualizer-surface) .visualizer-units {
+  display: none;
+}
+
 .music-visualizer .visualizer-surface {
   position: absolute;
   inset: 0;

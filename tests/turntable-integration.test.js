@@ -57,8 +57,9 @@ test('vinyl artwork fills its label without changing record geometry', () => {
   assert.match(css, /\.direct-drive-console \.expanded-vinyl-disc\s*\{[\s\S]*?width:\s*min\(52vw,\s*260px\)[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/);
 });
 
-test('vinyl uses requestAnimationFrame rotation and maps tonearm playback states', () => {
-  assert.match(script, /requestAnimationFrame\(animateVinylRotation\)/);
+test('vinyl uses the master adaptive frame engine and maps tonearm playback states', () => {
+  assert.match(script, /renderVinylEngineFrame = \(frameTime\) =>/);
+  assert.match(script, /renderVinylEngineFrame\(time\)/);
   assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
   assert.match(script, /disc\.style\.webkitTransform\s*=\s*discTransform/);
   assert.match(css, /-webkit-transform:\s*translate3d\(0, 0, 4px\) rotateZ\(var\(--vinyl-rotation\)\)/);
@@ -70,10 +71,11 @@ test('vinyl uses requestAnimationFrame rotation and maps tonearm playback states
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
 
-test('playback owns a persistent 33 1/3 RPM frame loop and pause preserves its angle', () => {
+test('playback owns a shared 33 1/3 RPM frame loop and pause preserves its angle', () => {
   assert.match(script, /vinylVelocity = targetVelocity/);
   assert.match(script, /const actuallyPlaying = Boolean\(audio && !audio\.paused && !audio\.ended && audio\.readyState >= 2\)/);
-  assert.match(script, /vinylAnimationFrame = requestAnimationFrame\(animateVinylRotation\);\n\s*\};/);
+  assert.match(script, /visualizerController\?\.ensureFrameLoop\(\)/);
+  assert.doesNotMatch(script, /requestAnimationFrame\(animateVinylRotation\)/);
   assert.match(script, /if \(!shouldRotate\) vinylVelocity = 0/);
   assert.doesNotMatch(script, /if \(!shouldRotate\) \{[\s\S]*?vinylRotation = 0/);
   assert.doesNotMatch(script, /mobileFrameInterval/);
@@ -91,10 +93,11 @@ test('universal media engine is gesture initialized, idempotent, and analyser in
   assert.match(css, /vinyl-css-fallback[\s\S]*?1\.8s linear infinite/);
 });
 
-test('iOS keeps requestAnimationFrame as the sole vinyl transform owner', () => {
+test('iOS keeps the shared frame engine as the sole vinyl transform owner', () => {
   assert.doesNotMatch(script, /useCssVinylAnimation/);
   assert.doesNotMatch(script, /verifyIosVinylAnimation/);
-  assert.match(script, /const layerDepth = isIosWebKit/);
+  assert.match(script, /translate3d\(0, 0, 4px\) rotateZ/);
+  assert.doesNotMatch(script, /4\.001px/);
   assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
   assert.match(script, /disc\.style\.webkitTransform\s*=\s*discTransform/);
   assert.match(css, /html\.is-ios \.turntable-assembly \.expanded-vinyl-disc[\s\S]*?-webkit-animation:\s*none !important/);
@@ -102,7 +105,7 @@ test('iOS keeps requestAnimationFrame as the sole vinyl transform owner', () => 
 
 test('iOS vinyl rotation recovers after WebKit lifecycle interruptions', () => {
   assert.match(script, /const restartVinylAnimation = \(\) =>/);
-  assert.match(script, /cancelAnimationFrame\(vinylAnimationFrame\)/);
+  assert.match(script, /visualizerController\?\.recover\(\)/);
   assert.match(script, /document\.addEventListener\('visibilitychange', recoverVinylAfterLifecycleChange\)/);
   assert.match(script, /window\.addEventListener\('pageshow', recoverVinylAfterLifecycleChange\)/);
   assert.match(script, /window\.addEventListener\('orientationchange', recoverVinylAfterLifecycleChange\)/);

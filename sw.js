@@ -1,4 +1,4 @@
-const APP_VERSION = 'carine-site-2026-09-26-universal-audio-visualizer';
+const APP_VERSION = 'carine-site-2026-09-26-adaptive-rendering';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v14-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';

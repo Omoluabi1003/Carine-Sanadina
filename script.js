@@ -4,9 +4,46 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-26-universal-audio-visualizer';
+const APP_VERSION = 'carine-site-2026-09-26-adaptive-rendering';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
+
+// Keep this record deliberately small: it survives a document recreation but
+// does not influence routing, playback, or browser lifecycle behavior.
+const PAGE_LIFECYCLE_STORAGE_KEY = getCarineStorageKey('page-lifecycle');
+const pageBootId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+const readPageLifecycleRecord = () => {
+  try {
+    return JSON.parse(window.sessionStorage.getItem(PAGE_LIFECYCLE_STORAGE_KEY) || '{}');
+  } catch (error) {
+    return {};
+  }
+};
+const writePageLifecycleRecord = (updates = {}) => {
+  try {
+    const record = { ...readPageLifecycleRecord(), ...updates };
+    window.sessionStorage.setItem(PAGE_LIFECYCLE_STORAGE_KEY, JSON.stringify(record));
+    return record;
+  } catch (error) {
+    return {};
+  }
+};
+const previousPageLifecycle = readPageLifecycleRecord();
+const navigationEntry = window.performance?.getEntriesByType?.('navigation')?.[0];
+writePageLifecycleRecord({
+  previousBootId: previousPageLifecycle.bootId || '',
+  previousBootAt: previousPageLifecycle.bootAt || 0,
+  priorPagehideAt: previousPageLifecycle.pagehideAt || 0,
+  bootId: pageBootId,
+  bootAt: Date.now(),
+  navigationType: navigationEntry?.type || 'unknown',
+  wasDiscarded: Boolean(document.wasDiscarded),
+  pageshowPersisted: false,
+  visualizerFrames: 0,
+  vinylFrames: 0
+});
+window.addEventListener('pageshow', (event) => writePageLifecycleRecord({ pageshowPersisted: Boolean(event.persisted) }));
+window.addEventListener('pagehide', () => writePageLifecycleRecord({ pagehideAt: Date.now() }));
 
 const translations = {};
 
@@ -6269,10 +6306,10 @@ if (musicPlayers.length) {
   let isVinylPlaying = false;
   let vinylRotation = 0;
   let vinylVelocity = 0;
-  let vinylAnimationFrame = 0;
   let vinylLastFrameTime = 0;
   let vinylRenderedFrameCount = 0;
   let vinylLastRenderedAt = 0;
+  let renderVinylEngineFrame = () => {};
   // 33 1/3 RPM = 200 degrees per second. Keep this in JavaScript rather than
   // a CSS animation so pause/resume preserves the exact physical position.
   const vinylPlaybackSpeed = (33 + (1 / 3)) * 360 / 60;
@@ -7519,6 +7556,8 @@ if (musicPlayers.length) {
       this.visualGradientKey = '';
       this.visualGradient = null;
       this.visualPalette = null;
+      this.glowGradientKey = '';
+      this.glowGradient = null;
       this.lastDrawTime = 0;
       this.previousTimestamp = 0;
       this.lastRecoveryAttempt = 0;
@@ -7584,7 +7623,6 @@ if (musicPlayers.length) {
         this.resizeObserver.observe(this.container);
         if (this.halo) this.resizeObserver.observe(this.halo);
       }
-      this.ensureFrameLoop();
       this.logDiagnostics('init');
     }
 
@@ -7644,6 +7682,7 @@ if (musicPlayers.length) {
       this.surface.style.height = `${cssHeight}px`;
       this.surfaceContext?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       this.visualGradientKey = '';
+      this.glowGradientKey = '';
       if (this.halo && this.haloContext) {
         const haloRect = this.halo.getBoundingClientRect();
         const haloSize = Math.max(1, Math.round(haloRect.width || 400));
@@ -7785,13 +7824,15 @@ if (musicPlayers.length) {
     stop(mode = 'idle') {
       this.mode = mode;
       this.buffering = mode === 'waiting';
-      this.ensureFrameLoop();
+      this.stopFrameLoop();
+      this.renderStatic(mode);
     }
 
     idle(mode = 'idle') {
       if (!this.container) return;
       this.mode = mode;
-      this.ensureFrameLoop();
+      this.stopFrameLoop();
+      this.renderStatic(mode);
     }
 
     renderStatic(mode = 'idle') {
@@ -7802,9 +7843,16 @@ if (musicPlayers.length) {
     }
 
     ensureFrameLoop() {
-      if (this.frameId || !this.container) return;
+      const audio = this.activeAudio;
+      if (this.frameId || !this.container || document.hidden || !audio || audio.paused || audio.ended) return;
       this.previousTimestamp = 0;
       this.frameId = window.requestAnimationFrame((time) => this.renderLoop(time));
+    }
+
+    stopFrameLoop() {
+      if (this.frameId) window.cancelAnimationFrame(this.frameId);
+      this.frameId = 0;
+      this.previousTimestamp = 0;
     }
 
     recover() {
@@ -7816,7 +7864,7 @@ if (musicPlayers.length) {
       if (audio && !audio.paused && !audio.ended && this.audioContext && ['suspended', 'interrupted'].includes(this.audioContext.state)) {
         this.audioContext.resume?.().catch((error) => this.warnFallback(error?.message || error));
       }
-      this.ensureFrameLoop();
+      if (!document.hidden && audio && !audio.paused && !audio.ended) this.ensureFrameLoop();
     }
 
     setBuffering(isBuffering) {
@@ -7839,7 +7887,12 @@ if (musicPlayers.length) {
           this.audioContext.resume?.().catch((error) => this.warnFallback(error?.message || error));
         }
 
-        if (!document.hidden) {
+        if (!document.hidden && playing) {
+          const constrainedDevice = reduceMotion || isCoarsePointerDevice() || (navigator.deviceMemory && navigator.deviceMemory <= 4);
+          const minimumFrameInterval = constrainedDevice ? 1000 / 30 : 1000 / 60;
+          if (this.lastDrawTime && time - this.lastDrawTime < minimumFrameInterval) return;
+          this.lastDrawTime = time;
+          renderVinylEngineFrame(time);
           const forceFallback = this.getForceMode() === 'fallback';
           const analyserConnected = analyserAvailable && !forceFallback;
           if (analyserConnected) this.inspectAnalyser(audio);
@@ -7851,15 +7904,20 @@ if (musicPlayers.length) {
           this.mode = playing ? (this.buffering ? 'waiting' : 'playing') : (audio && !audio.ended ? 'paused' : 'idle');
           this.setFallbackNote(this.fallbackActive);
           this.applyTheme(this.mode);
-          this.renderFrame(bands, time, playing ? 'playing' : this.mode);
-          this.frameCount += 1;
+          if (this.enabled && !reduceMotion) {
+            this.renderFrame(bands, time, 'playing');
+            this.frameCount += 1;
+          }
         }
       } catch (error) {
         // A canvas/GPU failure is isolated from media playback and the app shell.
         this.warnFallback(`[VISUALIZER] frame disabled: ${error?.message || error}`);
         this.enabled = false;
       } finally {
-        this.frameId = window.requestAnimationFrame((nextTime) => this.renderLoop(nextTime));
+        const audio = this.activeAudio;
+        if (!document.hidden && audio && !audio.paused && !audio.ended) {
+          this.frameId = window.requestAnimationFrame((nextTime) => this.renderLoop(nextTime));
+        }
       }
     }
 
@@ -7878,8 +7936,7 @@ if (musicPlayers.length) {
     }
 
     cancelFrame() {
-      // The visualization loop intentionally survives pause and AudioContext suspension.
-      this.ensureFrameLoop();
+      this.stopFrameLoop();
     }
 
     averageRange(array, start, end) {
@@ -8020,6 +8077,7 @@ if (musicPlayers.length) {
       if (themeKey === this.lastThemeKey) return;
       this.lastThemeKey = themeKey;
       this.visualGradientKey = '';
+      this.glowGradientKey = '';
       this.container.dataset.visualizationStyle = selectedVisualizationStyle;
       this.container.classList.toggle('is-analyser-fallback', this.fallbackActive);
       this.container.classList.toggle('visualizer-ready', this.enabled && !reduceMotion);
@@ -8047,6 +8105,19 @@ if (musicPlayers.length) {
       this.visualGradient = gradient;
       this.visualPalette = colors;
       this.visualGradientKey = key;
+    }
+
+    ensureGlowGradient() {
+      if (!this.surfaceContext) return;
+      const key = `${this.cssWidth}|${this.cssHeight}|${this.lastThemeKey}`;
+      if (this.glowGradient && this.glowGradientKey === key) return;
+      const centerX = this.cssWidth / 2;
+      const centerY = this.cssHeight / 2;
+      const gradient = this.surfaceContext.createRadialGradient(centerX, centerY, 4, centerX, centerY, Math.max(this.cssWidth, this.cssHeight) * 0.55);
+      gradient.addColorStop(0, 'rgba(96, 165, 250, 1)');
+      gradient.addColorStop(1, 'rgba(96, 165, 250, 0)');
+      this.glowGradient = gradient;
+      this.glowGradientKey = key;
     }
 
     frequencyColor(position) {
@@ -8149,7 +8220,7 @@ if (musicPlayers.length) {
     }
 
     renderFrame(bands, time = 0, state = 'playing') {
-      this.updateUnits(bands, time, state);
+      // Canvas is the visible representation; do not also mutate 64 DOM bars.
       this.renderHalo(bands, state);
       if (!this.surfaceContext || !this.surface) return;
       const context = this.surfaceContext;
@@ -8162,12 +8233,12 @@ if (musicPlayers.length) {
       const timeSeconds = time / 1000;
       context.clearRect(0, 0, width, height);
       this.ensureVisualPalette();
+      this.ensureGlowGradient();
       context.save();
-      const glowGradient = context.createRadialGradient(centerX, centerY, 4, centerX, centerY, Math.max(width, height) * 0.55);
-      glowGradient.addColorStop(0, `rgba(96, 165, 250, ${0.06 + bands.energy * 0.12 * quietScale})`);
-      glowGradient.addColorStop(1, 'rgba(96, 165, 250, 0)');
-      context.fillStyle = glowGradient;
+      context.globalAlpha = 0.06 + bands.energy * 0.12 * quietScale;
+      context.fillStyle = this.glowGradient;
       context.fillRect(0, 0, width, height);
+      context.globalAlpha = 1;
       const barCount = width < 420 ? 32 : width < 720 ? 48 : WAVEFORM_UNIT_COUNT;
       const gap = Math.max(3, width / 190);
       const barWidth = Math.max(3, Math.min(12, (width * 0.86) / barCount - gap));
@@ -8788,7 +8859,7 @@ if (musicPlayers.length) {
       computedTransformAtTimeA: transformA,
       computedTransformAtTimeB: transformB,
       transformChangesAcrossOneSecondWhileAudioPlays: Boolean(isPlaying && transformChanges),
-      javascriptAnimationFrameScheduled: Boolean(vinylAnimationFrame),
+      javascriptAnimationFrameScheduled: Boolean(visualizerController?.frameId),
       renderedFrameCountAtTimeA: renderedFrameCountA,
       renderedFrameCountAtTimeB: renderedFrameCountB,
       millisecondsSinceLastRenderedFrame: vinylLastRenderedAt ? Math.round(window.performance.now() - vinylLastRenderedAt) : null,
@@ -8805,7 +8876,7 @@ if (musicPlayers.length) {
         audioActuallyPlaying: isPlaying,
         vinylElementVisible: Boolean(rect.width > 0 && rect.height > 0 && rootStyles?.display !== 'none' && rootStyles?.visibility !== 'hidden' && Number(rootStyles?.opacity ?? 1) > 0),
         playingClassApplied,
-        javascriptAnimationFrameScheduled: Boolean(vinylAnimationFrame),
+        javascriptAnimationFrameScheduled: Boolean(visualizerController?.frameId),
         javascriptRotationAdvancing: Boolean(!sampleTransform || !isPlaying || javascriptRotationAdvancing),
         transformChanging: Boolean(!sampleTransform || !isPlaying || transformChanges),
         reducedMotionNotDisabling: !reduceMotionQuery.matches,
@@ -8895,11 +8966,7 @@ if (musicPlayers.length) {
 
   const renderVinylRotation = () => {
     const rotationValue = `${vinylRotation.toFixed(3)}deg`;
-    // Alternating a sub-pixel Z depth periodically invalidates the WebKit layer
-    // without creating a visible wobble. This prevents visually stale frames on
-    // iOS even when requestAnimationFrame itself continues to fire.
-    const layerDepth = isIosWebKit && Math.floor(vinylRotation / 24) % 2 ? '4.001px' : '4px';
-    const discTransform = `translate3d(0, 0, ${layerDepth}) rotateZ(${rotationValue})`;
+    const discTransform = `translate3d(0, 0, 4px) rotateZ(${rotationValue})`;
     vinylStages.forEach((stage) => stage.style.setProperty('--vinyl-rotation', rotationValue));
     vinylDiscs.forEach((disc) => {
       disc.classList.remove('vinyl-css-fallback');
@@ -8911,7 +8978,7 @@ if (musicPlayers.length) {
     vinylLastRenderedAt = window.performance.now();
   };
 
-  const animateVinylRotation = (frameTime) => {
+  renderVinylEngineFrame = (frameTime) => {
     try {
       const elapsed = vinylLastFrameTime ? Math.min((frameTime - vinylLastFrameTime) / 1000, 0.05) : 0;
       vinylLastFrameTime = frameTime;
@@ -8932,27 +8999,20 @@ if (musicPlayers.length) {
     } catch (error) {
       window.console?.error?.('[VISUALIZER] vinyl frame failed without interrupting playback', error);
     }
-    // One failed visual frame must not terminate the only rotation loop.
-    vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
   };
 
   const ensureVinylAnimation = () => {
-    if (!vinylAnimationFrame) {
-      vinylLastFrameTime = 0;
-      vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
-    }
+    visualizerController?.ensureFrameLoop();
   };
 
   const restartVinylAnimation = () => {
-    if (vinylAnimationFrame) cancelAnimationFrame(vinylAnimationFrame);
-    vinylAnimationFrame = 0;
     vinylLastFrameTime = 0;
-    ensureVinylAnimation();
+    visualizerController?.recover();
   };
 
   const recoverVinylAfterLifecycleChange = () => {
     if (document.visibilityState !== 'visible') return;
-    window.requestAnimationFrame(restartVinylAnimation);
+    restartVinylAnimation();
   };
 
   document.addEventListener('visibilitychange', recoverVinylAfterLifecycleChange);
@@ -8962,7 +9022,7 @@ if (musicPlayers.length) {
   window.setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     const frameAge = vinylLastRenderedAt ? window.performance.now() - vinylLastRenderedAt : Infinity;
-    if (!vinylAnimationFrame || frameAge > 1500) {
+    if (!visualizerController?.frameId || frameAge > 1500) {
       const audio = activePlayer ? getAudio(activePlayer) : null;
       if (audio && !audio.paused && !audio.ended) {
         vinylDiscs.forEach((disc) => {
@@ -10344,7 +10404,15 @@ if (musicPlayers.length) {
   // frames/timeupdate. This is also the non-destructive player watchdog.
   window.setInterval(() => {
     const audio = activePlayer ? getAudio(activePlayer) : null;
-    if (activePlayer) persistPlayerState();
+    if (activePlayer) {
+      persistPlayerState();
+      writePageLifecycleRecord({
+        lastPlaybackTime: Number.isFinite(audio?.currentTime) ? Math.round(audio.currentTime * 1000) / 1000 : 0,
+        lastPlaybackAt: Date.now(),
+        visualizerFrames: visualizerController?.frameCount || 0,
+        vinylFrames: vinylRenderedFrameCount
+      });
+    }
     if (document.visibilityState === 'visible' && activePlayer && !audio) {
       window.console?.warn?.('[MEMORY] Player watchdog found a missing audio element; route preserved.');
     }

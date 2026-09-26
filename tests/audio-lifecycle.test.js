@@ -64,9 +64,11 @@ test('updates and media recovery cannot reload or navigate the application', () 
   assert.match(script, /automatic reload suppressed/);
 });
 
-test('continuous visual frames isolate exceptions and retain one scheduled loop', () => {
+test('adaptive visual frames isolate exceptions and retain one scheduled loop', () => {
   assert.match(script, /\[VISUALIZER\] frame disabled/);
   assert.match(script, /vinyl frame failed without interrupting playback/);
-  assert.match(script, /if \(this\.frameId \|\| !this\.container\) return/);
+  assert.match(script, /if \(this\.frameId \|\| !this\.container \|\| document\.hidden/);
+  assert.match(script, /renderVinylEngineFrame\(time\)/);
+  assert.match(script, /if \(!document\.hidden && audio && !audio\.paused && !audio\.ended\)/);
   assert.match(script, /}, 4000\);/);
 });
