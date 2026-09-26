@@ -7503,6 +7503,9 @@ if (musicPlayers.length) {
       this.sourceConnected = false;
       this.sourceReused = false;
       this.lastThemeKey = '';
+      this.visualGradientKey = '';
+      this.visualGradient = null;
+      this.visualPalette = null;
       this.lastDrawTime = 0;
       this.previousTimestamp = 0;
       this.lastRecoveryAttempt = 0;
@@ -7627,6 +7630,7 @@ if (musicPlayers.length) {
       this.surface.style.width = `${cssWidth}px`;
       this.surface.style.height = `${cssHeight}px`;
       this.surfaceContext?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      this.visualGradientKey = '';
       if (this.halo && this.haloContext) {
         const haloRect = this.halo.getBoundingClientRect();
         const haloSize = Math.max(1, Math.round(haloRect.width || 400));
@@ -7995,6 +7999,7 @@ if (musicPlayers.length) {
       const themeKey = [selectedVisualizationStyle, this.fallbackActive, this.analyserFlat, state, this.enabled, reduceMotion].join('|');
       if (themeKey === this.lastThemeKey) return;
       this.lastThemeKey = themeKey;
+      this.visualGradientKey = '';
       this.container.dataset.visualizationStyle = selectedVisualizationStyle;
       this.container.classList.toggle('is-analyser-fallback', this.fallbackActive);
       this.container.classList.toggle('visualizer-ready', this.enabled && !reduceMotion);
@@ -8005,6 +8010,33 @@ if (musicPlayers.length) {
       this.container.classList.toggle('is-paused', state === 'paused');
       this.container.classList.toggle('is-idle', state !== 'playing');
       this.container.classList.toggle('is-off', !this.enabled || reduceMotion);
+      this.ensureVisualPalette();
+    }
+
+    ensureVisualPalette() {
+      if (!this.surfaceContext || !this.container) return;
+      if (this.visualGradientKey.startsWith(`${this.cssWidth}|`)) return;
+      const background = window.getComputedStyle(this.container).backgroundColor.match(/[\d.]+/g)?.slice(0, 3).map(Number) || [4, 18, 43];
+      const luminance = (background[0] * 0.2126 + background[1] * 0.7152 + background[2] * 0.0722) / 255;
+      const colors = luminance > 0.55
+        ? ['#007A52', '#247F7B', '#0369A1', '#6D28D9', '#8A6418', '#007A52']
+        : ['#00D68F', '#4EC7C2', '#38BDF8', '#8B5CF6', '#E0B968', '#00D68F'];
+      const key = `${this.cssWidth}|${luminance > 0.55 ? 'light' : 'dark'}`;
+      const gradient = this.surfaceContext.createLinearGradient(0, 0, this.cssWidth, 0);
+      colors.forEach((color, index) => gradient.addColorStop(index / (colors.length - 1), color));
+      this.visualGradient = gradient;
+      this.visualPalette = colors;
+      this.visualGradientKey = key;
+    }
+
+    frequencyColor(position) {
+      const colors = this.visualPalette || ['#00D68F', '#4EC7C2', '#38BDF8', '#8B5CF6', '#E0B968', '#00D68F'];
+      const scaled = Math.max(0, Math.min(1, position)) * (colors.length - 1);
+      const start = Math.min(colors.length - 2, Math.floor(scaled));
+      const amount = scaled - start;
+      const from = colors[start].match(/[\da-f]{2}/gi).map((value) => parseInt(value, 16));
+      const to = colors[start + 1].match(/[\da-f]{2}/gi).map((value) => parseInt(value, 16));
+      return `rgb(${from.map((value, channel) => Math.round(value + (to[channel] - value) * amount)).join(', ')})`;
     }
 
     updateUnits(bands, time = 0, state = 'playing') {
@@ -8109,6 +8141,7 @@ if (musicPlayers.length) {
       const centerY = height / 2;
       const timeSeconds = time / 1000;
       context.clearRect(0, 0, width, height);
+      this.ensureVisualPalette();
       context.save();
       const glowGradient = context.createRadialGradient(centerX, centerY, 4, centerX, centerY, Math.max(width, height) * 0.55);
       glowGradient.addColorStop(0, `rgba(96, 165, 250, ${0.06 + bands.energy * 0.12 * quietScale})`);
@@ -8129,10 +8162,14 @@ if (musicPlayers.length) {
           const y = centerY + (bands.waveform[i] - 128) / 128 * waveformAmplitude;
           if (i === 0) context.moveTo(x, y); else context.lineTo(x, y);
         }
-        context.strokeStyle = 'rgba(191, 219, 254, .9)';
-        context.lineWidth = 2;
-        context.shadowColor = '#60a5fa';
-        context.shadowBlur = isQuiet ? 0 : 6;
+        context.strokeStyle = this.visualGradient || '#00D68F';
+        context.globalAlpha = isQuiet ? 0.82 : Math.min(1, 0.9 + bands.energy * 0.1);
+        context.lineWidth = width < 600 ? 2 : width < 900 ? 2.4 : 2.8;
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        context.shadowColor = '#00D68F';
+        const lowPowerDevice = reduceMotion || (navigator.deviceMemory && navigator.deviceMemory <= 2);
+        context.shadowBlur = isQuiet || lowPowerDevice ? 0 : (width < 600 ? 6 : 10);
         context.stroke();
         context.restore();
         return;
@@ -8151,8 +8188,7 @@ if (musicPlayers.length) {
         const shapedWave = Math.min(0.9, Math.max(-0.9, rawWave));
         this.waveformPoints[index] += (shapedWave - this.waveformPoints[index]) * (isQuiet ? 0.12 : 0.34);
         const pulse = Math.max(0.06, value * quietScale);
-        const hue = 205 + normalized * 36 + (bands.high * 24);
-        const alpha = Math.min(0.82, isQuiet ? 0.24 + pulse * 0.28 : 0.38 + pulse * 0.36);
+        const alpha = Math.max(0.82, Math.min(1, isQuiet ? 0.82 : 0.84 + pulse * 0.16));
         let x = startX + index * (barWidth + gap);
         let y = centerY + this.waveformPoints[index] * waveformAmplitude * quietScale;
         let drawWidth = barWidth;
@@ -8178,13 +8214,10 @@ if (musicPlayers.length) {
         context.save();
         context.translate(x + drawWidth / 2, y);
         context.rotate(rotation);
-        const gradient = context.createLinearGradient(0, -drawHeight / 2, 0, drawHeight / 2);
-        gradient.addColorStop(0, 'rgba(248, 250, 252, 0.88)');
-        gradient.addColorStop(0.55, `hsla(${hue}, 90%, 68%, ${alpha})`);
-        gradient.addColorStop(1, `hsla(${hue + 18}, 88%, 56%, ${alpha})`);
-        context.fillStyle = gradient;
-        context.shadowColor = `hsla(${hue}, 90%, 66%, ${isQuiet ? 0.08 : 0.16})`;
-        context.shadowBlur = isQuiet ? 5 : 8;
+        context.globalAlpha = alpha;
+        context.fillStyle = this.visualGradient || '#00D68F';
+        context.shadowColor = this.frequencyColor(normalized);
+        context.shadowBlur = isQuiet || (navigator.deviceMemory && navigator.deviceMemory <= 2) ? 0 : 6;
         this.roundedRect(context, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight, Math.max(3, drawWidth));
         context.fill();
         context.restore();
@@ -8221,7 +8254,7 @@ if (musicPlayers.length) {
         context.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
         context.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
         context.strokeStyle = isLive
-          ? `rgba(226, 207, 167, ${0.18 + energy * 0.78})`
+          ? (this.frequencyColor?.(index / Math.max(1, segments - 1)) || '#00D68F')
           : 'rgba(218, 186, 118, 0.25)';
         context.lineWidth = isLive ? 2 : 1;
         context.shadowColor = 'rgba(96, 165, 250, 0.45)';
