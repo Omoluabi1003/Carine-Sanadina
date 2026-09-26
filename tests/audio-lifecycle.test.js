@@ -5,6 +5,7 @@ const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
 const script = fs.readFileSync(path.join(root, 'script.js'), 'utf8');
+const serviceWorker = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 
 test('lifecycle restores reconcile state without requesting playback', () => {
   const visibilityHandler = script.match(/document\.addEventListener\('visibilitychange',[\s\S]*?\n  \}\);/)?.[0] || '';
@@ -42,4 +43,30 @@ test('audio debug mode and report expose ownership diagnostics', () => {
     'lastPlayRequestSource'
   ].forEach((field) => assert.match(script, new RegExp(field)));
   assert.match(script, /window\.debugAudioState/);
+});
+
+test('player session survives document recreation without autoplay or navigation', () => {
+  assert.match(script, /PLAYER_SESSION_STORAGE_KEY/);
+  assert.match(script, /window\.sessionStorage\.setItem\(PLAYER_SESSION_STORAGE_KEY/);
+  ['route', 'activeTrackId', 'trackUrl', 'currentTime', 'playing', 'volume', 'visualizationMode', 'playerExpanded']
+    .forEach((field) => assert.match(script, new RegExp(`${field}:`)));
+  assert.match(script, /loadedmetadata', restorePosition, \{ once: true \}/);
+  assert.match(script, /if \(storedState\.playerExpanded\) setMobilePlayerOpen\(true\)/);
+  assert.match(script, /source: 'player-session-restore'/);
+  assert.match(script, /window\.history\.replaceState/);
+});
+
+test('updates and media recovery cannot reload or navigate the application', () => {
+  assert.doesNotMatch(script, /(?:window\.)?location\.reload\s*\(/);
+  assert.doesNotMatch(script, /history\.go\s*\(\s*0\s*\)/);
+  assert.doesNotMatch(script, /location\.(?:assign|replace)\s*\(/);
+  assert.doesNotMatch(serviceWorker, /skipWaiting\s*\(/);
+  assert.match(script, /automatic reload suppressed/);
+});
+
+test('continuous visual frames isolate exceptions and retain one scheduled loop', () => {
+  assert.match(script, /\[VISUALIZER\] frame disabled/);
+  assert.match(script, /vinyl frame failed without interrupting playback/);
+  assert.match(script, /if \(this\.frameId \|\| !this\.container\) return/);
+  assert.match(script, /}, 4000\);/);
 });
