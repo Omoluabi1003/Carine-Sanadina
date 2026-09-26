@@ -57,17 +57,24 @@ test('vinyl artwork fills its label without changing record geometry', () => {
   assert.match(css, /\.direct-drive-console \.expanded-vinyl-disc\s*\{[\s\S]*?width:\s*min\(52vw,\s*260px\)[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/);
 });
 
-test('vinyl uses requestAnimationFrame inertia and maps tonearm playback states', () => {
+test('vinyl uses requestAnimationFrame rotation and maps tonearm playback states', () => {
   assert.match(script, /requestAnimationFrame\(animateVinylRotation\)/);
   assert.match(script, /disc\.style\.transform\s*=\s*discTransform/);
   assert.match(script, /disc\.style\.webkitTransform\s*=\s*discTransform/);
   assert.match(css, /-webkit-transform:\s*translate3d\(0, 0, 4px\) rotateZ\(var\(--vinyl-rotation\)\)/);
-  assert.match(script, /vinylDeceleration/);
+  assert.match(script, /33 \+ \(1 \/ 3\)\) \* 360 \/ 60/);
   assert.match(script, /vinylVelocity\s*>\s*0/);
   assert.match(script, /syncVinylExperience\(false, 'ended'\)/);
   assert.match(css, /data-playback-state="playing"/);
   assert.match(css, /data-playback-state="paused"/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
+});
+
+test('playback owns a 33 1/3 RPM frame loop and pause cancels it immediately', () => {
+  assert.match(script, /vinylVelocity = targetVelocity/);
+  assert.match(script, /if \(isVinylPlaying && !reduceMotion\) \{\s*vinylAnimationFrame = requestAnimationFrame\(animateVinylRotation\)/);
+  assert.match(script, /if \(!shouldRotate\) \{[\s\S]*?cancelAnimationFrame\(vinylAnimationFrame\)[\s\S]*?vinylVelocity = 0/);
+  assert.doesNotMatch(script, /mobileFrameInterval/);
 });
 
 test('iOS keeps requestAnimationFrame as the sole vinyl transform owner', () => {

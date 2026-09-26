@@ -9235,9 +9235,11 @@ body.video-overlay-open {
   width: 45%;
   height: 62%;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(66, 148, 224, 0.13), transparent 67%);
-  filter: blur(10px);
-  opacity: 0.72;
+  background: radial-gradient(ellipse,
+    rgba(66, 148, 224, var(--studio-ambient-alpha, 0.13)),
+    transparent 67%);
+  filter: blur(var(--studio-ambient-blur, 10px));
+  opacity: var(--studio-ambient-opacity, 0.58);
   pointer-events: none;
 }
 

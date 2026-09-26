@@ -3,7 +3,7 @@ const getCarineStorageKey = (suffix) => `${CARINE_STORAGE_PREFIX}-${suffix}`;
 const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-25-local-clock';
+const APP_VERSION = 'carine-site-2026-09-26-motion-system';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -6275,8 +6275,9 @@ if (musicPlayers.length) {
   let vinylLastFrameTime = 0;
   let vinylRenderedFrameCount = 0;
   let vinylLastRenderedAt = 0;
-  const vinylPlaybackSpeed = 24;
-  const vinylDeceleration = 11;
+  // 33 1/3 RPM = 200 degrees per second. Keep this in JavaScript rather than
+  // a CSS animation so pause/resume preserves the exact physical position.
+  const vinylPlaybackSpeed = (33 + (1 / 3)) * 360 / 60;
   const lyricsCache = new Map();
   const lyricsOffsets = {
     consolation: 0,
@@ -7762,8 +7763,7 @@ if (musicPlayers.length) {
           return;
         }
 
-        const mobileFrameInterval = (isCoarsePointerDevice() || isIosWebKit) ? 33 : 0;
-        if (!document.hidden && (!mobileFrameInterval || !this.lastDrawTime || time - this.lastDrawTime >= mobileFrameInterval)) {
+        if (!document.hidden) {
           this.lastDrawTime = time;
           this.inspectAnalyser(currentAudio);
           const forceMode = this.getForceMode();
@@ -8122,7 +8122,15 @@ if (musicPlayers.length) {
       const context = this.haloContext;
       const center = size / 2;
       const isLive = state === 'playing' && this.enabled && !this.fallbackActive && !this.analyserFlat && !reduceMotion;
-      this.halo.closest('.luxury-audio-console')?.style.setProperty('--studio-level', isLive ? Math.min(1, Math.max(0, bands.energy || 0)).toFixed(3) : '0');
+      const consoleElement = this.halo.closest('.luxury-audio-console');
+      const safeLevel = (value) => isLive ? Math.min(1, Math.max(0, value || 0)).toFixed(3) : '0';
+      consoleElement?.style.setProperty('--studio-level', safeLevel(bands.energy));
+      consoleElement?.style.setProperty('--studio-bass', safeLevel(bands.bass));
+      consoleElement?.style.setProperty('--studio-mid', safeLevel(bands.mid));
+      consoleElement?.style.setProperty('--studio-high', safeLevel(bands.high));
+      consoleElement?.style.setProperty('--studio-ambient-blur', `${10 + Number(safeLevel(bands.bass)) * 5}px`);
+      consoleElement?.style.setProperty('--studio-ambient-alpha', (0.13 + Number(safeLevel(bands.mid)) * 0.16).toFixed(3));
+      consoleElement?.style.setProperty('--studio-ambient-opacity', (0.58 + Number(safeLevel(bands.high)) * 0.34).toFixed(3));
       context.clearRect(0, 0, size, size);
       context.save();
       context.translate(center, center);
@@ -8771,12 +8779,7 @@ if (musicPlayers.length) {
     const elapsed = vinylLastFrameTime ? Math.min((frameTime - vinylLastFrameTime) / 1000, 0.05) : 0;
     vinylLastFrameTime = frameTime;
     const targetVelocity = isVinylPlaying && !reduceMotion ? vinylPlaybackSpeed : 0;
-
-    if (vinylVelocity < targetVelocity) {
-      vinylVelocity = Math.min(targetVelocity, vinylVelocity + vinylDeceleration * 1.8 * elapsed);
-    } else if (vinylVelocity > targetVelocity) {
-      vinylVelocity = Math.max(targetVelocity, vinylVelocity - vinylDeceleration * elapsed);
-    }
+    vinylVelocity = targetVelocity;
 
     if (vinylVelocity > 0.01) {
       vinylRotation = (vinylRotation + vinylVelocity * elapsed) % 360;
@@ -8785,7 +8788,7 @@ if (musicPlayers.length) {
       vinylVelocity = 0;
     }
 
-    if ((isVinylPlaying && !reduceMotion) || vinylVelocity > 0) {
+    if (isVinylPlaying && !reduceMotion) {
       vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
     } else {
       vinylAnimationFrame = 0;
@@ -8794,7 +8797,7 @@ if (musicPlayers.length) {
   };
 
   const ensureVinylAnimation = () => {
-    if (!vinylAnimationFrame && ((isVinylPlaying && !reduceMotion) || vinylVelocity > 0)) {
+    if (!vinylAnimationFrame && isVinylPlaying && !reduceMotion) {
       vinylLastFrameTime = 0;
       vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
     }
@@ -8827,6 +8830,13 @@ if (musicPlayers.length) {
     const shouldRotate = Boolean(isPlaying);
     const state = playbackState || (shouldRotate ? 'playing' : activePlayer ? 'paused' : 'ready');
     isVinylPlaying = shouldRotate;
+
+    if (!shouldRotate) {
+      if (vinylAnimationFrame) cancelAnimationFrame(vinylAnimationFrame);
+      vinylAnimationFrame = 0;
+      vinylLastFrameTime = 0;
+      vinylVelocity = 0;
+    }
 
     vinylStages.forEach((stage) => {
       stage.classList.toggle('is-playing', shouldRotate);

@@ -103,6 +103,15 @@ test('visualizations share genuine Web Audio analyser samples and static fallbac
   assert.doesNotMatch(script, /fallbackWave\s*=/);
 });
 
+test('live analyser bands drive the surrounding studio atmosphere', () => {
+  for (const band of ['level', 'bass', 'mid', 'high']) {
+    assert.match(script, new RegExp(`--studio-${band}`));
+  }
+  assert.match(styles, /--studio-ambient-alpha/);
+  assert.match(styles, /--studio-ambient-blur/);
+  assert.match(styles, /--studio-ambient-opacity/);
+});
+
 test('album artwork atmosphere caches colors and rejects stale extraction results', () => {
   assert.match(script, /const artworkPaletteCache = new Map\(\)/);
   assert.match(script, /request !== artworkPaletteRequest/);
