@@ -406,6 +406,33 @@
         </div>
       </section>
 
+      <section class="section discovery" id="discovery" aria-labelledby="discovery-heading" data-content-platform>
+        <div class="container discovery-shell reveal">
+          <p class="eyebrow">Read · Listen · Reflect · Connect</p>
+          <h2 id="discovery-heading">What do you need today?</h2>
+          <p>Find a gentle path through Carine’s stories, sound, reflections, and ways to connect.</p>
+          <div class="discovery-choices" role="list" aria-label="Choose a path for today" data-i18n-aria-label="guide.startersLabel" data-discovery-choices>
+            <button type="button" data-healing-topic="encouragement">I need encouragement</button>
+            <button type="button" data-healing-topic="rebuilding">I am rebuilding after a difficult season</button>
+            <button type="button" data-healing-topic="red_flags">I want to understand red flags</button>
+            <button type="button" data-healing-topic="reflection_music">I want music for reflection</button>
+            <button type="button" data-healing-topic="faith">I need faith and hope</button>
+            <button type="button" data-healing-topic="speaking">I want to invite Carine to speak</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section healing-journey" id="healing-journey" aria-labelledby="healing-journey-heading" hidden>
+        <div class="container healing-journey-shell">
+          <div class="section-heading">
+            <p class="eyebrow">Your Healing Journey</p>
+            <h2 id="healing-journey-heading" tabindex="-1">A path for this moment</h2>
+            <p data-healing-summary aria-live="polite"></p>
+          </div>
+          <div class="healing-results" data-healing-results></div>
+        </div>
+      </section>
+
       <section class="section about" id="about" aria-labelledby="about-heading">
         <div class="container split-layout">
           <div class="section-kicker reveal" data-i18n="about.kicker">About Carine</div>
@@ -575,6 +602,21 @@
             </p>
             <p class="discreet-notice" data-i18n="music.disclaimer">Music and media are presented for promotional listening and artist visibility. Rights remain with their respective owners. Unauthorized copying, redistribution, or commercial use is prohibited.</p>
           </div>
+
+          <aside class="studio-track-view reveal" data-studio-view aria-labelledby="studio-view-title">
+            <div class="studio-track-view__art"><img data-studio-artwork src="" alt="" loading="lazy"></div>
+            <div class="studio-track-view__content">
+              <p class="eyebrow">Carine Studio</p>
+              <h3 id="studio-view-title" data-studio-title>Choose a track</h3>
+              <p class="studio-track-view__meta" data-studio-meta></p>
+              <p data-studio-description>Open a song’s Studio view for its story and connected recommendations.</p>
+              <div class="studio-track-view__actions">
+                <label>Explore a track <select data-studio-track-picker aria-label="Choose a Carine Studio track" data-i18n-aria-label="music.playlistLabel"></select></label>
+                <button class="button button-secondary" type="button" data-studio-share>Share track</button>
+              </div>
+              <nav class="studio-related" aria-label="Related content" data-i18n-aria-label="reflections.categoryLabel" data-studio-related></nav>
+            </div>
+          </aside>
 
           <div class="inline-listening-experience reveal is-visible" data-mobile-player aria-hidden="false">
             <div class="inline-player-card expanded-player-card">
@@ -943,6 +985,26 @@
         </div>
       </section>
 
+      <section class="section circle" id="stay-in-the-circle" aria-labelledby="circle-heading" data-circle>
+        <div class="container circle-panel reveal">
+          <div>
+            <p class="eyebrow">Stay connected</p>
+            <h2 id="circle-heading">Stay in the Circle</h2>
+            <p>New reflections, music and words of encouragement from Carine.</p>
+          </div>
+          <button class="button button-primary" type="button" data-circle-open aria-expanded="false" aria-controls="circle-form-wrap">Stay in the Circle</button>
+          <div id="circle-form-wrap" class="circle-form-wrap" data-circle-panel hidden>
+            <form class="circle-form" data-circle-form novalidate>
+              <label for="circle-email">Email address</label>
+              <div class="circle-form__row"><input id="circle-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" data-i18n-placeholder="guide.placeholder"><button class="button button-primary" type="submit">Subscribe</button></div>
+              <p class="discreet-notice">By subscribing, you choose to receive occasional updates. Every message will include an unsubscribe option.</p>
+              <p data-circle-status role="status" aria-live="polite"></p>
+            </form>
+            <button class="button button-ghost" type="button" data-circle-dismiss>Not now</button>
+          </div>
+        </div>
+      </section>
+
       <section class="section final-cta" id="contact" aria-labelledby="contact-heading">
         <div class="container cta-panel reveal">
           <p class="eyebrow" data-i18n="cta.kicker">Begin the conversation</p>
@@ -1073,5 +1135,6 @@
 
     <script src="content-reflections.js" defer></script>
     <script src="script.js" defer></script>
+    <script src="content-platform.js" defer></script>
   </body>
 </html>
