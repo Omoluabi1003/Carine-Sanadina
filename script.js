@@ -4921,7 +4921,7 @@ const renderCarinePlaylist = () => {
         data-track-credits-key="${creditsKey}"
         data-track-lyrics-timed="${lyricsTimed}"
       >
-        <audio aria-label="${escapePlaylistAttribute(`${model.title} by ${model.artist}`)}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous"></audio>
+        <audio aria-label="${escapePlaylistAttribute(`${model.title} by ${model.artist}`)}" data-i18n-aria-label="${trackKey}.audioLabel" preload="metadata" crossorigin="anonymous" playsinline webkit-playsinline></audio>
         <div class="track-cover-wrap">
           <img
             src="${coverUrl}"
@@ -7658,7 +7658,7 @@ if (musicPlayers.length) {
       if (!this.analyser) {
         this.analyser = this.audioContext.createAnalyser();
         this.analyser.fftSize = 2048;
-        this.analyser.smoothingTimeConstant = 0.8;
+        this.analyser.smoothingTimeConstant = 0.82;
         this.analyser.minDecibels = -90;
         this.analyser.maxDecibels = -10;
       }
@@ -8465,6 +8465,7 @@ if (musicPlayers.length) {
     scheduleVisualizerResize(40);
     const audio = activePlayer ? getAudio(activePlayer) : null;
     if (visualizerEnabled && audio && !audio.paused && !audio.ended) {
+      initializeMediaEngine();
       startVisualizer(audio);
     }
   });
@@ -8484,6 +8485,7 @@ if (musicPlayers.length) {
     reconcileAudioState('visibility-visible');
     wasPlayingBeforeBackground = false;
     if (audio && visualizerEnabled && !audio.paused && !audio.ended) {
+      initializeMediaEngine();
       startVisualizer(audio);
     }
   });
@@ -8767,6 +8769,7 @@ if (musicPlayers.length) {
     const discTransform = `translate3d(0, 0, ${layerDepth}) rotateZ(${rotationValue})`;
     vinylStages.forEach((stage) => stage.style.setProperty('--vinyl-rotation', rotationValue));
     vinylDiscs.forEach((disc) => {
+      disc.classList.remove('vinyl-css-fallback');
       disc.style.setProperty('--vinyl-rotation', rotationValue);
       disc.style.transform = discTransform;
       disc.style.webkitTransform = discTransform;
@@ -8778,8 +8781,13 @@ if (musicPlayers.length) {
   const animateVinylRotation = (frameTime) => {
     const elapsed = vinylLastFrameTime ? Math.min((frameTime - vinylLastFrameTime) / 1000, 0.05) : 0;
     vinylLastFrameTime = frameTime;
-    const targetVelocity = isVinylPlaying && !reduceMotion ? vinylPlaybackSpeed : 0;
+    // The media element is the source of truth. UI state and Web Audio can both
+    // lag behind after an iOS media-process suspension.
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended && audio.readyState >= 2);
+    const targetVelocity = actuallyPlaying ? vinylPlaybackSpeed : 0;
     vinylVelocity = targetVelocity;
+    if (actuallyPlaying !== isVinylPlaying) syncVinylExperience(actuallyPlaying, actuallyPlaying ? 'playing' : (audio?.ended ? 'ended' : 'paused'));
 
     if (vinylVelocity > 0.01) {
       vinylRotation = (vinylRotation + vinylVelocity * elapsed) % 360;
@@ -8788,16 +8796,13 @@ if (musicPlayers.length) {
       vinylVelocity = 0;
     }
 
-    if (isVinylPlaying && !reduceMotion) {
-      vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
-    } else {
-      vinylAnimationFrame = 0;
-      vinylLastFrameTime = 0;
-    }
+    // Keep one loop alive while paused so WebKit can resume without rebuilding
+    // a callback chain after lock-screen, tab, or back-forward-cache recovery.
+    vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
   };
 
   const ensureVinylAnimation = () => {
-    if (!vinylAnimationFrame && isVinylPlaying && !reduceMotion) {
+    if (!vinylAnimationFrame) {
       vinylLastFrameTime = 0;
       vinylAnimationFrame = requestAnimationFrame(animateVinylRotation);
     }
@@ -8807,12 +8812,11 @@ if (musicPlayers.length) {
     if (vinylAnimationFrame) cancelAnimationFrame(vinylAnimationFrame);
     vinylAnimationFrame = 0;
     vinylLastFrameTime = 0;
-    renderVinylRotation();
     ensureVinylAnimation();
   };
 
   const recoverVinylAfterLifecycleChange = () => {
-    if (document.visibilityState !== 'visible' || !isVinylPlaying || reduceMotion) return;
+    if (document.visibilityState !== 'visible') return;
     window.requestAnimationFrame(restartVinylAnimation);
   };
 
@@ -8821,9 +8825,17 @@ if (musicPlayers.length) {
   window.addEventListener('orientationchange', recoverVinylAfterLifecycleChange);
 
   window.setInterval(() => {
-    if (!isVinylPlaying || reduceMotion || document.visibilityState !== 'visible') return;
+    if (document.visibilityState !== 'visible') return;
     const frameAge = vinylLastRenderedAt ? window.performance.now() - vinylLastRenderedAt : Infinity;
-    if (!vinylAnimationFrame || frameAge > 1500) restartVinylAnimation();
+    if (!vinylAnimationFrame || frameAge > 1500) {
+      const audio = activePlayer ? getAudio(activePlayer) : null;
+      if (audio && !audio.paused && !audio.ended) {
+        vinylDiscs.forEach((disc) => {
+          if (disc.isConnected) disc.classList.add('vinyl-css-fallback');
+        });
+      }
+      restartVinylAnimation();
+    }
   }, 2000);
 
   const syncVinylExperience = (isPlaying, playbackState = null) => {
@@ -8831,12 +8843,7 @@ if (musicPlayers.length) {
     const state = playbackState || (shouldRotate ? 'playing' : activePlayer ? 'paused' : 'ready');
     isVinylPlaying = shouldRotate;
 
-    if (!shouldRotate) {
-      if (vinylAnimationFrame) cancelAnimationFrame(vinylAnimationFrame);
-      vinylAnimationFrame = 0;
-      vinylLastFrameTime = 0;
-      vinylVelocity = 0;
-    }
+    if (!shouldRotate) vinylVelocity = 0;
 
     vinylStages.forEach((stage) => {
       stage.classList.toggle('is-playing', shouldRotate);
@@ -8855,6 +8862,46 @@ if (musicPlayers.length) {
     expandedPlayerCard?.classList.toggle('turntable-playing', shouldRotate);
     ensureVinylAnimation();
   };
+
+  let mediaEngineInitialization = null;
+  let mediaEngineInitialized = false;
+  const mediaGestureEvents = ['pointerdown', 'touchstart', 'click'];
+  const initializeMediaEngineFromGesture = () => initializeMediaEngine({ allowCreate: true });
+  const removeMediaGestureListeners = () => mediaGestureEvents.forEach((eventName) => {
+    document.removeEventListener(eventName, initializeMediaEngineFromGesture, true);
+  });
+
+  // The single gesture-time entry point is idempotent across pointer/touch/click
+  // and delegates source-node uniqueness to VisualizerController's WeakMap.
+  async function initializeMediaEngine({ allowCreate = Boolean(window.navigator.userActivation?.isActive) } = {}) {
+    ensureVinylAnimation();
+    if (mediaEngineInitialized) {
+      const context = visualizerController?.audioContext;
+      if (context && ['suspended', 'interrupted'].includes(context.state)) await context.resume();
+      return context || null;
+    }
+    if (mediaEngineInitialization) return mediaEngineInitialization;
+
+    mediaEngineInitialization = (async () => {
+      const audio = activePlayer ? getAudio(activePlayer) : null;
+      const context = await ensureAudioContextForGesture({ allowCreate, allowResume: true });
+      if (context && audio) connectAudioToAnalyser(audio);
+      mediaEngineInitialized = Boolean(context);
+      if (mediaEngineInitialized) removeMediaGestureListeners();
+      if (!context) mediaEngineInitialization = null;
+      return context;
+    })().catch((error) => {
+      mediaEngineInitialization = null;
+      warnAnalyzerFallback(error?.message || error);
+      return null;
+    });
+    return mediaEngineInitialization;
+  }
+
+  mediaGestureEvents.forEach((eventName) => {
+    document.addEventListener(eventName, initializeMediaEngineFromGesture, { capture: true, passive: true });
+  });
+  ensureVinylAnimation();
 
   setupVinylDebugPanel();
   updateVisualizerToggleUI();
@@ -9418,7 +9465,7 @@ if (musicPlayers.length) {
     const status = musicPlayer.querySelector('[data-audio-status]');
 
     if (audio && musicPlayer.dataset.audioSrc) {
-      ['loadstart', 'loadedmetadata', 'durationchange', 'canplay', 'loadeddata', 'waiting', 'stalled', 'timeupdate', 'seeking', 'seeked', 'play', 'playing', 'pause', 'ended', 'error'].forEach((eventName) => {
+      ['loadstart', 'loadedmetadata', 'durationchange', 'canplay', 'canplaythrough', 'loadeddata', 'waiting', 'stalled', 'timeupdate', 'seeking', 'seeked', 'ratechange', 'play', 'playing', 'pause', 'ended', 'error'].forEach((eventName) => {
         audio.addEventListener(eventName, () => {
           lastAudioEvent = eventName;
         }, { passive: true });
@@ -9487,6 +9534,7 @@ if (musicPlayers.length) {
       });
 
       audio.addEventListener('play', () => {
+        initializeMediaEngine();
         musicPlayer.classList.add('is-playing');
         showMiniPlayer(musicPlayer);
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
@@ -10126,7 +10174,8 @@ if (musicPlayers.length) {
   restorePlayerStateWithoutAutoplay();
   window.addEventListener('focus', () => {
     lastLifecycleEvent = 'focus';
-    reconcileAudioState('focus');
+    const audio = reconcileAudioState('focus');
+    if (audio && !audio.paused && !audio.ended) initializeMediaEngine();
   });
   window.addEventListener('pagehide', () => {
     lastLifecycleEvent = 'pagehide';

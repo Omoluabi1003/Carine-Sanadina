@@ -70,11 +70,25 @@ test('vinyl uses requestAnimationFrame rotation and maps tonearm playback states
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
 
-test('playback owns a 33 1/3 RPM frame loop and pause cancels it immediately', () => {
+test('playback owns a persistent 33 1/3 RPM frame loop and pause preserves its angle', () => {
   assert.match(script, /vinylVelocity = targetVelocity/);
-  assert.match(script, /if \(isVinylPlaying && !reduceMotion\) \{\s*vinylAnimationFrame = requestAnimationFrame\(animateVinylRotation\)/);
-  assert.match(script, /if \(!shouldRotate\) \{[\s\S]*?cancelAnimationFrame\(vinylAnimationFrame\)[\s\S]*?vinylVelocity = 0/);
+  assert.match(script, /const actuallyPlaying = Boolean\(audio && !audio\.paused && !audio\.ended && audio\.readyState >= 2\)/);
+  assert.match(script, /vinylAnimationFrame = requestAnimationFrame\(animateVinylRotation\);\n\s*\};/);
+  assert.match(script, /if \(!shouldRotate\) vinylVelocity = 0/);
+  assert.doesNotMatch(script, /if \(!shouldRotate\) \{[\s\S]*?vinylRotation = 0/);
   assert.doesNotMatch(script, /mobileFrameInterval/);
+});
+
+test('universal media engine is gesture initialized, idempotent, and analyser independent', () => {
+  assert.match(script, /async function initializeMediaEngine/);
+  assert.match(script, /\['pointerdown', 'touchstart', 'click'\]/);
+  assert.match(script, /mediaEngineInitialization/);
+  assert.match(script, /mediaSourceNodes = new WeakMap\(\)/);
+  assert.match(script, /this\.analyser\.fftSize = 2048/);
+  assert.match(script, /this\.analyser\.smoothingTimeConstant = 0\.82/);
+  assert.match(script, /preload="metadata"[^>]*playsinline webkit-playsinline/);
+  assert.match(css, /@keyframes vinylSpin/);
+  assert.match(css, /vinyl-css-fallback[\s\S]*?1\.8s linear infinite/);
 });
 
 test('iOS keeps requestAnimationFrame as the sole vinyl transform owner', () => {
