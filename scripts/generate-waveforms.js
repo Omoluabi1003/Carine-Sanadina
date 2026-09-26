@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
-const tracks = { consolation: 'Consolation.mp3', gentillesse: 'La Gentillesse.mp3', wonderful: 'Wonderful.mp3', womanifesto: 'Womanifesto (1).mp3', 'paranoia-persecutive': 'Paranoïa Persécutive.mp3', reason: 'Reason.mp3', halleluyah: 'Hallelujah.mp3', hosanna: 'Hosanna.mp3', matondo: 'Matondo.mp3' };
+const tracks = { consolation: 'Consolation.mp3', gentillesse: 'La Gentillesse.mp3', wonderful: 'Wonderful.mp3', womanifesto: 'Womanifesto (1).mp3', 'paranoia-persecutive': 'Paranoïa Persécutive.mp3', reason: 'Reason.mp3', halleluyah: 'Hallelujah.mp3', hosanna: 'Hosanna.mp3', matondo: 'Matondo.mp3', 'work-on-me': 'Work On Me.mp3' };
 const result = {};
 for (const [id, file] of Object.entries(tracks)) {
   const pcm = execFileSync('ffmpeg', ['-v', 'error', '-i', path.join(root, file), '-ac', '1', '-ar', '8000', '-f', 'f32le', 'pipe:1'], { maxBuffer: 32000000 });

@@ -19,7 +19,8 @@
     ['reason', 'Reason', 'Afropop', '', 'D60D546C-83C3-401A-8C56-3B48FD5022E0.png', ['gratitude', 'hope', 'starting_over'], 'road-to-sunshine-faith'],
     ['halleluyah', 'Halleluyah', 'Gospel Worship', 'Lingala', 'Halleluyah Cover.png', ['faith', 'hope', 'gratitude'], 'road-to-sunshine-faith'],
     ['hosanna', 'Hosanna', 'Gospel Worship', '', 'Hosanna.jpg', ['faith', 'hope', 'encouragement'], 'road-to-sunshine-faith'],
-    ['matondo', 'Matondo', 'Gospel Praise', '', 'Matondo.jpeg', ['gratitude', 'faith', 'hope'], 'road-to-sunshine-faith']
+    ['matondo', 'Matondo', 'Gospel Praise', '', 'Matondo.jpeg', ['gratitude', 'faith', 'hope'], 'road-to-sunshine-faith'],
+    ['work-on-me', 'Work On Me', '', '', 'Work On Me.jpeg', [], '']
   ].map(([id, title, genre, language, artwork, themes, reflection]) => ({ id, slug: id, type: 'track', title, artist: 'Carine Sanadina', genre, language, artwork, themes, relatedReflection: reflection }));
   const reflections = (window.reflectionArticles || []).map((item) => ({
     id: item.slug, type: 'reflection', title: item.slug.split('-').map((word) => word[0].toUpperCase() + word.slice(1)).join(' '), href: `#reflection-${item.slug}`,
@@ -94,7 +95,7 @@
     if (picker) picker.value = track.slug;
     const related = studio.querySelector('[data-studio-related]');
     const reflection = reflections.find((item) => item.id === track.relatedReflection);
-    const book = pick(books, track.themes);
+    const book = track.themes.length ? pick(books, track.themes) : null;
     const next = tracks[(tracks.indexOf(track) + 1) % tracks.length];
     related.replaceChildren();
     [[reflection, 'Related reflection'], [book, 'Related book'], [next, 'Next track']].forEach(([item, label]) => {

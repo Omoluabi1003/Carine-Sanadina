@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-26-content-platform';
+const APP_VERSION = 'carine-site-2026-09-26-work-on-me';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -3679,6 +3679,25 @@ const matondoTranslations = {
 
 mergeTranslationAdditions(matondoTranslations, 'Matondo translations');
 
+const workOnMeTranslations = {};
+for (const language of ['en', 'fr', 'es', 'ln', 'sw', 'yo', 'de', 'ar', 'zh-CN']) {
+  workOnMeTranslations[language] = {
+    'tracks.workOnMe.title': 'Work On Me',
+    'tracks.workOnMe.audioLabel': 'Work On Me by Carine Sanadina',
+    'tracks.workOnMe.coverAlt': 'Work On Me cover artwork',
+    'tracks.workOnMe.fallback': 'Work On Me artwork is temporarily unavailable.',
+    'tracks.workOnMe.number': 'Track 10',
+    'tracks.workOnMe.description': 'A new track performed by Carine Sanadina.',
+    'tracks.workOnMe.about': 'Work On Me is performed by Carine Sanadina and produced by Omoluabi Productions.',
+    'workOnMeSynopsis': 'A new track performed by Carine Sanadina.',
+    'tracks.workOnMe.credits': 'Performed by Carine Sanadina\nProduced by Omoluabi Productions',
+    'tracks.workOnMe.playLabel': 'Play Work On Me',
+    'tracks.workOnMe.lyricsFallback': 'Lyrics are not available for this track.'
+  };
+}
+
+mergeTranslationAdditions(workOnMeTranslations, 'Work On Me translations');
+
 const appWideTranslationAdditions = {
   en: {
     'brand.logoAlt': 'Carine Sanadina logo',
@@ -4611,7 +4630,7 @@ const escapePlaylistAttribute = (value = '') => escapePlaylistText(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
-const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah', 'hosanna', 'matondo'];
+const REQUIRED_MUSIC_TRACK_IDS = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah', 'hosanna', 'matondo', 'work-on-me'];
 const DEFAULT_MUSIC_TRACK_ID = 'halleluyah';
 const PLAYLIST_STORAGE_KEYS = [PLAYER_STATE_STORAGE_KEY];
 const CACHE_SENSITIVE_STORAGE_KEYS = [
@@ -4815,6 +4834,23 @@ const CARINE_MUSIC_PLAYLIST = [
     lyricsTimed: [],
     translationKey: 'tracks.matondo',
     synopsisKey: 'matondoSynopsis'
+  },
+  {
+    id: 'work-on-me',
+    title: 'Work On Me',
+    artist: 'Carine Sanadina',
+    description: 'A new track performed by Carine Sanadina.',
+    coverUrl: './Work On Me.jpeg',
+    audioUrl: './Work On Me.mp3',
+    artworkFit: 'contain',
+    lyrics: '',
+    lyricsLrc: '',
+    lyricsFallbackKey: 'tracks.workOnMe.lyricsFallback',
+    about: 'Work On Me is performed by Carine Sanadina and produced by Omoluabi Productions.',
+    credits: 'Performed by Carine Sanadina\nProduced by Omoluabi Productions',
+    lyricsTimed: [],
+    translationKey: 'tracks.workOnMe',
+    synopsisKey: 'workOnMeSynopsis'
   }
 ];
 
@@ -8810,13 +8846,14 @@ if (musicPlayers.length) {
 
     const audio = getAudio(player);
     const artworkSrc = player.dataset.trackCover || '';
+    const artworkType = /\.jpe?g(?:$|[?#])/i.test(artworkSrc) ? 'image/jpeg' : 'image/png';
 
     try {
       navigator.mediaSession.metadata = new window.MediaMetadata({
         title: getTrackTitle(player),
         artist: player.dataset.trackArtist || 'Carine Sanadina',
         album: 'Carine Sanadina',
-        artwork: artworkSrc ? [{ src: artworkSrc, sizes: '512x512', type: 'image/png' }] : []
+        artwork: artworkSrc ? [{ src: artworkSrc, sizes: '512x512', type: artworkType }] : []
       });
       navigator.mediaSession.playbackState = audio && !audio.paused && !audio.ended ? 'playing' : 'paused';
       updateMediaSessionPosition(audio);

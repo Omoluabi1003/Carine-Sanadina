@@ -10,7 +10,7 @@ const platform = fs.readFileSync(path.join(root, 'content-platform.js'), 'utf8')
 const build = fs.readFileSync(path.join(root, 'scripts/build.js'), 'utf8');
 const worker = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 
-const trackIds = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah', 'hosanna', 'matondo'];
+const trackIds = ['consolation', 'gentillesse', 'wonderful', 'womanifesto', 'paranoia-persecutive', 'reason', 'halleluyah', 'hosanna', 'matondo', 'work-on-me'];
 
 test('normalized platform metadata references only the existing catalog', () => {
   for (const id of trackIds) {

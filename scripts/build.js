@@ -68,7 +68,9 @@ const staticRootAssets = [
   '00243680-B36E-4587-8623-9AEFD1896D1A.png',
   'Halleluyah Cover.png',
   'Hosanna.jpg',
-  'Matondo.jpeg'
+  'Matondo.jpeg',
+  'Work On Me.jpeg',
+  'Work On Me.mp3'
 ];
 
 for (const file of staticRootAssets) {
