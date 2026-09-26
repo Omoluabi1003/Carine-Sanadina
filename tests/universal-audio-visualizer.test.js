@@ -72,3 +72,13 @@ test('waveform strokes remain crisp and disable glow first on low-power devices'
   assert.match(script, /context\.lineJoin = 'round'/);
   assert.match(script, /navigator\.deviceMemory && navigator\.deviceMemory <= 2/);
 });
+
+
+test('waveform has a playback-synchronized fallback when raw audio capture is unavailable', () => {
+  assert.match(script, /fillUniversalWaveformFallback\(time = 0, playing = false\)/);
+  assert.match(script, /this\.fillUniversalWaveformFallback\(time, playing && !useIdle\)/);
+  assert.match(script, /waveformSource: live \? 'analyser' : \(playing && !useIdle \? 'playback-synchronized-fallback' : 'idle'\)/);
+  const fallbackBody = script.match(/fillUniversalWaveformFallback\(time = 0, playing = false\) \{[\s\S]*?\n    \}/)?.[0] || '';
+  assert.match(fallbackBody, /this\.activeAudio\?\.currentTime/);
+  assert.doesNotMatch(fallbackBody, /AudioContext|createMediaElementSource|createMediaStreamSource|\.play\(|\.pause\(/);
+});
