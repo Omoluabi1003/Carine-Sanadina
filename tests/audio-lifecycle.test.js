@@ -72,3 +72,20 @@ test('adaptive visual frames isolate exceptions and retain one scheduled loop', 
   assert.match(script, /if \(!document\.hidden && audio && !audio\.paused && !audio\.ended\)/);
   assert.match(script, /}, 4000\);/);
 });
+
+test('background lifecycle suspends visuals without controlling native audio', () => {
+  const visibilityHandler = script.match(/document\.addEventListener\('visibilitychange',[\s\S]*?\n  \}\);/)?.[0] || '';
+  assert.match(visibilityHandler, /persistPlayerState\(\)/);
+  assert.match(visibilityHandler, /stopLyricsAnimationLoop\(\)/);
+  assert.match(visibilityHandler, /visualizerController\?\.cancelFrame\(\)/);
+  assert.doesNotMatch(visibilityHandler, /audio\.pause\(|audio\.load\(|currentTime\s*=|activePlayer\s*=/);
+  assert.match(script, /document\.addEventListener\('freeze',[\s\S]*?persistPlayerState\(\)/);
+  assert.match(script, /document\.addEventListener\('resume',[\s\S]*?reconcileAudioState\('resume'\)/);
+});
+
+test('visual analyser never replaces native HTML audio output', () => {
+  const connectBody = script.match(/connectAnalyser\(audio\) \{[\s\S]*?\n    \}\n\n    switchTrack/)?.[0] || '';
+  assert.doesNotMatch(connectBody, /createMediaElementSource/);
+  assert.match(connectBody, /createMediaStreamSource/);
+  assert.doesNotMatch(connectBody, /audioContext\.destination/);
+});

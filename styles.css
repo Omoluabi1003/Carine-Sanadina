@@ -10847,3 +10847,10 @@ img, video { height: auto; }
 @media (max-width: 640px) {
   .hero { padding-top: calc(210px + env(safe-area-inset-top)); }
 }
+/* Lifecycle suspension is visual-only. The HTMLAudioElement deliberately
+   remains alive and playing while expensive decorative animation is paused. */
+.background-visuals-suspended *,
+.background-visuals-suspended *::before,
+.background-visuals-suspended *::after {
+  animation-play-state: paused !important;
+}

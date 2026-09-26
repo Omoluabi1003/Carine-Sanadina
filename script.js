@@ -7741,11 +7741,6 @@ if (musicPlayers.length) {
         this.probeTimeData = new Uint8Array(this.analyser.fftSize);
       }
 
-      if (!this.analyserConnectedToDestination) {
-        this.analyser.connect(this.audioContext.destination);
-        this.analyserConnectedToDestination = true;
-      }
-
       return this.audioContext;
     }
 
@@ -7766,7 +7761,20 @@ if (musicPlayers.length) {
 
       if (!nodeRecord) {
         try {
-          nodeRecord = { context: this.audioContext, source: this.audioContext.createMediaElementSource(audio) };
+          // Never route the HTMLAudioElement through Web Audio. A
+          // MediaElementAudioSourceNode replaces the element's native output,
+          // so an OS-suspended AudioContext can also silence the music. A
+          // captured stream is a read-only visualization tap: unsupported
+          // browsers simply use the time-based visual fallback while native
+          // media playback remains completely independent.
+          const captureStream = audio.captureStream || audio.mozCaptureStream;
+          if (typeof captureStream !== 'function' || typeof this.audioContext.createMediaStreamSource !== 'function') {
+            this.warnFallback('Non-routing analyser capture is unavailable; preserving native audio playback.');
+            this.sourceConnected = false;
+            return false;
+          }
+          const stream = captureStream.call(audio);
+          nodeRecord = { context: this.audioContext, stream, source: this.audioContext.createMediaStreamSource(stream) };
           this.mediaSourceNodes.set(audio, nodeRecord);
           this.sourceConnectionState.set(audio, false);
         } catch (error) {
@@ -8663,6 +8671,7 @@ if (musicPlayers.length) {
   window.addEventListener('orientationchange', () => scheduleVisualizerResize(180), { passive: true });
   window.addEventListener('pageshow', () => {
     lastLifecycleEvent = 'pageshow';
+    if (!document.hidden) document.documentElement.classList.remove('background-visuals-suspended');
     reconcileAudioState('pageshow');
     recoverVisualizer();
     scheduleVisualizerResize(40);
@@ -8673,17 +8682,22 @@ if (musicPlayers.length) {
     }
   });
   document.addEventListener('visibilitychange', () => {
-    resizeVisualizerSurface();
     const audio = activePlayer ? getAudio(activePlayer) : null;
 
     if (document.hidden) {
       wasPlayingBeforeBackground = Boolean(audio && !audio.paused && !audio.ended);
       lastLifecycleEvent = 'visibility-hidden';
+      persistPlayerState();
+      stopLyricsAnimationLoop();
+      visualizerController?.cancelFrame();
+      document.documentElement.classList.add('background-visuals-suspended');
       logAudioDiagnostics('visibility-hidden', { audio, wasPlayingBeforeBackground, userStoppedManually });
       return;
     }
 
     lastLifecycleEvent = 'visibility-visible';
+    document.documentElement.classList.remove('background-visuals-suspended');
+    resizeVisualizerSurface();
     logAudioDiagnostics('visibility-visible', { audio, wasPlayingBeforeBackground, userStoppedManually });
     reconcileAudioState('visibility-visible');
     recoverVisualizer();
@@ -8691,6 +8705,7 @@ if (musicPlayers.length) {
     if (audio && visualizerEnabled && !audio.paused && !audio.ended) {
       initializeMediaEngine();
       startVisualizer(audio);
+      startLyricsAnimationLoop(audio);
     }
   });
   window.addEventListener('carine:languagechange', () => {
@@ -9617,7 +9632,8 @@ if (musicPlayers.length) {
   };
 
   setMediaSessionActionHandler('play', () => {
-    if (activePlayer) playActiveTrack('mediaSession', activePlayer);
+    const audio = activePlayer ? getAudio(activePlayer) : null;
+    if (activePlayer && audio?.paused) playActiveTrack('mediaSession', activePlayer);
   });
   setMediaSessionActionHandler('pause', () => {
     const audio = activePlayer ? getAudio(activePlayer) : null;
@@ -9627,10 +9643,7 @@ if (musicPlayers.length) {
     }
   });
   setMediaSessionActionHandler('previoustrack', () => {
-    if (!activePlayer) return;
-    const currentIndex = musicPlayers.indexOf(activePlayer);
-    const previousPlayer = musicPlayers[Math.max(0, currentIndex - 1)] || musicPlayers[0];
-    if (previousPlayer) playAudio(previousPlayer);
+    if (activePlayer) playPreviousTrack(activePlayer);
   });
   setMediaSessionActionHandler('nexttrack', () => playNextTrack(activePlayer || musicPlayers[0]));
   setMediaSessionActionHandler('seekto', (details) => {
@@ -10443,6 +10456,27 @@ if (musicPlayers.length) {
   window.addEventListener('pagehide', () => {
     lastLifecycleEvent = 'pagehide';
     persistPlayerState();
+  });
+  // Page Lifecycle freeze/resume is implemented by Chromium and harmlessly
+  // ignored elsewhere. Only disposable rendering is stopped; the persistent
+  // HTMLAudioElement, playlist listeners, and Media Session remain intact.
+  document.addEventListener('freeze', () => {
+    lastLifecycleEvent = 'freeze';
+    persistPlayerState();
+    stopLyricsAnimationLoop();
+    visualizerController?.cancelFrame();
+    document.documentElement.classList.add('background-visuals-suspended');
+  });
+  document.addEventListener('resume', () => {
+    lastLifecycleEvent = 'resume';
+    const audio = reconcileAudioState('resume');
+    if (document.hidden) return;
+    document.documentElement.classList.remove('background-visuals-suspended');
+    recoverVisualizer();
+    if (audio && !audio.paused && !audio.ended) {
+      startLyricsAnimationLoop(audio);
+      if (visualizerEnabled) startVisualizer(audio);
+    }
   });
 }
 
