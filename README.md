@@ -1,5 +1,19 @@
 # Carine-Sanadina
 
+## Project at a glance
+
+**Category:** Author and personal brand website  
+**What it does:** Present the author's work, videos, reflections and public-facing digital experience  
+**Audience:** Users, technical contributors, project evaluators and potential partners  
+**Repository:** https://github.com/Omoluabi1003/Carine-Sanadina
+
+**Current implementation boundary:** Dynamic video discovery has a local fallback and optional endpoint; a public website is not itself proof of production backend coverage.
+
+This README documents the product direction and its implementation details. Planned or experimental features should not be interpreted as production-ready without verification in the code and deployment.
+
+---
+
+
 ## Local development
 
 This project is a dependency-free static site. Its automated tests use Node.js's built-in test runner; it does not require Playwright or downloaded browser binaries.
