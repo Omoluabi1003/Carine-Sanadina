@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-26-studio-4';
+const APP_VERSION = 'carine-site-2026-11-26-studio-5';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -7462,7 +7462,7 @@ if (musicPlayers.length) {
   const VISUALIZATION_STYLES = [
     { id: 'spectrum', labelKey: 'studio.spectrum' },
     { id: 'waveform', labelKey: 'studio.waveform' },
-    { id: 'radial', labelKey: 'studio.radial' },
+    { id: 'radial', labelKey: 'studio.vectorscope', label: 'Stereo vectorscope' },
     { id: 'mastering', labelKey: 'studio.mastering', label: 'Mastering analyzer' },
     { id: 'waterfall', labelKey: 'studio.waterfall', label: 'Spectrogram' },
     { id: 'meters', labelKey: 'studio.meters', label: 'RMS / peak meters' },
@@ -7664,7 +7664,7 @@ if (musicPlayers.length) {
       this.probeFrequencyData = new Uint8Array(frequencyBinCount);
       this.probeTimeData = new Uint8Array(frequencyBinCount);
       this.previousProbeData = new Uint8Array(frequencyBinCount);
-      this.spectrumBands = new Float32Array(WAVEFORM_UNIT_COUNT);
+      this.spectrumBands = new Float32Array(128);
       this.waveformData = new Uint8Array(2048);
       this.waveformPoints = new Float32Array(WAVEFORM_UNIT_COUNT);
       this.spectrumPeaks = new Float32Array(WAVEFORM_UNIT_COUNT);
@@ -7695,11 +7695,11 @@ if (musicPlayers.length) {
         .then(response => { if (!response.ok) throw new Error('No analysis asset'); return response.json(); })
         .then(data => {
           if (this.analysisRequest !== request) return;
-          if (data.version !== 1 || data.id !== track.id || data.source !== track.audioUrl ||
-              data.bands !== 32 || data.wave !== 64 || data.stride !== 98 || data.step !== 0.1 ||
+          if (data.version !== 2 || data.id !== track.id || data.source !== track.audioUrl ||
+              data.bands !== 128 || data.wave !== 128 || data.stride !== 514 || data.step !== 0.1 ||
               !Number.isInteger(data.frames) || data.frames < 1 || data.frames > 9000 ||
               !Number.isFinite(data.duration) || data.duration <= 0 || typeof data.data !== 'string' ||
-              data.data.length > 1200000) throw new Error('Invalid analysis asset');
+              data.data.length > 6300000) throw new Error('Invalid analysis asset');
           const raw = atob(data.data);
           if (raw.length !== data.frames * data.stride) throw new Error('Invalid analysis size');
           this.recordedAnalysis = { ...data, samples: Uint8Array.from(raw, char => char.charCodeAt(0)), audio };
@@ -7716,12 +7716,13 @@ if (musicPlayers.length) {
       const next = Math.min(data.frames - 1, frame + 1);
       const mix = Math.min(1, position - frame);
       const at = index => data.samples[frame * data.stride + index] * (1 - mix) + data.samples[next * data.stride + index] * mix;
-      for (let i = 0; i < this.spectrumBands.length; i++) this.spectrumBands[i] = at(Math.min(31, Math.floor(i * 32 / this.spectrumBands.length))) / 255;
+      for (let i = 0; i < this.spectrumBands.length; i++) this.spectrumBands[i] = at(Math.min(127, Math.floor(i * 128 / this.spectrumBands.length))) / 255;
       // A short actual PCM sample, not synthesized or interpolated across unrelated phases.
-      for (let i = 0; i < this.waveformData.length; i++) this.waveformData[i] = data.samples[frame * data.stride + 32 + Math.min(63, Math.floor(i * 64 / this.waveformData.length))];
+      for (let i = 0; i < this.waveformData.length; i++) this.waveformData[i] = data.samples[frame * data.stride + 128 + Math.min(127, Math.floor(i * 128 / this.waveformData.length))];
       const avg = (lo, hi) => { let total = 0; for (let i = lo; i < hi; i++) total += at(i) / 255; return total / (hi - lo); };
-      const bass = avg(0, 12), mid = avg(12, 23), high = avg(23, 32), rms = at(96) / 255;
-      return { spectrum: this.spectrumBands, waveform: this.waveformData, bass, mid, high, rms, peak: at(97)/255,
+      const bass = avg(0, 47), mid = avg(47, 89), high = avg(89, 128), rms = at(512) / 255;
+      const stereo = data.samples.subarray(frame * data.stride + 256, frame * data.stride + 512);
+      return { spectrum: this.spectrumBands, waveform: this.waveformData, bass, mid, high, rms, peak: at(513)/255, stereo,
         energy: bass*.32 + mid*.38 + high*.18 + rms*.12, live: true, waveformSource: 'recorded-analysis' };
     }
 
@@ -7863,7 +7864,7 @@ if (musicPlayers.length) {
 
       if (!this.analyser) {
         this.analyser = this.audioContext.createAnalyser();
-        this.analyser.fftSize = 2048;
+        this.analyser.fftSize = 4096;
         this.analyser.smoothingTimeConstant = 0.82;
         this.analyser.minDecibels = -90;
         this.analyser.maxDecibels = -10;
@@ -8046,9 +8047,9 @@ if (musicPlayers.length) {
           const analyserConnected = analyserAvailable && !forceFallback;
           if (analyserConnected) this.inspectAnalyser(audio);
           const live = analyserConnected && this.analyserActive && !this.analyserFlat;
-          const recorded = !live && !this.buffering && this.enabled && !reduceMotion ? this.getRecordedBands(audio) : null;
+          const recorded = (!live || selectedVisualizationStyle === 'radial') && !this.buffering && this.enabled && !reduceMotion ? this.getRecordedBands(audio) : null;
           const bands = recorded || this.sampleBands(time, !playing, !live, dt);
-          this.analysisSource = this.buffering ? 'none' : live ? 'live' : recorded ? 'recorded' : 'none';
+          this.analysisSource = this.buffering ? 'none' : recorded ? 'recorded' : live ? 'live' : 'none';
           this.liveBlend += ((live ? 1 : 0) - this.liveBlend) * Math.min(1, dt / 180);
           this.fallbackActive = playing && !live && !recorded;
           this.analyserFlat = analyserConnected ? this.analyserFlat : true;
@@ -8408,7 +8409,7 @@ if (musicPlayers.length) {
       const w=this.cssWidth,h=this.cssHeight, left=12,right=w-12,top=9,bottom=h-23;
       const values=Array.from(bands.spectrum, v=>Math.max(0,Math.min(1,v||0)));
       const recorded=this.analysisSource==='recorded';
-      const minHz=recorded?30:20,maxHz=recorded?10000:Math.min(16000,(this.audioContext?.sampleRate||48000)/2);
+      const minHz=20,maxHz=recorded?20000:Math.min(16000,(this.audioContext?.sampleRate||48000)/2);
       const key=style+'|'+this.analysisSource+'|'+this.activeTrackTitle;
       if(this.masteringKey!==key){this.masteringKey=key;this.masteringPeak=values.slice();this.masteringHistory=[];this.masteringLast=0;}
       const xForHz=hz=>left+Math.log(hz/minHz)/Math.log(maxHz/minHz)*(right-left);
@@ -8417,7 +8418,7 @@ if (musicPlayers.length) {
       context.save();context.fillStyle='#07121f';context.fillRect(0,0,w,h);
       context.font='10px system-ui';context.fillStyle='#a3b7cc';context.textBaseline='middle';
       if(style==='mastering'||style==='waterfall'){
-        const ticks=w<400?[50,100,500,1000,5000,10000]:[30,50,100,200,500,1000,2000,5000,10000];
+        const ticks=w<400?[50,100,500,1000,5000,10000]:[20,50,100,200,500,1000,2000,5000,10000,20000];
         for(const hz of ticks){if(hz<minHz||hz>maxHz)continue;const x=xForHz(hz);line(x,top,x,bottom,'#29405666');context.textAlign='center';context.fillText(hz>=1000?(hz/1000)+'k':String(hz),Math.max(13,Math.min(w-13,x)),h-10);}
         for(let n=0;n<=4;n++){const y=top+(bottom-top)*n/4;line(left,y,right,y,'#29405666');}
       }
@@ -8457,6 +8458,16 @@ if (musicPlayers.length) {
       context.clearRect(0, 0, width, height);
       // Do not present synthetic samples or a row of dots as measured audio.
       if (isQuiet || this.buffering || this.fallbackActive || !bands.live || (this.analysisSource !== 'recorded' && this.analyserFlat)) return;
+      if (selectedVisualizationStyle === 'radial') {
+        context.save(); context.fillStyle='#07121f';context.fillRect(0,0,width,height);
+        const radius=Math.min(width,height)*.39;
+        context.translate(centerX,centerY);context.strokeStyle='#496177';context.lineWidth=.7;
+        for(const scale of [.33,.66,1]){context.beginPath();context.arc(0,0,radius*scale,0,Math.PI*2);context.stroke();}
+        for(const a of [0,Math.PI/4,Math.PI/2,3*Math.PI/4]){context.beginPath();context.moveTo(-radius*Math.cos(a),-radius*Math.sin(a));context.lineTo(radius*Math.cos(a),radius*Math.sin(a));context.stroke();}
+        if(bands.stereo?.length===256){context.strokeStyle='#82e8dc';context.lineWidth=1;context.beginPath();for(let i=0;i<128;i++){const l=(bands.stereo[i]-128)/128,r=(bands.stereo[i+128]-128)/128;const x=(l-r)*radius/2,y=-(l+r)*radius/2;if(i===0)context.moveTo(x,y);else context.lineTo(x,y);}context.stroke();}
+        else {context.fillStyle='#b7c7da';context.font='11px system-ui';context.textAlign='center';context.fillText('Stereo analysis unavailable',0,0);}
+        context.restore();return;
+      }
       if (['mastering','waterfall','meters','band-energy'].includes(selectedVisualizationStyle)) { this.renderMasteringMode(context,bands,time,selectedVisualizationStyle); return; }
       this.ensureVisualPalette();
       this.ensureGlowGradient();
