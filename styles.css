@@ -11028,3 +11028,14 @@ main > .works.section .book-grid .book-card:last-child{grid-column:1/-1;grid-tem
 .music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer:not([data-signal-state="live"]):not([data-signal-state="recorded"])::after{content:"";display:block;position:absolute;inset:50% 10% auto;height:1px;background:#304762;opacity:.8;transform:none;box-shadow:none;pointer-events:none}
 .audio-visualizer-header .analysis-source{display:block;min-height:1em;font-size:.65rem;color:#d4bb8c;letter-spacing:.12em}
 @media(max-width:640px){.music-showcase .luxury-audio-console .audio-visualizer-panel{margin:8px 0;padding:10px}.music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer{height:92px!important}}
+
+/* Studio 4: mastering instruments share the native player surface. */
+.music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer:is([data-visualization-style="mastering"],[data-visualization-style="waterfall"],[data-visualization-style="meters"],[data-visualization-style="band-energy"]){height:clamp(144px,20vw,224px)!important;background:#07121f;border-radius:5px}
+.music-showcase .luxury-audio-console .audio-visualizer-controls .visualizer-style-control__select{max-width:100%;width:100%;font-weight:500}
+@media(max-width:640px){.music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer:is([data-visualization-style="mastering"],[data-visualization-style="waterfall"],[data-visualization-style="meters"],[data-visualization-style="band-energy"]){height:144px!important}}
+
+/* Studio 5 GPU display: real shader output beneath transparent instrumentation labels. */
+.music-visualizer .studio-gpu-surface{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
+.music-visualizer .studio-gpu-surface[hidden]{display:none!important}
+.music-visualizer .visualizer-surface{z-index:2;background:transparent!important}
+.music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer[data-visualization-style="radial"]{height:clamp(160px,24vw,260px)!important}

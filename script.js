@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-26-studio-3-1';
+const APP_VERSION = 'carine-site-2026-11-26-studio-5';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -7462,9 +7462,13 @@ if (musicPlayers.length) {
   const VISUALIZATION_STYLES = [
     { id: 'spectrum', labelKey: 'studio.spectrum' },
     { id: 'waveform', labelKey: 'studio.waveform' },
-    { id: 'radial', labelKey: 'studio.radial' }
+    { id: 'radial', labelKey: 'studio.vectorscope', label: 'Stereo vectorscope' },
+    { id: 'mastering', labelKey: 'studio.mastering', label: 'Mastering analyzer' },
+    { id: 'waterfall', labelKey: 'studio.waterfall', label: 'Spectrogram' },
+    { id: 'meters', labelKey: 'studio.meters', label: 'RMS / peak meters' },
+    { id: 'band-energy', labelKey: 'studio.bandEnergy', label: 'Bass / mid / treble' }
   ];
-  const DEFAULT_VISUALIZATION_STYLE = 'spectrum';
+  const DEFAULT_VISUALIZATION_STYLE = 'mastering';
   const normalizeVisualizationStyle = (styleId) => {
     const normalizedStyleId = String(styleId || '');
     const compactStyleId = normalizedStyleId.replace(/[\s-]/g, '').toLowerCase();
@@ -7581,7 +7585,7 @@ if (musicPlayers.length) {
   const setupVisualizationStyleSelector = () => {
     if (!visualizerStyleSelect) return;
     visualizerStyleSelect.innerHTML = VISUALIZATION_STYLES.map((style) => (
-      `<option value="${style.id}">${escapePlaylistText(translate(style.labelKey))}</option>`
+      `<option value="${style.id}">${escapePlaylistText(style.label ? t(style.labelKey, style.label) : translate(style.labelKey))}</option>`
     )).join('');
     visualizerStyleSelect.value = selectedVisualizationStyle;
   };
@@ -7660,7 +7664,7 @@ if (musicPlayers.length) {
       this.probeFrequencyData = new Uint8Array(frequencyBinCount);
       this.probeTimeData = new Uint8Array(frequencyBinCount);
       this.previousProbeData = new Uint8Array(frequencyBinCount);
-      this.spectrumBands = new Float32Array(WAVEFORM_UNIT_COUNT);
+      this.spectrumBands = new Float32Array(128);
       this.waveformData = new Uint8Array(2048);
       this.waveformPoints = new Float32Array(WAVEFORM_UNIT_COUNT);
       this.spectrumPeaks = new Float32Array(WAVEFORM_UNIT_COUNT);
@@ -7691,11 +7695,11 @@ if (musicPlayers.length) {
         .then(response => { if (!response.ok) throw new Error('No analysis asset'); return response.json(); })
         .then(data => {
           if (this.analysisRequest !== request) return;
-          if (data.version !== 1 || data.id !== track.id || data.source !== track.audioUrl ||
-              data.bands !== 32 || data.wave !== 64 || data.stride !== 98 || data.step !== 0.1 ||
+          if (data.version !== 2 || data.id !== track.id || data.source !== track.audioUrl ||
+              data.bands !== 128 || data.wave !== 128 || data.stride !== 514 || data.step !== 0.1 ||
               !Number.isInteger(data.frames) || data.frames < 1 || data.frames > 9000 ||
               !Number.isFinite(data.duration) || data.duration <= 0 || typeof data.data !== 'string' ||
-              data.data.length > 1200000) throw new Error('Invalid analysis asset');
+              data.data.length > 6300000) throw new Error('Invalid analysis asset');
           const raw = atob(data.data);
           if (raw.length !== data.frames * data.stride) throw new Error('Invalid analysis size');
           this.recordedAnalysis = { ...data, samples: Uint8Array.from(raw, char => char.charCodeAt(0)), audio };
@@ -7712,12 +7716,13 @@ if (musicPlayers.length) {
       const next = Math.min(data.frames - 1, frame + 1);
       const mix = Math.min(1, position - frame);
       const at = index => data.samples[frame * data.stride + index] * (1 - mix) + data.samples[next * data.stride + index] * mix;
-      for (let i = 0; i < this.spectrumBands.length; i++) this.spectrumBands[i] = at(Math.min(31, Math.floor(i * 32 / this.spectrumBands.length))) / 255;
+      for (let i = 0; i < this.spectrumBands.length; i++) this.spectrumBands[i] = at(Math.min(127, Math.floor(i * 128 / this.spectrumBands.length))) / 255;
       // A short actual PCM sample, not synthesized or interpolated across unrelated phases.
-      for (let i = 0; i < this.waveformData.length; i++) this.waveformData[i] = data.samples[frame * data.stride + 32 + Math.min(63, Math.floor(i * 64 / this.waveformData.length))];
+      for (let i = 0; i < this.waveformData.length; i++) this.waveformData[i] = data.samples[frame * data.stride + 128 + Math.min(127, Math.floor(i * 128 / this.waveformData.length))];
       const avg = (lo, hi) => { let total = 0; for (let i = lo; i < hi; i++) total += at(i) / 255; return total / (hi - lo); };
-      const bass = avg(0, 12), mid = avg(12, 23), high = avg(23, 32), rms = at(96) / 255;
-      return { spectrum: this.spectrumBands, waveform: this.waveformData, bass, mid, high, rms, peak: at(97)/255,
+      const bass = avg(0, 47), mid = avg(47, 89), high = avg(89, 128), rms = at(512) / 255;
+      const stereo = data.samples.subarray(frame * data.stride + 256, frame * data.stride + 512);
+      return { spectrum: this.spectrumBands, waveform: this.waveformData, bass, mid, high, rms, peak: at(513)/255, stereo,
         energy: bass*.32 + mid*.38 + high*.18 + rms*.12, live: true, waveformSource: 'recorded-analysis' };
     }
 
@@ -7859,7 +7864,7 @@ if (musicPlayers.length) {
 
       if (!this.analyser) {
         this.analyser = this.audioContext.createAnalyser();
-        this.analyser.fftSize = 2048;
+        this.analyser.fftSize = 4096;
         this.analyser.smoothingTimeConstant = 0.82;
         this.analyser.minDecibels = -90;
         this.analyser.maxDecibels = -10;
@@ -8042,9 +8047,9 @@ if (musicPlayers.length) {
           const analyserConnected = analyserAvailable && !forceFallback;
           if (analyserConnected) this.inspectAnalyser(audio);
           const live = analyserConnected && this.analyserActive && !this.analyserFlat;
-          const recorded = !live && !this.buffering && this.enabled && !reduceMotion ? this.getRecordedBands(audio) : null;
+          const recorded = (!live || selectedVisualizationStyle === 'radial') && !this.buffering && this.enabled && !reduceMotion ? this.getRecordedBands(audio) : null;
           const bands = recorded || this.sampleBands(time, !playing, !live, dt);
-          this.analysisSource = this.buffering ? 'none' : live ? 'live' : recorded ? 'recorded' : 'none';
+          this.analysisSource = this.buffering ? 'none' : recorded ? 'recorded' : live ? 'live' : 'none';
           this.liveBlend += ((live ? 1 : 0) - this.liveBlend) * Math.min(1, dt / 180);
           this.fallbackActive = playing && !live && !recorded;
           this.analyserFlat = analyserConnected ? this.analyserFlat : true;
@@ -8399,6 +8404,102 @@ if (musicPlayers.length) {
       context.closePath();
     }
 
+
+
+    initStudioGPU() {
+      if (!this.container || this.studioGPU || this.gpuFailed) return;
+      const canvas=document.createElement('canvas');canvas.className='studio-gpu-surface';canvas.setAttribute('aria-hidden','true');
+      const gl=canvas.getContext('webgl2',{alpha:true,antialias:true,premultipliedAlpha:false,powerPreference:'low-power'});
+      if(!gl){this.gpuFailed=true;return;}
+      const vertex='#version 300 es\nin vec2 p;out vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
+      const fragment=`#version 300 es
+      precision highp float;in vec2 uv;out vec4 color;
+      uniform sampler2D signal;uniform vec2 size;uniform int mode;uniform float energy;
+      float sampleSignal(float x,float row){return texture(signal,vec2(clamp(x,0.,1.),row)).r;}
+      void main(){
+        vec2 q=uv;float x=q.x;float y=q.y;
+        float grid=(1.-smoothstep(.0,.012,abs(fract(x*12.)-.5)))*.035+(1.-smoothstep(.0,.025,abs(fract(y*5.)-.5)))*.04;
+        vec3 base=mix(vec3(.014,.027,.044),vec3(.032,.067,.098),y)+grid;
+        float v=sampleSignal(x,.25);float p=sampleSignal(x,.75);
+        float line=0.;float fill=0.;float peak=0.;
+        if(mode==0){float yy=.09+v*.79;float py=.09+p*.79;line=exp(-abs(y-yy)*size.y*.63);fill=step(y,yy)*(.06+.19*y);peak=exp(-abs(y-py)*size.y*.85)*.46;}
+        if(mode==1){float yy=.5+(v-.5)*.84;line=exp(-abs(y-yy)*size.y*.67);}
+        if(mode==2){float cell=floor(x*64.);float xx=(cell+.5)/64.;float a=sampleSignal(xx,.25);float mask=step(.15,fract(x*64.))*step(fract(x*64.),.85);fill=mask*step(y,.08+a*.82)*(.23+.56*y);peak=mask*exp(-abs(y-(.08+a*.82))*size.y*.8)*.65;}
+        vec3 cyan=vec3(.20,.76,.91);vec3 silver=vec3(.57,.69,.77);
+        vec3 rgb=base+cyan*(fill+line*.78)+silver*peak;
+        rgb+=vec3(.05,.12,.18)*exp(-abs(y-.94)*12.)*.20;
+        color=vec4(rgb,1.);
+      }`;
+      const shader=(type,src)=>{const o=gl.createShader(type);gl.shaderSource(o,src);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)){gl.deleteShader(o);throw Error('shader compile');}return o;};
+      try{
+        const vs=shader(gl.VERTEX_SHADER,vertex),fs=shader(gl.FRAGMENT_SHADER,fragment),program=gl.createProgram();
+        gl.attachShader(program,vs);gl.attachShader(program,fs);gl.linkProgram(program);gl.deleteShader(vs);gl.deleteShader(fs);
+        if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error('shader link');
+        gl.useProgram(program);const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+        const loc=gl.getAttribLocation(program,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+        const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.R8,128,2,0,gl.RED,gl.UNSIGNED_BYTE,new Uint8Array(256));
+        const uniforms=Object.fromEntries(['signal','size','mode','energy'].map(k=>[k,gl.getUniformLocation(program,k)]));
+        this.studioGPU={canvas,gl,program,buffer,texture,uniforms,bytes:new Uint8Array(256),peak:new Float32Array(128),last:0};
+        canvas.hidden=true;this.container.prepend(canvas);
+        canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();canvas.hidden=true;this.gpuFailed=true;this.studioGPU=null;canvas.remove();});
+      }catch(_){this.gpuFailed=true;gl.getExtension('WEBGL_lose_context')?.loseContext();}
+    }
+
+    drawStudioGPU(bands,time,style) {
+      const mode={mastering:0,waveform:1,spectrum:2}[style];
+      if(mode===undefined)return false;
+      this.initStudioGPU();const g=this.studioGPU;if(!g)return false;
+      const {canvas,gl,program,texture,uniforms,bytes,peak}=g;
+      if(gl.isContextLost())return false;
+      const rect=this.container.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);
+      const w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));
+      if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+      const dt=Math.min(.2,Math.max(0,(time-(g.last||time))/1000));g.last=time;
+      for(let i=0;i<128;i++){const a=style==='waveform'?(bands.waveform[Math.floor(i*bands.waveform.length/128)]||0)/255:Math.max(0,Math.min(1,bands.spectrum[Math.floor(i*bands.spectrum.length/128)]||0));peak[i]=Math.max(a,peak[i]-dt*.16);bytes[i]=Math.round(a*255);bytes[128+i]=Math.round(peak[i]*255);}
+      gl.viewport(0,0,w,h);gl.useProgram(program);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,128,2,gl.RED,gl.UNSIGNED_BYTE,bytes);
+      gl.uniform1i(uniforms.signal,0);gl.uniform2f(uniforms.size,w,h);gl.uniform1i(uniforms.mode,mode);gl.uniform1f(uniforms.energy,bands.energy||0);gl.drawArrays(gl.TRIANGLES,0,3);
+      canvas.hidden=false;return true;
+    }
+
+    renderMasteringMode(context, bands, time, style) {
+      const w=this.cssWidth,h=this.cssHeight, left=12,right=w-12,top=9,bottom=h-23;
+      const values=Array.from(bands.spectrum, v=>Math.max(0,Math.min(1,v||0)));
+      const recorded=this.analysisSource==='recorded';
+      const minHz=20,maxHz=recorded?20000:Math.min(16000,(this.audioContext?.sampleRate||48000)/2);
+      const key=style+'|'+this.analysisSource+'|'+this.activeTrackTitle;
+      if(this.masteringKey!==key){this.masteringKey=key;this.masteringPeak=values.slice();this.masteringHistory=[];this.masteringLast=0;}
+      const xForHz=hz=>left+Math.log(hz/minHz)/Math.log(maxHz/minHz)*(right-left);
+      const yFor=v=>bottom-v*(bottom-top);
+      const line=(x1,y1,x2,y2,color)=>{context.strokeStyle=color;context.lineWidth=1;context.beginPath();context.moveTo(x1,y1);context.lineTo(x2,y2);context.stroke();};
+      context.save();context.fillStyle='#07121f';context.fillRect(0,0,w,h);
+      context.font='10px system-ui';context.fillStyle='#a3b7cc';context.textBaseline='middle';
+      if(style==='mastering'||style==='waterfall'){
+        const ticks=w<400?[50,100,500,1000,5000,10000]:[20,50,100,200,500,1000,2000,5000,10000,20000];
+        for(const hz of ticks){if(hz<minHz||hz>maxHz)continue;const x=xForHz(hz);line(x,top,x,bottom,'#29405666');context.textAlign='center';context.fillText(hz>=1000?(hz/1000)+'k':String(hz),Math.max(13,Math.min(w-13,x)),h-10);}
+        for(let n=0;n<=4;n++){const y=top+(bottom-top)*n/4;line(left,y,right,y,'#29405666');}
+      }
+      if(style==='mastering'){
+        const elapsed=Math.min(0.2,Math.max(0,(time-(this.masteringLast||time))/1000));
+        this.masteringLast=time;
+        values.forEach((v,i)=>this.masteringPeak[i]=Math.max(v,(this.masteringPeak[i]||0)-elapsed*.12));
+        const trace=(array)=>{context.beginPath();array.forEach((v,i)=>{const x=left+(i+.5)/array.length*(right-left),y=yFor(v);if(!i)context.moveTo(x,y);else context.lineTo(x,y);});};
+        trace(values);context.lineTo(right,bottom);context.lineTo(left,bottom);context.closePath();
+        const fill=context.createLinearGradient(0,top,0,bottom);fill.addColorStop(0,'#37c8ed55');fill.addColorStop(1,'#37c8ed08');context.fillStyle=fill;context.fill();
+        trace(this.masteringPeak);context.strokeStyle='#a8bacd88';context.lineWidth=1;context.stroke();
+        trace(values);context.strokeStyle='#51c9e9';context.lineWidth=1.8;context.lineJoin='round';context.stroke();
+      }else if(style==='waterfall'){
+        if(time-this.masteringLast>=100){this.masteringLast=time;this.masteringHistory.unshift(values);if(this.masteringHistory.length>48)this.masteringHistory.pop();}
+        const row=(bottom-top)/48,cell=(right-left)/values.length;
+        this.masteringHistory.forEach((frame,y)=>frame.forEach((v,x)=>{context.fillStyle='hsl('+(220-185*v)+', 80%, '+(8+53*v)+'%)';context.fillRect(left+x*cell,top+y*row,Math.ceil(cell),Math.ceil(row));}));
+      }else{
+        const rows=style==='meters'?[['RMS',bands.rms],['PEAK',bands.peak]]:[['BASS',bands.bass],['MID',bands.mid],['TREBLE',bands.high]];
+        const row=(h-12)/rows.length;
+        rows.forEach(([label,raw],i)=>{const v=Math.max(0,Math.min(1,raw||0)),y=6+i*row;context.textAlign='left';context.fillStyle='#b7c7da';context.fillText(label,12,y+row/2);const x=65,end=w-52,bw=Math.max(1,end-x),height=Math.min(13,row*.55);context.fillStyle='#20364c';context.fillRect(x,y+(row-height)/2,bw,height);context.fillStyle='#57c9e7';context.fillRect(x,y+(row-height)/2,bw*v,height);context.textAlign='right';context.fillStyle='#d5e5ef';context.fillText(style==='meters'?(v>0?(20*Math.log10(v)).toFixed(1)+' dB':'−∞ dB'):Math.round(v*100)+'%',w-8,y+row/2);});
+      }
+      context.restore();
+    }
+
     renderFrame(bands, time = 0, state = 'playing') {
       // Canvas is the visible representation; do not also mutate 64 DOM bars.
       this.renderHalo(bands, state);
@@ -8412,8 +8513,29 @@ if (musicPlayers.length) {
       const centerY = height / 2;
       const timeSeconds = time / 1000;
       context.clearRect(0, 0, width, height);
+      if(this.studioGPU) this.studioGPU.canvas.hidden=true;
       // Do not present synthetic samples or a row of dots as measured audio.
       if (isQuiet || this.buffering || this.fallbackActive || !bands.live || (this.analysisSource !== 'recorded' && this.analyserFlat)) return;
+      if (this.drawStudioGPU(bands,time,selectedVisualizationStyle)) {
+        // Canvas overlay retains readable frequency labels above the GPU surface.
+        if(selectedVisualizationStyle==='mastering'){
+          const maxHz=this.analysisSource==='recorded'?20000:Math.min(16000,(this.audioContext?.sampleRate||48000)/2);
+          context.font='10px system-ui';context.fillStyle='#a3b7cc';context.textAlign='center';
+          for(const hz of [50,100,500,1000,5000,10000]){if(hz>maxHz)continue;const x=Math.log(hz/20)/Math.log(maxHz/20)*width;context.fillText(hz>=1000?(hz/1000)+'k':String(hz),x,height-4);}
+        }
+        return;
+      }
+      if (selectedVisualizationStyle === 'radial') {
+        context.save(); context.fillStyle='#07121f';context.fillRect(0,0,width,height);
+        const radius=Math.min(width,height)*.39;
+        context.translate(centerX,centerY);context.strokeStyle='#496177';context.lineWidth=.7;
+        for(const scale of [.33,.66,1]){context.beginPath();context.arc(0,0,radius*scale,0,Math.PI*2);context.stroke();}
+        for(const a of [0,Math.PI/4,Math.PI/2,3*Math.PI/4]){context.beginPath();context.moveTo(-radius*Math.cos(a),-radius*Math.sin(a));context.lineTo(radius*Math.cos(a),radius*Math.sin(a));context.stroke();}
+        if(bands.stereo?.length===256){context.strokeStyle='#82e8dc';context.lineWidth=1;context.beginPath();for(let i=0;i<128;i++){const l=(bands.stereo[i]-128)/128,r=(bands.stereo[i+128]-128)/128;const x=(l-r)*radius/2,y=-(l+r)*radius/2;if(i===0)context.moveTo(x,y);else context.lineTo(x,y);}context.stroke();}
+        else {context.fillStyle='#b7c7da';context.font='11px system-ui';context.textAlign='center';context.fillText('Stereo analysis unavailable',0,0);}
+        context.restore();return;
+      }
+      if (['mastering','waterfall','meters','band-energy'].includes(selectedVisualizationStyle)) { this.renderMasteringMode(context,bands,time,selectedVisualizationStyle); return; }
       this.ensureVisualPalette();
       this.ensureGlowGradient();
       context.save();
