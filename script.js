@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-26-studio-3';
+const APP_VERSION = 'carine-site-2026-11-26-studio-3-1';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -7678,7 +7678,8 @@ if (musicPlayers.length) {
     }
 
     loadRecordedAnalysis(audio) {
-      const track = getTrackForPlayer(activePlayer);
+      const player = audio?.closest('[data-track-id]');
+      const track = getTrackForPlayer(player || activePlayer);
       if (!audio || !track || !/^[a-z0-9-]+$/.test(track.id)) return;
       if (this.analysisRequest?.id === track.id && this.analysisRequest.audio === audio) return;
       this.analysisRequest?.controller.abort();
@@ -7689,7 +7690,7 @@ if (musicPlayers.length) {
       fetch(new URL('audio-analysis/' + track.id + '.json?v=' + encodeURIComponent(APP_VERSION), document.baseURI), { signal: controller.signal })
         .then(response => { if (!response.ok) throw new Error('No analysis asset'); return response.json(); })
         .then(data => {
-          if (this.analysisRequest !== request || this.activeAudio !== audio) return;
+          if (this.analysisRequest !== request) return;
           if (data.version !== 1 || data.id !== track.id || data.source !== track.audioUrl ||
               data.bands !== 32 || data.wave !== 64 || data.stride !== 98 || data.step !== 0.1 ||
               !Number.isInteger(data.frames) || data.frames < 1 || data.frames > 9000 ||
@@ -7698,7 +7699,7 @@ if (musicPlayers.length) {
           const raw = atob(data.data);
           if (raw.length !== data.frames * data.stride) throw new Error('Invalid analysis size');
           this.recordedAnalysis = { ...data, samples: Uint8Array.from(raw, char => char.charCodeAt(0)), audio };
-        }).catch(() => { /* Native audio remains independent. */ });
+        }).catch(() => { if (this.analysisRequest === request) this.analysisRequest = null; /* Native audio remains independent. */ });
     }
 
     getRecordedBands(audio) {
@@ -7806,8 +7807,8 @@ if (musicPlayers.length) {
         this.surface.width = width;
         this.surface.height = height;
       }
-      this.surface.style.width = `${cssWidth}px`;
-      this.surface.style.height = `${cssHeight}px`;
+      this.surface.style.width = '100%';
+      this.surface.style.height = '100%';
       this.surfaceContext?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       this.visualGradientKey = '';
       this.glowGradientKey = '';
@@ -8020,6 +8021,7 @@ if (musicPlayers.length) {
         const audio = this.activeAudio;
         const playing = Boolean(audio && !audio.paused && !audio.ended);
         const contextRunning = this.audioContext?.state === 'running';
+        if (playing && this.enabled && !reduceMotion && !this.analysisRequest && !this.recordedAnalysis && time - (this.lastAnalysisRetry || 0) > 5000) { this.lastAnalysisRetry = time; this.loadRecordedAnalysis(audio); }
         const analyserAvailable = Boolean(playing && contextRunning && this.analyser && this.sourceConnected);
 
         if (playing && !contextRunning && this.audioContext && time - this.lastRecoveryAttempt > 1500 && document.visibilityState === 'visible') {
@@ -8265,7 +8267,7 @@ if (musicPlayers.length) {
       this.container.classList.toggle('is-off', !this.enabled || reduceMotion);
       this.container.dataset.signalState = !this.enabled || reduceMotion ? 'off' : state === 'waiting' ? 'buffering' : state !== 'playing' ? 'idle' : this.analysisSource === 'recorded' ? 'recorded' : this.analysisSource === 'live' ? 'live' : 'unavailable';
       const signalLabel = this.container.closest('.audio-visualizer-panel')?.querySelector('[data-analysis-source]');
-      if (signalLabel) signalLabel.textContent = this.analysisSource === 'recorded' && state === 'playing' ? 'RECORDED PCM' : this.analysisSource === 'live' && state === 'playing' ? 'LIVE PCM' : '';
+      if (signalLabel) signalLabel.textContent = this.analysisSource === 'recorded' && state === 'playing' ? 'RECORDED PCM' : this.analysisSource === 'live' && state === 'playing' ? 'LIVE PCM' : state === 'waiting' ? 'BUFFERING' : !this.enabled || reduceMotion ? 'OFF' : state === 'playing' ? 'SIGNAL UNAVAILABLE' : 'STANDBY';
       this.ensureVisualPalette();
     }
 
