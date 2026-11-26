@@ -1,6 +1,6 @@
-const APP_VERSION = 'carine-site-2026-09-26-work-on-me';
+const APP_VERSION = 'carine-site-2026-11-26-studio-3-1';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v14-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v15-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
@@ -60,13 +60,14 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION)
       .then((cache) => cache.addAll(CORE_ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_VERSION).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(keys.filter((key) => key.startsWith('carine-static-') && key !== CACHE_VERSION).map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
