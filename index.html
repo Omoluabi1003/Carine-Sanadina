@@ -694,6 +694,29 @@
                   </div>
                 </div>
 
+              <section class="audio-visualizer-panel" aria-labelledby="audio-visualizer-title">
+                <header class="audio-visualizer-header">
+                  <div>
+                    <span class="analysis-source" data-analysis-source aria-live="polite"></span>
+                    <h3 id="audio-visualizer-title" data-i18n="studio.soundInMotion">Sound in motion</h3>
+                  </div>
+                  <div class="audio-visualizer-controls">
+                    <label class="visualizer-toggle">
+                      <span class="visualizer-toggle__text" data-i18n="music.visualizerToggleLabel">Visualizer</span>
+                      <input class="visualizer-toggle__input" type="checkbox" data-visualizer-toggle checked />
+                      <span class="visualizer-toggle__track" aria-hidden="true"><span class="visualizer-toggle__thumb"></span></span>
+                    </label>
+                    <label class="visualizer-style-control">
+                      <span class="visualizer-style-control__label" data-i18n="music.visualizerStyleLabel">Visualization style</span>
+                      <select class="visualizer-style-control__select" data-visualizer-style aria-label="Choose visualization style" data-i18n-aria-label="music.visualizerStyleAria"></select>
+                    </label>
+                  </div>
+                </header>
+                <div class="music-visualizer" data-audio-visualizer role="img" aria-label="Measured audio visualization synchronized with playback"></div>
+                <p class="visualizer-helper" data-visualizer-helper aria-live="polite"></p>
+                <p class="visualizer-fallback" data-visualizer-fallback hidden data-i18n="studio.analysisUnavailable">Audio analysis is unavailable for this source; playback continues normally.</p>
+              </section>
+
                 <div class="console-transport">
                   <div class="expanded-player-progress" aria-live="off">
                     <span data-expanded-current>0:00</span>
@@ -746,28 +769,7 @@
                 </div>
               </aside>
 
-              <section class="audio-visualizer-panel" aria-labelledby="audio-visualizer-title">
-                <header class="audio-visualizer-header">
-                  <div>
-                    <p class="eyebrow" data-i18n="studio.liveAudio">Live audio</p>
-                    <h3 id="audio-visualizer-title" data-i18n="studio.soundInMotion">Sound in motion</h3>
-                  </div>
-                  <div class="audio-visualizer-controls">
-                    <label class="visualizer-toggle">
-                      <span class="visualizer-toggle__text" data-i18n="music.visualizerToggleLabel">Visualizer</span>
-                      <input class="visualizer-toggle__input" type="checkbox" data-visualizer-toggle checked />
-                      <span class="visualizer-toggle__track" aria-hidden="true"><span class="visualizer-toggle__thumb"></span></span>
-                    </label>
-                    <label class="visualizer-style-control">
-                      <span class="visualizer-style-control__label" data-i18n="music.visualizerStyleLabel">Visualization style</span>
-                      <select class="visualizer-style-control__select" data-visualizer-style aria-label="Choose visualization style" data-i18n-aria-label="music.visualizerStyleAria"></select>
-                    </label>
-                  </div>
-                </header>
-                <div class="music-visualizer" data-audio-visualizer role="img" aria-label="Real-time visualization of the playing audio" data-i18n-aria-label="music.visualizerStyleAria"></div>
-                <p class="visualizer-helper" data-visualizer-helper aria-live="polite"></p>
-                <p class="visualizer-fallback" data-visualizer-fallback hidden data-i18n="studio.analysisUnavailable">Audio analysis is unavailable for this source; playback continues normally.</p>
-              </section>
+
             </div>
           </div>
 
