@@ -11009,3 +11009,14 @@ main > .works.section .book-grid .book-card:last-child{grid-column:1/-1;grid-tem
 /* Preserve the measured stage geometry while idle: visibility instead of display allows
    ResizeObserver to report the actual canvas size immediately upon signal acquisition. */
 .audio-visualizer-panel .music-visualizer:not([data-signal-state="live"]){display:block;height:0!important;min-height:0!important;border:0;visibility:hidden}
+
+/* Studio 3: one instrument panel, no separate visualizer card. */
+.music-showcase .luxury-audio-console .audio-visualizer-panel{padding:14px 0 8px;margin:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.music-showcase .luxury-audio-console .audio-visualizer-header{padding:0 2px;gap:8px}
+.audio-visualizer-header .analysis-source{display:block;color:#d4bb8c;font-size:.63rem;font-weight:600;letter-spacing:.12em;min-height:0}
+.audio-visualizer-header .analysis-source:empty{display:none}
+.music-showcase .luxury-audio-console .music-visualizer:is([data-signal-state="live"],[data-signal-state="recorded"]){display:block;visibility:visible;height:clamp(100px,13vw,144px)!important;min-height:0!important;border:1px solid #304762;border-radius:5px;background:#071322}
+.music-showcase .luxury-audio-console .music-visualizer:is([data-signal-state="live"],[data-signal-state="recorded"]) .visualizer-surface{opacity:1;filter:none}
+.audio-visualizer-panel:has(.music-visualizer[data-signal-state="recorded"]) .visualizer-helper{display:none}
+.music-showcase .luxury-audio-console .audio-visualizer-panel .visualizer-fallback{padding:0 2px 4px}
+@media(max-width:640px){.music-showcase .luxury-audio-console .audio-visualizer-panel{padding:10px 0 4px}.music-showcase .luxury-audio-console .music-visualizer:is([data-signal-state="live"],[data-signal-state="recorded"]){height:92px!important}}
