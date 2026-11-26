@@ -1,4 +1,4 @@
-const APP_VERSION = 'carine-site-2026-11-26-studio-4';
+const APP_VERSION = 'carine-site-2026-11-26-studio-5';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v15-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
