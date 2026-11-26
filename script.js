@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-26-studio-3-1';
+const APP_VERSION = 'carine-site-2026-11-26-studio-4';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -7462,9 +7462,13 @@ if (musicPlayers.length) {
   const VISUALIZATION_STYLES = [
     { id: 'spectrum', labelKey: 'studio.spectrum' },
     { id: 'waveform', labelKey: 'studio.waveform' },
-    { id: 'radial', labelKey: 'studio.radial' }
+    { id: 'radial', labelKey: 'studio.radial' },
+    { id: 'mastering', labelKey: 'studio.mastering', label: 'Mastering analyzer' },
+    { id: 'waterfall', labelKey: 'studio.waterfall', label: 'Spectrogram' },
+    { id: 'meters', labelKey: 'studio.meters', label: 'RMS / peak meters' },
+    { id: 'band-energy', labelKey: 'studio.bandEnergy', label: 'Bass / mid / treble' }
   ];
-  const DEFAULT_VISUALIZATION_STYLE = 'spectrum';
+  const DEFAULT_VISUALIZATION_STYLE = 'mastering';
   const normalizeVisualizationStyle = (styleId) => {
     const normalizedStyleId = String(styleId || '');
     const compactStyleId = normalizedStyleId.replace(/[\s-]/g, '').toLowerCase();
@@ -7581,7 +7585,7 @@ if (musicPlayers.length) {
   const setupVisualizationStyleSelector = () => {
     if (!visualizerStyleSelect) return;
     visualizerStyleSelect.innerHTML = VISUALIZATION_STYLES.map((style) => (
-      `<option value="${style.id}">${escapePlaylistText(translate(style.labelKey))}</option>`
+      `<option value="${style.id}">${escapePlaylistText(style.label ? t(style.labelKey, style.label) : translate(style.labelKey))}</option>`
     )).join('');
     visualizerStyleSelect.value = selectedVisualizationStyle;
   };
@@ -8399,6 +8403,45 @@ if (musicPlayers.length) {
       context.closePath();
     }
 
+
+    renderMasteringMode(context, bands, time, style) {
+      const w=this.cssWidth,h=this.cssHeight, left=12,right=w-12,top=9,bottom=h-23;
+      const values=Array.from(bands.spectrum, v=>Math.max(0,Math.min(1,v||0)));
+      const recorded=this.analysisSource==='recorded';
+      const minHz=recorded?30:20,maxHz=recorded?10000:Math.min(16000,(this.audioContext?.sampleRate||48000)/2);
+      const key=style+'|'+this.analysisSource+'|'+this.activeTrackTitle;
+      if(this.masteringKey!==key){this.masteringKey=key;this.masteringPeak=values.slice();this.masteringHistory=[];this.masteringLast=0;}
+      const xForHz=hz=>left+Math.log(hz/minHz)/Math.log(maxHz/minHz)*(right-left);
+      const yFor=v=>bottom-v*(bottom-top);
+      const line=(x1,y1,x2,y2,color)=>{context.strokeStyle=color;context.lineWidth=1;context.beginPath();context.moveTo(x1,y1);context.lineTo(x2,y2);context.stroke();};
+      context.save();context.fillStyle='#07121f';context.fillRect(0,0,w,h);
+      context.font='10px system-ui';context.fillStyle='#a3b7cc';context.textBaseline='middle';
+      if(style==='mastering'||style==='waterfall'){
+        const ticks=w<400?[50,100,500,1000,5000,10000]:[30,50,100,200,500,1000,2000,5000,10000];
+        for(const hz of ticks){if(hz<minHz||hz>maxHz)continue;const x=xForHz(hz);line(x,top,x,bottom,'#29405666');context.textAlign='center';context.fillText(hz>=1000?(hz/1000)+'k':String(hz),Math.max(13,Math.min(w-13,x)),h-10);}
+        for(let n=0;n<=4;n++){const y=top+(bottom-top)*n/4;line(left,y,right,y,'#29405666');}
+      }
+      if(style==='mastering'){
+        const elapsed=Math.min(0.2,Math.max(0,(time-(this.masteringLast||time))/1000));
+        this.masteringLast=time;
+        values.forEach((v,i)=>this.masteringPeak[i]=Math.max(v,(this.masteringPeak[i]||0)-elapsed*.12));
+        const trace=(array)=>{context.beginPath();array.forEach((v,i)=>{const x=left+(i+.5)/array.length*(right-left),y=yFor(v);if(!i)context.moveTo(x,y);else context.lineTo(x,y);});};
+        trace(values);context.lineTo(right,bottom);context.lineTo(left,bottom);context.closePath();
+        const fill=context.createLinearGradient(0,top,0,bottom);fill.addColorStop(0,'#37c8ed55');fill.addColorStop(1,'#37c8ed08');context.fillStyle=fill;context.fill();
+        trace(this.masteringPeak);context.strokeStyle='#a8bacd88';context.lineWidth=1;context.stroke();
+        trace(values);context.strokeStyle='#51c9e9';context.lineWidth=1.8;context.lineJoin='round';context.stroke();
+      }else if(style==='waterfall'){
+        if(time-this.masteringLast>=100){this.masteringLast=time;this.masteringHistory.unshift(values);if(this.masteringHistory.length>48)this.masteringHistory.pop();}
+        const row=(bottom-top)/48,cell=(right-left)/values.length;
+        this.masteringHistory.forEach((frame,y)=>frame.forEach((v,x)=>{context.fillStyle='hsl('+(220-185*v)+', 80%, '+(8+53*v)+'%)';context.fillRect(left+x*cell,top+y*row,Math.ceil(cell),Math.ceil(row));}));
+      }else{
+        const rows=style==='meters'?[['RMS',bands.rms],['PEAK',bands.peak]]:[['BASS',bands.bass],['MID',bands.mid],['TREBLE',bands.high]];
+        const row=(h-12)/rows.length;
+        rows.forEach(([label,raw],i)=>{const v=Math.max(0,Math.min(1,raw||0)),y=6+i*row;context.textAlign='left';context.fillStyle='#b7c7da';context.fillText(label,12,y+row/2);const x=65,end=w-52,bw=Math.max(1,end-x),height=Math.min(13,row*.55);context.fillStyle='#20364c';context.fillRect(x,y+(row-height)/2,bw,height);context.fillStyle='#57c9e7';context.fillRect(x,y+(row-height)/2,bw*v,height);context.textAlign='right';context.fillStyle='#d5e5ef';context.fillText(style==='meters'?(v>0?(20*Math.log10(v)).toFixed(1)+' dB':'−∞ dB'):Math.round(v*100)+'%',w-8,y+row/2);});
+      }
+      context.restore();
+    }
+
     renderFrame(bands, time = 0, state = 'playing') {
       // Canvas is the visible representation; do not also mutate 64 DOM bars.
       this.renderHalo(bands, state);
@@ -8414,6 +8457,7 @@ if (musicPlayers.length) {
       context.clearRect(0, 0, width, height);
       // Do not present synthetic samples or a row of dots as measured audio.
       if (isQuiet || this.buffering || this.fallbackActive || !bands.live || (this.analysisSource !== 'recorded' && this.analyserFlat)) return;
+      if (['mastering','waterfall','meters','band-energy'].includes(selectedVisualizationStyle)) { this.renderMasteringMode(context,bands,time,selectedVisualizationStyle); return; }
       this.ensureVisualPalette();
       this.ensureGlowGradient();
       context.save();
