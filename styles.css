@@ -11020,3 +11020,11 @@ main > .works.section .book-grid .book-card:last-child{grid-column:1/-1;grid-tem
 .audio-visualizer-panel:has(.music-visualizer[data-signal-state="recorded"]) .visualizer-helper{display:none}
 .music-showcase .luxury-audio-console .audio-visualizer-panel .visualizer-fallback{padding:0 2px 4px}
 @media(max-width:640px){.music-showcase .luxury-audio-console .audio-visualizer-panel{padding:10px 0 4px}.music-showcase .luxury-audio-console .music-visualizer:is([data-signal-state="live"],[data-signal-state="recorded"]){height:92px!important}}
+
+
+/* Studio 3.1: keep the instrument visible at every playback state. */
+.music-showcase .luxury-audio-console .audio-visualizer-panel{margin:14px 0 10px;padding:12px 14px 10px;border:1px solid #304762;border-radius:8px;background:#081526}
+.music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer{display:block;visibility:visible;height:clamp(100px,13vw,144px)!important;min-height:0!important;border:1px solid #304762;border-radius:4px;background:#061221}
+.music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer:not([data-signal-state="live"]):not([data-signal-state="recorded"])::after{content:"";display:block;position:absolute;inset:50% 10% auto;height:1px;background:#304762;opacity:.8;transform:none;box-shadow:none;pointer-events:none}
+.audio-visualizer-header .analysis-source{display:block;min-height:1em;font-size:.65rem;color:#d4bb8c;letter-spacing:.12em}
+@media(max-width:640px){.music-showcase .luxury-audio-console .audio-visualizer-panel{margin:8px 0;padding:10px}.music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer{height:92px!important}}
