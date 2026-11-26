@@ -7680,7 +7680,7 @@ if (musicPlayers.length) {
     loadRecordedAnalysis(audio) {
       const track = getTrackForPlayer(activePlayer);
       if (!audio || !track || !/^[a-z0-9-]+$/.test(track.id)) return;
-      if (this.analysisRequest?.id === track.id) return;
+      if (this.analysisRequest?.id === track.id && this.analysisRequest.audio === audio) return;
       this.analysisRequest?.controller.abort();
       this.recordedAnalysis = null;
       const controller = new AbortController();
@@ -7781,8 +7781,9 @@ if (musicPlayers.length) {
 
     setFallbackNote(isUnavailable = false) {
       if (!this.note) return;
-      this.note.hidden = !isUnavailable;
-      this.note.textContent = translate(isUnavailable ? 'studio.analysisUnavailable' : 'music.visualizerAvailable');
+      const message = translate(isUnavailable ? 'studio.analysisUnavailable' : 'music.visualizerAvailable');
+      if (this.note.hidden === isUnavailable) this.note.hidden = !isUnavailable;
+      if (this.note.textContent !== message) this.note.textContent = message;
     }
 
     warnFallback(reason) {
