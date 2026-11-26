@@ -8405,6 +8405,63 @@ if (musicPlayers.length) {
     }
 
 
+
+    initStudioGPU() {
+      if (!this.container || this.studioGPU || this.gpuFailed) return;
+      const canvas=document.createElement('canvas');canvas.className='studio-gpu-surface';canvas.setAttribute('aria-hidden','true');
+      const gl=canvas.getContext('webgl2',{alpha:true,antialias:true,premultipliedAlpha:false,powerPreference:'low-power'});
+      if(!gl){this.gpuFailed=true;return;}
+      const vertex='#version 300 es\nin vec2 p;out vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
+      const fragment=`#version 300 es
+      precision highp float;in vec2 uv;out vec4 color;
+      uniform sampler2D signal;uniform vec2 size;uniform int mode;uniform float energy;
+      float sampleSignal(float x,float row){return texture(signal,vec2(clamp(x,0.,1.),row)).r;}
+      void main(){
+        vec2 q=uv;float x=q.x;float y=q.y;
+        float grid=(1.-smoothstep(.0,.012,abs(fract(x*12.)-.5)))*.035+(1.-smoothstep(.0,.025,abs(fract(y*5.)-.5)))*.04;
+        vec3 base=mix(vec3(.014,.027,.044),vec3(.032,.067,.098),y)+grid;
+        float v=sampleSignal(x,.25);float p=sampleSignal(x,.75);
+        float line=0.;float fill=0.;float peak=0.;
+        if(mode==0){float yy=.09+v*.79;float py=.09+p*.79;line=exp(-abs(y-yy)*size.y*.63);fill=step(y,yy)*(.06+.19*y);peak=exp(-abs(y-py)*size.y*.85)*.46;}
+        if(mode==1){float yy=.5+(v-.5)*.84;line=exp(-abs(y-yy)*size.y*.67);}
+        if(mode==2){float cell=floor(x*64.);float xx=(cell+.5)/64.;float a=sampleSignal(xx,.25);float mask=step(.15,fract(x*64.))*step(fract(x*64.),.85);fill=mask*step(y,.08+a*.82)*(.23+.56*y);peak=mask*exp(-abs(y-(.08+a*.82))*size.y*.8)*.65;}
+        vec3 cyan=vec3(.20,.76,.91);vec3 silver=vec3(.57,.69,.77);
+        vec3 rgb=base+cyan*(fill+line*.78)+silver*peak;
+        rgb+=vec3(.05,.12,.18)*exp(-abs(y-.94)*12.)*.20;
+        color=vec4(rgb,1.);
+      }`;
+      const shader=(type,src)=>{const o=gl.createShader(type);gl.shaderSource(o,src);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)){gl.deleteShader(o);throw Error('shader compile');}return o;};
+      try{
+        const vs=shader(gl.VERTEX_SHADER,vertex),fs=shader(gl.FRAGMENT_SHADER,fragment),program=gl.createProgram();
+        gl.attachShader(program,vs);gl.attachShader(program,fs);gl.linkProgram(program);gl.deleteShader(vs);gl.deleteShader(fs);
+        if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error('shader link');
+        gl.useProgram(program);const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+        const loc=gl.getAttribLocation(program,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+        const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.R8,128,2,0,gl.RED,gl.UNSIGNED_BYTE,new Uint8Array(256));
+        const uniforms=Object.fromEntries(['signal','size','mode','energy'].map(k=>[k,gl.getUniformLocation(program,k)]));
+        this.studioGPU={canvas,gl,program,buffer,texture,uniforms,bytes:new Uint8Array(256),peak:new Float32Array(128),last:0};
+        canvas.hidden=true;this.container.prepend(canvas);
+        canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();canvas.hidden=true;this.gpuFailed=true;this.studioGPU=null;canvas.remove();});
+      }catch(_){this.gpuFailed=true;gl.getExtension('WEBGL_lose_context')?.loseContext();}
+    }
+
+    drawStudioGPU(bands,time,style) {
+      const mode={mastering:0,waveform:1,spectrum:2}[style];
+      if(mode===undefined)return false;
+      this.initStudioGPU();const g=this.studioGPU;if(!g)return false;
+      const {canvas,gl,program,texture,uniforms,bytes,peak}=g;
+      if(gl.isContextLost())return false;
+      const rect=this.container.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);
+      const w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));
+      if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+      const dt=Math.min(.2,Math.max(0,(time-(g.last||time))/1000));g.last=time;
+      for(let i=0;i<128;i++){const a=style==='waveform'?(bands.waveform[Math.floor(i*bands.waveform.length/128)]||0)/255:Math.max(0,Math.min(1,bands.spectrum[Math.floor(i*bands.spectrum.length/128)]||0));peak[i]=Math.max(a,peak[i]-dt*.16);bytes[i]=Math.round(a*255);bytes[128+i]=Math.round(peak[i]*255);}
+      gl.viewport(0,0,w,h);gl.useProgram(program);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,128,2,gl.RED,gl.UNSIGNED_BYTE,bytes);
+      gl.uniform1i(uniforms.signal,0);gl.uniform2f(uniforms.size,w,h);gl.uniform1i(uniforms.mode,mode);gl.uniform1f(uniforms.energy,bands.energy||0);gl.drawArrays(gl.TRIANGLES,0,3);
+      canvas.hidden=false;return true;
+    }
+
     renderMasteringMode(context, bands, time, style) {
       const w=this.cssWidth,h=this.cssHeight, left=12,right=w-12,top=9,bottom=h-23;
       const values=Array.from(bands.spectrum, v=>Math.max(0,Math.min(1,v||0)));
@@ -8456,8 +8513,18 @@ if (musicPlayers.length) {
       const centerY = height / 2;
       const timeSeconds = time / 1000;
       context.clearRect(0, 0, width, height);
+      if(this.studioGPU) this.studioGPU.canvas.hidden=true;
       // Do not present synthetic samples or a row of dots as measured audio.
       if (isQuiet || this.buffering || this.fallbackActive || !bands.live || (this.analysisSource !== 'recorded' && this.analyserFlat)) return;
+      if (this.drawStudioGPU(bands,time,selectedVisualizationStyle)) {
+        // Canvas overlay retains readable frequency labels above the GPU surface.
+        if(selectedVisualizationStyle==='mastering'){
+          const maxHz=this.analysisSource==='recorded'?20000:Math.min(16000,(this.audioContext?.sampleRate||48000)/2);
+          context.font='10px system-ui';context.fillStyle='#a3b7cc';context.textAlign='center';
+          for(const hz of [50,100,500,1000,5000,10000]){if(hz>maxHz)continue;const x=Math.log(hz/20)/Math.log(maxHz/20)*width;context.fillText(hz>=1000?(hz/1000)+'k':String(hz),x,height-4);}
+        }
+        return;
+      }
       if (selectedVisualizationStyle === 'radial') {
         context.save(); context.fillStyle='#07121f';context.fillRect(0,0,width,height);
         const radius=Math.min(width,height)*.39;
