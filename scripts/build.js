@@ -96,3 +96,5 @@ if (existsSync(publicDir)) {
 
 console.log('Static site built in dist/');
 console.log(`Hashed app shell assets: ${Object.entries(assetMap).map(([source, output]) => `${source} -> ${output}`).join(', ')}`);
+
+require('./audio-analysis').generate(root, dist);
