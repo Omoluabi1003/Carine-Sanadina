@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-26-editorial-2-1';
+const APP_VERSION = 'carine-site-2026-11-26-studio-2-2';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -7736,7 +7736,7 @@ if (musicPlayers.length) {
     setFallbackNote(isUnavailable = false) {
       if (!this.note) return;
       this.note.hidden = !isUnavailable;
-      this.note.textContent = translate(isUnavailable ? 'music.visualizerFallback' : 'music.visualizerAvailable');
+      this.note.textContent = translate(isUnavailable ? 'studio.analysisUnavailable' : 'music.visualizerAvailable');
     }
 
     warnFallback(reason) {
@@ -7751,8 +7751,8 @@ if (musicPlayers.length) {
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
       const cssWidth = Math.max(1, Math.round(rect.width || this.container.clientWidth || 360));
       const cssHeight = Math.max(1, Math.round(rect.height || this.container.clientHeight || 210));
-      this.cssWidth = Math.max(260, cssWidth);
-      this.cssHeight = Math.max(160, cssHeight);
+      this.cssWidth = cssWidth;
+      this.cssHeight = cssHeight;
       const width = Math.max(1, Math.round(cssWidth * pixelRatio));
       const height = Math.max(1, Math.round(cssHeight * pixelRatio));
       if (this.surface.width !== width || this.surface.height !== height) {
@@ -7926,6 +7926,8 @@ if (musicPlayers.length) {
 
     renderStatic(mode = 'idle') {
       this.mode = mode;
+      this.fallbackActive = false;
+      this.setFallbackNote(false);
       const bands = this.sampleBands(0, true, true, 16);
       this.applyTheme(mode);
       this.renderFrame(bands, window.performance.now(), mode);
@@ -7988,13 +7990,13 @@ if (musicPlayers.length) {
           const forceFallback = this.getForceMode() === 'fallback';
           const analyserConnected = analyserAvailable && !forceFallback;
           if (analyserConnected) this.inspectAnalyser(audio);
-          const live = analyserConnected && this.flatFrames < 20;
+          const live = analyserConnected && this.analyserActive && !this.analyserFlat;
           const bands = this.sampleBands(time, !playing, !live, dt);
           this.liveBlend += ((live ? 1 : 0) - this.liveBlend) * Math.min(1, dt / 180);
           this.fallbackActive = playing && !live;
           this.analyserFlat = analyserConnected ? this.analyserFlat : true;
           this.mode = playing ? (this.buffering ? 'waiting' : 'playing') : (audio && !audio.ended ? 'paused' : 'idle');
-          this.setFallbackNote(this.fallbackActive);
+          this.setFallbackNote(this.enabled && this.fallbackActive && !this.buffering);
           this.applyTheme(this.mode);
           if (this.enabled && !reduceMotion) {
             this.renderFrame(bands, time, 'playing');
@@ -8208,6 +8210,7 @@ if (musicPlayers.length) {
       this.container.classList.toggle('is-paused', state === 'paused');
       this.container.classList.toggle('is-idle', state !== 'playing');
       this.container.classList.toggle('is-off', !this.enabled || reduceMotion);
+      this.container.dataset.signalState = !this.enabled || reduceMotion ? 'off' : state === 'waiting' ? 'buffering' : state !== 'playing' ? 'idle' : this.fallbackActive || this.analyserFlat ? 'unavailable' : 'live';
       this.ensureVisualPalette();
     }
 
@@ -8352,6 +8355,8 @@ if (musicPlayers.length) {
       const centerY = height / 2;
       const timeSeconds = time / 1000;
       context.clearRect(0, 0, width, height);
+      // Do not present synthetic samples or a row of dots as measured audio.
+      if (isQuiet || this.fallbackActive || this.analyserFlat || !bands.live) return;
       this.ensureVisualPalette();
       this.ensureGlowGradient();
       context.save();
@@ -9552,7 +9557,7 @@ if (musicPlayers.length) {
       await playbackPromise;
       const analyserReady = await analyserSetupPromise;
       if (visualizerEnabled && !reduceMotion && !analyserReady) {
-        setVisualizerFallback(false);
+        setVisualizerFallback(true);
       }
       syncTransportButtons(audio);
       updateMediaSessionMetadata(player);
@@ -9895,8 +9900,10 @@ if (musicPlayers.length) {
         }
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
-        stopVisualizer(audio.ended ? 'idle' : 'paused');
-        updateVisualizerToggleUI();
+        if (activePlayer === musicPlayer) {
+          stopVisualizer(audio.ended ? 'idle' : 'paused');
+          updateVisualizerToggleUI();
+        }
         if ('mediaSession' in navigator && activePlayer === musicPlayer) {
           navigator.mediaSession.playbackState = 'paused';
           updateMediaSessionPosition(audio);
