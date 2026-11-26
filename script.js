@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-09-26-work-on-me';
+const APP_VERSION = 'carine-site-2026-11-26-studio-3';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -7672,6 +7672,52 @@ if (musicPlayers.length) {
       this.analyserConnectedToDestination = false;
       this.mediaSourceNodes = new WeakMap();
       this.sourceConnectionState = new WeakMap();
+      this.recordedAnalysis = null;
+      this.analysisRequest = null;
+      this.analysisSource = 'none';
+    }
+
+    loadRecordedAnalysis(audio) {
+      const track = getTrackForPlayer(activePlayer);
+      if (!audio || !track || !/^[a-z0-9-]+$/.test(track.id)) return;
+      if (this.analysisRequest?.id === track.id && this.analysisRequest.audio === audio) return;
+      this.analysisRequest?.controller.abort();
+      this.recordedAnalysis = null;
+      const controller = new AbortController();
+      const request = { id: track.id, controller, audio };
+      this.analysisRequest = request;
+      fetch(new URL('audio-analysis/' + track.id + '.json?v=' + encodeURIComponent(APP_VERSION), document.baseURI), { signal: controller.signal })
+        .then(response => { if (!response.ok) throw new Error('No analysis asset'); return response.json(); })
+        .then(data => {
+          if (this.analysisRequest !== request || this.activeAudio !== audio) return;
+          if (data.version !== 1 || data.id !== track.id || data.source !== track.audioUrl ||
+              data.bands !== 32 || data.wave !== 64 || data.stride !== 98 || data.step !== 0.1 ||
+              !Number.isInteger(data.frames) || data.frames < 1 || data.frames > 9000 ||
+              !Number.isFinite(data.duration) || data.duration <= 0 || typeof data.data !== 'string' ||
+              data.data.length > 1200000) throw new Error('Invalid analysis asset');
+          const raw = atob(data.data);
+          if (raw.length !== data.frames * data.stride) throw new Error('Invalid analysis size');
+          this.recordedAnalysis = { ...data, samples: Uint8Array.from(raw, char => char.charCodeAt(0)), audio };
+        }).catch(() => { /* Native audio remains independent. */ });
+    }
+
+    getRecordedBands(audio) {
+      const data = this.recordedAnalysis;
+      if (!data || data.audio !== audio || !Number.isFinite(audio.currentTime) ||
+          audio.currentTime < 0 || audio.currentTime >= data.duration ||
+          (Number.isFinite(audio.duration) && Math.abs(audio.duration - data.duration) > 2)) return null;
+      const position = audio.currentTime / data.step;
+      const frame = Math.min(data.frames - 1, Math.floor(position));
+      const next = Math.min(data.frames - 1, frame + 1);
+      const mix = Math.min(1, position - frame);
+      const at = index => data.samples[frame * data.stride + index] * (1 - mix) + data.samples[next * data.stride + index] * mix;
+      for (let i = 0; i < this.spectrumBands.length; i++) this.spectrumBands[i] = at(Math.min(31, Math.floor(i * 32 / this.spectrumBands.length))) / 255;
+      // A short actual PCM sample, not synthesized or interpolated across unrelated phases.
+      for (let i = 0; i < this.waveformData.length; i++) this.waveformData[i] = data.samples[frame * data.stride + 32 + Math.min(63, Math.floor(i * 64 / this.waveformData.length))];
+      const avg = (lo, hi) => { let total = 0; for (let i = lo; i < hi; i++) total += at(i) / 255; return total / (hi - lo); };
+      const bass = avg(0, 12), mid = avg(12, 23), high = avg(23, 32), rms = at(96) / 255;
+      return { spectrum: this.spectrumBands, waveform: this.waveformData, bass, mid, high, rms, peak: at(97)/255,
+        energy: bass*.32 + mid*.38 + high*.18 + rms*.12, live: true, waveformSource: 'recorded-analysis' };
     }
 
     init() {
@@ -7735,8 +7781,9 @@ if (musicPlayers.length) {
 
     setFallbackNote(isUnavailable = false) {
       if (!this.note) return;
-      this.note.hidden = !isUnavailable;
-      this.note.textContent = translate(isUnavailable ? 'music.visualizerFallback' : 'music.visualizerAvailable');
+      const message = translate(isUnavailable ? 'studio.analysisUnavailable' : 'music.visualizerAvailable');
+      if (this.note.hidden === isUnavailable) this.note.hidden = !isUnavailable;
+      if (this.note.textContent !== message) this.note.textContent = message;
     }
 
     warnFallback(reason) {
@@ -7751,8 +7798,8 @@ if (musicPlayers.length) {
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
       const cssWidth = Math.max(1, Math.round(rect.width || this.container.clientWidth || 360));
       const cssHeight = Math.max(1, Math.round(rect.height || this.container.clientHeight || 210));
-      this.cssWidth = Math.max(260, cssWidth);
-      this.cssHeight = Math.max(160, cssHeight);
+      this.cssWidth = cssWidth;
+      this.cssHeight = cssHeight;
       const width = Math.max(1, Math.round(cssWidth * pixelRatio));
       const height = Math.max(1, Math.round(cssHeight * pixelRatio));
       if (this.surface.width !== width || this.surface.height !== height) {
@@ -7904,6 +7951,7 @@ if (musicPlayers.length) {
       this.activeTrackTitle = activePlayer ? getTrackTitle(activePlayer) : this.activeTrackTitle;
       this.mode = 'playing';
       this.buffering = false;
+      if (this.enabled && !reduceMotion) this.loadRecordedAnalysis(this.activeAudio);
       this.resize();
       this.ensureFrameLoop();
       setVisualizerHelper('');
@@ -7926,6 +7974,9 @@ if (musicPlayers.length) {
 
     renderStatic(mode = 'idle') {
       this.mode = mode;
+      this.fallbackActive = false;
+      this.analysisSource = 'none';
+      this.setFallbackNote(false);
       const bands = this.sampleBands(0, true, true, 16);
       this.applyTheme(mode);
       this.renderFrame(bands, window.performance.now(), mode);
@@ -7988,13 +8039,15 @@ if (musicPlayers.length) {
           const forceFallback = this.getForceMode() === 'fallback';
           const analyserConnected = analyserAvailable && !forceFallback;
           if (analyserConnected) this.inspectAnalyser(audio);
-          const live = analyserConnected && this.flatFrames < 20;
-          const bands = this.sampleBands(time, !playing, !live, dt);
+          const live = analyserConnected && this.analyserActive && !this.analyserFlat;
+          const recorded = !live && !this.buffering && this.enabled && !reduceMotion ? this.getRecordedBands(audio) : null;
+          const bands = recorded || this.sampleBands(time, !playing, !live, dt);
+          this.analysisSource = this.buffering ? 'none' : live ? 'live' : recorded ? 'recorded' : 'none';
           this.liveBlend += ((live ? 1 : 0) - this.liveBlend) * Math.min(1, dt / 180);
-          this.fallbackActive = playing && !live;
+          this.fallbackActive = playing && !live && !recorded;
           this.analyserFlat = analyserConnected ? this.analyserFlat : true;
           this.mode = playing ? (this.buffering ? 'waiting' : 'playing') : (audio && !audio.ended ? 'paused' : 'idle');
-          this.setFallbackNote(this.fallbackActive);
+          this.setFallbackNote(this.enabled && this.fallbackActive && !this.buffering);
           this.applyTheme(this.mode);
           if (this.enabled && !reduceMotion) {
             this.renderFrame(bands, time, 'playing');
@@ -8021,6 +8074,8 @@ if (musicPlayers.length) {
       this.units = [];
       this.surfaceContext = null;
       this.surface = null;
+      this.analysisRequest?.controller.abort();
+      this.recordedAnalysis = null;
       this.container?.replaceChildren();
       if (this.audioContext && this.audioContext.state !== 'closed') this.audioContext.close().catch(() => {});
       this.audioContext = null;
@@ -8193,7 +8248,7 @@ if (musicPlayers.length) {
       if (!this.container) return;
       this.mode = state;
       selectedVisualizationStyle = normalizeVisualizationStyle(selectedVisualizationStyle);
-      const themeKey = [selectedVisualizationStyle, this.fallbackActive, this.analyserFlat, state, this.enabled, reduceMotion].join('|');
+      const themeKey = [selectedVisualizationStyle, this.fallbackActive, this.analyserFlat, state, this.enabled, reduceMotion, this.analysisSource].join('|');
       if (themeKey === this.lastThemeKey) return;
       this.lastThemeKey = themeKey;
       this.visualGradientKey = '';
@@ -8208,6 +8263,9 @@ if (musicPlayers.length) {
       this.container.classList.toggle('is-paused', state === 'paused');
       this.container.classList.toggle('is-idle', state !== 'playing');
       this.container.classList.toggle('is-off', !this.enabled || reduceMotion);
+      this.container.dataset.signalState = !this.enabled || reduceMotion ? 'off' : state === 'waiting' ? 'buffering' : state !== 'playing' ? 'idle' : this.analysisSource === 'recorded' ? 'recorded' : this.analysisSource === 'live' ? 'live' : 'unavailable';
+      const signalLabel = this.container.closest('.audio-visualizer-panel')?.querySelector('[data-analysis-source]');
+      if (signalLabel) signalLabel.textContent = this.analysisSource === 'recorded' && state === 'playing' ? 'RECORDED PCM' : this.analysisSource === 'live' && state === 'playing' ? 'LIVE PCM' : '';
       this.ensureVisualPalette();
     }
 
@@ -8352,6 +8410,8 @@ if (musicPlayers.length) {
       const centerY = height / 2;
       const timeSeconds = time / 1000;
       context.clearRect(0, 0, width, height);
+      // Do not present synthetic samples or a row of dots as measured audio.
+      if (isQuiet || this.buffering || this.fallbackActive || !bands.live || (this.analysisSource !== 'recorded' && this.analyserFlat)) return;
       this.ensureVisualPalette();
       this.ensureGlowGradient();
       context.save();
@@ -8441,7 +8501,7 @@ if (musicPlayers.length) {
       const size = this.halo.getBoundingClientRect().width || 400;
       const context = this.haloContext;
       const center = size / 2;
-      const isLive = state === 'playing' && this.enabled && !this.fallbackActive && !this.analyserFlat && !reduceMotion;
+      const isLive = state === 'playing' && this.enabled && !this.fallbackActive && (!this.analyserFlat || this.analysisSource === 'recorded') && !this.buffering && !reduceMotion;
       const consoleElement = this.halo.closest('.luxury-audio-console');
       const safeLevel = (value) => isLive ? Math.min(1, Math.max(0, value || 0)).toFixed(3) : '0';
       consoleElement?.style.setProperty('--studio-level', safeLevel(bands.energy));
@@ -9552,7 +9612,7 @@ if (musicPlayers.length) {
       await playbackPromise;
       const analyserReady = await analyserSetupPromise;
       if (visualizerEnabled && !reduceMotion && !analyserReady) {
-        setVisualizerFallback(false);
+        setVisualizerFallback(true);
       }
       syncTransportButtons(audio);
       updateMediaSessionMetadata(player);
@@ -9895,8 +9955,10 @@ if (musicPlayers.length) {
         }
         updateToggle(playToggle, audio, getTrackTitle(musicPlayer));
 
-        stopVisualizer(audio.ended ? 'idle' : 'paused');
-        updateVisualizerToggleUI();
+        if (activePlayer === musicPlayer) {
+          stopVisualizer(audio.ended ? 'idle' : 'paused');
+          updateVisualizerToggleUI();
+        }
         if ('mediaSession' in navigator && activePlayer === musicPlayer) {
           navigator.mediaSession.playbackState = 'paused';
           updateMediaSessionPosition(audio);
