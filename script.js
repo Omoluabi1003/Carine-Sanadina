@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-26-studio-5';
+const APP_VERSION = 'carine-site-2026-11-26-cinematic-home';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -63,7 +63,7 @@ const getEarlyContinuityState = () => {
 const earlyContinuityState = getEarlyContinuityState();
 const continuityStateAge = Date.now() - Number(earlyContinuityState.savedAt || 0);
 const isContinuityRecoveryBoot = Boolean(
-  earlyContinuityState.route
+  document.wasDiscarded === true && !window.location.hash && earlyContinuityState.route
   && Number.isFinite(continuityStateAge)
   && continuityStateAge >= 0
   && continuityStateAge <= CONTINUITY_RECOVERY_WINDOW_MS
@@ -80,6 +80,18 @@ if (isContinuityRecoveryBoot) {
       writePageLifecycleRecord({ continuityRecovery: true, continuityRoute: recoveryRoute });
     }
   } catch (_) { /* Invalid recovery state must never block application boot. */ }
+}
+
+// The canonical home URL never inherits a previous player section.
+if (!window.location.hash && !isContinuityRecoveryBoot) {
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  let userNavigated = false;
+  const cancelHomeReset = () => { userNavigated = true; };
+  for (const event of ['pointerdown','touchstart','wheel','keydown']) window.addEventListener(event,cancelHomeReset,{once:true,passive:true});
+  const resetHome = () => { if (!userNavigated && !location.hash) window.scrollTo({top:0,left:0,behavior:'instant'}); };
+  resetHome();
+  window.addEventListener('load',resetHome,{once:true});
+  window.addEventListener('pageshow',event=>{if(!event.persisted)resetHome();});
 }
 
 const translations = {};
@@ -5299,6 +5311,7 @@ const completeCinematicSplash = () => {
   }
 
   splash.dataset.completed = 'true';
+  if (!window.location.hash && !isContinuityRecoveryBoot) window.scrollTo({top:0,left:0,behavior:'instant'});
   stopSplashTextRotator(splash);
   document.documentElement.classList.add('splash-ready');
   document.documentElement.classList.remove('splash-booting');
@@ -10659,7 +10672,7 @@ if (musicPlayers.length) {
   const restorePlayerStateWithoutAutoplay = () => {
     const storedState = getStoredPlayerState();
     restoreStateRan = true;
-    if (!window.location.hash && storedState.route) {
+    if (isContinuityRecoveryBoot && !window.location.hash && storedState.route) {
       try {
         const restoredRoute = new URL(storedState.route, window.location.origin);
         if (restoredRoute.origin === window.location.origin && restoredRoute.pathname === window.location.pathname && restoredRoute.hash) {
@@ -10705,7 +10718,7 @@ if (musicPlayers.length) {
       setActiveTrack(restoredPlayer);
       // Deliberately restore the screen but not autoplay: browser policies may
       // require a fresh gesture after the operating system recreated the page.
-      if (storedState.playerExpanded) setMobilePlayerOpen(true);
+      if (isContinuityRecoveryBoot && storedState.playerExpanded) setMobilePlayerOpen(true);
       if (shuffleEnabled && !shuffleQueue.length) createShuffleQueue(activeTrackId);
     }
     reconcileAudioState('restore-without-autoplay');
