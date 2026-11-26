@@ -10980,3 +10980,32 @@ main > .works.section .book-grid .book-card:last-child{grid-column:1/-1;grid-tem
 @media(max-width:900px){main > .works.section .book-grid .book-card{grid-column:1/-1;padding:28px 0;grid-template-columns:minmax(0,.8fr) minmax(0,1fr)}}
 @media(max-width:520px){main > .works.section .book-grid .book-card:first-child,main > .works.section .book-grid .book-card:last-child{grid-template-columns:1fr;gap:24px;padding:28px 0}main > .works.section .book-grid .book-card:not(:first-child):not(:last-child){gap:14px}.works .book-card .book-cover{padding:18px}.works .book-card .book-body h3{font-size:1.55rem}.works .book-card:first-child .book-body h3{font-size:2.5rem}.works .book-card .book-body p{font-size:.94rem!important;line-height:1.55;margin:10px 0}.works .book-card .book-cover img.official-book-cover{max-height:200px}.works .book-card:first-child .book-cover img.official-book-cover{max-height:270px}}
 @media(prefers-reduced-motion:reduce){.works .book-card .book-cover img.official-book-cover{transition:none;transform:none}}
+
+
+/* Studio 2.2: compact, restrained signal monitor. Only measured samples are shown. */
+.music-showcase .audio-visualizer-panel{min-height:0;padding:16px 18px;margin-top:16px;background:#0a192e;border:1px solid #304762;border-radius:10px;box-shadow:none}
+.music-showcase .audio-visualizer-header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;margin:0 0 12px}
+.audio-visualizer-header .eyebrow{display:none}
+.audio-visualizer-header h3{font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:1rem;letter-spacing:0;color:#eef3fa}
+.music-showcase .audio-visualizer-controls{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:12px;width:auto;min-width:0}
+.audio-visualizer-controls .visualizer-toggle{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:4px 0;min-height:44px;min-width:0;width:auto;border:0;background:transparent;box-shadow:none}
+.audio-visualizer-controls .visualizer-toggle__text{font-size:.72rem;letter-spacing:0;text-transform:none;color:#c1cfe0}
+.audio-visualizer-controls .visualizer-toggle__track{width:42px;height:24px;min-width:42px;box-shadow:none}
+.audio-visualizer-controls .visualizer-toggle__thumb{width:18px;height:18px;top:2px;left:3px;box-shadow:none}
+.audio-visualizer-controls .visualizer-toggle__input:checked + .visualizer-toggle__track .visualizer-toggle__thumb{transform:translateX(17px)}
+.audio-visualizer-controls .visualizer-style-control{display:block;min-width:0;max-width:100%;width:auto}
+.audio-visualizer-controls .visualizer-style-control__label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.audio-visualizer-controls .visualizer-style-control__select{width:100%;min-width:0;max-width:100%;height:44px;min-height:44px;padding:6px 30px 6px 10px;background-color:#112640;border:1px solid #304762;border-radius:6px;font-size:16px;box-shadow:none;color:#eef3fa}
+.music-showcase .audio-visualizer-panel .music-visualizer{position:relative;display:block;width:100%;height:clamp(100px,14vw,160px);min-height:0;margin:0;padding:0;border:1px solid #253e59;border-radius:6px;background:#071322;box-shadow:none;overflow:hidden}
+.audio-visualizer-panel .music-visualizer::before,.audio-visualizer-panel .music-visualizer::after{display:none}
+.audio-visualizer-panel .music-visualizer .visualizer-units{display:none!important}
+.audio-visualizer-panel .music-visualizer .visualizer-surface{position:absolute;inset:0;max-width:100%;max-height:100%;opacity:1}
+.audio-visualizer-panel .music-visualizer:not([data-signal-state="live"]){display:none}
+.audio-visualizer-panel .visualizer-helper,.audio-visualizer-panel .visualizer-fallback{margin:0;color:#b7c7db;font-size:.78rem!important;text-align:left;line-height:1.45}
+.audio-visualizer-panel .visualizer-helper:empty,.audio-visualizer-panel .visualizer-fallback[hidden]{display:none}
+.audio-visualizer-panel:has(.music-visualizer[data-signal-state="live"]) .audio-visualizer-header{margin-bottom:12px}
+.audio-visualizer-panel:has(.music-visualizer[data-signal-state="live"]) .visualizer-helper{display:none}
+@media(max-width:640px){.music-showcase .audio-visualizer-panel{padding:12px;margin-top:12px}.music-showcase .audio-visualizer-header{grid-template-columns:1fr;gap:4px;margin-bottom:6px}.music-showcase .audio-visualizer-controls{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;justify-content:stretch}.audio-visualizer-controls .visualizer-toggle{justify-content:flex-start}.music-showcase .audio-visualizer-panel .music-visualizer{height:112px}.inline-listening-experience .console-playlist-toggle span:last-child:not(.control-icon){display:none}.inline-listening-experience .console-playlist-toggle{width:44px;min-width:44px;max-width:44px;padding:0}.guide-widget .guide-launcher{max-width:calc(100vw - 32px);width:auto}.guide-widget .guide-launcher [data-i18n="guide.launcher"]{white-space:normal;overflow:visible;text-overflow:clip}}
+/* Preserve the measured stage geometry while idle: visibility instead of display allows
+   ResizeObserver to report the actual canvas size immediately upon signal acquisition. */
+.audio-visualizer-panel .music-visualizer:not([data-signal-state="live"]){display:block;height:0!important;min-height:0!important;border:0;visibility:hidden}
