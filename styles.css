@@ -11039,3 +11039,18 @@ main > .works.section .book-grid .book-card:last-child{grid-column:1/-1;grid-tem
 .music-visualizer .studio-gpu-surface[hidden]{display:none!important}
 .music-visualizer .visualizer-surface{z-index:2;background:transparent!important}
 .music-showcase .luxury-audio-console .audio-visualizer-panel .music-visualizer[data-visualization-style="radial"]{height:clamp(160px,24vw,260px)!important}
+
+/* Playback order is part of the instrument, not a separate dashboard. */
+.console-up-next{display:flex;align-items:center;gap:10px;padding:10px 0;margin:8px 0;border-block:1px solid #39516e;min-width:0}
+.console-up-next img{width:44px;height:44px;object-fit:cover;border-radius:3px;flex:none}
+.console-up-next img[hidden]{display:none}
+.console-up-next-copy{flex:1;min-width:0;display:grid;gap:4px}
+.console-up-next-kicker{font-size:.65rem;letter-spacing:.12em;color:#d4bb8c}
+.console-up-next-kicker span{color:#a9bfd5;letter-spacing:0;margin-left:6px;text-transform:none}
+.console-up-next-copy strong{font-size:.92rem;color:#eef3fa;overflow-wrap:anywhere}
+.console-click-setting{font:inherit;font-size:.68rem;color:#c1cfe0;background:transparent;border:1px solid #39516e;border-radius:4px;padding:8px;min-height:44px;max-width:96px;cursor:pointer}
+.console-queue-details{padding:12px 0;border-bottom:1px solid #39516e;color:#e6edf6}
+.console-queue-details summary{cursor:pointer;font-weight:600;min-height:44px;display:list-item;align-content:center}
+.console-queue-details ol{padding-inline-start:24px;margin:0 0 12px;display:grid;gap:8px;font-size:.85rem}
+@media(prefers-reduced-motion:no-preference){.luxury-audio-console button:active,.console-playlist-drawer button:active,[data-mini-player] button:active{transform:scale(.92);filter:brightness(.9)}}
+@media(max-width:480px){.console-up-next{gap:8px}.console-up-next-copy strong{font-size:.8rem}.console-click-setting{font-size:.62rem;max-width:78px}}

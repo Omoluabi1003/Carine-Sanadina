@@ -717,7 +717,12 @@
                 <p class="visualizer-fallback" data-visualizer-fallback hidden data-i18n="studio.analysisUnavailable">Audio analysis is unavailable for this source; playback continues normally.</p>
               </section>
 
-                <div class="console-transport">
+                <div class="console-up-next" aria-label="Upcoming playback">
+                    <img data-up-next-cover alt="" width="44" height="44" hidden>
+                    <div class="console-up-next-copy"><span class="console-up-next-kicker">UP NEXT <span data-up-next-mode></span></span><strong data-up-next-title aria-live="polite">End of queue</strong></div>
+                    <button type="button" class="console-click-setting" data-studio-click-toggle aria-pressed="true">Click sound: on</button>
+                  </div>
+                  <div class="console-transport">
                   <div class="expanded-player-progress" aria-live="off">
                     <span data-expanded-current>0:00</span>
                     <label class="sr-only" for="expanded-player-progress" data-i18n="mini.progress">Current track progress</label>
@@ -763,6 +768,7 @@
                     <div><span class="eyebrow" data-i18n="console.collection">Listening collection</span><h3 id="console-playlist-title" data-i18n="music.playlist">Playlist</h3></div>
                     <button class="console-playlist-close" type="button" data-console-playlist-close aria-label="Close playlist" data-i18n-aria-label="console.closePlaylist">×</button>
                   </div>
+                  <details class="console-queue-details"><summary>Upcoming playback order</summary><ol data-up-next-list></ol></details>
                   <div class="expanded-track-picker" aria-label="Choose a track" data-i18n-aria-label="music.playlistLabel">
                     <div class="expanded-track-list" data-expanded-playlist-tracks></div>
                   </div>
