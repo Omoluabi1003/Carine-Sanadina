@@ -6607,17 +6607,30 @@ if (musicPlayers.length) {
     button.setAttribute('title', label);
   };
 
+  // Explicit, localized transport state, independent of icon color.
+  const shuffleOffLabels={en:'Shuffle off',fr:'Aléatoire désactivé',es:'Aleatorio desactivado',sw:'Changanya imezimwa',ln:'Kosangisa ekangami',yo:'Dapọ̀ ti wa ni pipa',de:'Zufallsmodus aus',ar:'التشغيل العشوائي متوقف',zh:'随机播放已关闭'};
+  const shuffleStateLabel=()=>shuffleEnabled?translate('music.shuffleOn'):(shuffleOffLabels[currentLanguage]||shuffleOffLabels[String(currentLanguage).split('-')[0]]||shuffleOffLabels.en);
+  const repeatStateLabel=()=>translate(repeatMode==='one'?'music.repeatOne':repeatMode==='all'?'music.repeatAll':'music.repeatOff');
+  let transportNoticeTimer=0;
+  const announceTransportMode=(message)=>{
+    let notice=document.querySelector('[data-transport-notice]');
+    if(!notice){notice=document.createElement('div');notice.dataset.transportNotice='';notice.className='transport-mode-notice';notice.setAttribute('role','status');notice.setAttribute('aria-live','polite');notice.setAttribute('aria-atomic','true');document.body.append(notice);}
+    clearTimeout(transportNoticeTimer);notice.textContent=message;notice.classList.add('is-visible');
+    transportNoticeTimer=setTimeout(()=>notice.classList.remove('is-visible'),2200);
+  };
   const updateCommandButtons = () => {
-    const shuffleLabelKey = shuffleEnabled ? 'music.shuffleOn' : 'music.shuffle';
-    const shuffleLabel = translate(shuffleLabelKey);
+    const shuffleLabel = shuffleStateLabel();
     [shuffleButton, mobileShuffle, miniShuffle].forEach((button) => {
       if (!button) return;
       button.setAttribute('aria-pressed', String(shuffleEnabled));
-      button.dataset.i18nAriaLabel = shuffleLabelKey;
-      button.dataset.i18nTitle = shuffleLabelKey;
+      delete button.dataset.i18nAriaLabel;
+      delete button.dataset.i18nTitle;
       setAccessibleControlLabel(button, shuffleLabel);
       if (!button.querySelector('.control-icon, svg')) button.textContent = shuffleLabel;
       button.classList.toggle('is-active', shuffleEnabled);
+      button.dataset.transportMode='shuffle';
+      button.dataset.transportState=shuffleEnabled?'on':'off';
+      button.dataset.transportIndicator=shuffleEnabled?'ON':'OFF';
     });
 
     const repeatLabelKey = repeatMode === 'one' ? 'music.repeatOne' : repeatMode === 'all' ? 'music.repeatAll' : 'music.repeatOff';
@@ -6632,6 +6645,9 @@ if (musicPlayers.length) {
       if (!button.querySelector('.control-icon, svg')) button.textContent = repeatLabel;
       button.classList.toggle('is-active', repeatMode !== 'off');
       button.classList.toggle('is-repeat-one', repeatMode === 'one');
+      button.dataset.transportMode='repeat';
+      button.dataset.transportState=repeatMode;
+      button.dataset.transportIndicator=repeatMode==='one'?'1':repeatMode==='all'?'ALL':'OFF';
     });
     renderUpcomingQueue();
   };
@@ -9903,7 +9919,13 @@ if (musicPlayers.length) {
     const next=MUSIC_TRACKS_BY_ID.get(ids[0]);
     const title=next?t(next.translationKey+'.title',next.title):'End of queue';
     document.querySelectorAll('[data-up-next-title]').forEach(el=>{if(el.textContent!==title)el.textContent=title;});
-    document.querySelectorAll('[data-up-next-mode]').forEach(el=>el.textContent=repeatMode==='one'?'Repeat one':shuffleEnabled?'Shuffle order':'Sequential order');
+    document.querySelectorAll('[data-up-next-mode]').forEach(el=>{
+      const label=shuffleStateLabel()+' · '+repeatStateLabel();
+      if(el.textContent!==label)el.textContent=label;
+      el.dataset.shuffleState=shuffleEnabled?'on':'off';
+      el.dataset.repeatState=repeatMode;
+      el.title=label;
+    });
     document.querySelectorAll('[data-up-next-cover]').forEach(el=>{el.hidden=!next;if(next&&el.getAttribute('src')!==next.coverUrl)el.src=next.coverUrl;});
     document.querySelectorAll('[data-up-next-list]').forEach(el=>{
       const key=ids.join('|')+'|'+currentLanguage;
@@ -10469,12 +10491,14 @@ if (musicPlayers.length) {
     if (shuffleEnabled) createShuffleQueue(activeTrackId);
     else shuffleQueue = [];
     updateCommandButtons();
+    announceTransportMode(shuffleStateLabel()+(shuffleEnabled&&repeatMode==='one'?' · '+repeatStateLabel():''));
     persistPlayerState();
   };
 
   const cycleRepeat = () => {
     repeatMode = repeatMode === 'all' ? 'one' : repeatMode === 'one' ? 'off' : 'all';
     updateCommandButtons();
+    announceTransportMode(repeatStateLabel());
     persistPlayerState();
   };
 
