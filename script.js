@@ -6401,6 +6401,8 @@ if (musicPlayers.length) {
   let vinylRotation = 0;
   let vinylVelocity = 0;
   let vinylLastFrameTime = 0;
+  let vinylMotorFrame = 0;
+  let vinylHandoffUntil = 0;
   let vinylRenderedFrameCount = 0;
   let vinylLastRenderedAt = 0;
   let renderVinylEngineFrame = () => {};
@@ -8058,7 +8060,7 @@ if (musicPlayers.length) {
           const minimumFrameInterval = constrainedDevice ? 1000 / 30 : 1000 / 60;
           if (this.lastDrawTime && time - this.lastDrawTime < minimumFrameInterval) return;
           this.lastDrawTime = time;
-          renderVinylEngineFrame(time);
+          // Platter motor has an independent frame loop; analyzer swaps cannot stop it.
           const forceFallback = this.getForceMode() === 'fallback';
           const analyserConnected = analyserAvailable && !forceFallback;
           if (analyserConnected) this.inspectAnalyser(audio);
@@ -9313,7 +9315,7 @@ if (musicPlayers.length) {
       // The media element is the source of truth. UI state and Web Audio can both
       // lag behind after an iOS media-process suspension.
       const audio = activePlayer ? getAudio(activePlayer) : null;
-      const actuallyPlaying = Boolean(audio && !audio.paused && !audio.ended && audio.readyState >= 2);
+      const actuallyPlaying = !userStoppedManually && Boolean((audio && !audio.paused && !audio.ended) || frameTime < vinylHandoffUntil);
       const targetVelocity = actuallyPlaying ? vinylPlaybackSpeed : 0;
       vinylVelocity = targetVelocity;
       if (actuallyPlaying !== isVinylPlaying) syncVinylExperience(actuallyPlaying, actuallyPlaying ? 'playing' : (audio?.ended ? 'ended' : 'paused'));
@@ -9329,13 +9331,21 @@ if (musicPlayers.length) {
     }
   };
 
+  const vinylMotorTick = (time) => {
+    vinylMotorFrame = 0;
+    if (document.hidden) { vinylLastFrameTime = 0; return; }
+    renderVinylEngineFrame(time);
+    if (isVinylPlaying) ensureVinylAnimation();
+    else vinylLastFrameTime = 0;
+  };
   const ensureVinylAnimation = () => {
-    visualizerController?.ensureFrameLoop();
+    if (!vinylMotorFrame && !document.hidden) vinylMotorFrame = requestAnimationFrame(vinylMotorTick);
   };
 
   const restartVinylAnimation = () => {
     vinylLastFrameTime = 0;
     visualizerController?.recover();
+    ensureVinylAnimation();
   };
 
   const recoverVinylAfterLifecycleChange = () => {
@@ -9350,7 +9360,7 @@ if (musicPlayers.length) {
   window.setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     const frameAge = vinylLastRenderedAt ? window.performance.now() - vinylLastRenderedAt : Infinity;
-    if (!visualizerController?.frameId || frameAge > 1500) {
+    if (!vinylMotorFrame && frameAge > 1500) {
       const audio = activePlayer ? getAudio(activePlayer) : null;
       if (audio && !audio.paused && !audio.ended) {
         vinylDiscs.forEach((disc) => {
@@ -9362,8 +9372,8 @@ if (musicPlayers.length) {
   }, 2000);
 
   const syncVinylExperience = (isPlaying, playbackState = null) => {
-    const shouldRotate = Boolean(isPlaying);
-    const state = playbackState || (shouldRotate ? 'playing' : activePlayer ? 'paused' : 'ready');
+    const shouldRotate = !userStoppedManually && Boolean(isPlaying || performance.now() < vinylHandoffUntil);
+    const state = shouldRotate ? 'playing' : (playbackState || (activePlayer ? 'paused' : 'ready'));
     isVinylPlaying = shouldRotate;
 
     if (!shouldRotate) vinylVelocity = 0;
@@ -9610,6 +9620,7 @@ if (musicPlayers.length) {
 
   const resetMiniPlayer = () => {
     stopLyricsAnimationLoop();
+    vinylHandoffUntil = 0;
     activePlayer = null;
     musicPlayers.forEach((track) => track.classList.remove('is-active'));
     stopVisualizer('idle');
@@ -9711,8 +9722,10 @@ if (musicPlayers.length) {
     lastPlayRequestSource = source || 'unknown';
     const audio = getAudio(player);
     const status = player.querySelector('[data-audio-status]');
+    if (!isAutoAdvance) vinylHandoffUntil = 0;
 
     if (!audio || !getVerifiedAudioSource(player)) {
+      vinylHandoffUntil = 0;
       setPlayerReadyState(player, false);
       return false;
     }
@@ -9754,6 +9767,7 @@ if (musicPlayers.length) {
       }
 
       await playbackPromise;
+      if (activePlayer === player) { vinylHandoffUntil = 0; syncVinylExperience(!audio.paused && !audio.ended); }
       const analyserReady = await analyserSetupPromise;
       if (visualizerEnabled && !reduceMotion && !analyserReady) {
         setVisualizerFallback(true);
@@ -9773,6 +9787,7 @@ if (musicPlayers.length) {
       }
       return true;
     } catch (error) {
+      if (activePlayer === player) { vinylHandoffUntil = 0; syncVinylExperience(false); }
       logAudioDiagnostics('play-failed', {
         track: getTrackTitle(player),
         currentSrc: audio.currentSrc || audio.src,
@@ -9955,6 +9970,7 @@ if (musicPlayers.length) {
 
     if (!nextPlayer) {
       const audio = currentPlayer ? getAudio(currentPlayer) : null;
+      vinylHandoffUntil = 0;
       userStoppedManually = true;
       if (audio && !audio.paused) audio.pause();
       resetMiniPlayer();
@@ -9984,6 +10000,7 @@ if (musicPlayers.length) {
   setMediaSessionActionHandler('pause', () => {
     const audio = activePlayer ? getAudio(activePlayer) : null;
     if (audio) {
+      vinylHandoffUntil = 0;
       userStoppedManually = true;
       audio.pause();
     }
@@ -10154,6 +10171,8 @@ if (musicPlayers.length) {
         updateActiveLyric(audio, { forceScroll: true, event: 'ended' });
         const nextPlayer = shouldAdvance ? getNextTrack(musicPlayer) : null;
         const willAutoContinue = Boolean(nextPlayer);
+        if (activePlayer === musicPlayer) vinylHandoffUntil = willAutoContinue ? performance.now() + 15000 : 0;
+        if (willAutoContinue) syncVinylExperience(true);
 
         musicPlayer.classList.toggle('is-playing', willAutoContinue && nextPlayer === musicPlayer);
         audio.currentTime = 0;
@@ -10192,6 +10211,7 @@ if (musicPlayers.length) {
       });
 
       audio.addEventListener('error', () => {
+        if (activePlayer === musicPlayer) vinylHandoffUntil = 0;
         logAudioDiagnostics('audio-error', {
           track: getTrackTitle(musicPlayer),
           selectedSrc: getVerifiedAudioSource(musicPlayer),
@@ -10236,7 +10256,8 @@ if (musicPlayers.length) {
         if (audio.paused) {
           playAudio(musicPlayer);
         } else {
-          userStoppedManually = true;
+          vinylHandoffUntil = 0;
+      userStoppedManually = true;
           audio.pause();
         }
       });
@@ -10261,7 +10282,8 @@ if (musicPlayers.length) {
       if (audio.paused) {
         playAudio(activePlayer);
       } else {
-        userStoppedManually = true;
+        vinylHandoffUntil = 0;
+      userStoppedManually = true;
         audio.pause();
       }
     });
@@ -10585,6 +10607,7 @@ if (musicPlayers.length) {
     const audio = getAudio(activePlayer);
     if (audio.paused) playAudio(activePlayer);
     else {
+      vinylHandoffUntil = 0;
       userStoppedManually = true;
       audio.pause();
     }
