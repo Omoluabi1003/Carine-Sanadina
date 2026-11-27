@@ -11180,3 +11180,8 @@ body.onescreen-open > .onescreen-active .console-up-next{height:66px!important;m
 body.onescreen-open > .onescreen-active .luxury-audio-console{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:44px minmax(120px,1fr) 92px 66px!important;min-height:0!important}
 body.onescreen-open > .onescreen-active.studio-visualizer-off .luxury-audio-console{grid-template-rows:44px minmax(120px,1fr) 92px 66px!important}
 }
+
+/* A geometry-locked stylus replaces the independently scaled decorative arm only in OneScreen. */
+.onescreen-physical-arm{display:none}
+body.onescreen-open > .onescreen-active .turntable-assembly .tonearm-assembly{display:none!important}
+body.onescreen-open > .onescreen-active .turntable-assembly .onescreen-physical-arm{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:7;overflow:hidden;pointer-events:none;filter:drop-shadow(0 2px 2px #0006)}
