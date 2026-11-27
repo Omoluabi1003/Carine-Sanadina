@@ -623,7 +623,16 @@
           <div class="inline-listening-experience reveal is-visible" data-mobile-player aria-hidden="false">
             <div class="inline-player-card expanded-player-card">
               <section class="luxury-audio-console direct-drive-console" aria-label="Carine Sanadina direct-drive audio console" data-i18n-aria-label="console.label">
-                <div class="deck-brand-row">
+                <div class="onescreen-toolbar">
+                  <button type="button" data-onescreen-exit aria-label="Exit listening studio">‹ Website</button>
+                  <div class="onescreen-modes" role="group" aria-label="Listening experience">
+                    <button type="button" data-onescreen-mode="signature" aria-pressed="true">Signature</button>
+                    <button type="button" data-onescreen-mode="studio" aria-pressed="false">Studio</button>
+                    <button type="button" data-onescreen-mode="cinema" aria-pressed="false">Cinematic</button>
+                  </div>
+                  <button type="button" data-onescreen-settings aria-expanded="false" aria-label="Turntable settings">⚙</button>
+                </div>
+                <div class="deck-brand-row"><button type="button" class="onescreen-enter" data-onescreen-enter>Open OneScreen</button>
                   <div class="console-brand">CARINE SANADINA <span>DD-01</span></div>
                   <div class="deck-model">QUARTZ • DIRECT DRIVE</div>
                 </div>
