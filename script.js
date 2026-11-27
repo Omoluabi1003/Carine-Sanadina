@@ -10666,42 +10666,81 @@ if (musicPlayers.length) {
   const studioArm = document.createElementNS(ns,'svg');
   studioArm.setAttribute('class','onescreen-physical-arm');
   studioArm.setAttribute('aria-hidden','true');
-  studioArm.innerHTML = '<defs><linearGradient id="onescreen-arm-metal" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eff6fa"/><stop offset=".42" stop-color="#a0aeb9"/><stop offset=".65" stop-color="#394b5a"/><stop offset="1" stop-color="#c0ccd5"/></linearGradient><radialGradient id="onescreen-arm-pivot" cx=".32" cy=".25"><stop stop-color="#e9f0f6"/><stop offset=".45" stop-color="#75899c"/><stop offset="1" stop-color="#101d2a"/></radialGradient></defs><circle data-arm-base fill="#142231" stroke="#c8b38b" stroke-width="1.4"/><g data-arm-motion><path data-arm-shadow fill="none" stroke="#000" stroke-opacity=".48" stroke-width="7" stroke-linecap="round"/><path data-arm-shaft fill="none" stroke="url(#onescreen-arm-metal)" stroke-width="4" stroke-linecap="round"/><rect data-arm-head fill="url(#onescreen-arm-metal)" stroke="#a7b6c2" stroke-width=".65" rx="2"/><circle data-arm-stylus r="1.8" fill="#d7c19a"/><rect data-arm-weight width="13" height="8" rx="2" fill="url(#onescreen-arm-metal)" stroke="#8194a6" stroke-width=".6"/></g><circle data-arm-pivot fill="url(#onescreen-arm-pivot)" stroke="#9babb9" stroke-width="1"/>';
+
+  // Fixed-length pivot geometry, with physical cueing and groove tracking.
+  studioArm.innerHTML = `<defs>
+  <linearGradient id="armSteel" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#35414d"/><stop offset=".22" stop-color="#c2cdd5"/><stop offset=".38" stop-color="#f8fcff"/><stop offset=".56" stop-color="#83919c"/><stop offset=".8" stop-color="#27343e"/><stop offset="1" stop-color="#aab8c2"/></linearGradient>
+  <linearGradient id="armWeight"><stop stop-color="#161d24"/><stop offset=".3" stop-color="#a4b0bb"/><stop offset=".5" stop-color="#d4dce2"/><stop offset=".8" stop-color="#46515b"/><stop offset="1" stop-color="#18212a"/></linearGradient>
+  <radialGradient id="armBearing" cx=".3" cy=".24"><stop stop-color="#edf4fa"/><stop offset=".35" stop-color="#8b9ba9"/><stop offset=".75" stop-color="#293745"/><stop offset="1" stop-color="#111921"/></radialGradient>
+  <filter id="armBlur" x="-40%" y="-100%" width="190%" height="300%"><feGaussianBlur stdDeviation="2"/></filter></defs>
+  <g data-mount><ellipse cy="3" rx="19" ry="17" fill="#080b0d" opacity=".7"/><circle r="17" fill="#202a32" stroke="#b29c79"/><circle r="14" fill="url(#armBearing)" stroke="#101820"/><circle r="11" fill="#25313c" stroke="#a0adb6"/><circle cx="-12" cy="8" r="1.5" fill="#dce2e5"/><circle cx="12" cy="-8" r="1.5" fill="#dce2e5"/></g>
+  <g data-rest><ellipse rx="7" ry="4" fill="#121619"/><path d="M -4 0 V -7 Q 0 -12 4 -7 V 0" fill="none" stroke="#a9b6bf" stroke-width="2.5"/></g>
+  <g data-shadow filter="url(#armBlur)" opacity=".55"><path data-shadow-line stroke="#000" stroke-width="9" stroke-linecap="round"/><rect data-shadow-head width="22" height="11" rx="3" fill="#000"/></g>
+  <g data-rigid><path data-tube-outline fill="none" stroke="#23313a" stroke-width="7.5" stroke-linecap="round"/><path data-tube fill="none" stroke="url(#armSteel)" stroke-width="6" stroke-linecap="round"/><path data-highlight fill="none" stroke="#f6fbff" stroke-opacity=".75" stroke-width=".8"/>
+  <rect x="-29" y="-8" width="23" height="16" rx="3" fill="url(#armWeight)" stroke="#26313b"/><path d="M -25 -7 V 7 M -21 -7 V 7 M -17 -7 V 7 M -13 -7 V 7" stroke="#28333c" stroke-width=".8"/><rect x="-7" y="-5" width="10" height="10" rx="2" fill="url(#armSteel)"/>
+  <circle r="10" fill="url(#armBearing)" stroke="#151f28"/><circle r="5" fill="#34434e" stroke="#abb7bf"/><path d="M -3 0 H 3" stroke="#c5cfd6"/>
+  <g data-head><path d="M -23 -3 L -16 -6 H -4 L 1 -3 V 3 L -4 6 H -16 L -23 3 Z" fill="#26333d" stroke="#aab9c4" stroke-width=".7"/><path d="M -20 -3 H -5" stroke="#c5d1d9" stroke-width=".7"/><circle cx="-13" cy="-2.5" r="1" fill="#dce4e8"/><circle cx="-13" cy="2.5" r="1" fill="#dce4e8"/><rect x="-8" y="-3" width="8" height="6" rx="1" fill="#101820" stroke="#687b88"/><path d="M -5 0 H 0" stroke="#dfbb79" stroke-width="1.2"/><circle r="1.1" fill="#fff0ce"/></g></g>`;
   studioDeck?.append(studioArm);
-  const updateStudioArm = () => {
-    if (!mobilePlayer?.classList.contains('onescreen-active') || !studioDeck || !studioDisc) return;
-    const d=studioDeck.getBoundingClientRect();
-    // offset geometry is independent of the spinning disc's rotated bounding box.
-    const platter=studioDeck.querySelector('.console-turntable')?.getBoundingClientRect();
-    if (!d.width || !d.height || !platter?.width) return;
-    const cx=platter.left-d.left+platter.width/2, cy=platter.top-d.top+platter.height/2;
-    const radius=Math.min(studioDisc.offsetWidth,studioDisc.offsetHeight)/2;
-    if (!radius) return;
-    const px=Math.min(d.width-18,cx+radius+Math.max(14,radius*.18));
-    const py=Math.max(18,cy-radius*.83);
-    const state=studioVinyl?.dataset.playbackState;
-    const onRecord=state==='playing'||state==='paused';
-    const angle=-.52;
-    const tx=onRecord?cx+radius*.79*Math.cos(angle):px+Math.min(14,(d.width-px)/2);
-    const ty=onRecord?cy+radius*.79*Math.sin(angle):Math.min(d.height-12,py+radius*.91);
-    const length=Math.hypot(tx-px,ty-py), ux=(tx-px)/Math.max(1,length),uy=(ty-py)/Math.max(1,length);
-    const headX=tx-ux*7,headY=ty-uy*7,rotation=Math.atan2(uy,ux)*180/Math.PI;
-    const set=(sel,attrs)=>{const node=studioArm.querySelector(sel);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));};
+  const armSet=(selector,attrs)=>{const node=studioArm.querySelector(selector);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));};
+  const clampArm=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const easeArm=t=>{t=clampArm(t,0,1);return t*t*(3-2*t);};
+  const mixArm=(a,b,t)=>a+(b-a)*t;
+  let armFrame=0,armGeometry=null,armMeasureAt=0,armDrawAt=0,armAngle=null,armLift=0,armMotion=null,lastArmAudio=null,lastArmTime=0,lastArmTick=0,lastArmEngaged=false,lastArmSeeking=false;
+  const measureArm=()=>{
+    const d=studioDeck?.getBoundingClientRect(),p=studioDeck?.querySelector('.console-turntable')?.getBoundingClientRect();
+    const radius=Math.min(studioDisc?.offsetWidth||0,studioDisc?.offsetHeight||0)/2;
+    if(!d?.width||!d.height||!p?.width||!radius)return null;
+    const cx=p.left-d.left+p.width/2,cy=p.top-d.top+p.height/2,unit=clampArm(radius/86,.48,1.65);
+    const px=Math.min(d.width-24*unit,cx+radius*1.14),py=Math.max(30*unit,cy-radius*.91);
+    const distance=Math.hypot(cx-px,cy-py),length=radius*1.43,restAngle=Math.PI*.51,l=length/unit;
     studioArm.setAttribute('viewBox','0 0 '+d.width+' '+d.height);
-    set('[data-arm-base]',{cx:px,cy:py,r:Math.max(9,Math.min(15,radius*.13))});
-    set('[data-arm-pivot]',{cx:px,cy:py,r:Math.max(6,Math.min(10,radius*.09))});
-    const shaft='M '+(px-ux*12)+' '+(py-uy*12)+' L '+headX+' '+headY;
-    set('[data-arm-shaft]',{d:shaft});
-    set('[data-arm-shadow]',{d:shaft,transform:'translate(0 '+(state==='paused'?5:2)+')'});
-    set('[data-arm-head]',{x:headX-8,y:headY-3.8,width:16,height:7.6,transform:'rotate('+rotation+' '+headX+' '+headY+')'});
-    set('[data-arm-stylus]',{cx:tx,cy:ty});
-    set('[data-arm-weight]',{x:px-ux*12-6.5,y:py-uy*12-4,transform:'rotate('+rotation+' '+(px-ux*12)+' '+(py-uy*12)+')'});
+    armSet('[data-mount]',{transform:'translate('+px+' '+py+') scale('+unit+')'});
+    armSet('[data-rest]',{transform:'translate('+(px+Math.cos(restAngle)*length*.7)+' '+(py+Math.sin(restAngle)*length*.7)+') scale('+unit+')'});
+    const tube='M -8 0 H '+(l-18);
+    armSet('[data-tube]',{d:tube});armSet('[data-tube-outline]',{d:tube});armSet('[data-highlight]',{d:'M 10 -1.8 H '+(l-20)});
+    armSet('[data-head]',{transform:'translate('+l+' 0)'});
+    armSet('[data-shadow-line]',{d:'M -27 0 H '+l});armSet('[data-shadow-head]',{x:l-22,y:-5.5});
+    return {cx,cy,px,py,distance,length,radius,unit,restAngle};
   };
-  if (typeof ResizeObserver==='function' && studioDeck) {
-    const observer=new ResizeObserver(updateStudioArm);observer.observe(studioDeck);
-    if(studioDisc)observer.observe(studioDisc);
-  }
-  if(studioVinyl) new MutationObserver(updateStudioArm).observe(studioVinyl,{attributes:true,attributeFilter:['data-playback-state']});
+  const grooveAngle=(g,progress)=>{
+    const groove=g.radius*mixArm(.94,.66,clampArm(progress,0,1));
+    const bearing=Math.atan2(g.cy-g.py,g.cx-g.px);
+    const offset=Math.acos(clampArm((g.distance*g.distance+g.length*g.length-groove*groove)/(2*g.distance*g.length),-1,1));
+    return bearing-offset;
+  };
+  const updateStudioArm=(stamp=performance.now())=>{
+    if(!mobilePlayer?.classList.contains('onescreen-active')){armFrame=0;armAngle=null;armMotion=null;lastArmEngaged=false;lastArmAudio=null;return;}
+    if(!armGeometry||stamp-armMeasureAt>300){armGeometry=measureArm();armMeasureAt=stamp;}
+    const g=armGeometry;
+    if(!g||stamp-armDrawAt<32){armFrame=requestAnimationFrame(updateStudioArm);return;}
+    armDrawAt=stamp;
+    const audio=activePlayer?getAudio(activePlayer):null,time=Number(audio?.currentTime)||0,duration=Number(audio?.duration);
+    const state=studioVinyl?.dataset.playbackState;
+    const engaged=Boolean(audio&&!audio.ended&&(state==='playing'||state==='paused')&&(!audio.paused||time>0||lastArmEngaged&&audio===lastArmAudio));
+    const target=engaged?grooveAngle(g,duration>0&&Number.isFinite(duration)?time/duration:0):g.restAngle;
+    const changed=audio!==lastArmAudio;
+    const seeking=!changed&&engaged&&(Boolean(audio.seeking&&!lastArmSeeking)||Math.abs(time-lastArmTime)>Math.max(1.2,(stamp-lastArmTick)/1000+.5));
+    if(armAngle===null)armAngle=g.restAngle;
+    if(engaged!==lastArmEngaged||changed&&engaged||seeking)armMotion={start:stamp,from:armAngle,lift:armLift,returnFirst:changed&&lastArmEngaged&&engaged};
+    if(reduceMotion){armAngle=target;armLift=0;armMotion=null;}
+    else if(armMotion){
+      const m=armMotion,t=stamp-m.start;
+      if(t<180){armAngle=m.from;armLift=mixArm(m.lift,1,easeArm(t/180));}
+      else if(m.returnFirst&&t<560){armAngle=mixArm(m.from,g.restAngle,easeArm((t-180)/380));armLift=1;}
+      else {const offset=m.returnFirst?560:180,from=m.returnFirst?g.restAngle:m.from;
+        if(t<offset+540){armAngle=mixArm(from,target,easeArm((t-offset)/540));armLift=1;}
+        else{armAngle=target;armLift=1-easeArm((t-offset-540)/260);if(t>=offset+800)armMotion=null;}}
+    }else{armAngle=target;armLift=0;}
+    const degrees=armAngle*180/Math.PI,shift=armLift*6*g.unit;
+    armSet('[data-rigid]',{transform:'translate('+g.px+' '+g.py+') rotate('+degrees+') scale('+g.unit+' '+(g.unit*(1-armLift*.045))+')'});
+    armSet('[data-shadow]',{transform:'translate('+(g.px+shift*.4)+' '+(g.py+2*g.unit+shift)+') rotate('+degrees+') scale('+g.unit+')',opacity:.52-armLift*.23});
+    studioArm.dataset.cueState=armLift>.12?'lifted':'lowered';
+    lastArmAudio=audio;lastArmTime=time;lastArmTick=stamp;lastArmEngaged=engaged;lastArmSeeking=Boolean(audio?.seeking);
+    armFrame=requestAnimationFrame(updateStudioArm);
+  };
+  const refreshStudioArm=()=>{armGeometry=null;if(!armFrame&&mobilePlayer?.classList.contains('onescreen-active'))armFrame=requestAnimationFrame(updateStudioArm);};
+  if(typeof ResizeObserver==='function'&&studioDeck){const observer=new ResizeObserver(refreshStudioArm);observer.observe(studioDeck);if(studioDisc)observer.observe(studioDisc);}
+  if(studioVinyl)new MutationObserver(refreshStudioArm).observe(studioVinyl,{attributes:true,attributeFilter:['data-playback-state']});
   const studioViewport = () => {
     if (!mobilePlayer?.classList.contains('onescreen-active')) return;
     const vv=window.visualViewport;
@@ -10714,7 +10753,7 @@ if (musicPlayers.length) {
   const setOneScreenMode = mode => {
     if (!['signature','studio','cinema'].includes(mode) || !mobilePlayer) return;
     mobilePlayer.dataset.onescreenMode=mode;
-    requestAnimationFrame(updateStudioArm);
+    refreshStudioArm();
     mobilePlayer.querySelectorAll('[data-onescreen-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.onescreenMode===mode)));
     window.requestAnimationFrame(resizeVisualizerSurface);
   };
@@ -10739,7 +10778,7 @@ if (musicPlayers.length) {
       }
       setOneScreenMode(mobilePlayer.dataset.onescreenMode||'signature');
       studioViewport();
-      requestAnimationFrame(updateStudioArm);
+      refreshStudioArm();
       requestAnimationFrame(() => { resizeVisualizerSurface(); recoverVisualizer(); const audio = activePlayer ? getAudio(activePlayer) : null; if (visualizerEnabled && audio && !audio.paused && !audio.ended) startVisualizer(audio); });
       mobilePlayer.querySelector('[data-onescreen-exit]')?.focus({preventScroll:true});
     } else {
