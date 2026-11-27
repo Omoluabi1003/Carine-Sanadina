@@ -11146,3 +11146,37 @@ body.onescreen-open > .onescreen-active{position:fixed!important;inset:auto!impo
 }
 /* Explicit portal selectors override the original inline console sizing. */
 body.onescreen-open > .onescreen-active .luxury-audio-console .audio-visualizer-panel .music-visualizer{height:0!important;min-height:45px!important;flex:1 1 0!important;visibility:visible!important}
+
+/* OneScreen owns the entire visible viewport, including the floating navigation layer. */
+html.onescreen-open,body.onescreen-open{overflow:hidden!important;background:#071322!important}
+body.onescreen-open > :not(.onescreen-active):not(.console-playlist-drawer){visibility:hidden!important}
+body.onescreen-open > .onescreen-active{visibility:visible!important;top:0!important;left:0!important;width:100%!important;height:var(--studio-vh,100dvh)!important;z-index:2147483000!important;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important;background:#071322!important}
+body.onescreen-open > .console-playlist-drawer{z-index:2147483001!important}
+body.onescreen-open > .onescreen-active .inline-player-card{position:relative!important;box-sizing:border-box!important;overflow:visible!important}
+body.onescreen-open > .onescreen-active .luxury-audio-console{box-sizing:border-box!important;grid-template-columns:minmax(0,1fr);gap:8px!important}
+body.onescreen-open > .onescreen-active .turntable-assembly{container-type:size;min-width:0!important}
+body.onescreen-open > .onescreen-active .turntable-assembly .console-turntable{width:min(45cqw,86cqh)!important;height:min(45cqw,86cqh)!important;left:4%!important;top:50%!important;transform:translateY(-50%)!important}
+body.onescreen-open > .onescreen-active .turntable-assembly .expanded-artwork-wrap{padding:clamp(5px,2cqh,14px)!important}
+body.onescreen-open > .onescreen-active .turntable-assembly .tonearm-assembly{transform:scale(.65);transform-origin:top right}
+body.onescreen-open > .onescreen-active .audio-visualizer-header{display:grid!important;grid-template-columns:minmax(0,68px) minmax(0,1fr)!important;align-items:center!important;min-height:44px!important;max-height:none!important;padding:0!important}
+body.onescreen-open > .onescreen-active .audio-visualizer-controls{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important;gap:6px!important}
+body.onescreen-open > .onescreen-active .visualizer-style-control{width:100%!important;max-width:none!important}
+body.onescreen-open > .onescreen-active .visualizer-style-control__select{width:100%!important;min-height:44px!important;height:44px!important}
+body.onescreen-open > .onescreen-active .visualizer-style-control__label,body.onescreen-open > .onescreen-active .visualizer-toggle__text{display:none!important}
+body.onescreen-open > .onescreen-active .visualizer-toggle{min-width:44px!important;min-height:44px!important}
+body.onescreen-open > .onescreen-active .music-visualizer{border-radius:5px!important;background:#07121f!important}
+body.onescreen-open > .onescreen-active.studio-visualizer-off .music-visualizer{display:none!important}
+body.onescreen-open > .onescreen-active.studio-visualizer-off .luxury-audio-console{grid-template-rows:44px minmax(130px,1fr) auto auto auto!important}
+body.onescreen-open > .onescreen-active .console-transport,body.onescreen-open > .onescreen-active .console-up-next{min-width:0!important}
+@media(max-width:820px) and (orientation:portrait){
+body.onescreen-open > .onescreen-active .luxury-audio-console{grid-template-rows:44px minmax(100px,1fr) minmax(110px,.85fr) 92px 66px!important}
+body.onescreen-open > .onescreen-active[data-onescreen-mode="studio"] .luxury-audio-console{grid-template-rows:44px minmax(100px,.8fr) minmax(120px,1.2fr) 92px 66px!important}
+body.onescreen-open > .onescreen-active[data-onescreen-mode="cinema"] .luxury-audio-console{grid-template-rows:44px minmax(140px,1.4fr) minmax(95px,.65fr) 92px 66px!important}
+body.onescreen-open > .onescreen-active.studio-visualizer-off .luxury-audio-console{grid-template-rows:44px minmax(130px,1fr) auto 92px 66px!important}
+body.onescreen-open > .onescreen-active .console-transport{grid-template-rows:36px 50px!important}
+body.onescreen-open > .onescreen-active .console-up-next{height:66px!important;min-height:0!important;box-sizing:border-box!important}
+}
+@media(orientation:landscape) and (max-height:500px){
+body.onescreen-open > .onescreen-active .luxury-audio-console{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:44px minmax(120px,1fr) 92px 66px!important;min-height:0!important}
+body.onescreen-open > .onescreen-active.studio-visualizer-off .luxury-audio-console{grid-template-rows:44px minmax(120px,1fr) 92px 66px!important}
+}
