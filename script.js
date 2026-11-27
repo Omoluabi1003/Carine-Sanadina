@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-27-track-selection';
+const APP_VERSION = 'carine-site-2026-11-27-onescreen';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -10649,8 +10649,63 @@ if (musicPlayers.length) {
     expandedSheetLyricsStartTop = 0;
   });
 
-  miniExpand?.addEventListener('click', () => setMobilePlayerOpen(!mobilePlayer?.classList.contains('is-open')));
-  playerExpand?.addEventListener('click', () => setMobilePlayerOpen(!mobilePlayer?.classList.contains('is-expanded-player')));
+  // OneScreen reuses the existing player nodes, never the audio elements.
+  let studioReturnFocus = null;
+  const studioOrigin = document.createComment('onescreen player origin');
+  mobilePlayer?.before(studioOrigin);
+  const studioViewport = () => {
+    if (!mobilePlayer) return;
+    const vv=window.visualViewport;
+    mobilePlayer.style.setProperty('--studio-vh', Math.floor(vv?.height || window.innerHeight)+'px');
+    mobilePlayer.style.setProperty('--studio-vw', Math.floor(vv?.width || window.innerWidth)+'px');
+    mobilePlayer.style.setProperty('--studio-top', (vv?.offsetTop || 0)+'px');
+    mobilePlayer.style.setProperty('--studio-left', (vv?.offsetLeft || 0)+'px');
+    window.requestAnimationFrame(resizeVisualizerSurface);
+  };
+  const setOneScreenMode = mode => {
+    if (!['signature','studio','cinema'].includes(mode) || !mobilePlayer) return;
+    mobilePlayer.dataset.onescreenMode=mode;
+    mobilePlayer.querySelectorAll('[data-onescreen-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.onescreenMode===mode)));
+    window.requestAnimationFrame(resizeVisualizerSurface);
+  };
+  const setOneScreen = open => {
+    if (!mobilePlayer || open===mobilePlayer.classList.contains('onescreen-active')) return;
+    if (open) {
+      studioReturnFocus=document.activeElement;
+      setCinematicMode(false);
+      // Escape ancestor clipping and perspective without recreating any node.
+      document.body.append(mobilePlayer);
+      mobilePlayer.classList.add('onescreen-active');
+      document.body.classList.add('onescreen-open');
+      setOneScreenMode(mobilePlayer.dataset.onescreenMode||'signature');
+      studioViewport();
+      mobilePlayer.querySelector('[data-onescreen-exit]')?.focus({preventScroll:true});
+    } else {
+      setConsolePlaylistOpen(false,{returnFocus:false});
+      mobilePlayer.classList.remove('onescreen-active','onescreen-settings-open');
+      mobilePlayer.querySelector('[data-onescreen-settings]')?.setAttribute('aria-expanded','false');
+      document.body.classList.remove('onescreen-open');
+      studioOrigin.after(mobilePlayer);
+      studioReturnFocus?.focus?.({preventScroll:true});
+      window.requestAnimationFrame(resizeVisualizerSurface);
+    }
+  };
+  mobilePlayer?.querySelector('[data-onescreen-enter]')?.addEventListener('click',()=>setOneScreen(true));
+  mobilePlayer?.querySelector('[data-onescreen-exit]')?.addEventListener('click',()=>setOneScreen(false));
+  mobilePlayer?.querySelectorAll('[data-onescreen-mode]').forEach(button=>button.addEventListener('click',()=>setOneScreenMode(button.dataset.onescreenMode)));
+  mobilePlayer?.querySelector('[data-onescreen-settings]')?.addEventListener('click',event=>{
+    const open=mobilePlayer.classList.toggle('onescreen-settings-open');
+    event.currentTarget.setAttribute('aria-expanded',String(open));
+  });
+  window.addEventListener('resize',studioViewport,{passive:true});
+  window.visualViewport?.addEventListener('resize',studioViewport,{passive:true});
+  window.visualViewport?.addEventListener('scroll',studioViewport,{passive:true});
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&mobilePlayer?.classList.contains('onescreen-active')&&!consolePlaylistDrawer?.classList.contains('is-open'))setOneScreen(false);
+  });
+  // Enter from the existing expansion control; preserve standard inline browsing.
+  miniExpand?.addEventListener('click', () => setOneScreen(!mobilePlayer?.classList.contains('onescreen-active')));
+  playerExpand?.addEventListener('click', () => setOneScreen(!mobilePlayer?.classList.contains('onescreen-active')));
   buttonListenerStatus.expandCollapse = Boolean(miniExpand || playerExpand);
   mobileClose?.addEventListener('click', () => setMobilePlayerOpen(false));
   mobilePlayer?.addEventListener('click', (event) => {
