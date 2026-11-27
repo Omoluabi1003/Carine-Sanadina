@@ -719,8 +719,8 @@
 
                 <div class="console-up-next" aria-label="Upcoming playback">
                     <img data-up-next-cover alt="" width="44" height="44" hidden>
-                    <div class="console-up-next-copy"><span class="console-up-next-kicker">UP NEXT <span data-up-next-mode></span></span><strong data-up-next-title aria-live="polite">End of queue</strong></div>
-                    <button type="button" class="console-click-setting" data-studio-click-toggle aria-pressed="true">Click sound: on</button>
+                    <div class="console-up-next-copy"><span class="console-up-next-kicker">NEXT TRACK TO PLAY</span><strong data-up-next-title aria-live="polite">End of queue</strong><span class="console-up-next-meta" data-up-next-mode></span></div>
+                    <button type="button" class="console-next-queue" data-up-next-open aria-label="View upcoming playback queue" title="View upcoming playback queue"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h15M4 12h15M4 18h10M17 16l3 2-3 2"/></svg></button>
                   </div>
                   <div class="console-transport">
                   <div class="expanded-player-progress" aria-live="off">
@@ -768,7 +768,7 @@
                     <div><span class="eyebrow" data-i18n="console.collection">Listening collection</span><h3 id="console-playlist-title" data-i18n="music.playlist">Playlist</h3></div>
                     <button class="console-playlist-close" type="button" data-console-playlist-close aria-label="Close playlist" data-i18n-aria-label="console.closePlaylist">×</button>
                   </div>
-                  <details class="console-queue-details"><summary>Upcoming playback order</summary><ol data-up-next-list></ol></details>
+                  <details class="console-queue-details" open><summary>Upcoming playback order</summary><ol data-up-next-list></ol></details><button type="button" class="console-click-setting" data-studio-click-toggle aria-pressed="true">Click sound: on</button>
                   <div class="expanded-track-picker" aria-label="Choose a track" data-i18n-aria-label="music.playlistLabel">
                     <div class="expanded-track-list" data-expanded-playlist-tracks></div>
                   </div>
