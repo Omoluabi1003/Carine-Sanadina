@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-27-onescreen-default';
+const APP_VERSION = 'carine-site-2026-11-27-onescreen-repair';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -7619,6 +7619,7 @@ if (musicPlayers.length) {
       visualizerStyleSelect.setAttribute('aria-label', translate('music.visualizerStyleAria'));
     }
 
+    mobilePlayer?.classList.toggle('studio-visualizer-off', !visualizerEnabled);
     if (!visualizerEnabled) {
       setVisualizerHelper(isCoarsePointerDevice() ? translate('music.visualizerHelperTap') : translate('music.visualizerOff'));
     } else if (isIosSafari && (!activePlayer || getAudio(activePlayer)?.paused)) {
@@ -10654,12 +10655,12 @@ if (musicPlayers.length) {
   const studioOrigin = document.createComment('onescreen player origin');
   mobilePlayer?.before(studioOrigin);
   const studioViewport = () => {
-    if (!mobilePlayer) return;
+    if (!mobilePlayer?.classList.contains('onescreen-active')) return;
     const vv=window.visualViewport;
     mobilePlayer.style.setProperty('--studio-vh', Math.floor(vv?.height || window.innerHeight)+'px');
     mobilePlayer.style.setProperty('--studio-vw', Math.floor(vv?.width || window.innerWidth)+'px');
-    mobilePlayer.style.setProperty('--studio-top', (vv?.offsetTop || 0)+'px');
-    mobilePlayer.style.setProperty('--studio-left', (vv?.offsetLeft || 0)+'px');
+    mobilePlayer.style.setProperty('--studio-top', '0px');
+    mobilePlayer.style.setProperty('--studio-left', '0px');
     window.requestAnimationFrame(resizeVisualizerSurface);
   };
   const setOneScreenMode = mode => {
@@ -10677,14 +10678,26 @@ if (musicPlayers.length) {
       document.body.append(mobilePlayer);
       mobilePlayer.classList.add('onescreen-active');
       document.body.classList.add('onescreen-open');
+      document.documentElement.classList.add('onescreen-open');
+      // Repair a stale disabled preference once for this release; subsequent manual off remains respected.
+      if (!visualizerEnabled && !reduceMotion) {
+        let repaired = false;
+        try { repaired = sessionStorage.getItem('carine-onescreen-visualizer-repaired') === '1'; } catch (_) {}
+        if (!repaired) {
+          try { sessionStorage.setItem('carine-onescreen-visualizer-repaired','1'); } catch (_) {}
+          enableVisualizerFromGesture();
+        }
+      }
       setOneScreenMode(mobilePlayer.dataset.onescreenMode||'signature');
       studioViewport();
+      requestAnimationFrame(() => { resizeVisualizerSurface(); recoverVisualizer(); const audio = activePlayer ? getAudio(activePlayer) : null; if (visualizerEnabled && audio && !audio.paused && !audio.ended) startVisualizer(audio); });
       mobilePlayer.querySelector('[data-onescreen-exit]')?.focus({preventScroll:true});
     } else {
       setConsolePlaylistOpen(false,{returnFocus:false});
       mobilePlayer.classList.remove('onescreen-active','onescreen-settings-open');
       mobilePlayer.querySelector('[data-onescreen-settings]')?.setAttribute('aria-expanded','false');
       document.body.classList.remove('onescreen-open');
+      document.documentElement.classList.remove('onescreen-open');
       studioOrigin.after(mobilePlayer);
       studioReturnFocus?.focus?.({preventScroll:true});
       window.requestAnimationFrame(resizeVisualizerSurface);
