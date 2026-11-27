@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-27-onescreen';
+const APP_VERSION = 'carine-site-2026-11-27-onescreen-default';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -10703,6 +10703,16 @@ if (musicPlayers.length) {
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape'&&mobilePlayer?.classList.contains('onescreen-active')&&!consolePlaylistDrawer?.classList.contains('is-open'))setOneScreen(false);
   });
+  // Mobile visitors enter OneScreen when they explicitly navigate to Music or
+  // start playback. Never open it on an ordinary homepage visit.
+  const mobileStudio = () => matchMedia('(max-width: 820px)').matches;
+  document.addEventListener('click', event => {
+    if (!event.isTrusted || !mobileStudio()) return;
+    const target=event.target.closest?.('a[href="#music"], [data-mobile-toggle], [data-expanded-track-option], [data-mini-toggle]');
+    if (!target || mobilePlayer?.classList.contains('onescreen-active')) return;
+    requestAnimationFrame(()=>setOneScreen(true));
+  });
+  if (mobileStudio() && location.hash === '#music') requestAnimationFrame(()=>setOneScreen(true));
   // Enter from the existing expansion control; preserve standard inline browsing.
   miniExpand?.addEventListener('click', () => setOneScreen(!mobilePlayer?.classList.contains('onescreen-active')));
   playerExpand?.addEventListener('click', () => setOneScreen(!mobilePlayer?.classList.contains('onescreen-active')));
