@@ -1,4 +1,4 @@
-const APP_VERSION = 'carine-site-2026-11-27-onescreen-repair';
+const APP_VERSION = 'carine-site-2026-11-27-tonearm-contact';
 const PLAYLIST_VERSION = APP_VERSION;
 const CACHE_VERSION = `carine-static-v15-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';

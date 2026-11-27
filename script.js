@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-27-onescreen-repair';
+const APP_VERSION = 'carine-site-2026-11-27-tonearm-contact';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -10654,6 +10654,50 @@ if (musicPlayers.length) {
   let studioReturnFocus = null;
   const studioOrigin = document.createComment('onescreen player origin');
   mobilePlayer?.before(studioOrigin);
+  // The OneScreen arm uses the same measured coordinate system as the record.
+  const studioDeck = mobilePlayer?.querySelector('.turntable-assembly');
+  const studioDisc = studioDeck?.querySelector('.expanded-vinyl-disc');
+  const studioVinyl = studioDeck?.querySelector('[data-vinyl-stage]');
+  const ns = 'http://www.w3.org/2000/svg';
+  const studioArm = document.createElementNS(ns,'svg');
+  studioArm.setAttribute('class','onescreen-physical-arm');
+  studioArm.setAttribute('aria-hidden','true');
+  studioArm.innerHTML = '<defs><linearGradient id="onescreen-arm-metal" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eff6fa"/><stop offset=".42" stop-color="#a0aeb9"/><stop offset=".65" stop-color="#394b5a"/><stop offset="1" stop-color="#c0ccd5"/></linearGradient><radialGradient id="onescreen-arm-pivot" cx=".32" cy=".25"><stop stop-color="#e9f0f6"/><stop offset=".45" stop-color="#75899c"/><stop offset="1" stop-color="#101d2a"/></radialGradient></defs><circle data-arm-base fill="#142231" stroke="#c8b38b" stroke-width="1.4"/><g data-arm-motion><path data-arm-shadow fill="none" stroke="#000" stroke-opacity=".48" stroke-width="7" stroke-linecap="round"/><path data-arm-shaft fill="none" stroke="url(#onescreen-arm-metal)" stroke-width="4" stroke-linecap="round"/><rect data-arm-head fill="url(#onescreen-arm-metal)" stroke="#a7b6c2" stroke-width=".65" rx="2"/><circle data-arm-stylus r="1.8" fill="#d7c19a"/><rect data-arm-weight width="13" height="8" rx="2" fill="url(#onescreen-arm-metal)" stroke="#8194a6" stroke-width=".6"/></g><circle data-arm-pivot fill="url(#onescreen-arm-pivot)" stroke="#9babb9" stroke-width="1"/>';
+  studioDeck?.append(studioArm);
+  const updateStudioArm = () => {
+    if (!mobilePlayer?.classList.contains('onescreen-active') || !studioDeck || !studioDisc) return;
+    const d=studioDeck.getBoundingClientRect();
+    // offset geometry is independent of the spinning disc's rotated bounding box.
+    const platter=studioDeck.querySelector('.console-turntable')?.getBoundingClientRect();
+    if (!d.width || !d.height || !platter?.width) return;
+    const cx=platter.left-d.left+platter.width/2, cy=platter.top-d.top+platter.height/2;
+    const radius=Math.min(studioDisc.offsetWidth,studioDisc.offsetHeight)/2;
+    if (!radius) return;
+    const px=Math.min(d.width-18,cx+radius+Math.max(14,radius*.18));
+    const py=Math.max(18,cy-radius*.83);
+    const state=studioVinyl?.dataset.playbackState;
+    const onRecord=state==='playing'||state==='paused';
+    const angle=-.52;
+    const tx=onRecord?cx+radius*.79*Math.cos(angle):px+Math.min(14,(d.width-px)/2);
+    const ty=onRecord?cy+radius*.79*Math.sin(angle):Math.min(d.height-12,py+radius*.91);
+    const length=Math.hypot(tx-px,ty-py), ux=(tx-px)/Math.max(1,length),uy=(ty-py)/Math.max(1,length);
+    const headX=tx-ux*7,headY=ty-uy*7,rotation=Math.atan2(uy,ux)*180/Math.PI;
+    const set=(sel,attrs)=>{const node=studioArm.querySelector(sel);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));};
+    studioArm.setAttribute('viewBox','0 0 '+d.width+' '+d.height);
+    set('[data-arm-base]',{cx:px,cy:py,r:Math.max(9,Math.min(15,radius*.13))});
+    set('[data-arm-pivot]',{cx:px,cy:py,r:Math.max(6,Math.min(10,radius*.09))});
+    const shaft='M '+(px-ux*12)+' '+(py-uy*12)+' L '+headX+' '+headY;
+    set('[data-arm-shaft]',{d:shaft});
+    set('[data-arm-shadow]',{d:shaft,transform:'translate(0 '+(state==='paused'?5:2)+')'});
+    set('[data-arm-head]',{x:headX-8,y:headY-3.8,width:16,height:7.6,transform:'rotate('+rotation+' '+headX+' '+headY+')'});
+    set('[data-arm-stylus]',{cx:tx,cy:ty});
+    set('[data-arm-weight]',{x:px-ux*12-6.5,y:py-uy*12-4,transform:'rotate('+rotation+' '+(px-ux*12)+' '+(py-uy*12)+')'});
+  };
+  if (typeof ResizeObserver==='function' && studioDeck) {
+    const observer=new ResizeObserver(updateStudioArm);observer.observe(studioDeck);
+    if(studioDisc)observer.observe(studioDisc);
+  }
+  if(studioVinyl) new MutationObserver(updateStudioArm).observe(studioVinyl,{attributes:true,attributeFilter:['data-playback-state']});
   const studioViewport = () => {
     if (!mobilePlayer?.classList.contains('onescreen-active')) return;
     const vv=window.visualViewport;
@@ -10666,6 +10710,7 @@ if (musicPlayers.length) {
   const setOneScreenMode = mode => {
     if (!['signature','studio','cinema'].includes(mode) || !mobilePlayer) return;
     mobilePlayer.dataset.onescreenMode=mode;
+    requestAnimationFrame(updateStudioArm);
     mobilePlayer.querySelectorAll('[data-onescreen-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.onescreenMode===mode)));
     window.requestAnimationFrame(resizeVisualizerSurface);
   };
@@ -10690,6 +10735,7 @@ if (musicPlayers.length) {
       }
       setOneScreenMode(mobilePlayer.dataset.onescreenMode||'signature');
       studioViewport();
+      requestAnimationFrame(updateStudioArm);
       requestAnimationFrame(() => { resizeVisualizerSurface(); recoverVisualizer(); const audio = activePlayer ? getAudio(activePlayer) : null; if (visualizerEnabled && audio && !audio.paused && !audio.ended) startVisualizer(audio); });
       mobilePlayer.querySelector('[data-onescreen-exit]')?.focus({preventScroll:true});
     } else {
