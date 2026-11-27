@@ -11185,3 +11185,27 @@ body.onescreen-open > .onescreen-active.studio-visualizer-off .luxury-audio-cons
 .onescreen-physical-arm{display:none}
 body.onescreen-open > .onescreen-active .turntable-assembly .tonearm-assembly{display:none!important}
 body.onescreen-open > .onescreen-active .turntable-assembly .onescreen-physical-arm{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:7;overflow:hidden;pointer-events:none;filter:drop-shadow(0 2px 2px #0006)}
+
+/* Transport awareness: keep all feedback inside the existing control footprint. */
+button[data-transport-mode]{position:relative;isolation:isolate}
+button[data-transport-mode][data-transport-state="on"],
+button[data-transport-mode="repeat"]:is([data-transport-state="all"],[data-transport-state="one"]){
+  color:#a6f7cd!important;border-color:#64d9a2!important;
+  background:linear-gradient(150deg,#234b40,#102923)!important;
+  box-shadow:inset 0 0 0 1px #78e3ab25,0 0 12px #56db9638!important
+}
+button[data-transport-mode][data-transport-state="off"]{color:#b3c2d4!important}
+button[data-transport-mode]:has(.control-icon,svg)::before{
+  content:attr(data-transport-indicator);position:absolute;top:2px;right:3px;
+  font-size:8px;line-height:10px;font-weight:800;letter-spacing:.015em;
+  color:inherit;background:#081722;padding:0 2px;border-radius:2px;pointer-events:none;z-index:2
+}
+button[data-transport-mode="repeat"]:has(.control-icon,svg).is-repeat-one .control-icon::after{display:none}
+button[data-transport-mode="repeat"]:has(.control-icon,svg).is-repeat-one::after{display:none}
+button[data-transport-mode]:focus-visible{outline:2px solid #ecf8f2;outline-offset:2px}
+[data-up-next-mode]{font-size:clamp(.62rem,2vw,.75rem);line-height:1.25;letter-spacing:0!important;font-weight:600;overflow-wrap:anywhere}
+[data-up-next-mode][data-shuffle-state="on"]{color:#a6f7cd!important}
+.transport-mode-notice{position:fixed;z-index:2147483647;left:50%;bottom:calc(max(18px,env(safe-area-inset-bottom)) + 78px);max-width:calc(100vw - 32px);padding:10px 17px;border:1px solid #6bd6a2;border-radius:9px;background:#102923;color:#e7fff1;font-size:13px;font-weight:650;text-align:center;box-shadow:0 5px 24px #0008;opacity:0;transform:translate(-50%,6px);pointer-events:none;transition:opacity .16s,transform .16s;visibility:hidden}
+.transport-mode-notice.is-visible{opacity:1;transform:translate(-50%,0);visibility:visible!important}
+body.onescreen-open > .transport-mode-notice.is-visible{visibility:visible!important}
+@media(prefers-reduced-motion:reduce){.transport-mode-notice{transition:none}}
