@@ -11054,3 +11054,13 @@ main > .works.section .book-grid .book-card:last-child{grid-column:1/-1;grid-tem
 .console-queue-details ol{padding-inline-start:24px;margin:0 0 12px;display:grid;gap:8px;font-size:.85rem}
 @media(prefers-reduced-motion:no-preference){.luxury-audio-console button:active,.console-playlist-drawer button:active,[data-mini-player] button:active{transform:scale(.92);filter:brightness(.9)}}
 @media(max-width:480px){.console-up-next{gap:8px}.console-up-next-copy strong{font-size:.8rem}.console-click-setting{font-size:.62rem;max-width:78px}}
+
+/* Next track: unmistakable, compact and independent of sound settings. */
+.luxury-audio-console .console-up-next{gap:12px;min-height:78px;padding:12px 0;margin:8px 0;align-items:center}
+.luxury-audio-console .console-up-next img{width:52px;height:52px;flex:none;object-fit:cover}
+.luxury-audio-console .console-up-next-copy{gap:3px;min-width:0}
+.luxury-audio-console .console-up-next-kicker{font-size:.65rem;font-weight:700;letter-spacing:.1em;color:#e4c98f}
+.luxury-audio-console .console-up-next-copy strong{font-size:clamp(1.05rem,2.6vw,1.3rem);line-height:1.2;color:#fff}
+.console-up-next-meta{font-size:.72rem;color:#adc1d8}
+.console-next-queue{display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:44px;padding:0;color:#e3d3ae;background:#142a46;border:1px solid #39516e;border-radius:50%}
+.console-playlist-drawer .console-click-setting{max-width:none;width:auto;margin:8px 0 12px;padding:8px 12px;white-space:nowrap}
