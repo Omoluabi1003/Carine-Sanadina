@@ -768,10 +768,12 @@
                     <div><span class="eyebrow" data-i18n="console.collection">Listening collection</span><h3 id="console-playlist-title" data-i18n="music.playlist">Playlist</h3></div>
                     <button class="console-playlist-close" type="button" data-console-playlist-close aria-label="Close playlist" data-i18n-aria-label="console.closePlaylist">×</button>
                   </div>
-                  <details class="console-queue-details" open><summary>Upcoming playback order</summary><ol data-up-next-list></ol></details><button type="button" class="console-click-setting" data-studio-click-toggle aria-pressed="true">Click sound: on</button>
+                  <div class="console-library-tabs" role="group" aria-label="Playlist view"><button type="button" data-library-view="tracks" aria-pressed="true">Choose a song</button><button type="button" data-library-view="queue" aria-pressed="false">Up next</button></div>
                   <div class="expanded-track-picker" aria-label="Choose a track" data-i18n-aria-label="music.playlistLabel">
                     <div class="expanded-track-list" data-expanded-playlist-tracks></div>
                   </div>
+                  <div class="console-queue-details" data-queue-pane hidden><ol data-up-next-list></ol></div>
+                  <button type="button" class="console-click-setting" data-studio-click-toggle aria-pressed="true">Click sound: on</button>
                 </div>
               </aside>
 
