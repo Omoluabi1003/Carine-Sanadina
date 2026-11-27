@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-27-next-track-clarity';
+const APP_VERSION = 'carine-site-2026-11-27-track-selection';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -10501,7 +10501,21 @@ if (musicPlayers.length) {
     'button:not([disabled]):not([tabindex="-1"]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
   ) || []).filter((element) => element.getClientRects().length > 0);
 
-  const setConsolePlaylistOpen = (isOpen, { returnFocus = true } = {}) => {
+  const setLibraryView = (view = 'tracks') => {
+    const queue = view === 'queue';
+    const picker = consolePlaylistDrawer?.querySelector('.expanded-track-picker');
+    const pane = consolePlaylistDrawer?.querySelector('[data-queue-pane]');
+    if (picker) picker.hidden = queue;
+    if (pane) pane.hidden = !queue;
+    consolePlaylistDrawer?.querySelectorAll('[data-library-view]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.libraryView === (queue ? 'queue' : 'tracks')));
+    });
+  };
+  consolePlaylistDrawer?.querySelectorAll('[data-library-view]').forEach(button => {
+    button.addEventListener('click', () => setLibraryView(button.dataset.libraryView));
+  });
+
+  const setConsolePlaylistOpen = (isOpen, { returnFocus = true, view = 'tracks' } = {}) => {
     const open = Boolean(isOpen);
     const wasOpen = Boolean(consolePlaylistDrawer?.classList.contains('is-open'));
     playlistFocusRequest += 1;
@@ -10512,10 +10526,11 @@ if (musicPlayers.length) {
     consolePlaylistToggle?.setAttribute('aria-expanded', String(open));
     expandedPlayerCard?.classList.toggle('is-playlist-open', open);
 
+    if (open) setLibraryView(view);
     if (open && !wasOpen) {
       window.requestAnimationFrame(() => {
         if (focusRequest !== playlistFocusRequest || !consolePlaylistDrawer?.classList.contains('is-open')) return;
-        const firstTrack = consolePlaylistDrawer.querySelector('[data-expanded-track-option]');
+        const firstTrack = view === 'queue' ? consolePlaylistDrawer.querySelector('[data-library-view="queue"]') : consolePlaylistDrawer.querySelector('[data-expanded-track-option]');
         (firstTrack || getPlaylistFocusableElements()[0])?.focus({ preventScroll: true });
       });
     } else if (!open && wasOpen && returnFocus) {
@@ -10523,7 +10538,7 @@ if (musicPlayers.length) {
     }
   };
 
-  document.querySelector('[data-up-next-open]')?.addEventListener('click', () => setConsolePlaylistOpen(true));
+  document.querySelector('[data-up-next-open]')?.addEventListener('click', () => setConsolePlaylistOpen(true, { view: 'queue' }));
   consolePlaylistToggle?.addEventListener('click', () => {
     setConsolePlaylistOpen(!consolePlaylistDrawer?.classList.contains('is-open'));
   });

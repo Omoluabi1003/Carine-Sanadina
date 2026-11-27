@@ -11064,3 +11064,13 @@ main > .works.section .book-grid .book-card:last-child{grid-column:1/-1;grid-tem
 .console-up-next-meta{font-size:.72rem;color:#adc1d8}
 .console-next-queue{display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:44px;padding:0;color:#e3d3ae;background:#142a46;border:1px solid #39516e;border-radius:50%}
 .console-playlist-drawer .console-click-setting{max-width:none;width:auto;margin:8px 0 12px;padding:8px 12px;white-space:nowrap}
+
+/* Library and queue each own the scrollable drawer body. */
+.console-playlist-panel{height:min(76dvh,620px);max-height:76dvh;min-height:0}
+.console-library-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:0 0 auto;margin-bottom:12px}
+.console-library-tabs button{min-height:44px;padding:8px;color:#c1cfe0;background:#10243c;border:1px solid #39516e;border-radius:6px;font:inherit;font-size:.85rem}
+.console-library-tabs button[aria-pressed="true"]{color:#f7e3b3;border-color:#d4bb8c;background:#20334d}
+.console-playlist-panel .expanded-track-picker[hidden],.console-playlist-panel [data-queue-pane][hidden]{display:none!important}
+.console-playlist-panel .expanded-track-picker:not([hidden]),.console-playlist-panel [data-queue-pane]:not([hidden]){flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.console-playlist-panel .expanded-track-picker .expanded-track-list{flex:0 0 auto;overflow:visible}
+.console-playlist-panel .console-click-setting{flex:0 0 auto;align-self:flex-start;margin:8px 0 0}
