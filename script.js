@@ -9705,7 +9705,9 @@ if (musicPlayers.length) {
     });
   };
 
-  const playActiveTrack = async (source, player = activePlayer, { isAutoAdvance = false } = {}) => {
+  let playbackSelectionGeneration = 0;
+  const playActiveTrack = async (source, player = activePlayer, { isAutoAdvance = false, restart = false } = {}) => {
+    playbackSelectionGeneration += 1;
     lastPlayRequestSource = source || 'unknown';
     const audio = getAudio(player);
     const status = player.querySelector('[data-audio-status]');
@@ -9721,7 +9723,9 @@ if (musicPlayers.length) {
       audio.load();
     }
 
+    const shouldRestart = restart || isAutoAdvance || activePlayer !== player;
     pauseOtherPlayers(player);
+    if (shouldRestart) audio.currentTime = 0;
     userStoppedManually = false;
     stopVisualizer('idle');
     showMiniPlayer(player);
@@ -9935,7 +9939,7 @@ if (musicPlayers.length) {
       }
       const previousPlayer = getPlayerByTrackId(previousTrackId);
       if (previousPlayer) {
-        playAudio(previousPlayer);
+        playAudio(previousPlayer, { restart: true });
         return;
       }
     }
@@ -9943,7 +9947,7 @@ if (musicPlayers.length) {
     const sourcePlayer = getPlayerByTrackId(activeTrackId) || currentPlayer;
     const currentIndex = musicPlayers.indexOf(sourcePlayer);
     const previousPlayer = musicPlayers[currentIndex > 0 ? currentIndex - 1 : musicPlayers.length - 1] || musicPlayers[0];
-    if (previousPlayer) playAudio(previousPlayer);
+    if (previousPlayer) playAudio(previousPlayer, { restart: true });
   };
 
   const playNextTrack = (currentPlayer) => {
@@ -10570,7 +10574,7 @@ if (musicPlayers.length) {
     option.addEventListener('click', () => {
       const selectedPlayer = musicPlayers.find((player) => player.dataset.trackId === option.dataset.trackId);
       if (selectedPlayer) {
-        playAudio(selectedPlayer);
+        playAudio(selectedPlayer, { restart: true });
         setConsolePlaylistOpen(false);
         if (isLyricsExpanded) setLyricsMoreOpen(false);
       }
@@ -10878,8 +10882,10 @@ if (musicPlayers.length) {
     if (restoredPlayer) {
       defaultTrackInitializationRan = !storedState.activeTrackId;
       const restoredAudio = getAudio(restoredPlayer);
-      if (restoredAudio && Number.isFinite(storedState.currentTime) && storedState.currentTime > 0) {
+      if (isContinuityRecoveryBoot && restoredAudio && Number.isFinite(storedState.currentTime) && storedState.currentTime > 0) {
+        const recoveryGeneration = playbackSelectionGeneration;
         const restorePosition = () => {
+          if (playbackSelectionGeneration !== recoveryGeneration) return;
           const duration = Number.isFinite(restoredAudio.duration) ? restoredAudio.duration : storedState.currentTime;
           restoredAudio.currentTime = Math.min(storedState.currentTime, Math.max(0, duration));
         };
@@ -10900,8 +10906,16 @@ if (musicPlayers.length) {
   window.addEventListener('carine:selecttrack', (event) => {
     const requestedPlayer = musicPlayers.find((player) => player.dataset.trackId === event.detail?.trackId);
     if (!requestedPlayer) return;
-    setActiveTrack(requestedPlayer);
-    if (event.detail?.autoplay) playAudio(requestedPlayer);
+    if (event.detail?.autoplay) {
+      playAudio(requestedPlayer, { restart: true });
+    } else {
+      playbackSelectionGeneration += 1;
+      pauseOtherPlayers(requestedPlayer);
+      const requestedAudio = getAudio(requestedPlayer);
+      if (requestedAudio) { requestedAudio.pause(); requestedAudio.currentTime = 0; }
+      showMiniPlayer(requestedPlayer);
+      persistPlayerState();
+    }
   });
 
   restorePlayerStateWithoutAutoplay();
