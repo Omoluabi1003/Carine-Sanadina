@@ -4,7 +4,7 @@ const LANGUAGE_STORAGE_KEY = getCarineStorageKey('language');
 const PLAYER_STATE_STORAGE_KEY = getCarineStorageKey('player-state');
 const PLAYER_SESSION_STORAGE_KEY = getCarineStorageKey('player-session');
 const DEFAULT_LANGUAGE = 'en';
-const APP_VERSION = 'carine-site-2026-11-27-studio-queue';
+const APP_VERSION = 'carine-site-2026-11-27-next-track-clarity';
 const APP_VERSION_STORAGE_KEY = getCarineStorageKey('app-version');
 const PLAYLIST_VERSION = APP_VERSION;
 
@@ -10523,6 +10523,7 @@ if (musicPlayers.length) {
     }
   };
 
+  document.querySelector('[data-up-next-open]')?.addEventListener('click', () => setConsolePlaylistOpen(true));
   consolePlaylistToggle?.addEventListener('click', () => {
     setConsolePlaylistOpen(!consolePlaylistDrawer?.classList.contains('is-open'));
   });
