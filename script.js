@@ -9774,7 +9774,7 @@ if (musicPlayers.length) {
       const playbackPromise = Promise.resolve(audio.play());
       if (!firstTouchPlayed && !isAutoAdvance && navigator.userActivation?.isActive) {
         firstTouchPlayed = true;
-        if (!reduceMotion && studioDeck?.getBoundingClientRect().width && mobilePlayer?.getBoundingClientRect().width) {
+        if (!reduceMotion && firstHand3D && studioDeck?.getBoundingClientRect().width && mobilePlayer?.getBoundingClientRect().width) {
           firstTouchCue = { audio, generation: playbackSelectionGeneration, start: performance.now() };
           refreshStudioArm();
         }
@@ -9813,7 +9813,7 @@ if (musicPlayers.length) {
       }
       return true;
     } catch (error) {
-      if (firstTouchCue?.audio === audio) firstTouchCue = null;
+      if (firstTouchCue?.audio === audio) { firstTouchCue = null; firstHandCanvas.classList.remove('is-visible'); studioArm.classList.remove('first-touch-active'); }
       if (activePlayer === player) { vinylHandoffUntil = 0; syncVinylExperience(false); }
       logAudioDiagnostics('play-failed', {
         track: getTrackTitle(player),
@@ -10740,27 +10740,57 @@ if (musicPlayers.length) {
   <g data-head><path d="M -23 -3 L -16 -6 H -4 L 1 -3 V 3 L -4 6 H -16 L -23 3 Z" fill="#26333d" stroke="#aab9c4" stroke-width=".7"/><path d="M -20 -3 H -5" stroke="#c5d1d9" stroke-width=".7"/><circle cx="-13" cy="-2.5" r="1" fill="#dce4e8"/><circle cx="-13" cy="2.5" r="1" fill="#dce4e8"/><rect x="-8" y="-3" width="8" height="6" rx="1" fill="#101820" stroke="#687b88"/><path d="M -5 0 H 0" stroke="#dfbb79" stroke-width="1.2"/><circle r="1.1" fill="#fff0ce"/></g></g>`;
   studioDeck?.append(studioArm);
   // Articulated vector hand, composited in the same coordinate space as the stylus.
+  // The First Touch uses a real skinned GLB mesh, never the former vector illustration.
   const firstHand=document.createElementNS(ns,'g');
-  firstHand.setAttribute('data-first-touch-hand','');
   firstHand.setAttribute('visibility','hidden');
-  firstHand.innerHTML=`<defs>
-    <linearGradient id="firstSkin" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#ac7455"/><stop offset=".28" stop-color="#88533b"/><stop offset=".64" stop-color="#623722"/><stop offset="1" stop-color="#3b2017"/></linearGradient>
-    <linearGradient id="firstFinger" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b27a59"/><stop offset=".42" stop-color="#8c553a"/><stop offset="1" stop-color="#4a281d"/></linearGradient>
-    <linearGradient id="firstNail" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5b6aa"/><stop offset=".4" stop-color="#ab786d"/><stop offset="1" stop-color="#794c48"/></linearGradient>
-    <linearGradient id="firstGold"><stop stop-color="#78511e"/><stop offset=".35" stop-color="#f8dc94"/><stop offset=".6" stop-color="#b68b3e"/><stop offset="1" stop-color="#755020"/></linearGradient>
-    <filter id="firstShadow" x="-30%" y="-40%" width="180%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>
-    <g opacity=".4" filter="url(#firstShadow)" transform="translate(2 5)"><path d="M 130 -70 L 81 -43 Q 53 -36 32 -18 L 3 -1 Q -5 8 6 13 L 38 7 Q 51 29 81 13 L 140 -28Z" fill="#000"/></g>
-    <path d="M 154 -88 L 88 -57 Q 73 -47 57 -45 Q 39 -45 27 -32 L 9 -13 Q 2 -5 8 1 Q 13 5 21 -1 L 38 -15 Q 43 -17 46 -14 L 27 6 Q 21 14 28 18 Q 35 21 43 14 L 58 2 Q 64 4 65 8 L 53 21 Q 49 29 57 32 Q 64 33 70 26 L 87 11 Q 96 6 108 1 L 163 -22Z" fill="url(#firstSkin)" stroke="#422318" stroke-width=".8"/>
-    <path d="M 82 -39 Q 57 -36 38 -21 L 8 -2 Q -1 3 2 10 Q 6 16 15 12 L 43 -2 Q 56 -9 70 -11" fill="url(#firstFinger)" stroke="#653a29" stroke-width=".8"/>
-    <path d="M 7 1 Q 12 -2 17 1 L 14 9 Q 9 12 5 9 Q 2 5 7 1Z" fill="url(#firstNail)"/>
-    <path d="M 48 -10 Q 35 0 20 12 Q 13 17 15 23 Q 19 29 27 24 L 58 6 Q 68 2 75 -6" fill="url(#firstFinger)" stroke="#593022" stroke-width=".7"/>
-    <path d="M 18 18 Q 21 14 27 14 L 29 19 Q 24 24 19 24Z" fill="url(#firstNail)"/>
-    <path d="M 26 -8 L 31 -11 M 30 -5 L 35 -8 M 48 12 L 51 9 M 51 15 L 55 12 M 62 -29 Q 77 -33 91 -29" fill="none" stroke="#d29b79" stroke-opacity=".4" stroke-width=".65"/>
-    <path d="M 93 -56 Q 105 -35 118 -18" fill="none" stroke="url(#firstGold)" stroke-width="4.2"/><path d="M 99 -60 Q 110 -39 123 -23" fill="none" stroke="url(#firstGold)" stroke-width="1.3"/>
-    <path d="M 115 -67 L 154 -88 L 163 -22 L 135 -9 Q 122 -33 115 -67Z" fill="#102333" stroke="#30485b" stroke-width=".8"/>
-    <path d="M 117 -67 Q 131 -39 137 -11" fill="none" stroke="#8e7759" stroke-width="1.2"/>
-  `;
-  studioArm.append(firstHand);
+  const firstHandCanvas=document.createElement('canvas');
+  firstHandCanvas.className='first-touch-3d-canvas';
+  firstHandCanvas.setAttribute('aria-hidden','true');
+  studioDeck?.append(firstHandCanvas);
+  let firstHand3D=null, firstHandLoad=null;
+  const loadFirstHand3D=()=>{
+    if(firstHandLoad)return firstHandLoad;
+    firstHandLoad=(async()=>{
+      const T=await import('https://esm.sh/three@0.180.0');
+      const {GLTFLoader}=await import('https://esm.sh/three@0.180.0/examples/jsm/loaders/GLTFLoader.js');
+      const loader=new GLTFLoader();
+      let asset;
+      try{asset=await loader.loadAsync('./assets/first-touch/hand-posable.glb');}
+      catch(_){asset=await loader.loadAsync('https://files.innerscene.com/library/posable-anatomical-right-hand-f6098b4f/c28ad5ff8fafd424275f/hand-posable.glb');}
+      const renderer=new T.WebGLRenderer({canvas:firstHandCanvas,alpha:true,antialias:true,powerPreference:'low-power'});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.setSize(256,256,false);
+      renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+      const scene=new T.Scene(),camera=new T.OrthographicCamera(-.14,.14,.14,-.14,.01,3);
+      camera.position.set(.22,.28,.42);camera.lookAt(0,0,0);
+      scene.add(new T.HemisphereLight(0xffe8d1,0x687d99,2.3));
+      const key=new T.DirectionalLight(0xffe2c2,3.1);key.position.set(-.3,.5,.5);scene.add(key);
+      const rim=new T.DirectionalLight(0xc1ddff,1.5);rim.position.set(.4,.2,-.4);scene.add(rim);
+      const root=asset.scene,box=new T.Box3().setFromObject(root),center=box.getCenter(new T.Vector3()),size=box.getSize(new T.Vector3());
+      const pivot=new T.Group();root.position.sub(center);pivot.add(root);scene.add(pivot);
+      const scale=.22/Math.max(size.x,size.y,size.z,.001);pivot.scale.setScalar(scale);
+      const fingers=[];
+      root.traverse(obj=>{
+        if(obj.isBone&&/thumb|index|middle|ring|pinky|little|finger/i.test(obj.name))fingers.push({bone:obj,rest:obj.quaternion.clone(),name:obj.name.toLowerCase()});
+        if(obj.isMesh){obj.frustumCulled=false;const mats=Array.isArray(obj.material)?obj.material:[obj.material];for(const mat of mats){if(!mat)continue;mat.color?.set('#75432f');if('roughness'in mat)mat.roughness=.57;if('metalness'in mat)mat.metalness=0;mat.needsUpdate=true;}}
+      });
+      firstHand3D={T,renderer,scene,camera,pivot,fingers};
+      return firstHand3D;
+    })().catch(error=>{console.warn('[First Touch] 3D asset unavailable; cue omitted',error);firstHandCanvas.classList.remove('is-visible');return null;});
+    return firstHandLoad;
+  };
+  const drawFirstHand3D=(hx,hy,g,elapsed,exit)=>{
+    const h=firstHand3D;if(!h)return;
+    const grip=easeArm((elapsed-200)/200)*(1-easeArm((elapsed-1150)/240));
+    h.pivot.rotation.set(-.22,.45,-.48+grip*.1);
+    for(const f of h.fingers){const amount=/thumb|index/.test(f.name)?.25:.5;f.bone.quaternion.copy(f.rest).multiply(new h.T.Quaternion().setFromAxisAngle(new h.T.Vector3(0,0,1),amount*grip));}
+    const side=Math.max(84,g.radius*1.9);
+    firstHandCanvas.style.width=side+'px';firstHandCanvas.style.height=side+'px';
+    firstHandCanvas.style.left=(hx-side*.27)+'px';firstHandCanvas.style.top=(hy-side*.56)+'px';firstHandCanvas.style.opacity=String(1-exit);
+    firstHandCanvas.classList.add('is-visible');
+    h.renderer.render(h.scene,h.camera);
+  };
+  if(!reduceMotion&&studioDeck){const prefetch=()=>loadFirstHand3D();if('requestIdleCallback'in window)window.requestIdleCallback(prefetch,{timeout:2500});else setTimeout(prefetch,400);}
+
   const armSet=(selector,attrs)=>{const node=studioArm.querySelector(selector);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));};
   const clampArm=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeArm=t=>{t=clampArm(t,0,1);return t*t*(3-2*t);};
@@ -10790,7 +10820,7 @@ if (musicPlayers.length) {
   };
   const updateStudioArm=(stamp=performance.now())=>{
     const cueVisible=Boolean(firstTouchCue && mobilePlayer?.getBoundingClientRect().width && studioDeck?.getBoundingClientRect().width);
-    if(!mobilePlayer?.classList.contains('onescreen-active')&&!cueVisible){armFrame=0;armAngle=null;armMotion=null;lastArmEngaged=false;lastArmAudio=null;firstHand.setAttribute('visibility','hidden');studioArm.classList.remove('first-touch-active');return;}
+    if(!mobilePlayer?.classList.contains('onescreen-active')&&!cueVisible){armFrame=0;armAngle=null;armMotion=null;lastArmEngaged=false;lastArmAudio=null;firstHandCanvas.classList.remove('is-visible');studioArm.classList.remove('first-touch-active');return;}
     if(!armGeometry||stamp-armMeasureAt>300){armGeometry=measureArm();armMeasureAt=stamp;}
     const g=armGeometry;
     if(!g||stamp-armDrawAt<32){armFrame=requestAnimationFrame(updateStudioArm);return;}
@@ -10814,7 +10844,7 @@ if (musicPlayers.length) {
     }else{armAngle=target;armLift=0;}
     if(firstTouchCue){
       const cue=firstTouchCue,elapsed=stamp-cue.start;
-      if(cue.audio!==audio||cue.generation!==playbackSelectionGeneration||userStoppedManually||elapsed>1750||document.hidden){firstTouchCue=null;firstHand.setAttribute('visibility','hidden');studioArm.classList.remove('first-touch-active');}
+      if(cue.audio!==audio||cue.generation!==playbackSelectionGeneration||userStoppedManually||elapsed>1750||document.hidden){firstTouchCue=null;firstHandCanvas.classList.remove('is-visible');studioArm.classList.remove('first-touch-active');}
       else{
         studioArm.classList.add('first-touch-active');
         const touchTarget=grooveAngle(g,duration>0&&Number.isFinite(duration)?time/duration:0);
@@ -10824,8 +10854,7 @@ if (musicPlayers.length) {
         const arrival=easeArm(elapsed/300),exit=easeArm((elapsed-1200)/550);
         const hx=g.px+Math.cos(armAngle)*g.length-g.unit*8+(1-arrival+exit)*g.radius*.82;
         const hy=g.py+Math.sin(armAngle)*g.length-g.unit*4-(1-arrival+exit)*g.radius*.75;
-        firstHand.setAttribute('visibility','visible');firstHand.setAttribute('opacity',String(1-exit));
-        firstHand.setAttribute('transform','translate('+hx+' '+hy+') scale('+g.unit*.9+')');
+        drawFirstHand3D(hx,hy,g,elapsed,exit);
         armMotion=null;
       }
     }
