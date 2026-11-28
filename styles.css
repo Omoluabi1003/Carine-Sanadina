@@ -11209,3 +11209,8 @@ button[data-transport-mode]:focus-visible{outline:2px solid #ecf8f2;outline-offs
 .transport-mode-notice.is-visible{opacity:1;transform:translate(-50%,0);visibility:visible!important}
 body.onescreen-open > .transport-mode-notice.is-visible{visibility:visible!important}
 @media(prefers-reduced-motion:reduce){.transport-mode-notice{transition:none}}
+
+/* The First Touch: temporary deck-local overlay, never intercepts playback controls. */
+.turntable-assembly:has(.onescreen-physical-arm.first-touch-active) .tonearm-assembly{display:none!important}
+.turntable-assembly .onescreen-physical-arm.first-touch-active{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:7;overflow:hidden;pointer-events:none}
+@media(prefers-reduced-motion:reduce){[data-first-touch-hand]{display:none!important}}
