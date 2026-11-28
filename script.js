@@ -10768,11 +10768,11 @@ if (musicPlayers.length) {
   };
   const drawFirstHand3D=(hx,hy,g,elapsed,exit)=>{
     if(!firstHand3D)return;
-    // Dorsal-view pinch point measured from the new photographic asset: (0.165,0.485).
-    const side=Math.max(76,g.radius*1.38),angle=-4+3*easeArm((elapsed-300)/620)+5*exit;
+    // North-facing dorsal hand: align the curled fingertip region to the headshell.
+    const side=Math.max(88,g.radius*1.85),angle=3-5*easeArm((elapsed-300)/620)+4*exit;
     firstHandCanvas.style.width=side+'px';firstHandCanvas.style.height=side+'px';
-    firstHandCanvas.style.left=(hx-side*.165)+'px';firstHandCanvas.style.top=(hy-side*.485)+'px';
-    firstHandCanvas.style.transformOrigin='16.5% 48.5%';
+    firstHandCanvas.style.left=(hx-side*.245)+'px';firstHandCanvas.style.top=(hy-side*.365)+'px';
+    firstHandCanvas.style.transformOrigin='24.5% 36.5%';
     firstHandCanvas.style.transform='rotate('+angle+'deg) scale('+(1-.035*exit)+')';
     firstHandCanvas.style.opacity=String(1-exit);
     firstHandCanvas.classList.add('is-visible');
@@ -10840,8 +10840,8 @@ if (musicPlayers.length) {
         armLift=elapsed<300?easeArm(elapsed/300):1-easeArm((elapsed-920)/280);
         const arrival=easeArm(elapsed/300),exit=easeArm((elapsed-1200)/550);
         const gripLength=g.length-9*g.unit;
-        const hx=g.px+Math.cos(armAngle)*gripLength+(1-arrival+exit)*g.radius*1.25;
-        const hy=g.py+Math.sin(armAngle)*gripLength-(1-arrival+exit)*g.radius*.70;
+        const hx=g.px+Math.cos(armAngle)*gripLength+(1-arrival+exit)*g.radius*.85;
+        const hy=g.py+Math.sin(armAngle)*gripLength+(1-arrival+exit)*g.radius*1.35;
         drawFirstHand3D(hx,hy,g,elapsed,exit);
         armMotion=null;
       }
