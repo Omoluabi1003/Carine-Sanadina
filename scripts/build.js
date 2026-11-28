@@ -98,3 +98,24 @@ console.log('Static site built in dist/');
 console.log(`Hashed app shell assets: ${Object.entries(assetMap).map(([source, output]) => `${source} -> ${output}`).join(', ')}`);
 
 require('./audio-analysis').generate(root, dist);
+
+// Publish a same-origin copy of the CC0 MakeHuman-derived hand. A failed
+// optional asset must not take down the existing music website.
+(async () => {
+  const target = join(dist, 'assets', 'first-touch', 'hand-posable.glb');
+  const source = 'https://files.innerscene.com/library/posable-anatomical-right-hand-f6098b4f/c28ad5ff8fafd424275f/hand-posable.glb';
+  const valid = b => b.length >= 20 && b.toString('ascii',0,4)==='glTF' && b.readUInt32LE(4)===2 && b.readUInt32LE(8)===b.length;
+  if (existsSync(target) && valid(readFileSync(target))) return;
+  for (const url of [source, 'https://www.innerscene.com/api/library/posable-anatomical-right-hand-f6098b4f/download']) {
+    try {
+      const response = await fetch(url,{redirect:'follow',signal:AbortSignal.timeout(15000)});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      const bytes=Buffer.from(await response.arrayBuffer());
+      if(!valid(bytes))throw new Error('Invalid GLB header or length');
+      mkdirSync(join(dist,'assets','first-touch'),{recursive:true});
+      writeFileSync(target,bytes);
+      console.log('First Touch: same-origin GLB published ('+bytes.length+' bytes)');return;
+    } catch (err) { console.warn('First Touch asset source failed: '+err.message); }
+  }
+  console.warn('First Touch asset unavailable: deployment retains standard playback.');
+})();

@@ -9772,11 +9772,18 @@ if (musicPlayers.length) {
       pauseAllOtherAudios(audio);
       // Keep native play inside the user gesture for iOS. The cue is visual, never an autoplay gate.
       const playbackPromise = Promise.resolve(audio.play());
-      if (!firstTouchPlayed && !isAutoAdvance && navigator.userActivation?.isActive) {
+      if (!firstTouchPlayed && !isAutoAdvance && source !== 'mediaSession') {
         firstTouchPlayed = true;
-        if (!reduceMotion && firstHand3D && studioDeck?.getBoundingClientRect().width && mobilePlayer?.getBoundingClientRect().width) {
-          firstTouchCue = { audio, generation: playbackSelectionGeneration, start: performance.now() };
-          refreshStudioArm();
+        if (!reduceMotion) {
+          const generation = playbackSelectionGeneration, requestedAt = performance.now();
+          const beginCue = model => {
+            if (!model || generation !== playbackSelectionGeneration || userStoppedManually || activePlayer !== player || audio.ended || document.hidden || performance.now()-requestedAt > 3500) return;
+            if (!studioDeck?.getBoundingClientRect().width || !studioDeck?.getBoundingClientRect().height) return;
+            firstTouchCue = { audio, generation, start: performance.now() };
+            refreshStudioArm();
+          };
+          if (firstHand3D) beginCue(firstHand3D);
+          else loadFirstHand3D().then(beginCue);
         }
       }
       let analyserSetupPromise = Promise.resolve(false);
@@ -10741,8 +10748,6 @@ if (musicPlayers.length) {
   studioDeck?.append(studioArm);
   // Articulated vector hand, composited in the same coordinate space as the stylus.
   // The First Touch uses a real skinned GLB mesh, never the former vector illustration.
-  const firstHand=document.createElementNS(ns,'g');
-  firstHand.setAttribute('visibility','hidden');
   const firstHandCanvas=document.createElement('canvas');
   firstHandCanvas.className='first-touch-3d-canvas';
   firstHandCanvas.setAttribute('aria-hidden','true');
@@ -10751,8 +10756,7 @@ if (musicPlayers.length) {
   const loadFirstHand3D=()=>{
     if(firstHandLoad)return firstHandLoad;
     firstHandLoad=(async()=>{
-      const T=await import('https://esm.sh/three@0.180.0');
-      const {GLTFLoader}=await import('https://esm.sh/three@0.180.0/examples/jsm/loaders/GLTFLoader.js');
+      const [T,{GLTFLoader}]=await Promise.all([import('https://esm.sh/three@0.180.0'),import('https://esm.sh/three@0.180.0/examples/jsm/loaders/GLTFLoader.js')]);
       const loader=new GLTFLoader();
       let asset;
       try{asset=await loader.loadAsync('./assets/first-touch/hand-posable.glb');}
@@ -10789,7 +10793,7 @@ if (musicPlayers.length) {
     firstHandCanvas.classList.add('is-visible');
     h.renderer.render(h.scene,h.camera);
   };
-  if(!reduceMotion&&studioDeck){const prefetch=()=>loadFirstHand3D();if('requestIdleCallback'in window)window.requestIdleCallback(prefetch,{timeout:2500});else setTimeout(prefetch,400);}
+  if(!reduceMotion&&studioDeck){loadFirstHand3D();}
 
   const armSet=(selector,attrs)=>{const node=studioArm.querySelector(selector);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));};
   const clampArm=(v,a,b)=>Math.max(a,Math.min(b,v));
