@@ -1,6 +1,6 @@
 const APP_VERSION = 'carine-site-2026-11-27-tonearm-contact';
 const PLAYLIST_VERSION = APP_VERSION;
-const CACHE_VERSION = `carine-static-v22-${APP_VERSION}`;
+const CACHE_VERSION = `carine-static-v23-${APP_VERSION}`;
 const OFFLINE_URL = './offline.html';
 const CORE_ASSETS = [
   './offline.html',
@@ -8,7 +8,8 @@ const CORE_ASSETS = [
   './content-reflections.js',
   './script.js',
   './content-platform.js',
-  './manifest.json'
+  './manifest.json',
+  './assets/first-touch/hand-cinematic.js'
 ];
 
 const isMediaRequest = (request) => {
