@@ -10746,35 +10746,38 @@ if (musicPlayers.length) {
   <circle r="10" fill="url(#armBearing)" stroke="#151f28"/><circle r="5" fill="#34434e" stroke="#abb7bf"/><path d="M -3 0 H 3" stroke="#c5cfd6"/>
   <g data-head><path d="M -23 -3 L -16 -6 H -4 L 1 -3 V 3 L -4 6 H -16 L -23 3 Z" fill="#26333d" stroke="#aab9c4" stroke-width=".7"/><path d="M -20 -3 H -5" stroke="#c5d1d9" stroke-width=".7"/><circle cx="-13" cy="-2.5" r="1" fill="#dce4e8"/><circle cx="-13" cy="2.5" r="1" fill="#dce4e8"/><rect x="-8" y="-3" width="8" height="6" rx="1" fill="#101820" stroke="#687b88"/><path d="M -5 0 H 0" stroke="#dfbb79" stroke-width="1.2"/><circle r="1.1" fill="#fff0ce"/></g></g>`;
   studioDeck?.append(studioArm);
-  // Articulated vector hand, composited in the same coordinate space as the stylus.
-  // The First Touch uses a real skinned GLB mesh, never the former vector illustration.
-  // Photographic composite with a locally bundled alpha cutout, no remote model.
-  const firstHandCanvas=document.createElement('img');
+  // The First Touch: six isolated photographic right-hand poses, clocked by the live tonearm.
+  const firstHandCanvas=document.createElement('canvas');
   firstHandCanvas.className='first-touch-3d-canvas first-touch-cinematic';
-  firstHandCanvas.alt='';firstHandCanvas.setAttribute('aria-hidden','true');firstHandCanvas.draggable=false;
+  firstHandCanvas.setAttribute('aria-hidden','true');
+  firstHandCanvas.width=418;firstHandCanvas.height=627;
   studioDeck?.append(firstHandCanvas);
+  const handContext=firstHandCanvas.getContext('2d');
   let firstHand3D=null,firstHandLoad=null;
   const loadFirstHand3D=()=>{
     if(firstHandLoad)return firstHandLoad;
-    firstHandLoad=new Promise(resolve=>{
-      const src=window.FIRST_TOUCH_CINEMATIC_ASSET;
-      if(!src){resolve(null);return;}
-      firstHandCanvas.onload=()=>{firstHand3D=firstHandCanvas;resolve(firstHandCanvas);};
-      firstHandCanvas.onerror=()=>resolve(null);
-      firstHandCanvas.src=src;
-      if(firstHandCanvas.complete&&firstHandCanvas.naturalWidth){firstHand3D=firstHandCanvas;resolve(firstHandCanvas);}
-    });
+    const sources=window.FIRST_TOUCH_POSES;
+    firstHandLoad=Array.isArray(sources)&&sources.length===6&&handContext?
+      Promise.all(sources.map(src=>new Promise((resolve,reject)=>{
+        const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src;
+      }))).then(frames=>(firstHand3D=frames)).catch(()=>null):Promise.resolve(null);
     return firstHandLoad;
   };
   const drawFirstHand3D=(hx,hy,g,elapsed,exit)=>{
     if(!firstHand3D)return;
-    // North-facing dorsal hand: align the curled fingertip region to the headshell.
-    const side=Math.max(88,g.radius*1.85),angle=3-5*easeArm((elapsed-300)/620)+4*exit;
-    firstHandCanvas.style.width=side+'px';firstHandCanvas.style.height=side+'px';
-    firstHandCanvas.style.left=(hx-side*.245)+'px';firstHandCanvas.style.top=(hy-side*.365)+'px';
-    firstHandCanvas.style.transformOrigin='24.5% 36.5%';
-    firstHandCanvas.style.transform='rotate('+angle+'deg) scale('+(1-.035*exit)+')';
-    firstHandCanvas.style.opacity=String(1-exit);
+    const phase=elapsed<450?2*easeArm(elapsed/450):elapsed<1350?2+easeArm((elapsed-450)/900):3+2*easeArm((elapsed-1350)/800);
+    const a=Math.min(5,Math.floor(phase)),b=Math.min(5,a+1),f=phase-a;
+    const w=Math.max(76,g.radius*1.45),h=w*627/418;
+    const angle=2-4*easeArm((elapsed-450)/650)+3*exit;
+    firstHandCanvas.style.width=w+'px';firstHandCanvas.style.height=h+'px';
+    firstHandCanvas.style.left=(hx-w*.35)+'px';firstHandCanvas.style.top=(hy-h*.25)+'px';
+    firstHandCanvas.style.transformOrigin='35% 25%';
+    firstHandCanvas.style.transform='rotate('+angle+'deg)';
+    firstHandCanvas.style.opacity=String(easeArm(elapsed/120)*(1-exit));
+    handContext.clearRect(0,0,418,627);
+    handContext.globalAlpha=1-f;handContext.drawImage(firstHand3D[a],0,0,418,627);
+    if(f>0){handContext.globalAlpha=f;handContext.drawImage(firstHand3D[b],0,0,418,627);}
+    handContext.globalAlpha=1;
     firstHandCanvas.classList.add('is-visible');
   };
   if(!reduceMotion&&studioDeck)loadFirstHand3D();
@@ -10831,14 +10834,14 @@ if (musicPlayers.length) {
     }else{armAngle=target;armLift=0;}
     if(firstTouchCue){
       const cue=firstTouchCue,elapsed=stamp-cue.start;
-      if(cue.audio!==audio||cue.generation!==playbackSelectionGeneration||userStoppedManually||elapsed>1750||document.hidden){firstTouchCue=null;firstHandCanvas.classList.remove('is-visible');studioArm.classList.remove('first-touch-active');}
+      if(cue.audio!==audio||cue.generation!==playbackSelectionGeneration||userStoppedManually||elapsed>2150||document.hidden){firstTouchCue=null;firstHandCanvas.classList.remove('is-visible');studioArm.classList.remove('first-touch-active');}
       else{
         studioArm.classList.add('first-touch-active');
         const touchTarget=grooveAngle(g,duration>0&&Number.isFinite(duration)?time/duration:0);
-        const travel=easeArm((elapsed-300)/620);
+        const travel=easeArm((elapsed-450)/650);
         armAngle=mixArm(g.restAngle,touchTarget,travel);
-        armLift=elapsed<300?easeArm(elapsed/300):1-easeArm((elapsed-920)/280);
-        const arrival=easeArm(elapsed/300),exit=easeArm((elapsed-1200)/550);
+        armLift=elapsed<450?easeArm((elapsed-280)/170):1-easeArm((elapsed-1100)/250);
+        const arrival=easeArm(elapsed/450),exit=easeArm((elapsed-1350)/800);
         const gripLength=g.length-9*g.unit;
         const hx=g.px+Math.cos(armAngle)*gripLength+(1-arrival+exit)*g.radius*.85;
         const hy=g.py+Math.sin(armAngle)*gripLength+(1-arrival+exit)*g.radius*1.35;
