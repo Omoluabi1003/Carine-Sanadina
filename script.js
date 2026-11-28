@@ -10748,53 +10748,36 @@ if (musicPlayers.length) {
   studioDeck?.append(studioArm);
   // Articulated vector hand, composited in the same coordinate space as the stylus.
   // The First Touch uses a real skinned GLB mesh, never the former vector illustration.
-  const firstHandCanvas=document.createElement('canvas');
-  firstHandCanvas.className='first-touch-3d-canvas';
-  firstHandCanvas.setAttribute('aria-hidden','true');
+  // Photographic composite with a locally bundled alpha cutout, no remote model.
+  const firstHandCanvas=document.createElement('img');
+  firstHandCanvas.className='first-touch-3d-canvas first-touch-cinematic';
+  firstHandCanvas.alt='';firstHandCanvas.setAttribute('aria-hidden','true');firstHandCanvas.draggable=false;
   studioDeck?.append(firstHandCanvas);
-  let firstHand3D=null, firstHandLoad=null;
+  let firstHand3D=null,firstHandLoad=null;
   const loadFirstHand3D=()=>{
     if(firstHandLoad)return firstHandLoad;
-    firstHandLoad=(async()=>{
-      const [T,{GLTFLoader}]=await Promise.all([import('https://esm.sh/three@0.180.0'),import('https://esm.sh/three@0.180.0/examples/jsm/loaders/GLTFLoader.js')]);
-      const loader=new GLTFLoader();
-      let asset;
-      try{asset=await loader.loadAsync('./assets/first-touch/hand-posable.glb');}
-      catch(_){asset=await loader.loadAsync('https://files.innerscene.com/library/posable-anatomical-right-hand-f6098b4f/c28ad5ff8fafd424275f/hand-posable.glb');}
-      const renderer=new T.WebGLRenderer({canvas:firstHandCanvas,alpha:true,antialias:true,powerPreference:'low-power'});
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.setSize(256,256,false);
-      renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
-      const scene=new T.Scene(),camera=new T.OrthographicCamera(-.14,.14,.14,-.14,.01,3);
-      camera.position.set(.22,.28,.42);camera.lookAt(0,0,0);
-      scene.add(new T.HemisphereLight(0xffe8d1,0x687d99,2.3));
-      const key=new T.DirectionalLight(0xffe2c2,3.1);key.position.set(-.3,.5,.5);scene.add(key);
-      const rim=new T.DirectionalLight(0xc1ddff,1.5);rim.position.set(.4,.2,-.4);scene.add(rim);
-      const root=asset.scene,box=new T.Box3().setFromObject(root),center=box.getCenter(new T.Vector3()),size=box.getSize(new T.Vector3());
-      const pivot=new T.Group();root.position.sub(center);pivot.add(root);scene.add(pivot);
-      const scale=.22/Math.max(size.x,size.y,size.z,.001);pivot.scale.setScalar(scale);
-      const fingers=[];
-      root.traverse(obj=>{
-        if(obj.isBone&&/thumb|index|middle|ring|pinky|little|finger/i.test(obj.name))fingers.push({bone:obj,rest:obj.quaternion.clone(),name:obj.name.toLowerCase()});
-        if(obj.isMesh){obj.frustumCulled=false;const mats=Array.isArray(obj.material)?obj.material:[obj.material];for(const mat of mats){if(!mat)continue;mat.color?.set('#75432f');if('roughness'in mat)mat.roughness=.57;if('metalness'in mat)mat.metalness=0;mat.needsUpdate=true;}}
-      });
-      firstHand3D={T,renderer,scene,camera,pivot,fingers};
-      return firstHand3D;
-    })().catch(error=>{console.warn('[First Touch] 3D asset unavailable; cue omitted',error);firstHandCanvas.classList.remove('is-visible');return null;});
+    firstHandLoad=new Promise(resolve=>{
+      const src=window.FIRST_TOUCH_CINEMATIC_ASSET;
+      if(!src){resolve(null);return;}
+      firstHandCanvas.onload=()=>{firstHand3D=firstHandCanvas;resolve(firstHandCanvas);};
+      firstHandCanvas.onerror=()=>resolve(null);
+      firstHandCanvas.src=src;
+      if(firstHandCanvas.complete&&firstHandCanvas.naturalWidth){firstHand3D=firstHandCanvas;resolve(firstHandCanvas);}
+    });
     return firstHandLoad;
   };
   const drawFirstHand3D=(hx,hy,g,elapsed,exit)=>{
-    const h=firstHand3D;if(!h)return;
-    const grip=easeArm((elapsed-200)/200)*(1-easeArm((elapsed-1150)/240));
-    h.pivot.rotation.set(-.22,.45,-.48+grip*.1);
-    for(const f of h.fingers){const amount=/thumb|index/.test(f.name)?.25:.5;f.bone.quaternion.copy(f.rest).multiply(new h.T.Quaternion().setFromAxisAngle(new h.T.Vector3(0,0,1),amount*grip));}
-    const side=Math.max(84,g.radius*1.9);
+    if(!firstHand3D)return;
+    // The photographed pinch point is at normalized (0.155,0.55).
+    const side=Math.max(85,g.radius*1.62),angle=-8+5*easeArm((elapsed-300)/620)+6*exit;
     firstHandCanvas.style.width=side+'px';firstHandCanvas.style.height=side+'px';
-    firstHandCanvas.style.left=(hx-side*.27)+'px';firstHandCanvas.style.top=(hy-side*.56)+'px';firstHandCanvas.style.opacity=String(1-exit);
+    firstHandCanvas.style.left=(hx-side*.155)+'px';firstHandCanvas.style.top=(hy-side*.55)+'px';
+    firstHandCanvas.style.transformOrigin='15.5% 55%';
+    firstHandCanvas.style.transform='rotate('+angle+'deg) scale('+(1-.035*exit)+')';
+    firstHandCanvas.style.opacity=String(1-exit);
     firstHandCanvas.classList.add('is-visible');
-    h.renderer.render(h.scene,h.camera);
   };
-  if(!reduceMotion&&studioDeck){loadFirstHand3D();}
-
+  if(!reduceMotion&&studioDeck)loadFirstHand3D();
   const armSet=(selector,attrs)=>{const node=studioArm.querySelector(selector);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));};
   const clampArm=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeArm=t=>{t=clampArm(t,0,1);return t*t*(3-2*t);};
@@ -10856,7 +10839,7 @@ if (musicPlayers.length) {
         armAngle=mixArm(g.restAngle,touchTarget,travel);
         armLift=elapsed<300?easeArm(elapsed/300):1-easeArm((elapsed-920)/280);
         const arrival=easeArm(elapsed/300),exit=easeArm((elapsed-1200)/550);
-        const hx=g.px+Math.cos(armAngle)*g.length-g.unit*8+(1-arrival+exit)*g.radius*.82;
+        const hx=g.px+Math.cos(armAngle)*g.length-g.unit*3+(1-arrival+exit)*g.radius*.82;
         const hy=g.py+Math.sin(armAngle)*g.length-g.unit*4-(1-arrival+exit)*g.radius*.75;
         drawFirstHand3D(hx,hy,g,elapsed,exit);
         armMotion=null;
